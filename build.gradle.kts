@@ -44,7 +44,8 @@ tasks {
 	create("gitCommit${it.first.capitalize()}", Exec::class) {
 	  mustRunAfter(gitUpdateSubmodules)
 	  workingDir(file(it.second))
-	  commandLine("git", "commit", "-am", "autocommit")
+	  /*https://stackoverflow.com/questions/4298960/git-add-and-commit-in-one-command*/
+	  commandLine("git", "add-commit", "-m", "autocommit")
 	  isIgnoreExitValue = true
 	  this.setStandardOutput(java.io.ByteArrayOutputStream())
 
@@ -62,7 +63,8 @@ tasks {
   val gitCommit by creating(Exec::class) {
 	mustRunAfter(gitUpdateSubmodules)
 	gitCommitSubs.forEach { mustRunAfter(it) }
-	commandLine("git", "commit", "-am", "autocommit")
+	/*https://stackoverflow.com/questions/4298960/git-add-and-commit-in-one-command*/
+	commandLine("git", "add-commit", "-m", "autocommit")
 	isIgnoreExitValue = true
 	this.setStandardOutput(java.io.ByteArrayOutputStream())
 
@@ -75,6 +77,7 @@ tasks {
 	  }
 	}
   }
+
 
 
   allprojects {
