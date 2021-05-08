@@ -4,7 +4,7 @@
 enableFeaturePreview("VERSION_CATALOGS")
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
-
+include("klib")
 include("KJ")
 include("KJ:v1")
 
