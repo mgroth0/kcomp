@@ -20,6 +20,15 @@ projectFolder.resolve("KJ")
 	.filter { it.name != "buildSrc" }
 	.forEach {
 	  include("KJ:" + it.name)
+
+	  it.listFiles()!!
+		  .filter {
+			"build.gradle.kts" in it.listFiles()?.map { it.name } ?: listOf()
+		  }
+		  .filter { it.name != "buildSrc" }
+		  .forEach { f ->
+			include("KJ:${f.parentFile.name}:" + f.name)
+		  }
 	}
 
 

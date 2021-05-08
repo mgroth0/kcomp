@@ -10,3 +10,24 @@
 [submodule "KJ/reflect"]
 	path = KJ/reflect
 	url = https://github.com/mgroth0/reflect
+[submodule "KJ/kjlib"]
+	path = KJ/kjlib
+	url = https://github.com/mgroth0/kjlib
+[submodule "KJ/json"]
+	path = KJ/json
+	url = https://github.com/mgroth0/json
+[submodule "KJ/hurricanefx"]
+	path = KJ/hurricanefx
+	url = https://github.com/mgroth0/hurricanefx
+[submodule "KJ/auto"]
+	path = KJ/auto
+	url = https://github.com/mgroth0/auto
+[submodule "KJ/exec"]
+	path = KJ/exec
+	url = https://github.com/mgroth0/exec
+[submodule "KJ/gui"]
+	path = KJ/gui
+	url = https://github.com/mgroth0/gui
+[submodule "style"]
+	path = style
+	url = https://github.com/mgroth0/style

@@ -1,3 +1,3 @@
 dependencies {
-  implementation(projects.kj.klibexport)
+  implementation(projects.kj.gui)
 }
