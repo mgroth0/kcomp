@@ -11,21 +11,6 @@ val thelibs = libs
 val theMatt = projects
 val shadowGradle = projectDir.resolve("shadow.gradle")
 
-val abstractProjects = listOf<String>()
-val mylibs = projectDir.resolve("libs.txt").readText().lines().filter { it.isNotBlank() }.map { it.trim() }
-val applibs = projectDir.resolve("applibs.txt").readText().lines().filter { it.isNotBlank() }.map { it.trim() }
-val clapps = projectDir.resolve("clapps.txt").readText().lines().filter { it.isNotBlank() }.map { it.trim() }
-
-
-val guiapps = subprojects.map { it.path }.filter {
-  it !in abstractProjects
-  && it !in mylibs
-  && it !in applibs
-  && it !in clapps
-}
-
-
-
 
 subprojects sub@{
   val sp = this
@@ -33,20 +18,16 @@ subprojects sub@{
   val sppath = path
   println("path example:${sppath}")
 
-  val isAbstract = sppath in abstractProjects
-  val isGuiApp = sppath in guiapps
-  val isCLApp = sppath in clapps
-  val isExecutable = isGuiApp || isCLApp
-  val isAppLib = sppath in applibs
-  val isBaseLib = sppath in mylibs
-  val isAnyLib = isAppLib || isBaseLib
+  val modtype = ModType.valueOf(projectDir.resolve("modtype.txt").readText().trim())
+  val isExecutable = modtype in listOf(ModType.APP, ModType.CLAPP)
+  val isAnyLib =  modtype in listOf(ModType.LIB, ModType.APPLIB)
 
-  if (isAbstract) return@sub
+  if (modtype==ModType.ABSTRACT) return@sub
 
   repositories {
 	mavenCentral()
 	maven(url = "https://jitpack.io")
-	/*mavenLocal() // for my reflections*/
+	mavenLocal() // for my reflections
   }
 
   apply<JavaPlugin>()
@@ -98,11 +79,11 @@ subprojects sub@{
 	}
   }
 
-  if (isBaseLib) return@sub
+  if (modtype==ModType.LIB) return@sub
   if (isAnyLib) return@sub
   require(isExecutable)
 
-  if (isCLApp) {
+  if (modtype==ModType.CLAPP) {
 	tasks.withType<JavaExec> {
 	  standardInput = System.`in`
 	}
@@ -114,7 +95,7 @@ subprojects sub@{
   apply<ApplicationPlugin>()
   apply<ShadowPlugin>()
 
-  val mainPackage = "matt.${path.replace(":KJ:","").replace(":",".").toLowerCase()}"
+  val mainPackage = "matt.${path.replace(":KJ:", "").replace(":", ".").toLowerCase()}"
 
 
   val createAppNameResource by tasks.creating {
