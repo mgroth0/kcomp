@@ -4,3 +4,6 @@
 [submodule "klib"]
 	path = klib
 	url = https://github.com/mgroth0/klib
+[submodule "KJ/klibexport"]
+	path = KJ/klibexport
+	url = https://github.com/mgroth0/klibexport

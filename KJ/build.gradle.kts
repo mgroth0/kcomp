@@ -24,6 +24,11 @@ subprojects sub@{
 
   if (modtype==ModType.ABSTRACT) return@sub
 
+  if (!projectDir.resolve(".gitignore").exists()) {
+	/*since I plan to convert most to git submodules anyway...*/
+	projectDir.resolve(".gitignore").writeText("build/")
+  }
+
   repositories {
 	mavenCentral()
 	maven(url = "https://jitpack.io")

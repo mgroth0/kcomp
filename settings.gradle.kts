@@ -4,11 +4,25 @@
 enableFeaturePreview("VERSION_CATALOGS")
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
-include("klib")
-include("KJ")
-include("KJ:v1")
-
 val projectFolder = File(System.getProperty("user.dir"))
+
+projectFolder
+	.listFiles()!!
+	.filter { "build.gradle.kts" in it.listFiles()?.map { it.name } ?: listOf() }
+	.filter { it.name != "buildSrc" }
+	.forEach {
+	  include(it.name)
+	}
+
+projectFolder.resolve("KJ")
+	.listFiles()!!
+	.filter { "build.gradle.kts" in it.listFiles()?.map { it.name } ?: listOf() }
+	.filter { it.name != "buildSrc" }
+	.forEach {
+	  include("KJ:" + it.name)
+	}
+
+
 dependencyResolutionManagement {
   versionCatalogs {
 	create("libs") {

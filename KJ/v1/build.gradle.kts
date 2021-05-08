@@ -1,3 +1,3 @@
 dependencies {
-  implementation(projects.klib)
+  implementation(projects.kj.klibexport)
 }
