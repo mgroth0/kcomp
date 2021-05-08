@@ -41,7 +41,8 @@ tasks {
   }
   val gitCommitSubs by creating(Exec::class) {
 	/*https://stackoverflow.com/questions/4298960/git-add-and-commit-in-one-command*/
-	commandLine("git", "submodule", "foreach", "--recursive", "git", "add-commit", "-m", "autocommit")
+	/*https://stackoverflow.com/questions/19728933/continue-looping-over-submodules-with-the-git-submodule-foreach-command-after*/
+	commandLine("git", "submodule", "foreach", "--recursive", "git add-commit -m autocommit || :")
 	isIgnoreExitValue = true
 	this.setStandardOutput(java.io.ByteArrayOutputStream())
 
@@ -100,7 +101,7 @@ tasks {
 	tasks.withType<Jar> {
 	  gitCommit.mustRunAfter(this)
 	  gitCommitSubs.mustRunAfter(this)
-//	  gitCommitSubs.forEach { it.mustRunAfter(this) }
+	  //	  gitCommitSubs.forEach { it.mustRunAfter(this) }
 	}
   }
   val gitPushSubs by creating(Exec::class) {
