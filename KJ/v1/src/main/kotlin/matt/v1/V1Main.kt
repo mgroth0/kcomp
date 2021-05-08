@@ -1,6 +1,10 @@
 package matt.v1
 
-import matt.kjlib.commons.ROOT_FOLDER
-import matt.klib.dmap.withStoringDefault
+import matt.gui.app.GuiApp
+import matt.hurricanefx.tornadofx.control.label
 
-fun main() = GuiApp()
+fun main(): Unit = GuiApp {
+  vbox {
+	label("hello hello")
+  }
+}.start()
