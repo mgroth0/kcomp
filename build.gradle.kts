@@ -37,15 +37,10 @@ idea {
 tasks {
 
 
-  val gitAddSub by creating(Exec::class) {
-	workingDir(file("buildSrc"))
-	commandLine("git", "add", ".")
-  }
 
   val gitCommitSub by creating(Exec::class) {
 	workingDir(file("buildSrc"))
-	mustRunAfter(gitAddSub)
-	commandLine("git", "commit", "-m", "autocommit")
+	commandLine("git", "commit", "-am", "autocommit")
 	isIgnoreExitValue = true
 	this.setStandardOutput(java.io.ByteArrayOutputStream())
 
@@ -58,30 +53,45 @@ tasks {
 	  }
 	}
   }
-  val gitAdd by creating(Exec::class) {
-	mustRunAfter(gitCommitSub)
-	commandLine("git", "add", ".")
+  val gitCommitSub2 by creating(Exec::class) {
+	workingDir(file("klib"))
+	commandLine("git", "commit", "-am", "autocommit")
+	isIgnoreExitValue = true
+	this.setStandardOutput(java.io.ByteArrayOutputStream())
+
+	doLast {
+	  val stdout = standardOutput.toString()
+	  if (execResult!!.exitValue == 0) {
+		//do nothing
+	  } else if ("nothing to commit" !in stdout) {
+		throw RuntimeException(stdout)
+	  }
+	}
   }
+
+  val gitCommit by creating(Exec::class) {
+	mustRunAfter(gitCommitSub)
+	mustRunAfter(gitCommitSub2)
+	commandLine("git", "commit", "-am", "autocommit")
+	isIgnoreExitValue = true
+	this.setStandardOutput(java.io.ByteArrayOutputStream())
+
+	doLast {
+	  val stdout = standardOutput.toString()
+	  if (execResult!!.exitValue == 0) {
+		//do nothing
+	  } else if ("nothing to commit" !in stdout) {
+		throw RuntimeException(stdout)
+	  }
+	}
+  }
+
+
   allprojects {
 	tasks.withType<Jar> {
-	  gitAdd.mustRunAfter(this)
-	  gitAddSub.mustRunAfter(this)
-	}
-  }
-  val gitCommit by creating(Exec::class) {
-	mustRunAfter(gitAdd)
-	mustRunAfter(gitCommitSub)
-	commandLine("git", "commit", "-m", "autocommit")
-	isIgnoreExitValue = true
-	this.setStandardOutput(java.io.ByteArrayOutputStream())
-
-	doLast {
-	  val stdout = standardOutput.toString()
-	  if (execResult!!.exitValue == 0) {
-		//do nothing
-	  } else if ("nothing to commit" !in stdout) {
-		throw RuntimeException(stdout)
-	  }
+	  gitCommit.mustRunAfter(this)
+	  gitCommitSub.mustRunAfter(this)
+	  gitCommitSub2.mustRunAfter(this)
 	}
   }
   val gitPushSub by creating(Exec::class) {
@@ -89,20 +99,27 @@ tasks {
 	workingDir = file("buildSrc")
 	commandLine("git", "push")
   }
+  val gitPushSub2 by creating(Exec::class) {
+	mustRunAfter(gitCommitSub2)
+	workingDir = file("klib")
+	commandLine("git", "push")
+  }
   val gitPush by creating(Exec::class) {
 	mustRunAfter(gitCommit)
 	mustRunAfter(gitPushSub)
+	mustRunAfter(gitPushSub2)
 	commandLine("git", "push")
   }
 
   val gitAddCommitPush by creating {
-	dependsOn(gitAdd)
 	dependsOn(gitCommit)
 	dependsOn(gitPush)
 
-	dependsOn(gitAddSub)
 	dependsOn(gitCommitSub)
 	dependsOn(gitPushSub)
+
+	dependsOn(gitCommitSub2)
+	dependsOn(gitPushSub2)
   }
 
   val kbuild by creating {
