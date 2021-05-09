@@ -32,29 +32,84 @@ idea {
   }
 }
 
+subprojects {
+  tasks {
+	if (".git" in projectDir.list()) {
+	  val gitPullSubmodule by creating(Exec::class) {
+		workingDir(projectDir)
+		commandLine("git", "pull")
+		if (parent != null && parent != rootProject) {
+		  if (".git" in parent!!.projectDir.list()) {
+			dependsOn(parent!!.tasks["gitPullSubmodule"])
+		  }
+		}
+	  }
+	  val gitAddCommitSubmodule by creating(Exec::class) {
+		val addCommitTask = this
+		mustRunAfter(gitPullSubmodule)
+		this@subprojects.tasks.withType<Jar> {
+		  addCommitTask.mustRunAfter(this)
+		}
+		workingDir(projectDir)
+		/*https://stackoverflow.com/questions/4298960/git-add-and-commit-in-one-command*/
+		/*https://stackoverflow.com/questions/19728933/continue-looping-over-submodules-with-the-git-submodule-foreach-command-after*/
+		commandLine("git", "add-commit", "-m", "autocommit")
+		this@subprojects
+			.subprojects
+			.filter { ".git" in it.projectDir!!.list() }
+			.forEach {
+			  it.tasks.withType {
+				if (it.name == "gitAddCommitSubmodule") {
+				  addCommitTask.dependsOn(it)
+				}
+			  }
+			  //			  dependsOn(it.tasks["gitAddCommitSubmodule"])
+			}
+		isIgnoreExitValue = true
+		this.setStandardOutput(java.io.ByteArrayOutputStream())
 
-
-tasks {
-
-  val gitUpdateSubmodules by creating(Exec::class) {
-	commandLine("git", "submodule", "foreach", "--recursive", "git", "pull")
-  }
-  val gitCommitSubs by creating(Exec::class) {
-	/*https://stackoverflow.com/questions/4298960/git-add-and-commit-in-one-command*/
-	/*https://stackoverflow.com/questions/19728933/continue-looping-over-submodules-with-the-git-submodule-foreach-command-after*/
-	commandLine("git", "submodule", "foreach", "--recursive", "git add-commit -m autocommit || :")
-	isIgnoreExitValue = true
-	this.setStandardOutput(java.io.ByteArrayOutputStream())
-
-	doLast {
-	  val stdout = standardOutput.toString()
-	  if (execResult!!.exitValue == 0) {
-		//do nothing
-	  } else if ("nothing to commit" !in stdout) {
-		throw RuntimeException(stdout)
+		doLast {
+		  val stdout = standardOutput.toString()
+		  if (execResult!!.exitValue == 0) {
+			//do nothing
+		  } else if ("nothing to commit" !in stdout) {
+			throw RuntimeException(stdout)
+		  }
+		}
+	  }
+	  val gitPushSub by creating(Exec::class) {
+		val pushTask = this
+		//		mustRunAfter(gitPullSubmodule)
+		//		tasks.withType<Jar> {
+		//		  addCommitTask.mustRunAfter(this)
+		//		}
+		workingDir(projectDir)
+		commandLine("git", "push")
 	  }
 	}
   }
+}
+
+tasks {
+
+  //  val gitUpdateSubmodules by creating(Exec::class) {
+  //	commandLine("git", "submodule", "foreach", "--recursive", "git", "pull")
+  //  }
+  //  val gitCommitSubs by creating(Exec::class) {
+  //
+  //	commandLine("git", "submodule", "foreach", "--recursive", "git add-commit -m autocommit || :")
+  //	isIgnoreExitValue = true
+  //	this.setStandardOutput(java.io.ByteArrayOutputStream())
+  //
+  //	doLast {
+  //	  val stdout = standardOutput.toString()
+  //	  if (execResult!!.exitValue == 0) {
+  //		//do nothing
+  //	  } else if ("nothing to commit" !in stdout) {
+  //		throw RuntimeException(stdout)
+  //	  }
+  //	}
+  //  }
 
   //  val gitCommitSubs = gitSubmodules.map {
   //	create("gitCommit${it.first.capitalize()}", Exec::class) {
@@ -77,8 +132,16 @@ tasks {
   //  }
 
   val gitCommit by creating(Exec::class) {
-	mustRunAfter(gitUpdateSubmodules)
-	mustRunAfter(gitCommitSubs)
+	val gcTask = this
+	subprojects {
+	  tasks.withType {
+		if (name in listOf("gitAddCommitSubmodule", "gitPullSubmodule")) {
+		  gcTask.mustRunAfter(this)
+		}
+	  }
+	}
+	//	mustRunAfter(gitUpdateSubmodules)
+	//	mustRunAfter(gitCommitSubs)
 	//	gitCommitSubs.forEach { mustRunAfter(it) }
 	/*https://stackoverflow.com/questions/4298960/git-add-and-commit-in-one-command*/
 	commandLine("git", "add-commit", "-m", "autocommit")
@@ -94,19 +157,48 @@ tasks {
 	  }
 	}
   }
+  val gitPullBuildSrc by creating(Exec::class) {
+	commandLine("git", "pull")
+	workingDir("buildSrc")
+  }
+  val gitCommitBuildSrc by creating(Exec::class) {
+
+	mustRunAfter(gitPullBuildSrc)
+	//	mustRunAfter(gitCommitSubs)
+	//	gitCommitSubs.forEach { mustRunAfter(it) }
+	/*https://stackoverflow.com/questions/4298960/git-add-and-commit-in-one-command*/
+	commandLine("git", "add-commit", "-m", "autocommit")
+	workingDir("buildSrc")
+	isIgnoreExitValue = true
+	this.setStandardOutput(java.io.ByteArrayOutputStream())
+
+	doLast {
+	  val stdout = standardOutput.toString()
+	  if (execResult!!.exitValue == 0) {
+		//do nothing
+	  } else if ("nothing to commit" !in stdout) {
+		throw RuntimeException(stdout)
+	  }
+	}
+  }
+  val gitPushBuildSrc by creating(Exec::class) {
+	commandLine("git", "push")
+	workingDir("buildSrc")
+	mustRunAfter(gitCommitBuildSrc)
+  }
 
 
 
   allprojects {
 	tasks.withType<Jar> {
 	  gitCommit.mustRunAfter(this)
-	  gitCommitSubs.mustRunAfter(this)
+	  //	  gitCommitSubs.mustRunAfter(this)
 	  //	  gitCommitSubs.forEach { it.mustRunAfter(this) }
 	}
   }
-  val gitPushSubs by creating(Exec::class) {
-	commandLine("git", "submodule", "foreach", "--recursive", "git", "push")
-  }
+  //  val gitPushSubs by creating(Exec::class) {
+  //	commandLine("git", "submodule", "foreach", "--recursive", "git", "push")
+  //  }
 
   //  val gitPushSubs = gitSubmodules.map {
   //	create("gitPush${it.first.capitalize()}", Exec::class) {
@@ -120,19 +212,42 @@ tasks {
 
   val gitPush by creating(Exec::class) {
 	mustRunAfter(gitCommit)
-	mustRunAfter(gitPushSubs)
+	val pushTask = this
+	subprojects {
+	  tasks.withType {
+		if (name in listOf("gitPushSub")) {
+		  pushTask.mustRunAfter(this)
+		}
+	  }
+	}
+	//	mustRunAfter(gitPushSubs)
 	//	gitPushSubs.forEach { mustRunAfter(it) }
 	commandLine("git", "push")
   }
 
   val gitAddCommitPush by creating {
-	dependsOn(gitUpdateSubmodules)
+
+	val theTask = this
+
+	subprojects {
+	  tasks.withType {
+		if (name in listOf("gitPushSub", "gitAddCommitSubmodule", "gitPullSubmodule")) {
+		  theTask.dependsOn(this)
+		}
+	  }
+	}
+
+	//	dependsOn(gitUpdateSubmodules)
 
 	dependsOn(gitCommit)
 	dependsOn(gitPush)
 
-	dependsOn(gitCommitSubs)
-	dependsOn(gitPushSubs)
+	dependsOn(gitPullBuildSrc)
+	dependsOn(gitCommitBuildSrc)
+	dependsOn(gitPushBuildSrc)
+
+	//	dependsOn(gitCommitSubs)
+	//	dependsOn(gitPushSubs)
 	//	gitCommitSubs.forEach { dependsOn(it) }
 	//	gitPushSubs.forEach { dependsOn(it) }
 
