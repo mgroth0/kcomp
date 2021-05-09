@@ -20,13 +20,14 @@ subprojects sub@{
 
   val modtype = ModType.valueOf(projectDir.resolve("modtype.txt").readText().trim())
   val isExecutable = modtype in listOf(ModType.APP, ModType.CLAPP)
-  val isAnyLib =  modtype in listOf(ModType.LIB, ModType.APPLIB)
+  val isAnyLib = modtype in listOf(ModType.LIB, ModType.APPLIB)
 
-  if (modtype==ModType.ABSTRACT) return@sub
+  if (modtype == ModType.ABSTRACT) return@sub
 
   if (!projectDir.resolve(".gitignore").exists()) {
 	/*since I plan to convert most to git submodules anyway...*/
-	projectDir.resolve(".gitignore").writeText("build/")
+	/*must have leading slash here or packages called build wont be commited*/
+	projectDir.resolve(".gitignore").writeText("/build/")
   }
 
   repositories {
@@ -84,11 +85,11 @@ subprojects sub@{
 	}
   }
 
-  if (modtype==ModType.LIB) return@sub
+  if (modtype == ModType.LIB) return@sub
   if (isAnyLib) return@sub
   require(isExecutable)
 
-  if (modtype==ModType.CLAPP) {
+  if (modtype == ModType.CLAPP) {
 	tasks.withType<JavaExec> {
 	  standardInput = System.`in`
 	}
