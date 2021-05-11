@@ -31,7 +31,7 @@ idea {
 	)
   }
 }
-
+val check = tasks.register("validate", MValidations::class)
 subprojects {
   tasks {
 	if (".git" in projectDir.list()) {
@@ -54,6 +54,7 @@ subprojects {
 		/*https://stackoverflow.com/questions/4298960/git-add-and-commit-in-one-command*/
 		/*https://stackoverflow.com/questions/19728933/continue-looping-over-submodules-with-the-git-submodule-foreach-command-after*/
 		commandLine("git", "add-commit", "-m", "autocommit")
+		dependsOn(check)
 		this@subprojects
 			.subprojects
 			.filter { ".git" in it.projectDir!!.list() }
@@ -145,6 +146,7 @@ tasks {
 	//	gitCommitSubs.forEach { mustRunAfter(it) }
 	/*https://stackoverflow.com/questions/4298960/git-add-and-commit-in-one-command*/
 	commandLine("git", "add-commit", "-m", "autocommit")
+	dependsOn(check)
 	isIgnoreExitValue = true
 	this.setStandardOutput(java.io.ByteArrayOutputStream())
 
@@ -168,6 +170,7 @@ tasks {
 	//	gitCommitSubs.forEach { mustRunAfter(it) }
 	/*https://stackoverflow.com/questions/4298960/git-add-and-commit-in-one-command*/
 	commandLine("git", "add-commit", "-m", "autocommit")
+	dependsOn(check)
 	workingDir("buildSrc")
 	isIgnoreExitValue = true
 	this.setStandardOutput(java.io.ByteArrayOutputStream())
@@ -272,7 +275,7 @@ tasks {
 }
 
 
-val check = tasks.register("validate", MValidations::class)
+
 allprojects {
   tasks.withType<JavaCompile> {
 	dependsOn(check)

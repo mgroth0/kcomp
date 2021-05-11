@@ -31,6 +31,7 @@ projectFolder.resolve("KJ")
 		  }
 	}
 
+include("style")
 
 dependencyResolutionManagement {
   versionCatalogs {
@@ -39,3 +40,4 @@ dependencyResolutionManagement {
 	}
   }
 }
+

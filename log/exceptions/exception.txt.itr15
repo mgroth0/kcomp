@@ -1,0 +1,15 @@
+runtimeID:0.9965897376824409
+
+heapsize:319.0 MB
+heapmaxsize:2.0 GB
+heapFreesize:56.2 MB
+
+java.lang.IllegalArgumentException: Failed requirement.
+	at matt.v1.lab.ResponseSet.popGainGradient(lab.kt:182)
+	at matt.v1.lab.Experiment$MetaLoop.iteration(lab.kt:417)
+	at matt.v1.lab.Experiment$MetaLoop.iteration(lab.kt:410)
+	at matt.v1.lab.Experiment$ExperimentalLoop.runAndExtract(lab.kt:241)
+	at matt.v1.lab.Experiment.run(lab.kt:274)
+	at matt.v1.V1MainKt$main$1$1$3$1$1.invoke(V1Main.kt:100)
+	at matt.v1.V1MainKt$main$1$1$3$1$1.invoke(V1Main.kt:99)
+	at kotlin.concurrent.ThreadsKt$thread$thread$1.run(Thread.kt:30)

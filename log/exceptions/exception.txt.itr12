@@ -1,0 +1,11 @@
+runtimeID:0.45116240226209425
+
+heapsize:370.0 MB
+heapmaxsize:2.0 GB
+heapFreesize:112.0 MB
+
+java.util.NoSuchElementException
+	at matt.v1.V1MainKt$main$1$1$Fig3BResult.troughShift(V1Main.kt:281)
+	at matt.v1.V1MainKt$main$1$1$4$1$1.invoke(V1Main.kt:372)
+	at matt.v1.V1MainKt$main$1$1$4$1$1.invoke(V1Main.kt:321)
+	at kotlin.concurrent.ThreadsKt$thread$thread$1.run(Thread.kt:30)

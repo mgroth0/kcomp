@@ -1,0 +1,18 @@
+runtimeID:0.11042217146375777
+
+heapsize:50.0 MB
+heapmaxsize:2.0 GB
+heapFreesize:26.0 MB
+
+java.lang.AssertionError: Assertion failed
+	at matt.v1.model.Stimulus.pix(model.kt:154)
+	at matt.v1.model.FieldGenerator$mat$2.invoke(model.kt:92)
+	at matt.v1.model.FieldGenerator$mat$2.invoke(model.kt:85)
+	at kotlin.SynchronizedLazyImpl.getValue(LazyJVM.kt:74)
+	at matt.v1.model.FieldGenerator.getMat(model.kt:85)
+	at matt.v1.model.SimpleCell.stimulate(model.kt:201)
+	at matt.v1.model.ComplexCell.stimulate(model.kt:229)
+	at matt.v1.model.ComplexCell.stimulate$default(model.kt:228)
+	at matt.v1.V1MainKt$main$1$1$4$1$1.invoke(V1Main.kt:280)
+	at matt.v1.V1MainKt$main$1$1$4$1$1.invoke(V1Main.kt:261)
+	at kotlin.concurrent.ThreadsKt$thread$thread$1.run(Thread.kt:30)
