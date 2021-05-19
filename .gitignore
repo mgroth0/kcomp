@@ -1,2 +1,5 @@
-bin/jar/
-build/
+/bin/jar/
+/build/
+/log/
+/data/
+/KJ/jar/

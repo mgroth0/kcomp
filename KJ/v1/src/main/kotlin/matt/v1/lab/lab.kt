@@ -1,125 +1,71 @@
 package matt.v1.lab
 
-import javafx.scene.chart.NumberAxis
-import javafx.scene.chart.XYChart.Data
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
+import de.gsi.chart.axes.spi.DefaultNumericAxis
+import javafx.scene.paint.Color
 import matt.gui.loop.runLater
 import matt.hurricanefx.eye.lang.BProp
+import matt.json.custom.toJsonWriter
+import matt.json.prim.loadJson
+import matt.kjlib.commons.DATA_FOLDER
+import matt.kjlib.file.get
+import matt.kjlib.jmath.geometricMean
+import matt.kjlib.jmath.getPoisson
+import matt.kjlib.jmath.mean
+import matt.kjlib.jmath.orth
 import matt.kjlib.jmath.sigFigs
 import matt.kjlib.log.NEVER
 import matt.kjlib.str.addSpacesUntilLengthIs
 import matt.kjlib.str.prependZeros
+import matt.klib.log.warn
 import matt.klib.ranges.step
 import matt.klibexport.klibexport.setAll
+import matt.v1.compcache.BayesianPriorC
+import matt.v1.compcache.DivNorm
+import matt.v1.compcache.GaussianFit
+import matt.v1.compcache.PPCUnit
+import matt.v1.compcache.Point
+import matt.v1.compcache.PreDNPopR
+import matt.v1.compcache.Stimulation
 import matt.v1.gui.Figure
 import matt.v1.gui.StatusLabel
-import matt.v1.lab.Experiment.XVar.AQ
 import matt.v1.lab.Experiment.XVar.CONTRAST
 import matt.v1.lab.Experiment.XVar.DIST_4_ATTENTION
 import matt.v1.lab.Experiment.XVar.MASK
-import matt.v1.lab.Experiment.XVar.ORIENTATION
+import matt.v1.lab.Experiment.XVar.PREF_ORIENTATION
 import matt.v1.lab.Experiment.XVar.SIZE
-import matt.v1.lab.Experiment.YExtract
-import matt.v1.lab.Experiment.YExtract.ASD
-import matt.v1.lab.Experiment.YExtract.NO_DN
-import matt.v1.lab.Experiment.YExtract.TD
-import matt.v1.lab.Experiment.YExtract.WITH_DN
-import matt.v1.lab.ResourceUsageCfg.DEV2
+import matt.v1.lab.Experiment.XVar.STIM_AND_PREF_ORIENTATION
+import matt.v1.lab.Experiment.XVar.STIM_ORIENTATION
+import matt.v1.lab.Fit.Gaussian
+import matt.v1.lab.PoissonVar.FAKE1
+import matt.v1.lab.PoissonVar.FAKE10
+import matt.v1.lab.PoissonVar.FAKE5
+import matt.v1.lab.PoissonVar.NONE
+import matt.v1.lab.PoissonVar.YES
+import matt.v1.lab.ResourceUsageCfg.DEV
 import matt.v1.lab.ResourceUsageCfg.FINAL
+import matt.v1.lab.YExtract.CCW
+import matt.v1.lab.YExtract.MAX_PPC
+import matt.v1.lab.YExtract.POP_GAIN
+import matt.v1.lab.YExtract.PPC
+import matt.v1.lab.YExtract.PPC_UNIT
+import matt.v1.lab.YExtract.PRIOR
+import matt.v1.model.BASE_SIGMA_POOLING
 import matt.v1.model.Cell
 import matt.v1.model.ComplexCell
 import matt.v1.model.Field
 import matt.v1.model.FieldLocAndOrientation
-import matt.v1.model.SUPPRESSIVE_FIELD_GAIN_TYPICAL
+import matt.v1.model.PopulationResponse
 import matt.v1.model.SimpleCell
 import matt.v1.model.SimpleCell.Phase
 import matt.v1.model.SimpleCell.Phase.SIN
 import matt.v1.model.Stimulus
+import matt.v1.model.tdDivNorm
+import org.apache.commons.math3.exception.ConvergenceException
+import kotlin.math.abs
+import kotlin.math.roundToInt
 
-fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
-
-
-  val baseExp = Experiment(
-	name = "3.B",
-	title = "DN causes saturation with ↑ contrast",
-	xlabel = "% Contrast",
-	ylabel = "Neural Response % Maximum",
-	fig = fig,
-	statusLabel = statusLabel,
-	xVar = CONTRAST,
-	yExtracts = listOf(NO_DN, WITH_DN),
-	normToMaxes = true
-  )
-
-  val exps = mutableListOf(baseExp)
-  exps += baseExp.copy(
-	name = "3.C",
-	title = "DN allows suppression",
-	xlabel = "Mask % Contrast",
-	xMax = 50.0,
-	xVar = MASK
-  )
-  exps += baseExp.copy(
-	name = "3.D",
-	title = "DN causes tuning curve to peak at optimal size",
-	xlabel = "Size (Degrees)",
-	xMax = 10.0,
-	xVar = SIZE,
-	xMin = rCfg.F3D_STEP
-  )
-  exps += exps.last().copy(
-	name = "4.C",
-	title = "↓ D.N. in ASD causes ↑ the absolute pop. gain (matches b. data)",
-	xMax = 6.05,
-	xMin = 1.55,
-	yExtracts = listOf(TD, ASD),
-	ylabel = "Population Gain",
-	autoY = true,
-	normToMaxes = false
-  )
-  exps += exps.last().copy(
-	name = "4.D",
-	title = "pop. gain from ↓ D.N. in ASD diverges from TD as contrast ↑ (matches b. data)",
-	xMin = 0.0,
-	xMax = 100.0,
-	xVar = CONTRAST,
-	xlabel = baseExp.xlabel
-  )
-  exps += baseExp.copy(
-	name = "5.C",
-	title = "dist. from center of attn. causes ↓ pop. gain and then ↑ (matches b. data)",
-	xMin = 0.0,
-	xMax = 10.0,
-	xVar = DIST_4_ATTENTION,
-	xlabel = "Distance (Degrees)",
-	ylabel = exps.last().ylabel,
-	troughShift = true,
-	autoY = true,
-	yExtracts = listOf(TD, ASD),
-  )
-  exps += exps.last().copy(
-	name = "5.D",
-	title = "pop. gain gradient from attn increases with ASD symptomatology (↑c) (matches b. data)",
-	xMetaMin = 0.0,
-	xMetaMax = 50.0,
-	xlabel = "Gain Term % Decrease",
-	ylabel = "Population Gain Gradient",
-	metaGain = true,
-	yExtracts = listOf(TD) /*TD gets modified along AQ scale*/
-  )
-
-  /*𝑐(𝜃)=𝑐0−𝑤𝜃∙cos(4∙𝜃∙𝜋180⁄),*/
-  /*we performed a simulation with𝑐0=1x10−4(the control value of 𝑐) and three values of 𝑤𝜃: 0(reflecting a flat prior), 2.5x10−5(reflecting a weak prior), and 5x10−5(reflecting a strong prior)*/
-  exps += baseExp.copy(
-	name = "S4.A",
-	title = "probability learning stuff (TODO)",
-	xMin = 0.0,
-	xMax = 180.0,
-	xlabel = "Preferred Orientation (Degrees)",
-	ylabel = "c(Θ)",
-	autoY = true
-  )
-  return exps
-}
 
 private const val BASE_SIGMA_STEP = 0.1
 private const val FASTER_SIGMA_STEP = 0.25
@@ -132,23 +78,26 @@ enum class ResourceUsageCfg(
   val F3C_STEP: Double = 0.005,
   val F3D_STEP: Double = BASE_SIGMA_STEP,
   val F5C_STEP: Double = 0.2,
-  val F5D_STEP: Double = 10.0
+  val F5D_STEP: Double = 10.0,
+  val FS1_STEP: Double = 0.25,
 ) {
   FINAL(X0_STEP = 0.2),
 
 
-  DEV2(
+  DEV(
 	CELL_THETA_STEP = 10.0,
 	CELL_X0_STEP_MULT = 10,
 	F3B_STEP = 20.0,
 	F3C_STEP = 10.0,
 	F3D_STEP = FASTER_SIGMA_STEP,
-	F5C_STEP = FINAL.F5C_STEP*2
+	F5C_STEP = FINAL.F5C_STEP*2,
+	FS1_STEP = 10.0,
   ),
 
+  @Suppress("unused")
   DEBUG(
-	CELL_THETA_STEP = 10.0,
-	CELL_X0_STEP_MULT = 10,
+	CELL_THETA_STEP = 30.0,
+	CELL_X0_STEP_MULT = 40,
 	F3B_STEP = 20.0,
 	F3C_STEP = 10.0,
 	F3D_STEP = FASTER_SIGMA_STEP,
@@ -157,7 +106,7 @@ enum class ResourceUsageCfg(
   )
 }
 
-val rCfg = DEV2
+val rCfg = DEV
 
 
 const val X0_ABS_MINMAX = 15.0
@@ -177,12 +126,12 @@ private val field = Field(absLimXY = FIELD_ABS_MINMAX, stepXY = rCfg.X0_STEP)
 
 
 data class Response(val x: Double, val r: Double)
-data class ResponseSeries(val tag: YExtract) {
+data class ResponseSeries(val yExtract: SeriesCfg) {
   val responses = mutableListOf<Response>()
   val normalizedResponses = mutableListOf<Response>()
 }
 
-class ResponseSet(vararg extracts: YExtract) {
+class ResponseSet(vararg extracts: SeriesCfg) {
   val series = extracts.map { ResponseSeries(it) }
   fun fitToMaxAsPercent() {
 	series.forEachIndexed { i, series ->
@@ -196,8 +145,8 @@ class ResponseSet(vararg extracts: YExtract) {
   }
 
   fun troughShift() {
-	val higherTrough = series.map { it.responses }.maxByOrNull { it.minOf { it.r } }!!
-	val lowerTrough = series.map { it.responses }.minByOrNull { it.minOf { it.r } }!!
+	val higherTrough = series.map { it.responses }.maxByOrNull { it.minOf { resp -> resp.r } }!!
+	val lowerTrough = series.map { it.responses }.minByOrNull { it.minOf { resp -> resp.r } }!!
 	val diff = higherTrough.minOfOrNull { it.r }!! - lowerTrough.minOfOrNull { it.r }!!
 	higherTrough.setAll(higherTrough.map { it.copy(r = it.r - diff) })
   }
@@ -210,6 +159,49 @@ class ResponseSet(vararg extracts: YExtract) {
 
 }
 
+enum class YExtract {
+  PRIOR,
+  PPC, /*Probabilistic Population Code*/
+  POP_GAIN, /*POP_GAIN includes other stuff?*/
+  MAX_PPC,
+  CCW,
+  PPC_UNIT
+}
+
+enum class PoissonVar {
+  NONE, YES, FAKE1, FAKE5, FAKE10
+}
+
+data class SeriesCfg(
+  val label: String,
+  val DN: Boolean = false,
+  val contrastAlpha: Double? = null,
+  val priorWeight: Double? = null,
+  val sigmaPooling: Double = BASE_SIGMA_POOLING,
+  val yExtract: YExtract = POP_GAIN,
+  val poissonVar: PoissonVar = NONE,
+  val poissonVarI: Int? = null,
+  val divNorm: DivNorm = tdDivNorm,
+  val stimTheta: Double? = null,
+  val stimGaussianEnveloped: Boolean? = null,
+  val stimSF: Double? = null,
+  val relThetaMid: Double? = null,
+  val line: Boolean = true,
+  val markers: Boolean = false,
+  val fit: Fit? = null
+) {
+  init {
+	require(line || markers)
+  }
+}
+
+enum class ExpCategory {
+  ROSENBERG, OTHER
+}
+
+enum class Fit {
+  Gaussian
+}
 
 data class Experiment(
   val name: String,
@@ -227,10 +219,15 @@ data class Experiment(
   val statusLabel: StatusLabel,
   val fig: Figure,
   val xVar: XVar,
-  val yExtracts: List<YExtract>,
+  val xStep: Double,
+  val series: List<SeriesCfg>,
   val normToMaxes: Boolean = false,
-  val troughShift: Boolean = false
+  val troughShift: Boolean = false,
+  val stimTrans: (Stimulus.()->Stimulus)? = null,
+  val category: ExpCategory,
+  val baseContrast: Double = 0.5,
 ) {
+
 
   val runningProp = BProp(false)
 
@@ -244,54 +241,117 @@ data class Experiment(
 	MASK,
 	SIZE,
 	DIST_4_ATTENTION,
-	AQ,
-	ORIENTATION
+	STIM_ORIENTATION,
+	REL_STIM_ORIENTATION,
+	PREF_ORIENTATION,
+	STIM_AND_PREF_ORIENTATION,
+	FT
   }
 
-  enum class YExtract(val label: String) {
-	NO_DN("- D.N"),
-	WITH_DN("+ D.N"),
-	TD("TD"),
-	ASD("ASD"),
+  companion object {
+	const val CONTRAST1 = 7.5
+	const val CONTRAST2 = 20.0
   }
 
-  abstract inner class ExperimentalLoop<X, Y>(
+
+  abstract inner class ExperimentalLoop<X: Any, Y>(
 	protected val itr: List<X>,
   ) {
-	abstract fun iteration(x: X): Y
-	var lastX: X? = null
+	lateinit var x: X
+	var isLast = false
+	protected abstract fun iteration(): Y
 	fun justRun() {
-	  itr.forEach { x ->
+	  itr.forEachIndexed { i, newX ->
+		isLast = i == itr.size - 1
 		if (stopped) return
-		lastX = x
-		iteration(x)
+		x = newX
+		iteration()
+		if (stopped) return
 	  }
 	}
 
 	fun runAndExtract(extraction: ExperimentalLoop<X, Y>.(Y)->Unit) {
-	  itr.forEach { x ->
+	  itr.forEachIndexed { i, newX ->
+		isLast = i == itr.size - 1
 		if (stopped) return
-		lastX = x
-		val y = iteration(x)
+		x = newX
+		val y = iteration()
+		if (stopped) return
 		extraction(y)
 	  }
 	}
   }
 
+  val jsonFile = DATA_FOLDER["kcomp"]["v1"]["exps"]["$name.json"]
+
 
   fun setupFig() {
-	fig.clear()
-	fig.chart.title = title
-	fig.chart.xAxis.label = xlabel
-	fig.chart.yAxis.label = ylabel
-	(fig.chart.xAxis as NumberAxis).upperBound = xMetaMax ?: xMax
 
-	if (!autoY) {
-	  (fig.chart.yAxis as NumberAxis).upperBound = yMax
-	  (fig.chart.yAxis as NumberAxis).lowerBound = yMin
+	fig.clear()
+	//	GaussianCurveFitter.create().fit()
+	fig.chart.title = title
+	(fig.chart.xAxis as DefaultNumericAxis).apply {
+	  name = xlabel
+	  axisLabel.apply {
+		text = xlabel
+		fill = Color.WHITE
+	  }
+	  max = xMetaMax ?: xMax
 	}
+	(fig.chart.yAxis as DefaultNumericAxis).apply {
+	  name = ylabel
+	  axisLabel.apply {
+		text = ylabel
+		fill = Color.WHITE
+	  }
+	  if (!autoY) {
+		max = yMax
+		min = yMin
+	  }
+	}
+
+	series.forEachIndexed { i, s ->
+	  fig.debugPrepName = s.label /*fixes bug a few lines below where setting name does nothing*/
+	  @Suppress("UNUSED_VARIABLE")
+	  val make = fig.series[i]
+	  fig.styleSeries(i = i, line = s.line, marker = s.markers)
+	  //	  fig.setSeriesShowLine(i, s.line)
+	  //	  fig.setSeriesShowMarkers(i, s.markers)
+	}
+
+	var nextFitIndex = series.size
+	series.forEach {
+	  if (it.fit == Gaussian) {
+		fig.debugPrepName = "${it.label} (Gaussian fit)"
+		@Suppress("UNUSED_VARIABLE")
+		val make = fig.series[nextFitIndex]
+		fig.styleSeries(i = nextFitIndex, line = true, marker = false)
+		nextFitIndex++
+	  }
+	}
+
+	fig.chart.axes.forEach { a -> a.forceRedraw() }
+	fig.chart.legend.updateLegend(fig.chart.datasets, fig.chart.renderers, true)
+
+
   }
 
+  fun load() {
+	runningProp.value = true
+	stopped = false
+	if (jsonFile.exists()) {
+	  jsonFile.loadJson(JsonArray::class).forEachIndexed { i, e ->
+		val s = fig.series[i]
+		e.asJsonArray.forEachIndexed { ii, p ->
+		  val point = p.asJsonObject
+		  s.set(ii, point["x"].asDouble, point["y"].asDouble)
+		}
+	  }
+	}
+	fig.autorangeY()
+	fig.autorangeXWith(xMin, xMax)
+	runningProp.value = false
+  }
 
   fun run() {
 	runLater { runningProp.value = true }
@@ -299,43 +359,126 @@ data class Experiment(
 	if (metaGain) {
 	  MetaLoop(xMetaMin!!..xMetaMax!! step rCfg.F5D_STEP)
 		  .runAndExtract {
-			(fig.chart.yAxis as NumberAxis).upperBound = 10.0
+			val xForThread = x
+			runLater {
+			  fig.series[0].add(xForThread, it)
+			}
+			var nextFitIndex = 1
+			series.forEachIndexed { i, s ->
+			  fig.styleSeries(i = i, line = s.line, marker = s.markers)
+			  val g = if (isLast && s.fit == Gaussian && fig.series[0].xValues.size >= 3) {
 
-			fig.series1.data.add((Data(lastX!!, it)))
-			println("current data should be visible: ${fig.series1.data}")
-			fig.autorangeY()
+				val diff = xMax - xMin
+				try {
+				  GaussianFit(
+					fig.series[0].xValues.zip(fig.series[0].yValues).map {
+					  Point(x = it.first, y = it.second)
+					},
+					xMin = xMin,
+					xStep = (diff/10),
+					xMax = xMax
+				  ).findOrCompute()
+				} catch (e: ConvergenceException) {
+				  warn(e.message ?: "no message for $e")
+				  e.printStackTrace()
+				  listOf()
+				}
+			  } else null
+			  runLater {
+				if (g != null) {
+				  g.forEachIndexed { index, p ->
+					fig.series[nextFitIndex].set(index, p.x, p.y)
+					fig.styleSeries(i = nextFitIndex, line = true, marker = false)
+				  }
+				  nextFitIndex++
+				}
+			  }
+			}
+			runLater {
+			  if (autoY) fig.autorangeY()
+			  fig.chart.axes.forEach { a -> a.forceRedraw() }
+			  fig.chart.legend.updateLegend(fig.chart.datasets, fig.chart.renderers, true)
+			}
 		  }
 	} else buildCoreLoop().runAndExtract {
-	  runLater {
-		it.series.forEachIndexed { i, series ->
-		  val figSeries = when (i) {
-			0    -> fig.series1
-			1    -> fig.series2
-			else -> NEVER
+	  var nextFitIndex = series.size
+	  it.series.forEachIndexed { i, series ->
+		val resultData = (if (normToMaxes) series.normalizedResponses else series.responses).toList()
+
+		val g = if (isLast && this@Experiment.series[i].fit == Gaussian && resultData.size >= 3) {
+
+		  val diff = xMax - xMin
+		  try {
+			GaussianFit(
+			  resultData.map { Point(x = it.x, y = it.r) },
+			  xMin = xMin,
+			  xStep = (diff/10),
+			  xMax = xMax
+			)
+				.findOrCompute()
+		  } catch (e: ConvergenceException) {
+			warn(e.message ?: "no message for $e")
+			e.printStackTrace()
+			listOf()
 		  }
-		  val resultData = if (normToMaxes) series.normalizedResponses else series.responses
-		  figSeries.data.setAll(resultData.map { Data(it.x, it.r) })
-		  if (it.series.size > 1) {
-			figSeries.name = series.tag.label
+		} else null
+		runLater {
+
+
+		  val figSeries = fig.series[i]
+
+		  resultData.forEachIndexed { i, r ->
+			figSeries.set(i, r.x, r.r)
+		  }
+		  if (g != null) {
+			g.forEachIndexed { index, p ->
+			  fig.series[nextFitIndex].set(index, p.x, p.y)
+			  fig.styleSeries(i = nextFitIndex, line = true, marker = false)
+			}
+			nextFitIndex++
 		  }
 		}
 
 
+	  }
+
+
+	  runLater {
+		series.forEachIndexed { i, s ->
+		  fig.styleSeries(i = i, line = s.line, marker = s.markers)
+		}
 
 		if (autoY) fig.autorangeY()
+		fig.autorangeXWith(xMin, xMax)
+		fig.chart.axes.forEach { a -> a.forceRedraw() }
+		fig.chart.legend.updateLegend(fig.chart.datasets, fig.chart.renderers, true)
 	  }
+	}
+	if (!stopped){
+	  runLater{
+		/*must be in fx thread for now because otherwise theres no way to ensure the datasets are fully filled in time for this*/
+		jsonFile.parentFile.mkdirs()
+		jsonFile.writeText(JsonArray().apply {
+		  fig.chart.datasets.forEach { s ->
+			add(JsonArray().apply {
+			  (0 until s.dataCount).forEach { index ->
+				add(JsonObject().apply {
+				  addProperty("x", s[0, index])
+				  addProperty("y", s[1, index])
+				})
+			  }
+			})
+		  }
+		}.toJsonWriter().toJsonString())
+	  }
+
 	}
 	runLater { runningProp.value = false }
   }
 
   fun buildCoreLoop(): CoreLoop {
-	val aRange = xMin..xMax step when (xVar) {
-	  MASK             -> rCfg.F3C_STEP
-	  SIZE             -> rCfg.F3D_STEP
-	  DIST_4_ATTENTION -> rCfg.F5C_STEP
-	  else             -> rCfg.F3B_STEP
-	}
-	return CoreLoop(aRange.toList(), ResponseSet(*yExtracts.toTypedArray()))
+	val aRange = xMin..xMax step xStep
+	return CoreLoop(aRange.toList(), ResponseSet(*series.toTypedArray()))
   }
 
   inner class CoreLoop(
@@ -344,71 +487,248 @@ data class Experiment(
   ): ExperimentalLoop<Double, ResponseSet>(itr) {
 
 
-	var tempC: Double? = null
+	var metaC: Double? = null
 
-	override fun iteration(x: Double): ResponseSet {
+	internal fun update(
+	  verb: String = "stimulating",
+	  i: Int
+	) {
+	  statusLabel.statusExtra =
+		  "$verb cell ${i.prependZeros(3)}/${allComplexCells.size} with ${xVar.name}: ${
+			x.sigFigs(3)
+				.toString()
+				.addSpacesUntilLengthIs(5)
+		  }"
+	}
+
+	override fun iteration(): ResponseSet {
+
+	  PreDNPopR.coreLoopForStatusUpdates = this
 
 	  var cell = allComplexCells.sortedBy { it.X0 }.first { it.X0 >= 0.0 }
-	  var stim = cell.perfectStim().copy(a = .5)
-	  var attentionExp = false
+	  var stim = cell.perfectStim().copy(a = baseContrast)
 
-	  when (xVar) {
-		CONTRAST         -> stim = stim.copy(a = x*0.01)
-		MASK             -> stim = stim withMask stim.copy(a = x*0.01, f = stim.f.copy(t = orth(stim.f.t)))
-		SIZE             -> stim = stim.copy(a = 1.0, s = x)
-		DIST_4_ATTENTION -> {
-		  cell = allComplexCells.filter { it.Y0 == 0.0 }.sortedBy { it.X0 }.first { it.X0 >= x }
-		  stim = cell.perfectStim().copy(a = 1.0)
-		  attentionExp = true
+	  stim = when (xVar) {
+		CONTRAST                                               -> stim.copy(a = x*0.01)
+		MASK                                                   -> stim withMask stim.copy(
+		  a = x*0.01,
+		  f = stim.f.copy(t = orth(stim.f.t))
+		)
+		SIZE                                                   -> stim.copy(s = x)
+		in listOf(STIM_ORIENTATION, STIM_AND_PREF_ORIENTATION) -> stim.copy(f = stim.f.copy(t = x))
+		else                                                   -> stim
+	  }
+	  cell = when (xVar) {
+		DIST_4_ATTENTION                                       -> allComplexCells.sortedBy { it.X0 }
+			.first { it.X0 >= x }
+		in listOf(PREF_ORIENTATION, STIM_AND_PREF_ORIENTATION) -> allComplexCells.sortedBy { it.t }
+			.filter { it.t >= x }
+			.sortedBy { it.X0 }
+			.first { it.X0 >= 0.0 }
+		else                                                   -> cell
+	  }
+
+	  /* val fe = when (xVar) {
+		 FT   -> x
+		 else -> 0.1
+	   }*/
+
+	  val attentionExp = xVar == DIST_4_ATTENTION
+
+	  if (stimTrans != null) stim = stimTrans.invoke(stim)
+
+
+	  var priorW: Double? = null
+	  fun ComplexCell.prior() = BayesianPriorC(
+		c0 = tdDivNorm.c,
+		w0 = priorW!!,
+		t = t
+	  )
+
+	  fun ComplexCell.cfgStim(
+		cfgStim: Stimulus,
+		popR: PopulationResponse? = null
+	  ) = Stimulation(
+		cell = this,
+		stim = cfgStim,
+		popR = popR?.copy(
+		  divNorm = if (metaC != null) popR.divNorm.copy(c = metaC!!) else if (priorW != null) popR.divNorm.copy(c = prior().findOrCompute()) else popR.divNorm
+		),
+		attention = attentionExp
+	  ).findOrCompute(debug = false)
+
+
+	  /*val pt = (1.0/(THETA_MAX - THETA_MIN))*/
+
+	  /*needed for geo mean*/
+	  /*val DEBUG_PPC = 1*10.0.pow(16) *//*because the formula they gave was a proportion, this is legal*/
+
+	  /*higher = more lenient*/
+	  /*	  val THETA_THRESHOLD = 1000
+			val DIST_THRESHOLD = 1000*/
+
+
+
+
+	  fun decode(
+		ftStim: Stimulus,
+		trialStim: Stimulus,
+		poisson: PoissonVar,
+		popRcfg: PopulationResponse.()->PopulationResponse
+	  ) = allComplexCells
+		  .asSequence()
+		  .mapIndexed { i, c ->
+			/*.parMapIndexed { i, c ->*/
+			if (i%10 == 0) update(verb = "decoding", i = i + 1)
+			val ft = c.cfgStim(
+			  ftStim,
+			  popR = PreDNPopR(ftStim, attentionExp).findOrCompute().popRcfg()
+			)
+			/*println("c.X0=${c.X0},c.t=${c.t},ftStim.t=${ftStim.t},ft=${ft}")*/
+
+			val preRI = c.cfgStim(
+			  cfgStim = trialStim,
+			  popR = PreDNPopR(trialStim, attentionExp).findOrCompute().popRcfg()
+			)
+			/*println("c.X0=${c.X0},c.t=${c.t},trialStim.t=${trialStim.t},preRI=${preRI}")*/
+
+			val ri = when (poisson) {
+			  NONE   -> preRI.roundToInt()
+			  YES    -> preRI.getPoisson()
+			  FAKE1  -> preRI.roundToInt() + 1
+			  FAKE5  -> preRI.roundToInt() + 5
+			  FAKE10 -> preRI.roundToInt() + 10
+			}
+			(PPCUnit(
+			  ft = ft,
+			  ri = ri
+			).findOrCompute(debug = false)) /* * DEBUG_PPC (needed for geo mean)*/
+		  }.let {
+			when (poisson) {
+			  FAKE1  -> it.mean()
+			  FAKE5  -> it.mean()
+			  FAKE10 -> it.mean()
+			  else   -> it.geometricMean()
+			}
+		  }
+	  /*How do you add weights to elements in a product?*/
+	  /*pt include in any discussions, not in computation. PPC is a proportion so this is legal*/
+
+
+
+	  responseSet.series.forEach { ser ->
+		if (stopped) return@iteration responseSet
+		val y = ser.yExtract
+		var rStim = y.contrastAlpha?.let { a -> stim.copy(a = a) } ?: stim
+		rStim = y.stimTheta?.let { t -> rStim.copy(f = rStim.f.copy(t = t)) } ?: rStim
+		rStim = y.stimGaussianEnveloped?.let { g -> rStim.copy(gaussianEnveloped = g) } ?: rStim
+		rStim = y.stimSF?.let { sf -> rStim.copy(SF = sf) } ?: rStim
+
+		if (y.relThetaMid != null) {
+		  rStim = rStim.copy(f = rStim.f.copy(t = y.relThetaMid + x))
 		}
-		AQ               -> TODO()
-		ORIENTATION      -> TODO()
-	  }
 
-	  val DEBUG = if (attentionExp) 250 else 1
-	  val S = (allComplexCells - cell).mapIndexed { i, c ->
-		if (i%10 == 0) {
-		  statusLabel.statusExtra =
-			  "stimulating cell ${i.prependZeros(3)}/${allComplexCells.size} with ${xVar.name}: ${x.sigFigs(3).toString().addSpacesUntilLengthIs(5)}"
-		}
-		val D = c.stimulate(stim, attention = attentionExp)
-		val W = cell.weights[c]
-		W*D
-	  }.sum()*DIRTY_S_MUlT*DEBUG /*without DIRTY_S_MUlT, Fig.3.D doesnt work...nvm still doesnt work*/
+		priorW = y.priorWeight
 
-	  responseSet.series.forEach {
-		it.responses += when (it.tag) {
-		  NO_DN   -> Response(
-			x,
-			cell.stimulate(stim, attention = attentionExp, tempC = tempC)
-		  )
-		  WITH_DN -> Response(
-			x,
-			cell.stimulate(stim, divNormS = S, attention = attentionExp, tempC = tempC)
-		  )
-		  /*above and below same*/
-		  TD      -> Response(
-			x,
-			cell.stimulate(stim, divNormS = S, attention = attentionExp, tempC = tempC)
-		  )
-		  ASD     -> Response(
-			x,
-			cell.stimulate(stim, divNormS = S, autism = true, attention = attentionExp, tempC = tempC)
+		val popRcfg: PopulationResponse.()->PopulationResponse = {
+		  copy(
+			sigmaPooling = y.sigmaPooling,
+			divNorm = y.divNorm
 		  )
 		}
-	  }
+		val ccwTrials = when (ser.yExtract.poissonVar) {
+		  in listOf(NONE, FAKE1, FAKE5, FAKE10) -> 1
+		  YES                                   -> 50
+		  //		  FAKE -> NEVER
+		  else                                  -> NEVER
+		}
+		ser.responses += Response(
+		  x,
+		  when (y.yExtract) {
+			PRIOR    -> cell.prior().findOrCompute()
+			PPC      -> decode(
+			  ftStim = rStim,
+			  poisson = ser.yExtract.poissonVar,
+			  trialStim = rStim.copy(f = rStim.f.copy(t = 90.0)),
+			  popRcfg = popRcfg
+			)
+			MAX_PPC  -> (1..(if (y.poissonVar == NONE) 1 else 20)).map {
+			  decode(
+				ftStim = rStim,
+				poisson = ser.yExtract.poissonVar,
+				trialStim = rStim,
+				popRcfg = popRcfg
+			  )
+			}.mean()/*.also {
+			  *//*println("decoded:${it}")   *//*
+			}*/
+			CCW      -> {
+			  val substep = 1.0
+			  (1..ccwTrials).map {
+				val probs = (y.relThetaMid!! - (substep*9)..y.relThetaMid + substep*10 step substep)
+					.mapIndexed { i, theta ->
+					  (decode(
+						ftStim = rStim.copy(f = rStim.f.copy(t = theta)),
+						poisson = ser.yExtract.poissonVar,
+						trialStim = rStim,
+						popRcfg = popRcfg
+					  ) to if (theta > y.relThetaMid) 1.0 else 0.0)/*.also {
+						println("${y.label} decoded(ts=${theta}/${rStim.t}):${it}")
+					  }*/
+					}
+				/*when (ser.yExtract.poissonVar) {
+				  in listOf(NONE, FAKE) -> (probs.filter { it.second == 1.0 }
+												.meanOf { it.first.alsoPrintln { "1p:${this}" } } - probs.filter { it.second == 0.0 }
+												.meanOf { it.first.alsoPrintln { "0p:${this}" } }) + 0.5
+				  YES                   -> probs.maxByOrNull { it.first }!!.second
+				  else                  -> NEVER
+				  *//*FAKE -> NEVER*//*
+				}*/
 
 
-	  if (normToMaxes) {
-		responseSet.fitToMaxAsPercent()
+				probs.maxByOrNull { it.first }!!.second
+
+				/*WIth this, all three (deterministic,poisson,and fake) have 100% perfect results with no diff between 45 and 90*/
+				/*listOf(
+				  probs.filter { it.second == 0.0 }.meanOf { it.first.alsoPrintln { "0p:${this}" } },
+				  probs.filter { it.second == 1.0 }.meanOf { it.first.alsoPrintln { "1p:${this}" } },
+				).mapIndexed { i, m -> m to i }
+					.maxByOrNull { it.first }!!.second.toDouble()*/
+			  }.mean()
+			}
+			POP_GAIN -> cell.cfgStim(
+			  cfgStim = rStim,
+			  popR = if (y.DN) PreDNPopR(rStim, attentionExp).findOrCompute().popRcfg() else null
+			)
+			PPC_UNIT -> {
+			  /*var nextX = 0.0
+			  var lastResult = -1.0
+			  val step = 0.1
+			  do {
+				nextX += step*/
+			  /*val thisResult = */PPCUnit(x, (x + y.poissonVarI!!).roundToInt()).findOrCompute()
+			  /*	  println(
+					  "x=${x},nextX=${nextX.sigFigs(3)},ri=${(nextX + fe).roundToInt()},thisResult=${
+						thisResult.sigFigs(
+						  3
+						)
+					  }"
+					)*/
+			  /*		val stillHigher = thisResult > lastResult
+					  if (stillHigher) {
+						lastResult = thisResult
+					  }
+					} while (stillHigher)
+					nextX - step*/
+			}
+		  }
+		)
 	  }
-	  if (troughShift && x == itr.last()) {
-		responseSet.troughShift()
-	  }
+
+	  if (normToMaxes) responseSet.fitToMaxAsPercent()
+	  if (troughShift && x == itr.last()) responseSet.troughShift()
 
 	  return responseSet
-
-
 	}
   }
 
@@ -416,9 +736,10 @@ data class Experiment(
   inner class MetaLoop(itr: List<Double>): ExperimentalLoop<Double, Double>(itr) {
 	constructor(r: Iterable<Double>): this(r.toList())
 
-	override fun iteration(x: Double): Double {
-	  val tempC = SUPPRESSIVE_FIELD_GAIN_TYPICAL*((100.0 - x)/100)
-	  val coreLoop = buildCoreLoop().also { it.tempC = tempC }
+	override fun iteration(): Double {
+	  val coreLoop = buildCoreLoop().also {
+		it.metaC = tdDivNorm.c*((100.0 - x)/100)
+	  }
 	  coreLoop.justRun()
 	  return coreLoop.responseSet.popGainGradient()
 	}
@@ -443,8 +764,14 @@ val baseStim = Stimulus(
 
 val baseSimpleSinCell = SimpleCell(
   f = baseField,
+
+
   sx = 0.7,
   sy = 1.2,
+  /*Rosenberg used an elliptical receptive field without explanation. This may interfere with some orientation-based results*/
+  /*sx = 0.95,
+  sy = 0.95,*/
+
   SF = 4.0,
   phase = SIN
 )
@@ -469,8 +796,12 @@ val DIRTY_S_MUlT = REQ_SIZE.toDouble()/allComplexCells.size.toDouble()
 fun Cell.perfectStim() = baseStim.copy(f = baseStim.f.copy(t = t, X0 = X0, Y0 = Y0))
 
 
-fun orth(degrees: Double): Double {
-  require(degrees in 0.0..180.0)
-  return if (degrees < 90.0) degrees + 90.0
-  else degrees - 90.0
+/**
+ * Shortest distance (angular) between two angles.
+ * It will be in range [0, 180].
+ */
+fun angularDifference(alpha: Double, beta: Double): Double {
+  val phi = abs(beta - alpha)%360.0  /*This is either the distance or 360 - distance*/
+  return if (phi > 180.0) 360.0 - phi else phi
 }
+

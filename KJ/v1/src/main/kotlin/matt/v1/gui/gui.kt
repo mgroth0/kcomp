@@ -1,34 +1,45 @@
 package matt.v1.gui
 
+import de.gsi.chart.XYChart
+import de.gsi.chart.axes.spi.DefaultNumericAxis
+import de.gsi.chart.renderer.LineStyle
+import de.gsi.chart.renderer.spi.ErrorDataSetRenderer
+import de.gsi.dataset.spi.DoubleDataSet
 import javafx.application.Platform.runLater
-import javafx.collections.ObservableList
-import javafx.scene.chart.LineChart
-import javafx.scene.chart.NumberAxis
-import javafx.scene.chart.XYChart.Data
-import javafx.scene.chart.XYChart.Series
+import javafx.event.EventTarget
+import javafx.scene.canvas.Canvas
 import javafx.scene.layout.FlowPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
+import javafx.scene.layout.Region
+import javafx.scene.paint.Color
 import javafx.scene.text.Font
 import matt.gui.loop.runLaterReturn
+import matt.hurricanefx.exactHeight
+import matt.hurricanefx.exactHeightProperty
+import matt.hurricanefx.exactWidth
 import matt.hurricanefx.exactWidthProperty
 import matt.hurricanefx.eye.lang.Prop
 import matt.hurricanefx.eye.lib.onChange
 import matt.hurricanefx.eye.lib.onNonNullChange
-import matt.hurricanefx.eye.prop.div
 import matt.hurricanefx.eye.prop.times
-import matt.hurricanefx.tornadofx.charts.linechart
-import matt.hurricanefx.tornadofx.charts.series
+import matt.hurricanefx.tornadofx.control.checkbox
 import matt.hurricanefx.tornadofx.control.label
 import matt.hurricanefx.tornadofx.control.slider
+import matt.hurricanefx.tornadofx.fx.opcr
 import matt.hurricanefx.tornadofx.item.combobox
 import matt.kjlib.async.every
 import matt.kjlib.date.sec
 import matt.kjlib.itr.loopIterator
 import matt.kjlib.jmath.sigFigs
+import matt.klib.dmap.withStoringDefault
 import matt.v1.Status.IDLE
 import matt.v1.Status.WORKING
 import kotlin.reflect.KProperty
+
+//import de.gsi.chart.XYChart
+//import de.gsi.chart.axes.spi.DefaultNumericAxis
+//import de.gsi.dataset.spi.DoubleDataSet
 
 abstract class VisualizationCfg(val responsive: Boolean = false) {
 
@@ -85,6 +96,10 @@ abstract class VisualizationCfg(val responsive: Boolean = false) {
 	override var value: Any? = ((range.second.toDouble() + range.first.toDouble())/2.0) + range.first.toDouble()
   }
 
+  inner class CfgBoolProp(default: Boolean): CfgProp<Boolean>() {
+	override var value: Any? = default
+  }
+
 
   val cfgPane by lazy {
 	FlowPane().apply {
@@ -95,19 +110,32 @@ abstract class VisualizationCfg(val responsive: Boolean = false) {
 		when (p) {
 		  is CfgObjProp<*> -> combobox(values = p.values.toList()) {
 			value = p.value
-			maxWidthProperty().bind(fp.widthProperty())
+			/*maxWidthProperty().bind(fp.widthProperty())*/
+			exactWidthProperty().bind(fp.widthProperty()*.4)
 			promptText = p.name + "?"
 			valueProperty().onChange {
 			  p.value = it
 			  update()
 			}
 		  }
+		  is CfgBoolProp   -> checkbox(p.name) {
+			isSelected = p.value as Boolean
+			/*maxWidthProperty().bind(fp.widthProperty())*/
+			exactWidthProperty().bind(fp.widthProperty()*.4)
+			//			promptText = p.name + "?"
+			selectedProperty().onChange {
+			  p.value = it
+			  update()
+			}
+		  }
 		  is SliderProp    -> label(p.name) {
+			exactWidthProperty().bind(fp.widthProperty()*.4)
 			when (p) {
 			  is CfgIntProp    -> slider(min = p.range.first, max = p.range.last, value = (p.value as Int).toDouble())
 			  is CfgDoubleProp -> slider(min = p.range.first, max = p.range.second, value = p.value as Double)
 			}.apply {
-			  maxWidthProperty().bind(fp.widthProperty())
+
+			  /*maxWidthProperty().bind(fp.widthProperty())*/
 			  isSnapToTicks = p is CfgIntProp
 			  isShowTickMarks = p is CfgIntProp
 			  isShowTickLabels = p is CfgIntProp
@@ -115,7 +143,7 @@ abstract class VisualizationCfg(val responsive: Boolean = false) {
 			  minorTickCount = 0
 			  fun updateText() {
 				text = when (p) {
-				  is CfgIntProp    -> "${p.name}:$value"
+				  is CfgIntProp    -> "${p.name}:${value}"
 				  is CfgDoubleProp -> "${p.name}:${value.sigFigs(3)}"
 				}
 			  }
@@ -151,13 +179,91 @@ abstract class VisualizationCfg(val responsive: Boolean = false) {
   }
 }
 
-class Figure: Pane() {
-  lateinit var series1: Series<Number, Number>
-	private set
-  lateinit var series2: Series<Number, Number>
-	private set
+class Figure(
+  //  var line: Boolean = true
+): Pane() {
 
-  fun autorangeY() = autorangeYWith(series1.data, series2.data)
+  var debugPrepName = "New Dataset"
+
+  val seriesColors = listOf(
+	"darkblue",
+	"yellow",
+	"lightgreen",
+	"red",
+	"pink",
+	"white"
+  )
+  //
+  //  val seriesStyles = listOf(
+  //	"markerColor=darkblue; markerType=circle;strokeColor=darkblue;strokeWidth=2;",
+  //	"markerColor=yellow; markerType=circle;strokeColor=yellow;strokeWidth=2;"
+  //  )
+
+  fun styleSeries(i: Int, marker: Boolean, line: Boolean) {
+	var s = ""
+	if (marker) {
+	  s += "markerColor: ${seriesColors[i]}; markerType: circle;"
+	} else {
+	  s += "markerColor: transparent;"
+	}
+	s += if (line) {
+	  "strokeColor: ${seriesColors[i]}; strokeWidth: 2;"
+	} else {
+	  /*for now keep stroke color same as marker color for the legend*/
+	  /*s += "strokeColor: ${seriesColors[i]}; strokeWidth: 2;"*/
+	  "strokeColor: transparent; strokeWidth: 0;"
+	}
+	series[i].style = s
+	(chart.renderers[i] as ErrorDataSetRenderer).apply {
+	  this.isDrawMarker = marker
+	  this.markerSize = if (marker) 10.0 else 0.0
+	  this.polyLineStyle = if (line) LineStyle.NORMAL else LineStyle.NONE
+	}
+  }
+
+  val series = mutableMapOf<Int, DoubleDataSet>().withStoringDefault {
+	while (it + 1 > chart.datasets.size) {
+	  val ds = DoubleDataSet(debugPrepName)
+	  chart.datasets.add(ds)
+	  /*  if (it <= seriesStyles.size-1) {
+		  ds.setStyle(seriesStyles[it])
+		  *//*ds.addDataStyle(seriesStyles[it])*//*
+	  } */
+	  //	  ds.style = seriesStyles[it]
+	  chart.renderers.add(ErrorDataSetRenderer().apply {
+		/*	markerSize = 10.0
+			isDrawMarker = true*/
+		/*polyLineStyle = LineStyle.NONE*/
+		datasets.add(ds)
+	  })
+	  styleSeries(i = it, marker = false, line = true)
+	  //	  chart.series("")
+	}
+	chart.datasets[it] as DoubleDataSet
+  }
+
+  /*  fun setSeriesShowLine(i: Int, b: Boolean) {
+	  *//*if (b == false) {
+	  *//**//*if (b) NORMAL*//**//* *//**//*removes color, and in a buggy way where legend still has color*//**//*
+	  (chart.renderers[i] as ErrorDataSetRenderer).polyLineStyle = LineStyle.NONE
+	}*//*
+	(chart.renderers[i] as ErrorDataSetRenderer).polyLineStyle = LineStyle.NONE
+
+	*//*chart.lookup(".default-color${i}.chart-series-line")?.style = if (b) "-fxstroke: transparent" else "";*//*
+  }*/
+
+  /*  fun setSeriesShowMarkers(i: Int, b: Boolean) {
+	  *//*if (b==false) {
+	  (chart.renderers[i] as ErrorDataSetRenderer).isDrawMarker = b
+	}
+*//*
+	(chart.renderers[i] as ErrorDataSetRenderer).isDrawMarker = b
+	(chart.renderers[i] as ErrorDataSetRenderer).markerSize = 0.0
+	*//*chart.lookup(".default-color${i}.chart-line-symbol")?.style = if (b) "-fxstroke: transparent" else ""*//*
+  }*/
+
+  fun autorangeY() = autorangeYWith(*series.values.toTypedArray())
+  fun autorangeX() = autorangeXWith(*series.values.toTypedArray())
   fun clear() {
 
 	/*turns out JavaFX charts are super buggy and I have to do it this way*/
@@ -176,57 +282,85 @@ class Figure: Pane() {
 	chart.xAxis.label = ""
 	chart.yAxis.label = ""
 	chart.title = ""*/
+	series.clear()
 	children.remove(chart)
 	newChart()
 	/*I like it. Much cleaner, changes fast, actually feels more responsive.*/
   }
 
 
-  fun autorangeYWith(vararg series: ObservableList<Data<Number, Number>>) {
-	val min = series.flatMap { it }.minOfOrNull { it.yValue.toDouble() }!!
-	val max = series.flatMap { it }.maxOfOrNull { it.yValue.toDouble() }!!
+  private fun autorangeYWith(vararg series: DoubleDataSet) {
+
+
+	val min = series.flatMap { it.yValues.toList() }.minOrNull()!!
+	val max = series.flatMap { it.yValues.toList() }.maxOrNull()!!
 	val diff = max - min
 	val tenPercent = 0.1*diff
-	(chart.yAxis as NumberAxis).lowerBound = min - tenPercent
-	(chart.yAxis as NumberAxis).upperBound = max + tenPercent
+	chart.yAxis.min = min - tenPercent
+	chart.yAxis.max = max + tenPercent
+  }
+
+  private fun autorangeXWith(vararg series: DoubleDataSet) {
+	val min = series.flatMap { it.xValues.toList() }.minOrNull()!!
+	val max = series.flatMap { it.xValues.toList() }.maxOrNull()!!
+	autorangeXWith(min, max)
+  }
+
+  fun autorangeXWith(min: Double, max: Double) {
+	val diff = max - min
+	val fivePercent = 0.05*diff
+	chart.xAxis.min = min - fivePercent
+	chart.xAxis.max = max + fivePercent
   }
 
   private fun newChart() {
-	chart = linechart(
-	  "run an experiment",
-	  NumberAxis().apply {
-		isAutoRanging = false
-		isTickMarkVisible = true
-		isTickLabelsVisible = true
-		minorTickCount = 5
-		tickUnitProperty().bind(upperBoundProperty().div(5))
-	  },
-	  NumberAxis().apply {
-		isAutoRanging = false
-		isTickMarkVisible = true
-		isTickLabelsVisible = true
-		minorTickCount = 5
-		tickUnitProperty().bind(upperBoundProperty().div(5))
-		/*tickLabelFormatter = BYTE_SIZE_FORMATTER*/
-	  }
-	) {
-	  series1 = series("")
-	  series2 = series("")
-	  createSymbols = false
+	val axis1 = DefaultNumericAxis().apply {
+	  isAutoRanging = false
+	  isTickMarkVisible = true
+	  isTickLabelsVisible = true
+	  minorTickCount = 5
+	  /*maxMajorTickLabelCount = 5
+	  tick
+	  tickUnitProperty().bind(maxProperty().minus(minProperty()).div(5))*/
+
+	}
+	val axis2 = DefaultNumericAxis().apply {
+	  isAutoRanging = false
+	  isTickMarkVisible = true
+	  isTickLabelsVisible = true
+	  minorTickCount = 5
+	  /*tickUnitProperty().bind(maxProperty().minus(minProperty()).div(5))
+	  *//*tickLabelFormatter = BYTE_SIZE_FORMATTER*/
+	}
+	chart =
+
+
+		/*if (line)*/ XYChart(axis1, axis2).apply {
+	  this@Figure.children.add(this)
+	  title = "run an experiment"
+	} /*else scatterchart(
+		  "run an experiment",
+		  axis1,
+		  axis2
+		) {}*/
+	chart.apply {
+	  //	  (this as? LineChart)?.createSymbols = false
 	  if (scene != null) {
 		exactWidthProperty().bind(scene.widthProperty()*0.9)
 	  }
 	  sceneProperty().onNonNullChange {
 		exactWidthProperty().bind(it.widthProperty()*0.9)
 	  }
-
-	  this.animated = false
+	  //		this.ani
+	  //	  this.animated = false
 	  layoutX = 0.0
 	  layoutY = 0.0
+	  exactHeightProperty().bind(this@Figure.heightProperty())
+	  exactWidthProperty().bind(this@Figure.widthProperty())
 	}
   }
 
-  lateinit var chart: LineChart<Number, Number> private set
+  lateinit var chart: XYChart private set
 
   init {
 	newChart()
@@ -259,3 +393,5 @@ class StatusLabel: HBox()/*so label is steady*/ {
 	}
   }
 }
+
+

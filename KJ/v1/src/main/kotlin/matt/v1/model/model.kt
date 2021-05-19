@@ -2,11 +2,20 @@
 
 package matt.v1.model
 
+import matt.kjlib.cache.LRUCache
 import matt.kjlib.jmath.e
 import matt.kjlib.log.NEVER
 import matt.kjlib.stream.forEachNested
-import matt.klib.dmap.withStoringDefault
+import matt.klib.math.sq
 import matt.klib.ranges.step
+import matt.reflect.toStringBuilder
+import matt.v1.compcache.AttentionAmp
+import matt.v1.compcache.DivNorm
+import matt.v1.compcache.Norm
+import matt.v1.compcache.Weight
+import matt.v1.compcache.XTheta
+import matt.v1.compcache.YTheta
+import matt.v1.lab.DIRTY_S_MUlT
 import matt.v1.model.NormMethod.ADD_POINT_5
 import matt.v1.model.NormMethod.RATIO
 import matt.v1.model.SimpleCell.Phase.COS
@@ -14,8 +23,10 @@ import matt.v1.model.SimpleCell.Phase.SIN
 import org.jetbrains.kotlinx.multik.api.empty
 import org.jetbrains.kotlinx.multik.api.mk
 import org.jetbrains.kotlinx.multik.ndarray.data.D2
+import org.jetbrains.kotlinx.multik.ndarray.data.MultiArray
 import org.jetbrains.kotlinx.multik.ndarray.data.get
 import org.jetbrains.kotlinx.multik.ndarray.data.set
+import org.jetbrains.kotlinx.multik.ndarray.operations.forEachIndexed
 import org.jetbrains.kotlinx.multik.ndarray.operations.max
 import org.jetbrains.kotlinx.multik.ndarray.operations.min
 import kotlin.math.cos
@@ -24,6 +35,7 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.sin
+import kotlin.math.sqrt
 import kotlin.system.exitProcess
 
 /*just for visualizing*/
@@ -39,9 +51,7 @@ data class Field(
   val stepXY: Double
 ) {
   val range = (-absLimXY..absLimXY step stepXY).toList()
-  val length = range.size.apply {
-	println("field.length:${this}")
-  }
+  val length = range.size
 }
 
 
@@ -52,17 +62,13 @@ interface FieldLocI {
   val Y0: Double /*VERTICAL_POS*/
   val field: Field /*HEIGHT_WIDTH*/
 
-  infix fun normDistTo(other: FieldLocI): Double {
-	//	println("DEBUG normDistTo")
-	//	tab("X0=$X0")
-	//	tab("other.X0=${other.X0}")
-	//	tab("Y0=${Y0}")
-	//	tab("other.Y0=${other.Y0}")
-	val r = Math.sqrt((X0 - other.X0).pow(2) + (Y0 - other.Y0).pow(2))
-	//	tab("r=${r}")
-	return r
-  }
+  /*TODO: better naming*/
+  infix fun normTo(other: FieldLocI) = Norm(
+	dX = X0 - other.X0,
+	dY = Y0 - other.Y0
+  )
 
+  infix fun normDistTo(other: FieldLocI) = normTo(other).findOrCompute()
 }
 
 data class FieldLocAndOrientation(
@@ -74,46 +80,64 @@ data class FieldLocAndOrientation(
 
 interface Orientation: FieldLocI {
   val t: Double /*THETA_ORIENTATION*/
-  val tRadians get() = Math.toRadians(t).apply { assert(!this.isNaN()) }
-  fun xTheta(x: Double, y: Double) =
-	  (cos(tRadians)*(x - X0) + sin(tRadians)*(y - Y0)).apply { assert(!this.isNaN()) }
+  val tRadians get() = Math.toRadians(t)
+  fun xTheta(x: Double, y: Double) = XTheta(t = tRadians, dX = x - X0, dY = y - Y0).findOrCompute()
 
-  fun yTheta(x: Double, y: Double) =
-	  (-sin(tRadians)*(x - X0) + cos(tRadians)*(y - Y0)).apply { assert(!this.isNaN()) }
+  fun yTheta(x: Double, y: Double) = YTheta(t = tRadians, dX = x - X0, dY = y - Y0).findOrCompute()
 }
 
 
+val stimCache = LRUCache<Stimulus, MultiArray<Double, D2>>(1000)
+val cellCache = LRUCache<Cell, MultiArray<Double, D2>>(1000)
+
 abstract class FieldGenerator(
-  private val field: Field
+  private val field: Field,
 ) {
 
   protected abstract fun pix(x: Double, y: Double): Double
 
   val mat by lazy {
-	//	val m = field.range.map { DoubleArray(field.length) }.toTypedArray()
-	val m = mk.empty<Double, D2>(field.length, field.length)
-	//	globaltoc("generating matrix for $this")
-
-
-	(0 until field.length).forEachNested { x, y ->
-	  m[x, y] = pix(field.range[x], field.range[y]).apply { require(!this.isNaN()) }
+	val cache = when (this) {
+	  is Stimulus -> stimCache[this]
+	  is Cell     -> cellCache[this]
+	  else        -> null
 	}
-	//	globaltoc("generated matrix for $this")
+
+	val m = cache ?: mk.empty<Double, D2>(field.length, field.length).let { m ->
+	  (0 until field.length).forEachNested { x, y ->
+		m[x, y] = pix(field.range[x], field.range[y]).apply { require(!this.isNaN()) }
+	  }
+	  m
+	}
+	if (cache == null) {
+	  when (this) {
+		is Stimulus -> stimCache[this] = m
+		is Cell     -> cellCache[this] = m
+	  }
+	}
 	m
+  }
+  val flatMat by lazy {
+	mat.flatten().let { m ->
+	  DoubleArray(m.size).also { d ->
+		m.forEachIndexed { i: Int, dd: Double ->
+		  d[i] = dd
+		}
+	  }
+	}
   }
 
 
-  val min by lazy { mat.min()!! }
-  val max by lazy { mat.max()!! }
+  private val min by lazy { mat.min()!! }
+  private val max by lazy { mat.max()!! }
 
   fun getVisSample(x: Double, y: Double): Double {
 	val sX = min(floor(x*vis.size).toInt(), vis.size - 1)
 	val sY = min(floor(y*vis.size).toInt(), vis.size - 1)
-	//	println("x=${x},y=${y},Sx=${sX},sY=${sY}")
 	return vis[sX][sY]
   }
 
-  val vis by lazy {
+  private val vis by lazy {
 	val v = (0 until field.length).map { DoubleArray(field.length) }.toTypedArray()
 	when (NORM) {
 	  RATIO       -> {
@@ -151,12 +175,19 @@ data class Stimulus(
   val a: Double, /*ALPHA_CONTRAST*/
   val s: Double, /*SIGMA_SIZE*/
   override val SF: Double,
-  val mask: Stimulus? = null
+  val mask: Stimulus? = null,
+  val gaussianEnveloped: Boolean = true
 ): FieldGenerator(f.field), Orientation by f, CommonParams {
-  private val sDen = (2*s.pow(2)).apply { assert(this != 0.0) }
+  private val sDen = (2*s.sq()).apply { assert(this != 0.0) }
+
 
   override fun pix(x: Double, y: Double): Double {
-	return (a*(e.pow(-(xTheta(x, y).pow(2)/sDen) - (yTheta(x, y).pow(2)/sDen)))*cos(
+	return ((if (gaussianEnveloped) (a*(e.pow(
+	  -(xTheta(x, y).sq()/sDen) - (yTheta(
+		x,
+		y
+	  ).sq()/sDen)
+	))) else 1.0)*cos(
 	  SF*xTheta(
 		x,
 		y
@@ -185,7 +216,8 @@ data class SimpleCell(
   val sx: Double, /*SIGMA_WIDTH*/
   val sy: Double, /*SIGMA_HEIGHT*/
   override val SF: Double,
-  val phase: Phase
+  val phase: Phase,
+  val gaussianEnveloped: Boolean = true
 ): FieldGenerator(f.field), Orientation by f, CommonParams, Cell {
 
   enum class Phase { SIN, COS }
@@ -195,11 +227,16 @@ data class SimpleCell(
 	COS -> cos(d)
   }
 
-  private val sxDen = (2*sx.pow(2))
-  private val syDen = (2*sy.pow(2))
+  private val sxDen = (2*sx.sq())
+  private val syDen = (2*sy.sq())
 
   override fun pix(x: Double, y: Double): Double {
-	return ((e.pow(-(xTheta(x, y).pow(2)/sxDen) - (yTheta(x, y).pow(2)/syDen)))*phaseFun(
+	return ((if (gaussianEnveloped) e.pow(
+	  -(xTheta(x, y).sq()/sxDen) - (yTheta(
+		x,
+		y
+	  ).sq()/syDen)
+	) else 1.0)*phaseFun(
 	  SF*xTheta(
 		x,
 		y
@@ -208,43 +245,74 @@ data class SimpleCell(
   }
 
   fun stimulate(stim: Stimulus): Double {
-	//	globaltoc("running dot product")
 	/*this is a different calculation...*/
 	/*val d = mk.linalg.dot(stim.mat, mat).sum()*/
 
-	var e = 0.0
+	/*	//	val dottic = tic()
+		//	dottic.toc("starting regular dot product")*/
+	var ee = 0.0
 	(0 until field.length).forEachNested { x, y ->
-	  e += stim.mat[x][y]*mat[x][y]
+	  ee += stim.mat[x][y]*mat[x][y]
 	}
-	//	println("finished running dot product: ${e}")
-	return e
+	/*	//	dottic.toc("finished regular dot product: $e")
+
+		//	dottic.toc("finished GPU dot product")
+		//	val flatStimMat = stim.mat.flatten()
+		//	val flatMat = mat.flatten()*/
+
+
+	/*val ensureCreatedFirst = stim.flatMat
+	val ensureCreatedFirst2 = flatMat
+	val result = DoubleArray(field.size2D)
+	val k = object: Kernel() {
+	  override fun run() {
+		result[globalId] = stim.flatMat[globalId]*flatMat[globalId]
+	  }
+	}
+	k.execute(Range.create(field.size2D))*/
+	//	val s = result.sum()
+	//	dottic.toc("finished GPU dot product: $s")
+
+	/*val best = KernelManager.instance().bestDevice()
+	println("best:${best}")*/
+
+
+	/*exitProcess(0)*/
+
+
+	/*return result.sum()*/
+	/*return DotProductGPU(stim.flatMat, flatMat).calc()*/
+	return ee
   }
 }
 
 const val BASELINE_ACTIVITY = 2.0
 const val DC = BASELINE_ACTIVITY
 
-val SIGMA_POOLING = Math.sqrt(5.0)
-val S_POOL_SQUARED_DOUBLED = 2*SIGMA_POOLING.pow(2)
+val BASE_SIGMA_POOLING = sqrt(5.0)
+val ASD_SIGMA_POOLING = BASE_SIGMA_POOLING*0.8
+val ATTENTION_SUPP_SIGMA_POOLING = BASE_SIGMA_POOLING*1.5
 
-val SEMI_SATURATION_CONSTANT = 1.0
-val v = SEMI_SATURATION_CONSTANT
-
-val SUPPRESSIVE_FIELD_GAIN_TYPICAL = 1.0*10.0.pow(-4)
-val SUPPRESSIVE_FIELD_GAIN_AUTISM = 7.5*10.0.pow(-5)
-
-val ATTENTION_X = 0.0
-val ATTENTION_Y = 0.0
+const val ATTENTION_X = 0.0
+const val ATTENTION_Y = 0.0
 val ATTENTION_CENTER = object: FieldLocI {
   override val X0 = ATTENTION_X
   override val Y0 = ATTENTION_Y
   override val field get() = NEVER
 
 }
-const val G = 7
-val SIGMA_ATTENTION = 2.0
 
-data class ComplexCell(val sinCell: SimpleCell, val cosCell: SimpleCell): Orientation by sinCell, Cell {
+val tdDivNorm = DivNorm(
+  D = null,
+  c = 1.0*10.0.pow(-4),
+  v = 1.0,
+  S = null
+)
+
+data class ComplexCell(
+  val sinCell: SimpleCell,
+  val cosCell: SimpleCell
+): Orientation by sinCell, Cell {
   constructor(cells: Pair<SimpleCell, SimpleCell>): this(cells.first, cells.second)
 
   init {
@@ -254,36 +322,49 @@ data class ComplexCell(val sinCell: SimpleCell, val cosCell: SimpleCell): Orient
 
   fun stimulate(
 	stim: Stimulus,
-	divNormS: Double? = null,
-	autism: Boolean = false,
 	attention: Boolean = false,
-	tempC: Double? = null
+	popR: PopulationResponse? = null,
   ): Double {
-	return (DC + sinCell.stimulate(stim).pow(2) + cosCell.stimulate(stim).pow(2)).let {
-	  if (attention) {
-		//		println("pre-attention:${it}")
-		it*(1 + G*e.pow(-((stim.normDistTo(ATTENTION_CENTER).pow(2))/(2*SIGMA_ATTENTION.pow(2)))))
-	  } else it
+//	println("stimulating $this")
+	val divNormS =
+		if (popR != null) getSfor(popR, attention, sigmaPooling = popR.sigmaPooling) else null
+	val debug = (DC + sinCell.stimulate(stim).sq() + cosCell.stimulate(stim).sq()).let {
+	  if (popR == null) {
+		if (attention) {
+		  it*AttentionAmp(
+			norm = stim.normTo(ATTENTION_CENTER)
+		  ).findOrCompute()
+		} else it
+	  } else popR[this]!!
 	}.let {
-	  //	  if (attention) {
-	  //		println("post-attention:${it}")
-	  //	  }
-	  if (divNormS != null) {
-		val c = tempC ?: if (autism) SUPPRESSIVE_FIELD_GAIN_AUTISM else SUPPRESSIVE_FIELD_GAIN_TYPICAL
-		(it/(v + c*divNormS))
-	  } else it
+	  popR?.divNorm?.copy(
+		D = it,
+		S = divNormS,
+	  )?.findOrCompute(debug = false) ?: it
 	}
+//	println("r=${debug}")
+	return debug
   }
 
-  val weights = mutableMapOf<ComplexCell, Double>().withStoringDefault { other ->
-	val v = e.pow(
-	  (-(this.normDistTo(other)
-		  .pow(2)))/(S_POOL_SQUARED_DOUBLED)
-	)
+  private fun getSfor(
+	popActivity: Map<ComplexCell, Double>,
+	attentionExp: Boolean,
+	sigmaPooling: Double
+  ): Double {
+	val debug = if (attentionExp) 250 else 1
 
-	//	println("newW=${v}")
-	v
+	return /*S=*/ popActivity.map {
+	  /*W=*/(Weight(norm = normDistTo(it.key/*c*/), sigmaPool = sigmaPooling).findOrCompute() /*W*/)*(it.value /*D*/)
+	}.sum()*DIRTY_S_MUlT*debug
   }
-
-
 }
+
+data class PopulationResponse(
+  val m: Map<ComplexCell, Double> = mapOf(),
+  val sigmaPooling: Double = BASE_SIGMA_POOLING,
+  val divNorm: DivNorm = tdDivNorm
+): Map<ComplexCell, Double> by m {
+  override fun toString() = toStringBuilder(::sigmaPooling, ::divNorm)
+}
+
+

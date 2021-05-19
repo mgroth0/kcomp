@@ -15,6 +15,7 @@ plugins {
   id("org.jetbrains.kotlin.multiplatform") apply false
   id("com.github.johnrengelman.shadow") version "6.1.0"
   idea
+  id("org.barfuin.gradle.taskinfo") version "1.1.1"
 }
 
 idea {
@@ -57,14 +58,15 @@ subprojects {
 		dependsOn(check)
 		this@subprojects
 			.subprojects
-			.filter { ".git" in it.projectDir!!.list() }
+			.filter {
+			  ".git" in it.projectDir!!.list()
+			}
 			.forEach {
 			  it.tasks.withType {
-				if (it.name == "gitAddCommitSubmodule") {
-				  addCommitTask.dependsOn(it)
+				if (name == "gitAddCommitSubmodule") {
+				  addCommitTask.dependsOn(this)
 				}
 			  }
-			  //			  dependsOn(it.tasks["gitAddCommitSubmodule"])
 			}
 		isIgnoreExitValue = true
 		this.setStandardOutput(java.io.ByteArrayOutputStream())
@@ -92,45 +94,6 @@ subprojects {
 }
 
 tasks {
-
-  //  val gitUpdateSubmodules by creating(Exec::class) {
-  //	commandLine("git", "submodule", "foreach", "--recursive", "git", "pull")
-  //  }
-  //  val gitCommitSubs by creating(Exec::class) {
-  //
-  //	commandLine("git", "submodule", "foreach", "--recursive", "git add-commit -m autocommit || :")
-  //	isIgnoreExitValue = true
-  //	this.setStandardOutput(java.io.ByteArrayOutputStream())
-  //
-  //	doLast {
-  //	  val stdout = standardOutput.toString()
-  //	  if (execResult!!.exitValue == 0) {
-  //		//do nothing
-  //	  } else if ("nothing to commit" !in stdout) {
-  //		throw RuntimeException(stdout)
-  //	  }
-  //	}
-  //  }
-
-  //  val gitCommitSubs = gitSubmodules.map {
-  //	create("gitCommit${it.first.capitalize()}", Exec::class) {
-  //	  mustRunAfter(gitUpdateSubmodules)
-  //	  workingDir(file(it.second))
-  //	  /*https://stackoverflow.com/questions/4298960/git-add-and-commit-in-one-command*/
-  //	  commandLine("git", "add-commit", "-m", "autocommit")
-  //	  isIgnoreExitValue = true
-  //	  this.setStandardOutput(java.io.ByteArrayOutputStream())
-  //
-  //	  doLast {
-  //		val stdout = standardOutput.toString()
-  //		if (execResult!!.exitValue == 0) {
-  //		  //do nothing
-  //		} else if ("nothing to commit" !in stdout) {
-  //		  throw RuntimeException(stdout)
-  //		}
-  //	  }
-  //	}
-  //  }
 
   val gitCommit by creating(Exec::class) {
 	val gcTask = this
@@ -173,7 +136,7 @@ tasks {
 	dependsOn(check)
 	workingDir("buildSrc")
 	isIgnoreExitValue = true
-	this.setStandardOutput(java.io.ByteArrayOutputStream())
+	this.standardOutput = java.io.ByteArrayOutputStream()
 
 	doLast {
 	  val stdout = standardOutput.toString()
@@ -183,6 +146,8 @@ tasks {
 		throw RuntimeException(stdout)
 	  }
 	}
+
+
   }
   val gitPushBuildSrc by creating(Exec::class) {
 	commandLine("git", "push")
