@@ -119,16 +119,26 @@ subprojects sub@{
 	dependsOn(createAppNameResource)
   }
 
+  val jvmRuntimeArgs = listOf(
+	"-Xmx6g"
+  )
+
   configure<JavaApplication> {
 	if (JIGSAW) mainModule.set(mainPackage)
 	mainClass.set("${mainPackage}.${spname.capitalize()}MainKt")
+	this.applicationDefaultJvmArgs = jvmRuntimeArgs
   }
   apply(from = shadowGradle)
+
   tasks.withType<JavaExec> {
 	enableAssertions = true
+	/*this.args = jvmRuntimeArgs*/
+	this.jvmArgs = jvmRuntimeArgs
   }
   tasks.withType<JavaJarExec> {
 	enableAssertions = true
+	/*this.args = jvmRuntimeArgs*/
+	this.jvmArgs = jvmRuntimeArgs
   }
   tasks.withType<ShadowJar> {
 	doLast {
