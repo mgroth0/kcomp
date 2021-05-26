@@ -30,6 +30,7 @@ import matt.hurricanefx.tornadofx.nodes.disableWhen
 import matt.hurricanefx.tornadofx.tab.staticTab
 import matt.hurricanefx.tornadofx.tab.tabpane
 import matt.kjlib.async.daemon
+import matt.kjlib.commons.ismac
 import matt.kjlib.date.globaltic
 import matt.kjlib.str.addSpacesUntilLengthIs
 import matt.kjlib.stream.forEachNested
@@ -48,6 +49,7 @@ import matt.v1.lab.baseSimpleSinCell
 import matt.v1.lab.baseStim
 import matt.v1.model.SimpleCell
 import matt.v1.model.Stimulus
+import kotlin.system.exitProcess
 
 
 enum class Status { WORKING, IDLE }
@@ -57,6 +59,10 @@ const val VISUAL_SCALE = 3.0
 const val SAMPLE_HW = 100
 
 fun main(): Unit = GuiApp {
+  if (!ismac()) {
+	println("hello from linux!")
+	exitProcess(0)
+  }
   globaltic()
   vbox {
 	alignment = Pos.CENTER
