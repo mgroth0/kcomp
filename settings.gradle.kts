@@ -1,37 +1,32 @@
+/*this file is hard-linked across 2 projects*/
+
 @file:Suppress("UnstableApiUsage")
 
 
 enableFeaturePreview("VERSION_CATALOGS")
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
+pluginManagement {
+  includeBuild("../gradle-dependency-graph-generator-plugin")
+}
+
 val projectFolder = File(System.getProperty("user.dir"))
 
-projectFolder
-	.listFiles()!!
-	.filter { "build.gradle.kts" in it.listFiles()?.map { it.name } ?: listOf() }
-	.filter { it.name != "buildSrc" }
-	.forEach {
-	  include(it.name)
-	}
-
-projectFolder.resolve("KJ")
-	.listFiles()!!
-	.filter { "build.gradle.kts" in it.listFiles()?.map { it.name } ?: listOf() }
-	.filter { it.name != "buildSrc" }
-	.forEach {
-	  include("KJ:" + it.name)
-
-	  it.listFiles()!!
-		  .filter {
-			"build.gradle.kts" in it.listFiles()?.map { it.name } ?: listOf()
-		  }
-		  .filter { it.name != "buildSrc" }
-		  .forEach { f ->
-			include("KJ:${f.parentFile.name}:" + f.name)
-		  }
-	}
-
-include("style")
+val mightHaveDirectSubprojects = mutableListOf(projectFolder)
+while (mightHaveDirectSubprojects.isNotEmpty()) {
+  mightHaveDirectSubprojects.toList().apply {
+	mightHaveDirectSubprojects.clear()
+  }.forEach {
+	it
+		.listFiles()!!
+		.filter { "build.gradle.kts" in (it.list() ?: arrayOf()) }
+		.filter { it.name != "buildSrc" }
+		.forEach {
+		  include(it.relativeTo(projectFolder).path.replace(File.separator, ":"))
+		  mightHaveDirectSubprojects.add(it)
+		}
+  }
+}
 
 dependencyResolutionManagement {
   versionCatalogs {

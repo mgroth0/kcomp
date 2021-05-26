@@ -1,7 +1,8 @@
+/*This file is currently hard-linked across 2 projects*/
+
 import com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
 import com.github.jengelman.gradle.plugins.shadow.internal.JavaJarExec
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-//import matt.groovyland.tomlVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 

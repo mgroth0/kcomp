@@ -34,6 +34,7 @@ idea {
 }
 val check = tasks.register("validate", MValidations::class)
 subprojects {
+  println("configuring subproject: ${this.projectDir}")
   tasks {
 	if (".git" in projectDir.list()) {
 	  val gitPullSubmodule by creating(Exec::class) {
