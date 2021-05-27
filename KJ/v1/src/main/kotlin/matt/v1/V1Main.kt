@@ -30,10 +30,10 @@ import matt.hurricanefx.tornadofx.nodes.disableWhen
 import matt.hurricanefx.tornadofx.tab.staticTab
 import matt.hurricanefx.tornadofx.tab.tabpane
 import matt.kjlib.async.daemon
-import matt.kjlib.commons.ismac
 import matt.kjlib.date.globaltic
 import matt.kjlib.str.addSpacesUntilLengthIs
 import matt.kjlib.stream.forEachNested
+import matt.reflect.ismac
 import matt.v1.Status.IDLE
 import matt.v1.Status.WORKING
 import matt.v1.exps.experiments
