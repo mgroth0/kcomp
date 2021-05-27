@@ -33,6 +33,9 @@ fun main() = CommandLineApp("Hello remote") {
 	pwd()
 	ls()
 
+	sendLineAndWait("git pull")
+	sendLineAndWait("git submodule update")
+
 	writeFile(VAGRANTFILE_NAME, VagrantfileForSingularityBuild(OM_KCOMP))
 	sendLineAndWait("module load openmind/singularity")
 	hostname()
@@ -61,6 +64,8 @@ fun main() = CommandLineApp("Hello remote") {
 	setPrompt(numExpectPrompts = 2)
 	hostname()
 	cd(OM_KCOMP)
+	sendLineAndWait("Xvfb :0 -screen 0 1600x1200x16 &")
+	sendLineAndWait("export DISPLAY=:0")
 	sendLineAndWait("/opt/gradle/gradle-${GRADLE_VERSION}/bin/gradle KJ:v1:run")
 	/*/opt/gradle/gradle-7.0.2/bin/gradle KJ:v1:run*/
 	/*javac java.java*/

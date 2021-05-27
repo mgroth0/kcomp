@@ -37,7 +37,7 @@ From: ubuntu:20.04
 	wget https://services.gradle.org/distributions/gradle-$GRADLE_VERSION-bin.zip -P /tmp
 	apt install unzip -y
 	unzip -d /opt/gradle /tmp/gradle-$GRADLE_VERSION-bin.zip
-	
+	apt install xvfb -y
     echo "done with post-build"
 	  """.trimIndent() else ""
   }

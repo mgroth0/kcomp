@@ -1,5 +1,6 @@
 package matt.v1
 
+import matt.gui.app.GuiApp
 import kotlin.system.exitProcess
 
 
@@ -9,7 +10,7 @@ enum class Status { WORKING, IDLE }
 const val VISUAL_SCALE = 3.0
 const val SAMPLE_HW = 100
 
-fun main(): Unit /*= GuiApp*/ {
+fun main(): Unit = GuiApp {
   /*if (!ismac()) {*/
   println("hello from linux!")
   exitProcess(0)
@@ -142,7 +143,7 @@ fun main(): Unit /*= GuiApp*/ {
 		}
 	  }
 	}*/
-}/*.start()*/
+}.start()
 
 
 
