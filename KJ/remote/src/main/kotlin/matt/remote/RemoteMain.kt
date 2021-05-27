@@ -3,6 +3,7 @@ package matt.remote
 import matt.exec.cmd.CommandLineApp
 import matt.remote.expect.cd
 import matt.remote.expect.exit
+import matt.remote.expect.hostname
 import matt.remote.expect.ls
 import matt.remote.expect.mkdir
 import matt.remote.expect.pwd
@@ -34,8 +35,13 @@ fun main() = CommandLineApp("Hello remote") {
 
 	writeFile(VAGRANTFILE_NAME, VagrantfileForSingularityBuild(OM_KCOMP))
 	sendLineAndWait("module load openmind/singularity")
+	hostname()
 	sendLine(SRun(timeMin = 15).command)
+	/*srun -v -c 1 --mem=4G  -t 15 --pty bash*/
+	/*srun -v -c 1 --mem=4G --gres=gpu:0 -t 15 --pty bash*/
+	/*srun -v -c 1 --mem=4G --gres=gpu:0 --constraint=any-gpu -t 15 --pty bash*/
 	setPrompt()
+	hostname()
 
 	if (REBUILD_SINGULARITY) {
 	  sendLineAndWait("vagrant up")
@@ -48,11 +54,16 @@ fun main() = CommandLineApp("Hello remote") {
 	  exit()
 	}
 
+
+
 	sendLine("singularity exec -B $OM_KCOMP:$OM_KCOMP -B $OM_DATA_FOLD:$OM_DATA_FOLD --nv $SINGULARITY_SIMG_NAME /bin/bash")
-	/* singularity exec -B /om2/user/mjgroth/kcomp:/om2/user/mjgroth/kcomp kcomp.simg /bin/bash*/
+	/*singularity exec -B /om2/user/mjgroth/kcomp:/om2/user/mjgroth/kcomp kcomp.simg /bin/bash*/
 	setPrompt(numExpectPrompts = 2)
+	hostname()
 	cd(OM_KCOMP)
 	sendLineAndWait("/opt/gradle/gradle-${GRADLE_VERSION}/bin/gradle KJ:v1:run")
+	/*/opt/gradle/gradle-7.0.2/bin/gradle KJ:v1:run*/
+	/*javac java.java*/
 	interact()
 	pwd()
 	ls()

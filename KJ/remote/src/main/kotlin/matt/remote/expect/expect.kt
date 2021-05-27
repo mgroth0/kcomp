@@ -14,6 +14,7 @@ val File.absolutePathEnforced: String get() = ensureAbsolute.absolutePath
 infix fun Expect.cd(dir: String) = sendLineAndWait("cd \"$dir\"")
 infix fun Expect.cd(file: File) = cd(file.absolutePathEnforced)
 fun Expect.pwd() = sendLineAndWait("pwd")
+fun Expect.hostname() = sendLineAndWait("hostname")
 fun Expect.ls() = sendLineAndWait("ls")
 fun Expect.exit() = sendLineAndWait("exit")
 fun Expect.mkdir(name: String) = sendLineAndWait("mkdir \"$name\"")
