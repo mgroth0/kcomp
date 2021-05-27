@@ -1,3 +1,5 @@
+/*this file is hard-linked across 2 projects*/
+
 import matt.jbuild.greeting.JGreetingPlugin
 import matt.jbuild.jigsaw.JigsawPlugin
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -15,8 +17,31 @@ plugins {
   id("org.jetbrains.kotlin.multiplatform") apply false
   id("com.github.johnrengelman.shadow") version "6.1.0"
   idea
+  if ("mac" in System.getProperty("os.name").toLowerCase()) {
+	id("com.vanniktech.dependency.graph.generator")
+  }
   id("org.barfuin.gradle.taskinfo") version "1.1.1"
 }
+
+
+
+if ("mac" in System.getProperty("os.name").toLowerCase()) {
+  tasks {
+
+	val openGraph by creating {
+	  dependsOn("generateDependencyGraph")
+	  doLast {
+		println("sending signal to file")
+		InterAppInterface["file"].open("/Users/matt/Desktop/registered/todo/flow/build/reports/dependency-graph/dependency-graph.svg")
+		println("sent signal")
+	  }
+	}
+  }
+}
+
+
+
+
 
 idea {
   module {
@@ -32,9 +57,9 @@ idea {
 	)
   }
 }
+
 val check = tasks.register("validate", MValidations::class)
 subprojects {
-  println("configuring subproject: ${this.projectDir}")
   tasks {
 	if (".git" in projectDir.list()) {
 	  val gitPullSubmodule by creating(Exec::class) {
@@ -147,8 +172,6 @@ tasks {
 		throw RuntimeException(stdout)
 	  }
 	}
-
-
   }
   val gitPushBuildSrc by creating(Exec::class) {
 	commandLine("git", "push")
@@ -229,11 +252,16 @@ tasks {
 	tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
 	  kbuild.dependsOn(this)
 	}
+	tasks.withType<PublishToMavenRepository> {
+	  kbuild.dependsOn(this)
+	}
   }
   val mbuild by creating {
-	/*project(":kjs").afterEvaluate {
-	  dependsOn(":kjs:assemble")
-	}*/
+	allprojects.firstOrNull { it.path == ":kjs" }?.also {
+	  it.afterEvaluate {
+		dependsOn(":kjs:assemble")
+	  }
+	}
 	dependsOn(kbuild)
   }
 
