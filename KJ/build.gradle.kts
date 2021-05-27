@@ -81,7 +81,7 @@ subprojects sub@{
 	  listOf("base", "controls", "graphics", "web", "media").forEach {
 		substitute(module("org.openjfx:javafx-$it"))
 			.using(module("org.openjfx:javafx-$it:${fxVersion}"))
-			.withClassifier("mac")
+			.withClassifier(if (isMac) "mac" else "linux")
 	  }
 	}
   }
