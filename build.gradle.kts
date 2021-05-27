@@ -25,7 +25,7 @@ plugins {
 
 
 
-if ("mac" in System.getProperty("os.name").toLowerCase()) {
+if (isMac) {
   tasks {
 
 	val openGraph by creating {

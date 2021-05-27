@@ -64,6 +64,7 @@ fun main() = CommandLineApp("Hello remote") {
 	sendLineAndWait("/opt/gradle/gradle-${GRADLE_VERSION}/bin/gradle KJ:v1:run")
 	/*/opt/gradle/gradle-7.0.2/bin/gradle KJ:v1:run*/
 	/*javac java.java*/
+	/*java HelloWorld*/
 	interact()
 	pwd()
 	ls()
