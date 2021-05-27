@@ -29,6 +29,8 @@ slf4jlog4j = { module = "org.slf4j:slf4j-log4j12", version = "1.7.30" }
 log4jslf4j = { module = "org.apache.logging.log4j:log4j-slf4j18-impl", version = "2.14.1" }
 
 reflections = { module = "org.reflections:reflections", version = "0.9.12" }
+#https://github.com/ronmamo/reflections/issues/273
+reflections8 = { module = "net.oneandone.reflections8:reflections8", version = "0.11.5" }
 
 jLatexMath = { module = "org.scilab.forge:jlatexmath", version = "1.0.7" }
 jLatexMathFX = { module = "com.proudapes:jlatexmathfx", version = "0.3.2" }
