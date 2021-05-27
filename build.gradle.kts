@@ -14,11 +14,7 @@ if (JavaVersion.current() != JavaVersion.VERSION_16) {
 }
 
 plugins {
-  if ("mac" in System.getProperty("os.name").toLowerCase()) {
-	id("org.jetbrains.kotlin.multiplatform") apply false
-  } else {
-	id("org.jetbrains.kotlin.jvm") apply false
-  }
+  id("org.jetbrains.kotlin.multiplatform") apply false
   id("com.github.johnrengelman.shadow") version "6.1.0"
   idea
   if ("mac" in System.getProperty("os.name").toLowerCase()) {
