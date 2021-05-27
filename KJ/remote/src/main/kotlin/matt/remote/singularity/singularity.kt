@@ -32,7 +32,7 @@ From: ubuntu:20.04
 	apt install software-properties-common -y
     add-apt-repository ppa:openjdk-r/ppa  
 	apt update
-	apt install openjdk-16-jre -y
+	apt install openjdk-16-jdk -y
 	apt install wget -y
 	wget https://services.gradle.org/distributions/gradle-$GRADLE_VERSION-bin.zip -P /tmp
 	apt install unzip -y

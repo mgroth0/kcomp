@@ -21,7 +21,7 @@ import matt.remote.slurm.SRun
 import matt.remote.vagrant.VAGRANTFILE_NAME
 import matt.remote.vagrant.VagrantfileForSingularityBuild
 
-const val REBUILD_SINGULARITY = true
+const val REBUILD_SINGULARITY = false
 
 fun main() = CommandLineApp("Hello remote") {
 
@@ -49,9 +49,11 @@ fun main() = CommandLineApp("Hello remote") {
 	}
 
 	sendLine("singularity exec -B $OM_KCOMP:$OM_KCOMP -B $OM_DATA_FOLD:$OM_DATA_FOLD --nv $SINGULARITY_SIMG_NAME /bin/bash")
+	/* singularity exec -B /om2/user/mjgroth/kcomp:/om2/user/mjgroth/kcomp kcomp.simg /bin/bash*/
 	setPrompt(numExpectPrompts = 2)
 	cd(OM_KCOMP)
 	sendLineAndWait("/opt/gradle/gradle-${GRADLE_VERSION}/bin/gradle KJ:v1:run")
+	interact()
 	pwd()
 	ls()
 	rm(SINGULARITY_FILE_NAME)

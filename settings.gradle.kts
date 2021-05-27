@@ -6,8 +6,10 @@
 enableFeaturePreview("VERSION_CATALOGS")
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
-pluginManagement {
-  includeBuild("../gradle-dependency-graph-generator-plugin")
+if ("mac" in System.getProperty("os.name").toLowerCase()) {
+  pluginManagement {
+	includeBuild("../gradle-dependency-graph-generator-plugin")
+  }
 }
 
 val projectFolder = File(System.getProperty("user.dir"))
