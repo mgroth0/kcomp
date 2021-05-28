@@ -1,8 +1,9 @@
 package matt.nn
 
 import matt.gui.app.GuiApp
-import matt.kjlib.jmath.e
 import matt.kjlib.jmath.nextUnitDouble
+import matt.kjlib.jmath.sigmoid
+import matt.kjlib.jmath.sigmoidDerivative
 import matt.kjlib.stream.applyEach
 import matt.klib.math.sq
 import matt.nn.NeuralNetwork.Companion.INPUT_LENGTH
@@ -12,7 +13,6 @@ import matt.remote.host.Hosts
 import matt.remote.runThisOnOM
 import matt.remote.slurm.SRun
 import kotlin.concurrent.thread
-import kotlin.math.pow
 import kotlin.random.Random.Default.nextDouble
 import kotlin.system.exitProcess
 
@@ -136,8 +136,6 @@ class NeuralNetwork(
   }
 }
 
-fun sigmoid(x: Double): Double = 1/(1 + e.pow(-x))
-fun sigmoidDerivative(x: Double): Double = e.pow(-x).let { it/(1 + it).sq() }
 
 data class Neuron(val bias: Double = 0.0) {
   val axons = mutableListOf<Axon>()
