@@ -1,12 +1,11 @@
 package matt.remote
 
+import matt.exec.app.appName
 import matt.exec.cmd.CommandLineApp
 import matt.remote.expect.cd
 import matt.remote.expect.exit
 import matt.remote.expect.hostname
-import matt.remote.expect.ls
 import matt.remote.expect.mkdir
-import matt.remote.expect.pwd
 import matt.remote.expect.rm
 import matt.remote.expect.sendLineAndWait
 import matt.remote.expect.writeFile
@@ -21,7 +20,9 @@ import matt.remote.singularity.SingularityRecipe.Companion.GRADLE_VERSION
 import matt.remote.slurm.SRun
 import matt.remote.vagrant.VAGRANTFILE_NAME
 import matt.remote.vagrant.VagrantfileForSingularityBuild
+import net.sf.expectit.Expect
 
+const val REBUILD_VAGRANT = false
 const val REBUILD_SINGULARITY = false
 
 fun main() = CommandLineApp("Hello remote") {
@@ -30,13 +31,7 @@ fun main() = CommandLineApp("Hello remote") {
 
 	mkdir(OM_KCOMP)
 	cd(OM_KCOMP)
-	pwd()
-	ls()
 
-	sendLineAndWait("git pull")
-	sendLineAndWait("git submodule update")
-
-	writeFile(VAGRANTFILE_NAME, VagrantfileForSingularityBuild(OM_KCOMP))
 	sendLineAndWait("module load openmind/singularity")
 	hostname()
 	sendLine(SRun(timeMin = 15).command)
@@ -47,37 +42,54 @@ fun main() = CommandLineApp("Hello remote") {
 	hostname()
 
 	if (REBUILD_SINGULARITY) {
+	  if (REBUILD_VAGRANT) {
+		sendLineAndWait("vagrant destroy -f")
+		rm(VAGRANTFILE_NAME)
+		writeFile(VAGRANTFILE_NAME, VagrantfileForSingularityBuild(OM_KCOMP))
+		/*sendLineAndWait("vagrant init sylabs/singularity-ce-3.8-ubuntu-bionic64")*/
+	  }
 	  sendLineAndWait("vagrant up")
 	  sendLine("vagrant ssh")
-	  setPrompt()
+	  setPrompt(numExpectPrompts = 3)
 	  cd(OM_KCOMP)
 	  writeFile(SINGULARITY_FILE_NAME, SingularityRecipe().text)
-	  rm(SINGULARITY_SIMG_NAME)
-	  sendLineAndWait("sudo singularity -v build --writable $SINGULARITY_SIMG_NAME $SINGULARITY_FILE_NAME")
+	  rm(SINGULARITY_SIMG_NAME, rf = true/*if sandbox, its a dir*/)
+	  /*--sandbox*/
+	  sendLineAndWait("sudo singularity -v build $SINGULARITY_SIMG_NAME $SINGULARITY_FILE_NAME")
 	  exit()
 	}
 
+	runThisOnOM()
 
-
-	sendLine("singularity exec -B $OM_KCOMP:$OM_KCOMP -B $OM_DATA_FOLD:$OM_DATA_FOLD --nv $SINGULARITY_SIMG_NAME /bin/bash")
-	/*singularity exec -B /om2/user/mjgroth/kcomp:/om2/user/mjgroth/kcomp kcomp.simg /bin/bash*/
-	setPrompt(numExpectPrompts = 2)
-	hostname()
-	cd(OM_KCOMP)
-	sendLineAndWait("Xvfb :0 -screen 0 1600x1200x16 &")
-	sendLineAndWait("export DISPLAY=:0")
-	sendLineAndWait("/opt/gradle/gradle-${GRADLE_VERSION}/bin/gradle KJ:v1:run")
-	/*/opt/gradle/gradle-7.0.2/bin/gradle KJ:v1:run*/
-	/*javac java.java*/
-	/*java HelloWorld*/
-	interact()
-	pwd()
-	ls()
 	rm(SINGULARITY_FILE_NAME)
-	rm(VAGRANTFILE_NAME)
-
   }
 
   acceptAny { println("command=$it") }
 }.start()
+
+fun Expect.runThisOnOM(srun: SRun? = null) = runOnOM(proj = appName, srun = srun)
+fun Expect.runOnOM(proj: String, srun: SRun? = null) {
+  cd(OM_KCOMP)
+  sendLineAndWait("module load openmind/singularity")
+  if (srun != null) {
+	sendLine(srun.command)
+	setPrompt()
+  }
+  sendLineAndWait("git pull")
+  sendLineAndWait("git submodule update")
+
+  /*NVIDIA binaries may not be bound with --writable*/
+  sendLine("singularity exec -B $OM_KCOMP:$OM_KCOMP -B $OM_DATA_FOLD:$OM_DATA_FOLD --nv $SINGULARITY_SIMG_NAME /bin/bash")
+  /*singularity exec -B /om2/user/mjgroth/kcomp:/om2/user/mjgroth/kcomp kcomp.simg /bin/bash*/
+  setPrompt(numExpectPrompts = 2)
+  hostname()
+  cd(OM_KCOMP)
+  sendLineAndWait("Xvfb :0 -screen 0 1600x1200x16 &")
+  sendLineAndWait("export DISPLAY=:0")
+  sendLineAndWait("/opt/gradle/gradle-${GRADLE_VERSION}/bin/gradle KJ:v1:run --console=plain")
+  /*/opt/gradle/gradle-7.0.2/bin/gradle KJ:v1:run*/
+  /*javac java.java*/
+  /*java HelloWorld*/
+  interact()
+}
 

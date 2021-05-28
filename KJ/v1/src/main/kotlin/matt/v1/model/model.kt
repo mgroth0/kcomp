@@ -3,6 +3,7 @@
 package matt.v1.model
 
 import matt.kjlib.cache.LRUCache
+import matt.kjlib.jmath.dot
 import matt.kjlib.jmath.e
 import matt.kjlib.log.NEVER
 import matt.kjlib.stream.forEachNested
@@ -244,46 +245,8 @@ data class SimpleCell(
 	)).apply { assert(!this.isNaN()) }
   }
 
-  fun stimulate(stim: Stimulus): Double {
-	/*this is a different calculation...*/
-	/*val d = mk.linalg.dot(stim.mat, mat).sum()*/
 
-	/*	//	val dottic = tic()
-		//	dottic.toc("starting regular dot product")*/
-	var ee = 0.0
-	(0 until field.length).forEachNested { x, y ->
-	  ee += stim.mat[x][y]*mat[x][y]
-	}
-	/*	//	dottic.toc("finished regular dot product: $e")
-
-		//	dottic.toc("finished GPU dot product")
-		//	val flatStimMat = stim.mat.flatten()
-		//	val flatMat = mat.flatten()*/
-
-
-	/*val ensureCreatedFirst = stim.flatMat
-	val ensureCreatedFirst2 = flatMat
-	val result = DoubleArray(field.size2D)
-	val k = object: Kernel() {
-	  override fun run() {
-		result[globalId] = stim.flatMat[globalId]*flatMat[globalId]
-	  }
-	}
-	k.execute(Range.create(field.size2D))*/
-	//	val s = result.sum()
-	//	dottic.toc("finished GPU dot product: $s")
-
-	/*val best = KernelManager.instance().bestDevice()
-	println("best:${best}")*/
-
-
-	/*exitProcess(0)*/
-
-
-	/*return result.sum()*/
-	/*return DotProductGPU(stim.flatMat, flatMat).calc()*/
-	return ee
-  }
+  fun stimulate(stim: Stimulus) = stim.mat dot mat
 }
 
 const val BASELINE_ACTIVITY = 2.0
@@ -325,7 +288,7 @@ data class ComplexCell(
 	attention: Boolean = false,
 	popR: PopulationResponse? = null,
   ): Double {
-//	println("stimulating $this")
+	//	println("stimulating $this")
 	val divNormS =
 		if (popR != null) getSfor(popR, attention, sigmaPooling = popR.sigmaPooling) else null
 	val debug = (DC + sinCell.stimulate(stim).sq() + cosCell.stimulate(stim).sq()).let {
@@ -342,7 +305,7 @@ data class ComplexCell(
 		S = divNormS,
 	  )?.findOrCompute(debug = false) ?: it
 	}
-//	println("r=${debug}")
+	//	println("r=${debug}")
 	return debug
   }
 

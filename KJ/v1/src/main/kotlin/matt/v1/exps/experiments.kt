@@ -141,7 +141,7 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	ylabel = "Neural Response",
 	autoY = true,
 	series = listOf(contrast1, contrast2),
-	title = "(strange) definition of pop. gain",
+	title = "Definition of pop. gain",
 	normToMaxes = false
 	/*alpha is 0.075 or 0.2*/
 	/*theta ranges from 0 to 180 in 0.25 steps*/

@@ -16,4 +16,5 @@ dependencies {
   implementation(libs.commons.math)
   implementation(libs.chartFX)
   implementation(libs.apfloat)
+  implementation(libs.fx.swing)
 }

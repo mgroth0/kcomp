@@ -1,7 +1,12 @@
 package matt.v1
 
+import javafx.embed.swing.SwingFXUtils
 import javafx.geometry.Pos
+import javafx.scene.SnapshotParameters
 import javafx.scene.control.Button
+import javafx.scene.input.DataFormat
+import javafx.scene.input.MouseEvent
+import javafx.scene.input.TransferMode
 import javafx.scene.layout.Border
 import javafx.scene.layout.BorderStroke
 import javafx.scene.layout.BorderStrokeStyle
@@ -22,6 +27,7 @@ import matt.hurricanefx.eye.lang.BProp
 import matt.hurricanefx.eye.lib.onChange
 import matt.hurricanefx.eye.prop.minus
 import matt.hurricanefx.op
+import matt.hurricanefx.tornadofx.clip.put
 import matt.hurricanefx.tornadofx.control.button
 import matt.hurricanefx.tornadofx.fx.attachTo
 import matt.hurricanefx.tornadofx.layout.vbox
@@ -30,7 +36,9 @@ import matt.hurricanefx.tornadofx.nodes.disableWhen
 import matt.hurricanefx.tornadofx.tab.staticTab
 import matt.hurricanefx.tornadofx.tab.tabpane
 import matt.kjlib.async.daemon
+import matt.kjlib.commons.TEMP_DIR
 import matt.kjlib.date.globaltic
+import matt.kjlib.file.get
 import matt.kjlib.str.addSpacesUntilLengthIs
 import matt.kjlib.stream.forEachNested
 import matt.reflect.ismac
@@ -49,6 +57,7 @@ import matt.v1.lab.baseSimpleSinCell
 import matt.v1.lab.baseStim
 import matt.v1.model.SimpleCell
 import matt.v1.model.Stimulus
+import javax.imageio.ImageIO
 import kotlin.system.exitProcess
 
 
@@ -59,6 +68,8 @@ const val VISUAL_SCALE = 3.0
 const val SAMPLE_HW = 100
 
 fun main(): Unit = GuiApp {
+
+
   if (!ismac()) {
 	println("hello from linux!")
 	exitProcess(0)
@@ -144,6 +155,19 @@ fun main(): Unit = GuiApp {
 		  - figButtonBox.heightProperty()
 		  - statusLabel.heightProperty()
 		)
+	fig.addEventFilter(MouseEvent.DRAG_DETECTED) {
+	  println("drag detected")
+	  val params = SnapshotParameters()
+	  params.fill = Color.BLACK
+	  val snapshot = fig.snapshot(params, null)
+	  val img = SwingFXUtils.fromFXImage(snapshot, null)
+	  val imgFile = TEMP_DIR["drag_image.png"]
+	  ImageIO.write(img, "png", imgFile)
+	  val db = startDragAndDrop(*TransferMode.ANY)
+	  db.put(DataFormat.FILES, mutableListOf(imgFile))
+	  it.consume()
+	  println("drag consumed")
+	}
 	val exps = experiments(fig, statusLabel)
 	val allButtons = mutableListOf<Button>()
 	exps.forEach { exp ->
@@ -173,6 +197,8 @@ fun main(): Unit = GuiApp {
 			}
 		  }
 		}
+
+
 
 		exp.runningProp.onChange {
 		  when (it) {

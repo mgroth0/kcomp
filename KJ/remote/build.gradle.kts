@@ -1,5 +1,5 @@
 dependencies {
   implementation(projects.kj.exec)
-  implementation(libs.expect)
-  implementation(libs.jsch)
+  api(libs.expect)
+  api(libs.jsch)
 }

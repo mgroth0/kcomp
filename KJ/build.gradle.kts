@@ -78,7 +78,7 @@ subprojects sub@{
 
   configurations.all {
 	resolutionStrategy.dependencySubstitution {
-	  listOf("base", "controls", "graphics", "web", "media").forEach {
+	  listOf("base", "controls", "graphics", "web", "media", "swing").forEach {
 		substitute(module("org.openjfx:javafx-$it"))
 			.using(module("org.openjfx:javafx-$it:${fxVersion}"))
 			.withClassifier(if (isMac) "mac" else "linux")
