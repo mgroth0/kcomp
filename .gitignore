@@ -5,3 +5,5 @@
 /KJ/jar/
 /temp/
 /tmp/
+/.gradle/
+/.vagrant/
