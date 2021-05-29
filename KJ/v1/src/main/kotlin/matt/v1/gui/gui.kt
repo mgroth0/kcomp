@@ -6,52 +6,103 @@ import de.gsi.chart.renderer.LineStyle
 import de.gsi.chart.renderer.spi.ErrorDataSetRenderer
 import de.gsi.dataset.spi.DoubleDataSet
 import javafx.application.Platform.runLater
-import javafx.event.EventTarget
-import javafx.scene.canvas.Canvas
+import javafx.beans.property.ObjectProperty
+import javafx.embed.swing.SwingFXUtils
+import javafx.geometry.Pos
+import javafx.scene.image.Image
 import javafx.scene.layout.FlowPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
-import javafx.scene.layout.Region
+import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
 import matt.gui.loop.runLaterReturn
-import matt.hurricanefx.exactHeight
+import matt.gui.proto.ScaledCanvas
+import matt.gui.proto.scaledCanvas
+import matt.hurricanefx.dragsSnapshot
 import matt.hurricanefx.exactHeightProperty
-import matt.hurricanefx.exactWidth
 import matt.hurricanefx.exactWidthProperty
 import matt.hurricanefx.eye.lang.Prop
 import matt.hurricanefx.eye.lib.onChange
 import matt.hurricanefx.eye.lib.onNonNullChange
 import matt.hurricanefx.eye.prop.times
 import matt.hurricanefx.tornadofx.control.checkbox
+import matt.hurricanefx.tornadofx.control.imageview
 import matt.hurricanefx.tornadofx.control.label
 import matt.hurricanefx.tornadofx.control.slider
-import matt.hurricanefx.tornadofx.fx.opcr
 import matt.hurricanefx.tornadofx.item.combobox
+import matt.hurricanefx.tornadofx.layout.hbox
+import matt.hurricanefx.tornadofx.nodes.add
 import matt.kjlib.async.every
 import matt.kjlib.date.sec
+import matt.kjlib.image.resize
+import matt.kjlib.image.toSquare
 import matt.kjlib.itr.loopIterator
 import matt.kjlib.jmath.sigFigs
+import matt.kjlib.stream.forEachNested
 import matt.klib.dmap.withStoringDefault
-import matt.v1.Status.IDLE
-import matt.v1.Status.WORKING
+import matt.v1.gui.StatusLabel.Status.IDLE
+import matt.v1.gui.StatusLabel.Status.WORKING
+import org.jetbrains.kotlinx.multik.ndarray.data.D2
+import org.jetbrains.kotlinx.multik.ndarray.data.MultiArray
+import org.jetbrains.kotlinx.multik.ndarray.operations.forEachIndexed
+import java.awt.image.BufferedImage
+import java.io.File
+import javax.imageio.ImageIO
+import kotlin.math.floor
 import kotlin.reflect.KProperty
 
-//import de.gsi.chart.XYChart
-//import de.gsi.chart.axes.spi.DefaultNumericAxis
-//import de.gsi.dataset.spi.DoubleDataSet
-
-abstract class VisualizationCfg(val responsive: Boolean = false) {
+abstract class ImageVisualizer(
+  private val responsive: Boolean = false,
+  protected val imageHW: Int,
+  imgScale: Double,
+  staticImages: List<ObjectProperty<File>> = listOf()
+): VBox() {
+  protected val HWd = imageHW.toDouble()
+  open fun update() {}
 
   val props = mutableListOf<CfgProp<*>>()
+  private val imageBox = hbox { alignment = Pos.CENTER }
 
-  abstract fun update(): Any?
+  protected fun preprocessImage(file: File): BufferedImage {
+	return ImageIO.read(file).toSquare().resize(imageHW, imageHW)
+  }
+
+  protected fun preprocessImageFX(file: File): Image {
+	return SwingFXUtils.toFXImage(preprocessImage(file), null)
+  }
+
+  protected var canv: ScaledCanvas? = null
+
+  init {
+	alignment = Pos.CENTER
+
+
+	staticImages.forEach {
+	  imageBox.imageview(preprocessImageFX(it.value)) {
+		runLater {
+		  fitWidthProperty().bind(canv!!.widthProperty())
+		  fitHeightProperty().bind(canv!!.heightProperty())
+		}
+
+		it.onChange {
+		  image = preprocessImageFX(it!!)
+		}
+	  }
+	}
+	canv = imageBox.scaledCanvas(hw = imageHW, scale = imgScale).apply {
+	  dragsSnapshot()
+	}
+  }
+
+
+  abstract fun visualize()
 
   abstract inner class CfgProp<T> {
 	abstract var value: Any?
 	lateinit var name: String
 	operator fun provideDelegate(
-	  thisRef: VisualizationCfg,
+	  thisRef: ImageVisualizer,
 	  prop: KProperty<*>
 	): CfgProp<T> {
 	  props += this
@@ -60,14 +111,14 @@ abstract class VisualizationCfg(val responsive: Boolean = false) {
 	}
 
 	operator fun getValue(
-	  thisRef: VisualizationCfg,
+	  thisRef: ImageVisualizer,
 	  property: KProperty<*>
 	): T {
 	  return value as T
 	}
 
 	operator fun setValue(
-	  thisRef: VisualizationCfg,
+	  thisRef: ImageVisualizer,
 	  property: KProperty<*>,
 	  newValue: T
 	) {
@@ -81,8 +132,8 @@ abstract class VisualizationCfg(val responsive: Boolean = false) {
 	override var value: Any? = values.first()
   }
 
-  inner class CfgIntProp(val range: IntRange): CfgProp<Int>(), SliderProp {
-	override var value: Any? = range.first.let {
+  inner class CfgIntProp(val range: IntRange, val default: Int? = null): CfgProp<Int>(), SliderProp {
+	override var value: Any? = default ?: range.first.let {
 	  val mid = (range.last - range.first) + range.first
 	  var v = it
 	  while (v < mid) {
@@ -100,72 +151,84 @@ abstract class VisualizationCfg(val responsive: Boolean = false) {
 	override var value: Any? = default
   }
 
+  init {
+	runLater { /*must runlater to get child props*/
 
-  val cfgPane by lazy {
-	FlowPane().apply {
-	  val fp = this
-	  hgap = 10.0
-	  vgap = 10.0
-	  props.forEach { p ->
-		when (p) {
-		  is CfgObjProp<*> -> combobox(values = p.values.toList()) {
-			value = p.value
-			/*maxWidthProperty().bind(fp.widthProperty())*/
-			exactWidthProperty().bind(fp.widthProperty()*.4)
-			promptText = p.name + "?"
-			valueProperty().onChange {
-			  p.value = it
-			  update()
-			}
-		  }
-		  is CfgBoolProp   -> checkbox(p.name) {
-			isSelected = p.value as Boolean
-			/*maxWidthProperty().bind(fp.widthProperty())*/
-			exactWidthProperty().bind(fp.widthProperty()*.4)
-			//			promptText = p.name + "?"
-			selectedProperty().onChange {
-			  p.value = it
-			  update()
-			}
-		  }
-		  is SliderProp    -> label(p.name) {
-			exactWidthProperty().bind(fp.widthProperty()*.4)
-			when (p) {
-			  is CfgIntProp    -> slider(min = p.range.first, max = p.range.last, value = (p.value as Int).toDouble())
-			  is CfgDoubleProp -> slider(min = p.range.first, max = p.range.second, value = p.value as Double)
-			}.apply {
 
+	  add(FlowPane().apply {
+		val fp = this
+		hgap = 10.0
+		vgap = 10.0
+		props.forEach { p ->
+		  when (p) {
+			is CfgObjProp<*> -> combobox(values = p.values.toList()) {
+			  println("getting component for CfgObjProp")
+			  value = p.value
 			  /*maxWidthProperty().bind(fp.widthProperty())*/
-			  isSnapToTicks = p is CfgIntProp
-			  isShowTickMarks = p is CfgIntProp
-			  isShowTickLabels = p is CfgIntProp
-			  majorTickUnit = 1.0
-			  minorTickCount = 0
-			  fun updateText() {
-				text = when (p) {
-				  is CfgIntProp    -> "${p.name}:${value}"
-				  is CfgDoubleProp -> "${p.name}:${value.sigFigs(3)}"
-				}
+			  exactWidthProperty().bind(fp.widthProperty()*.4)
+			  promptText = p.name + "?"
+			  valueProperty().onChange {
+				println("obj changed: $it")
+				p.value = it
+				update()
+				visualize()
 			  }
-			  updateText()
-			  when (responsive) {
-				true  -> {
-				  valueProperty().onChange {
-					runLater {
-					  p.value = it
-					  updateText()
-					  update()
-					}
+			}
+			is CfgBoolProp   -> checkbox(p.name) {
+			  isSelected = p.value as Boolean
+			  /*maxWidthProperty().bind(fp.widthProperty())*/
+			  exactWidthProperty().bind(fp.widthProperty()*.4)
+			  //			promptText = p.name + "?"
+			  selectedProperty().onChange {
+				p.value = it
+				update()
+				visualize()
+			  }
+			}
+			is SliderProp    -> label(p.name) {
+			  exactWidthProperty().bind(fp.widthProperty()*.4)
+			  when (p) {
+				is CfgIntProp    -> slider(min = p.range.first, max = p.range.last, value = (p.value as Int).toDouble())
+				is CfgDoubleProp -> slider(min = p.range.first, max = p.range.second, value = p.value as Double)
+			  }.apply {
+
+				/*maxWidthProperty().bind(fp.widthProperty())*/
+
+
+
+				isSnapToTicks = p is CfgIntProp
+				isShowTickMarks = p is CfgIntProp
+				isShowTickLabels = p is CfgIntProp
+				majorTickUnit = 1.0
+				minorTickCount = 0
+				fun updateText() {
+				  text = when (p) {
+					is CfgIntProp    -> "${p.name}:${floor(value)}"
+					is CfgDoubleProp -> "${p.name}:${value.sigFigs(3)}"
 				  }
 				}
-				false -> {
-				  valueChangingProperty().onChange {
-					if (!it) {
-					  /*I think this runLater is necessary or else the wrong value comes through when snap to ticks is true*/
+				updateText()
+				when (responsive) {
+				  true  -> {
+					valueProperty().onChange {
 					  runLater {
-						p.value = value
+						p.value = if (p is CfgIntProp) floor(it) else it
 						updateText()
 						update()
+						visualize()
+					  }
+					}
+				  }
+				  false -> {
+					valueChangingProperty().onChange {
+					  if (!it) {
+						/*I think this runLater is necessary or else the wrong value comes through when snap to ticks is true*/
+						runLater {
+						  p.value = if (p is CfgIntProp) floor(value) else it
+						  updateText()
+						  update()
+						  visualize()
+						}
 					  }
 					}
 				  }
@@ -174,9 +237,43 @@ abstract class VisualizationCfg(val responsive: Boolean = false) {
 			}
 		  }
 		}
-	  }
+	  })
 	}
   }
+}
+
+abstract class GeneratedImageVisualizer(
+  responsive: Boolean = false,
+  imageHW: Int,
+  imgScale: Double,
+  staticImages: List<ObjectProperty<File>> = listOf()
+): ImageVisualizer(responsive, imageHW, imgScale, staticImages) {
+
+  override fun visualize() =
+	  (0..imageHW)
+		  .forEachNested { x, y ->
+			canv!![x, y] = draw(x, y)
+		  }
+
+  abstract fun draw(x: Int, y: Int): Color
+
+}
+
+abstract class FilteredImageVisualizer(
+  responsive: Boolean = false,
+  imageHW: Int,
+  imgScale: Double,
+  private val staticImages: List<ObjectProperty<File>> = listOf()
+): ImageVisualizer(responsive, imageHW, imgScale, staticImages) {
+
+  override fun visualize() {
+	draw(staticImages[0].value).forEachIndexed { i, d ->
+	  canv!![i[0], i[1]] = Color.rgb(d, d, d)
+	}
+  }
+
+  abstract fun draw(input: File): MultiArray<Int, D2>
+
 }
 
 class Figure(
@@ -201,10 +298,10 @@ class Figure(
 
   fun styleSeries(i: Int, marker: Boolean, line: Boolean) {
 	var s = ""
-	if (marker) {
-	  s += "markerColor: ${seriesColors[i]}; markerType: circle;"
+	s += if (marker) {
+	  "markerColor: ${seriesColors[i]}; markerType: circle;"
 	} else {
-	  s += "markerColor: transparent;"
+	  "markerColor: transparent;"
 	}
 	s += if (line) {
 	  "strokeColor: ${seriesColors[i]}; strokeWidth: 2;"
@@ -367,7 +464,11 @@ class Figure(
   }
 }
 
-class StatusLabel: HBox()/*so label is steady*/ {
+class StatusLabel(
+  val name: String? = null
+): HBox()/*so label is steady*/ {
+  enum class Status { WORKING, IDLE }
+
   var status = Prop(IDLE)
   var statusExtra = ""
 
@@ -385,9 +486,9 @@ class StatusLabel: HBox()/*so label is steady*/ {
 	  when (status.value!!) {
 		IDLE    -> runLaterReturn { statusLabel.text = "" }
 		WORKING -> runLaterReturn {
-		  statusLabel.text =
-			  (statusExtra.takeIf { it.isNotBlank() }
-			   ?: "working") + (0 until dotItr.next()).joinToString(separator = "") { "." }
+		  statusLabel.text = (if (name != null) "$name: " else "") +
+							 (statusExtra.takeIf { it.isNotBlank() }
+							  ?: "working") + (0 until dotItr.next()).joinToString(separator = "") { "." }
 		}
 	  }
 	}

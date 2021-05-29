@@ -26,7 +26,7 @@ class Host(private val hostname: String) {
   }
 
 
-  fun ssh(op: Expect.()->Unit) {
+  fun ssh(vararg echos: java.lang.Appendable, op: Expect.()->Unit) {
 
 	val jSch = JSch().apply {
 	  setKnownHosts(HOME_DIR[".ssh"]["known_hosts"].absolutePath)
@@ -52,7 +52,26 @@ class Host(private val hostname: String) {
 	val p = ExpectBuilder()
 		.withInputs(channel.inputStream, channel.extInputStream)
 		.withOutput(channel.outputStream)
-		.withEchoInput(System.out)
+		.withEchoInput(object: Appendable {
+		  override fun append(csq: CharSequence?): java.lang.Appendable {
+			System.out.append(csq)
+			echos.forEach { it.append(csq) }
+			return this
+		  }
+
+		  override fun append(csq: CharSequence?, start: Int, end: Int): java.lang.Appendable {
+			System.out.append(csq, start, end)
+			echos.forEach { it.append(csq, start, end) }
+			return this
+		  }
+
+		  override fun append(c: Char): java.lang.Appendable {
+			System.out.append(c)
+			echos.forEach { it.append(c) }
+			return this
+		  }
+
+		})
 		.withEchoOutput(System.err)
 		.withExceptionOnFailure()
 		.withInfiniteTimeout()

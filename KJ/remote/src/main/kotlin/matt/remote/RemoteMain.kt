@@ -4,6 +4,7 @@ import matt.exec.app.appName
 import matt.exec.cmd.CommandLineApp
 import matt.remote.expect.cd
 import matt.remote.expect.exit
+import matt.remote.expect.expect
 import matt.remote.expect.hostname
 import matt.remote.expect.mkdir
 import matt.remote.expect.rm
@@ -90,6 +91,9 @@ fun Expect.runOnOM(proj: String, srun: SRun? = null) {
   /*/opt/gradle/gradle-7.0.2/bin/gradle KJ:v1:run*/
   /*javac java.java*/
   /*java HelloWorld*/
-  interact()
+  println("INTERACTING")
+  interact() /*doesnt work in thread*/
+  expect("THIS STRING WILL NEVER PRINT")
+  println("DONE INTERACTING, WILL DISCONNECT")
 }
 

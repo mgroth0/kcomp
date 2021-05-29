@@ -7,7 +7,6 @@ import matt.kjlib.jmath.sigmoidDerivative
 import matt.kjlib.stream.applyEach
 import matt.klib.math.sq
 import matt.nn.NeuralNetwork.Companion.INPUT_LENGTH
-import matt.nn.salience.Salience
 import matt.reflect.os
 import matt.remote.host.Hosts
 import matt.remote.runThisOnOM
@@ -37,7 +36,6 @@ fun main() = GuiApp {
 	nn.backpropagate(predicted = y, actual = actual)
 	println("loss:$loss")
   }
-  Salience()
   exitProcess(0)
 }.start()
 

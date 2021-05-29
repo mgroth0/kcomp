@@ -17,4 +17,5 @@ dependencies {
   implementation(libs.chartFX)
   implementation(libs.apfloat)
   implementation(libs.fx.swing)
+  implementation(projects.kj.remote)
 }

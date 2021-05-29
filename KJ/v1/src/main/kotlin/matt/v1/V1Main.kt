@@ -1,143 +1,163 @@
 package matt.v1
 
-import javafx.embed.swing.SwingFXUtils
 import javafx.geometry.Pos
-import javafx.scene.SnapshotParameters
 import javafx.scene.control.Button
-import javafx.scene.input.DataFormat
-import javafx.scene.input.MouseEvent
-import javafx.scene.input.TransferMode
+import javafx.scene.control.ComboBox
 import javafx.scene.layout.Border
 import javafx.scene.layout.BorderStroke
 import javafx.scene.layout.BorderStrokeStyle
 import javafx.scene.layout.BorderWidths
 import javafx.scene.layout.FlowPane
+import javafx.scene.layout.Priority.ALWAYS
+import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
+import javafx.util.StringConverter
 import matt.gui.app.GuiApp
 import matt.gui.core.context.mcontextmenu
 import matt.gui.loop.runLater
 import matt.gui.loop.runLaterReturn
-import matt.gui.proto.scaledCanvas
 import matt.gui.resize.DragResizer
-import matt.gui.resize.DragResizer.Companion.RESIZE_MARGIN
+import matt.hurricanefx.dragsSnapshot
 import matt.hurricanefx.exactHeight
 import matt.hurricanefx.exactHeightProperty
-import matt.hurricanefx.exactWidthProperty
+import matt.hurricanefx.eye.collect.toObservable
 import matt.hurricanefx.eye.lang.BProp
 import matt.hurricanefx.eye.lib.onChange
-import matt.hurricanefx.eye.prop.minus
+import matt.hurricanefx.eye.prop.times
+import matt.hurricanefx.lazyTab
 import matt.hurricanefx.op
-import matt.hurricanefx.tornadofx.clip.put
 import matt.hurricanefx.tornadofx.control.button
 import matt.hurricanefx.tornadofx.fx.attachTo
 import matt.hurricanefx.tornadofx.layout.vbox
-import matt.hurricanefx.tornadofx.nodes.add
 import matt.hurricanefx.tornadofx.nodes.disableWhen
+import matt.hurricanefx.tornadofx.nodes.vgrow
 import matt.hurricanefx.tornadofx.tab.staticTab
 import matt.hurricanefx.tornadofx.tab.tabpane
+import matt.hurricanefx.visibleAndManagedProp
 import matt.kjlib.async.daemon
-import matt.kjlib.commons.TEMP_DIR
-import matt.kjlib.date.globaltic
-import matt.kjlib.file.get
+import matt.kjlib.log.NEVER
 import matt.kjlib.str.addSpacesUntilLengthIs
-import matt.kjlib.stream.forEachNested
 import matt.reflect.ismac
-import matt.v1.Status.IDLE
-import matt.v1.Status.WORKING
+import matt.reflect.onLinux
+import matt.remote.host.Hosts
+import matt.remote.runThisOnOM
+import matt.remote.slurm.SRun
+import matt.v1.STARTUP.ITTI_KOCH
 import matt.v1.exps.experiments
 import matt.v1.gui.Figure
 import matt.v1.gui.StatusLabel
-import matt.v1.gui.VisualizationCfg
+import matt.v1.gui.StatusLabel.Status.IDLE
+import matt.v1.gui.StatusLabel.Status.WORKING
 import matt.v1.lab.ExpCategory.OTHER
 import matt.v1.lab.ExpCategory.ROSENBERG
-import matt.v1.lab.THETA_MAX
-import matt.v1.lab.THETA_MIN
-import matt.v1.lab.allSimpleCosCells
-import matt.v1.lab.baseSimpleSinCell
-import matt.v1.lab.baseStim
-import matt.v1.model.SimpleCell
-import matt.v1.model.Stimulus
-import javax.imageio.ImageIO
+import matt.v1.vis.IttiKochVisualizer
+import matt.v1.vis.IttiKochVisualizer.Companion.dogFolder
+import matt.v1.vis.IttiKochVisualizer.Companion.ittiKochInput
+import matt.v1.vis.RosenbergVisualizer
+import java.io.File
+import kotlin.concurrent.thread
 import kotlin.system.exitProcess
 
 
-enum class Status { WORKING, IDLE }
+private enum class STARTUP { ROSENBERG, ITTI_KOCH }
 
-
-const val VISUAL_SCALE = 3.0
-const val SAMPLE_HW = 100
+private val startup: STARTUP = STARTUP.ROSENBERG
+private val REMOTE = ismac()
 
 fun main(): Unit = GuiApp {
+  val remoteStatus = if (REMOTE) StatusLabel("remote") else null
+  if (REMOTE) {
+	thread {
+	  remoteStatus!!.status.value = WORKING
+	  Hosts.POLESTAR.ssh(object: Appendable {
+		var clearOnNext = false
+		override fun append(csq: CharSequence?): java.lang.Appendable {
+		  csq?.forEach {
+			append(it)
+		  }
+		  return this
+		}
 
+		override fun append(csq: CharSequence?, start: Int, end: Int): java.lang.Appendable {
+		  if (csq != null) append(csq.subSequence(start, end))
+		  return this
+		}
 
-  if (!ismac()) {
+		override fun append(c: Char): java.lang.Appendable {
+		  if (c in listOf('\n', '\r')) {
+			clearOnNext = true
+		  } else {
+			if (clearOnNext) {
+			  remoteStatus.statusExtra = ""
+			  clearOnNext = false
+			}
+			remoteStatus.statusExtra += c
+		  }
+		  return this
+		}
+
+	  }) {
+		runThisOnOM(srun = SRun(timeMin = 15))
+	  }
+	  remoteStatus.status.value = IDLE
+	}
+  }
+  onLinux {
 	println("hello from linux!")
 	exitProcess(0)
   }
-  globaltic()
+
+
+
   vbox {
 	alignment = Pos.CENTER
+	val visualizer = tabpane {
+	  this.vgrow = ALWAYS
+	  tabs += lazyTab("Rosenberg") { RosenbergVisualizer() }
+	  tabs += lazyTab("Itti Koch") {
+		VBox(
+		  ComboBox(
+			dogFolder.listFiles()!!.sorted().toObservable()
+		  ).apply {
+			valueProperty().bindBidirectional(ittiKochInput)
+			/*simpleCellFactory { it.name to null }*/
+			this.converter = object: StringConverter<File>() {
+			  override fun toString(`object`: File?): String {
+				return `object`!!.name
+			  }
 
-	val stimVisualizerBox = /*need this here*/this.vbox {
+			  override fun fromString(string: String?): File {
+				NEVER
+			  }
+
+			}
+		  }, IttiKochVisualizer()
+		).apply { alignment = Pos.CENTER }
+	  }
+	  when (startup) {
+		STARTUP.ROSENBERG -> selectionModel.select(tabs.first())
+		ITTI_KOCH         -> selectionModel.select(tabs.last())
+	  }
+
 	  DragResizer.makeResizable(this)
-	  alignment = Pos.CENTER
 	  border = Border(
 		BorderStroke(
 		  null, null, Color.GRAY, null, null, null, BorderStrokeStyle.SOLID, null, null,
-		  BorderWidths(0.0, 0.0, RESIZE_MARGIN.toDouble(), 0.0), null
+		  BorderWidths(0.0, 0.0, DragResizer.RESIZE_MARGIN.toDouble(), 0.0), null
 		)
 	  )
 	}
 
-	val canv = stimVisualizerBox.scaledCanvas(hw = SAMPLE_HW, scale = VISUAL_SCALE)
-
-	fun show(stim: Stimulus? = null, cell: SimpleCell? = null) =
-		(0..SAMPLE_HW)
-			.forEachNested { x, y ->
-			  val rg = stim?.getVisSample(x/SAMPLE_HW.toDouble(), y/SAMPLE_HW.toDouble()) ?: 0.0
-			  val b = cell?.getVisSample(x/SAMPLE_HW.toDouble(), y/SAMPLE_HW.toDouble()) ?: 0.0
-			  canv[x, y] = Color.color(rg, rg, b)
-			}
-
-	val cfg = object: VisualizationCfg(responsive = true) {
-	  var stimulus by CfgObjProp(baseStim.copy(f = baseStim.f.copy(X0 = 0.0)), null)
-	  var cell by CfgObjProp(
-		null,
-		baseSimpleSinCell.copy(f = baseSimpleSinCell.f.copy(X0 = 0.0)),
-		allSimpleCosCells[0].copy(f = baseSimpleSinCell.f.copy(X0 = 0.0))
-	  )
-	  val SF by CfgDoubleProp(0.01 to 1)
-	  val theta by CfgDoubleProp(THETA_MIN to THETA_MAX)
-	  val sigmaMult by CfgDoubleProp(0.01 to 10)
-	  val gaussian by CfgBoolProp(true)
-	  override fun update() =
-		  show(
-			stim = stimulus?.copy(
-			  SF = SF,
-			  f = stimulus!!.f.copy(t = theta),
-			  s = stimulus!!.s*sigmaMult,
-			  gaussianEnveloped = gaussian
-			),
-			cell = cell?.copy(
-			  SF = SF,
-			  f = cell!!.f.copy(t = theta),
-			  sx = cell!!.sx*sigmaMult,
-			  sy = cell!!.sy*sigmaMult,
-			  gaussianEnveloped = gaussian
-			)
-		  )
-	}
-	cfg.update()
-	stimVisualizerBox.add(cfg.cfgPane.apply {
-	  exactWidthProperty().bind(stage.widthProperty())
-	})
+	val ittKochTab = visualizer.tabs[1]
 
 	val loadProp = BProp(false)
 	val expBox = vbox {
-	  exactHeightProperty().bind(stage.heightProperty() - stimVisualizerBox.heightProperty())
+	  this.vgrow = ALWAYS
+	  exactHeightProperty().bind(stage.heightProperty()*0.75)
 	  mcontextmenu {
 		checkitem("load", loadProp)
 	  }
+	  visibleAndManagedProp().bind(ittKochTab.selectedProperty().not())
 	}
 
 	val rosenbergPane = FlowPane()
@@ -149,25 +169,14 @@ fun main(): Unit = GuiApp {
 	}
 	val fig = Figure().attachTo(expBox)
 	val statusLabel = StatusLabel().attachTo(expBox)
-	fig.exactHeightProperty()
+	fig.vgrow = ALWAYS
+	/*fig.exactHeightProperty()
 		.bind(
 		  expBox.heightProperty()
 		  - figButtonBox.heightProperty()
 		  - statusLabel.heightProperty()
-		)
-	fig.addEventFilter(MouseEvent.DRAG_DETECTED) {
-	  println("drag detected")
-	  val params = SnapshotParameters()
-	  params.fill = Color.BLACK
-	  val snapshot = fig.snapshot(params, null)
-	  val img = SwingFXUtils.fromFXImage(snapshot, null)
-	  val imgFile = TEMP_DIR["drag_image.png"]
-	  ImageIO.write(img, "png", imgFile)
-	  val db = startDragAndDrop(*TransferMode.ANY)
-	  db.put(DataFormat.FILES, mutableListOf(imgFile))
-	  it.consume()
-	  println("drag consumed")
-	}
+		)*/
+	fig.dragsSnapshot()
 	val exps = experiments(fig, statusLabel)
 	val allButtons = mutableListOf<Button>()
 	exps.forEach { exp ->
@@ -198,8 +207,6 @@ fun main(): Unit = GuiApp {
 		  }
 		}
 
-
-
 		exp.runningProp.onChange {
 		  when (it) {
 			true  -> {
@@ -216,8 +223,12 @@ fun main(): Unit = GuiApp {
 		it.disableWhen { statusLabel.status.isEqualTo(WORKING).and(exp.runningProp.not()) }
 	  }
 	}
+	if (REMOTE) {
+	  remoteStatus!!.attachTo(this)
+	}
   }
 }.start()
+
 
 
 
