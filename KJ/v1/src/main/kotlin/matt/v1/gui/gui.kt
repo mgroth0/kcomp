@@ -162,7 +162,7 @@ abstract class ImageVisualizer(
 		props.forEach { p ->
 		  when (p) {
 			is CfgObjProp<*> -> combobox(values = p.values.toList()) {
-			  println("getting component for CfgObjProp")
+//			  println("getting component for CfgObjProp")
 			  value = p.value
 			  /*maxWidthProperty().bind(fp.widthProperty())*/
 			  exactWidthProperty().bind(fp.widthProperty()*.4)

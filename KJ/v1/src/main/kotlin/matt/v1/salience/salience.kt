@@ -2,6 +2,7 @@ package matt.v1.salience
 
 import matt.hurricanefx.intColorToFXColor
 import matt.kjlib.date.withStopwatch
+import matt.kjlib.jmath.convolve
 import matt.kjlib.jmath.intMean
 import matt.klibexport.klibexport.go
 import matt.v1.pyramid.pyrDown
@@ -16,6 +17,8 @@ import org.jetbrains.kotlinx.multik.ndarray.data.D3
 import org.jetbrains.kotlinx.multik.ndarray.data.NDArray
 import org.jetbrains.kotlinx.multik.ndarray.data.get
 import org.jetbrains.kotlinx.multik.ndarray.data.set
+import org.jetbrains.kotlinx.multik.ndarray.operations.map
+import org.jetbrains.kotlinx.multik.ndarray.operations.minus
 import org.jetbrains.kotlinx.multik.ndarray.operations.sum
 import java.awt.image.BufferedImage
 import kotlin.math.absoluteValue
@@ -36,6 +39,22 @@ data class FeatureDef(
 data class Salience(
   val thing: Boolean = true
 ) {
+
+  companion object {
+	val LPF_KERNEL = mk.empty<Double, D2>(5, 5).apply {
+	  (0..4).forEach { x ->
+		(0..4).forEach { y ->
+		  this[x, y] = when {
+			x == 0 || y == 0 || x == 4 || y == 4 -> 1.0/16.0
+			x == 1 || y == 1 || x == 3 || y == 3 -> 1.0/4.0
+			else                                 -> 3.0/8.0
+		  }
+		}
+	  }
+	}
+  }
+
+
   fun computeFeatures(im: BufferedImage): Map<FeatureDef, NDArray<Int, D2>> = withStopwatch("salience filter") { t ->
 	val r = mk.empty<Int, D3>(im.height, im.width, 3)
 	val rr = mk.empty<Int, D2>(im.height, im.width)
@@ -102,6 +121,12 @@ data class Salience(
 			featBy[pxRow, pxCol] = (centerBY - surroundBY).absoluteValue
 		  }
 		}
+
+
+		val g0 = featIntense.convolve(LPF_KERNEL)
+		val ln = featIntense - g0.map { it.roundToInt() }
+		val orients = listOf(0,45,90,135)
+
 
 		(1..center).forEach { _ ->
 		  featIntense = featIntense.pyrUp()

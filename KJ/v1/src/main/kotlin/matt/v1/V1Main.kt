@@ -62,11 +62,12 @@ import kotlin.system.exitProcess
 private enum class STARTUP { ROSENBERG, ITTI_KOCH }
 
 private val startup: STARTUP = STARTUP.ROSENBERG
-private val REMOTE = ismac()
+private const val REMOTE = false
+private val REMOTE_AND_MAC = REMOTE && ismac()
 
 fun main(): Unit = GuiApp {
-  val remoteStatus = if (REMOTE) StatusLabel("remote") else null
-  if (REMOTE) {
+  val remoteStatus = if (REMOTE_AND_MAC) StatusLabel("remote") else null
+  if (REMOTE_AND_MAC) {
 	thread {
 	  remoteStatus!!.status.value = WORKING
 	  Hosts.POLESTAR.ssh(object: Appendable {
@@ -209,7 +210,7 @@ fun main(): Unit = GuiApp {
 
 		exp.runningProp.onChange {
 		  when (it) {
-			true  -> {
+			true -> {
 			  text = "stop"
 			  op = exp::stop
 			}
@@ -223,11 +224,15 @@ fun main(): Unit = GuiApp {
 		it.disableWhen { statusLabel.status.isEqualTo(WORKING).and(exp.runningProp.not()) }
 	  }
 	}
-	if (REMOTE) {
+	if (REMOTE_AND_MAC) {
 	  remoteStatus!!.attachTo(this)
 	}
   }
-}.start()
+}.start(
+  shutdown = {
+	println("debug shutdown")
+  }
+)
 
 
 

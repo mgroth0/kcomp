@@ -5,11 +5,11 @@ import com.jcraft.jsch.UserInfo
 import matt.kjlib.commons.HOME_DIR
 import matt.kjlib.file.get
 import matt.remote.expect.expect
-import matt.remote.expect.sendLineAndWait
 import matt.remote.host.Host.Companion.SUB_PROMPT
 import matt.remote.om.OM
 import net.sf.expectit.Expect
 import net.sf.expectit.ExpectBuilder
+import net.sf.expectit.ExpectIOException
 
 class Host(private val hostname: String) {
 
@@ -78,12 +78,18 @@ class Host(private val hostname: String) {
 		.build()
 
 	println("established SSH connection to $hostname")
+	try {
+	  p expect "Last login"
+	  p.setPrompt()
 
-	p expect "Last login"
-	p.setPrompt()
 
-
-	op(p)
+	  op(p)
+	} catch (e: ExpectIOException) {
+	  println(e)
+	  println(e.message)
+	  e.printStackTrace()
+	  println("caught $e, now closing and disconnecting ssh session")
+	}
 	p.close()
 	channel.disconnect()
 	session.disconnect()
@@ -93,16 +99,25 @@ class Host(private val hostname: String) {
 }
 
 fun Expect.prompt() = expect(SUB_PROMPT)
-fun Expect.setPrompt(numExpectPrompts: Int = 3) {
+fun Expect.setPrompt(/*numExpectPrompts: Int = 3*/) {
   println("setPrompt1")
-  sendLineAndWait(Host.PROMPT_SET_SH)
-  if (numExpectPrompts > 1) {
+  sendLine(Host.PROMPT_SET_SH)
+  /*if (numExpectPrompts > 1) {
 	(2..numExpectPrompts).forEach {
 	  println("setPrompt${it}")
 	  prompt()
 	}
-  }
+  }*/
+  catchUp()
   println("setPromptEnd")
+}
+
+fun Expect.catchUp() {
+  /*use any environmental var that's consistent in all shells*/
+  /*this is tested in base OM, srun, and singularity. Not yet tested in vagrant.*/
+  sendLine("echo \$NCARG_FONTCAPS")
+  expect("/usr/lib64/ncarg/fontcaps")
+  prompt()
 }
 
 object Hosts {

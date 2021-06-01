@@ -8,12 +8,11 @@ import matt.kjlib.file.get
 import matt.klib.dmap.withStoringDefault
 import matt.v1.gui.FilteredImageVisualizer
 import matt.v1.gui.GeneratedImageVisualizer
-import matt.v1.lab.THETA_MAX
-import matt.v1.lab.THETA_MIN
-import matt.v1.lab.allSimpleCosCells
-import matt.v1.lab.baseSimpleSinCell
-import matt.v1.lab.baseStim
+import matt.v1.lab.petri.baseSimpleSinCell
+import matt.v1.lab.petri.baseStim
+import matt.v1.lab.rcfg.rCfg
 import matt.v1.model.SimpleCell
+import matt.v1.model.SimpleCell.Phase.COS
 import matt.v1.model.Stimulus
 import matt.v1.salience.FeatureDef
 import matt.v1.salience.FeatureType
@@ -33,12 +32,12 @@ class RosenbergVisualizer: GeneratedImageVisualizer(
   private var cell by CfgObjProp(
 	null,
 	baseSimpleSinCell.copy(f = baseSimpleSinCell.f.copy(X0 = 0.0)),
-	allSimpleCosCells[0].copy(f = baseSimpleSinCell.f.copy(X0 = 0.0))
+	baseSimpleSinCell.copy(f = baseSimpleSinCell.f.copy(X0 = 0.0), phase = COS),
   )
 
   @Suppress("PrivatePropertyName")
   private val SF by CfgDoubleProp(0.01 to 1)
-  private val theta by CfgDoubleProp(THETA_MIN to THETA_MAX)
+  private val theta by CfgDoubleProp(rCfg.THETA_MIN to rCfg.THETA_MAX)
   private val sigmaMult by CfgDoubleProp(0.01 to 10)
   private val gaussian by CfgBoolProp(true)
   override fun update() {
@@ -95,7 +94,6 @@ class IttiKochVisualizer: FilteredImageVisualizer(
 
 
   override fun draw(input: File) = run {
-	println("draw")
 	val features = featureCache[input.absolutePath]
 	features[FeatureDef(center = center, surround = surround, type = type)]!!
   }

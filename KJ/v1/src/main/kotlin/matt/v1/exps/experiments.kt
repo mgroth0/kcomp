@@ -1,10 +1,16 @@
 package matt.v1.exps
 
+import matt.kjlib.jmath.mean
+import matt.klib.log.warnOnce
+import matt.klib.ranges.step
+import matt.v1.compcache.PPCUnit
+import matt.v1.compcache.PreDNPopR
 import matt.v1.gui.Figure
 import matt.v1.gui.StatusLabel
 import matt.v1.lab.ExpCategory.OTHER
 import matt.v1.lab.ExpCategory.ROSENBERG
 import matt.v1.lab.Experiment
+import matt.v1.lab.Experiment.CoreLoop
 import matt.v1.lab.Experiment.XVar.CONTRAST
 import matt.v1.lab.Experiment.XVar.DIST_4_ATTENTION
 import matt.v1.lab.Experiment.XVar.FT
@@ -20,16 +26,11 @@ import matt.v1.lab.PoissonVar.FAKE10
 import matt.v1.lab.PoissonVar.FAKE5
 import matt.v1.lab.PoissonVar.YES
 import matt.v1.lab.SeriesCfg
-import matt.v1.lab.YExtract.CCW
-import matt.v1.lab.YExtract.MAX_PPC
-import matt.v1.lab.YExtract.POP_GAIN
-import matt.v1.lab.YExtract.PPC
-import matt.v1.lab.YExtract.PPC_UNIT
-import matt.v1.lab.YExtract.PRIOR
-import matt.v1.lab.rCfg
+import matt.v1.lab.petri.pop2D
+import matt.v1.lab.rcfg.rCfg
 import matt.v1.model.ASD_SIGMA_POOLING
 import matt.v1.model.ATTENTION_SUPP_SIGMA_POOLING
-import matt.v1.model.tdDivNorm
+import matt.v1.model.Stimulus
 import kotlin.math.pow
 
 /*(Rosenberg et al. 2015)*/
@@ -38,8 +39,25 @@ import kotlin.math.pow
 fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 
 
-  val noDN = SeriesCfg(label = "- D.N.")
-  val withDN = noDN.copy(label = "+ D.N.", DN = true)
+  val noDN = SeriesCfg(
+	label = "- D.N.",
+	yExtractCustom = {
+	  cell.cfgStim(
+		cfgStim = seriesStim,
+	  )
+	}
+  )
+  val withDN = noDN.copy(
+	label = "+ D.N.",
+	yExtractCustom = {
+	  cell.cfgStim(
+		cfgStim = seriesStim,
+		popR = PreDNPopR(seriesStim, attentionExp, pop)()
+	  )/*.also {
+		println("cfgStim:$it")
+	  }*/
+	}
+  )
   val baseExp = Experiment(
 	name = "3.B",
 	title = "DN causes saturation with ↑ contrast",
@@ -76,7 +94,10 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
   )
 
   val td = withDN.copy(label = "TD")
-  val ascC = td.copy(label = "ASC c", divNorm = tdDivNorm.copy(c = 7.5*10.0.pow(-5)))
+  val ascC = td.copy(
+	label = "ASC c",
+	popRcfg = { copy(divNorm = divNorm.copy(c = 7.5*10.0.pow(-5))) },
+  )
   val popGainBySize = exps.last().copy(
 	name = "4.C",
 	title = "↓ D.N. in ASD causes ↑ the absolute pop. gain (matches b. data)",
@@ -126,9 +147,29 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
   )
 
   val contrast1 =
-	  td.copy(label = "${Experiment.CONTRAST1}%", contrastAlpha = Experiment.CONTRAST1*0.01)
+	  td.copy(
+		label = "${Experiment.CONTRAST1}%",
+
+
+		stimCfg = {
+		  it.copy(
+			a = Experiment.CONTRAST1*0.01
+		  )
+		},
+
+
+		)
   val contrast2 =
-	  td.copy(label = "${Experiment.CONTRAST2}%", contrastAlpha = Experiment.CONTRAST2*0.01)
+	  td.copy(
+		label = "${Experiment.CONTRAST2}%",
+
+		stimCfg = {
+		  it.copy(
+			a = Experiment.CONTRAST2*0.01
+		  )
+		}
+
+	  )
 
   exps += baseExp.copy(
 	name = "S1.A",
@@ -146,6 +187,12 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	/*alpha is 0.075 or 0.2*/
 	/*theta ranges from 0 to 180 in 0.25 steps*/
   )
+  val PPC: CoreLoop.()->Double = {
+	decode(
+	  ftStim = seriesStim,
+	  trialStim = seriesStim.copy(f = seriesStim.f.copy(t = 90.0)),
+	)
+  }
   exps += exps.last().copy(
 	name = "S1.B",
 	xVar = STIM_ORIENTATION,
@@ -154,15 +201,20 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	autoY = true,
 	title = "Probabilistic Population Code (PPC)",
 	stimTrans = { copy(SF = 3.0) },
-	series = exps.last().series.map { it.copy(yExtract = PPC) } + listOf(
-	  contrast1.copy(label = "${contrast1.label} (Poisson)", poissonVar = YES, yExtract = PPC),
-	  contrast2.copy(label = "${contrast2.label} (Poisson)", poissonVar = YES, yExtract = PPC)
+	series = exps.last().series.map { it.copy(yExtractCustom = PPC) } + listOf(
+	  contrast1.copy(label = "${contrast1.label} (Poisson)", poissonVar = YES, yExtractCustom = PPC),
+	  contrast2.copy(label = "${contrast2.label} (Poisson)", poissonVar = YES, yExtractCustom = PPC)
 	)
-	/*alpha is 0.075 or 0.2*/
   )
 
-  val ascV = td.copy(label = "ASC v", divNorm = tdDivNorm.copy(v = 0.01))
-  val ascSS = td.copy(label = "ASC σs", sigmaPooling = ASD_SIGMA_POOLING)
+  val ascV = td.copy(
+	label = "ASC v",
+	popRcfg = { copy(divNorm = divNorm.copy(v = 0.01)) },
+  )
+  val ascSS = td.copy(
+	label = "ASC σs",
+	popRcfg = { copy(sigmaPooling = ASD_SIGMA_POOLING) },
+  )
 
   exps += popGainBySize.copy(
 	name = "S2.A",
@@ -196,7 +248,10 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	troughShift = true,
 	series = listOf(
 	  td,
-	  td.copy(label = "Increased σs", sigmaPooling = ATTENTION_SUPP_SIGMA_POOLING)
+	  td.copy(
+		label = "Increased σs",
+		popRcfg = { copy(sigmaPooling = ATTENTION_SUPP_SIGMA_POOLING) },
+	  )
 	),
   )
   exps += exps.first { it.name == "5.C" }.copy(
@@ -205,18 +260,27 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	troughShift = false,
 	series = listOf(
 	  td.copy(label = "TD V1") /*same as TD with different label*/,
-	  td.copy(label = "v = 20000 (2 in paper)", divNorm = tdDivNorm.copy(v = 20_000.0)),
-	  td.copy(label = "v = 40000 (4 in paper)", divNorm = tdDivNorm.copy(v = 40_000.0)),
-	  td.copy(label = "v = 60000 (6 in paper)", divNorm = tdDivNorm.copy(v = 60_000.0))
+	  td.copy(label = "v = 20000 (2 in paper)",
+		popRcfg = { copy(divNorm = divNorm.copy(v = 20_000.0)) }
+	  ),
+	  td.copy(
+		label = "v = 40000 (4 in paper)",
+		popRcfg = { copy(divNorm = divNorm.copy(v = 40_000.0)) },
+	  ),
+	  td.copy(
+		label = "v = 60000 (6 in paper)",
+		popRcfg = { copy(divNorm = divNorm.copy(v = 60_000.0)) },
+	  )
 	),
   )
 
-
-  val flatPrior = td.copy(
+  val priorSeriesBase = td.copy(
 	label = "Flat",
 	priorWeight = 0.0,
-	yExtract = PRIOR,
-	divNorm = td.divNorm.copy(v = 0.000001) /*DEBUG*/
+	popRcfg = { copy(divNorm = divNorm.copy(v = 0.000001)) }, /*DEBUG*/
+  )
+  val flatPrior = priorSeriesBase.copy(
+	yExtractCustom = { cell.prior()() },
   )
 
   val weakPrior = flatPrior.copy(
@@ -243,19 +307,26 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
   )
 
 
-  val flatPriorR = flatPrior.copy(
+  fun priorSeriesStimCfg(theta: Double?, plusX: Boolean = false): CoreLoop.(Stimulus)->Stimulus {
+	return {
+	  it.copy(
+		SF = 3.0,
+		gaussianEnveloped = false,
+		a = 0.1,
+		f = it.f.takeIf { theta == null && !plusX } ?: it.f.copy(t = theta!! + (if (plusX) x else 0.0))
+	  )
+	}
+  }
+
+  val flatPriorR = priorSeriesBase.copy(
 	label = "Flat (45° stim)",
-	yExtract = POP_GAIN,
-	stimTheta = 45.0,
-	contrastAlpha = 0.1,
-	stimGaussianEnveloped = false,
-	stimSF = 3.0
+	stimCfg = priorSeriesStimCfg(45.0)
   )
   exps += exps.last().copy(
 	name = "S4.B",
 	title = "Bayesian Priors: Oblique effect is diminished in Autism",
 	ylabel = "Neural Response",
-	xStep = 15.0,
+	xStep = rCfg.CELL_THETA_STEP,
 	series = listOf(
 	  flatPriorR,
 	  flatPriorR.copy(
@@ -268,23 +339,47 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	  ),
 	  flatPriorR.copy(
 		label = "Flat (90° stim)",
-		stimTheta = 90.0,
+		stimCfg = priorSeriesStimCfg(90.0),
 		priorWeight = flatPriorR.priorWeight
 	  ),
 	  flatPriorR.copy(
 		label = "Weak (90° stim)",
-		stimTheta = 90.0,
+		stimCfg = priorSeriesStimCfg(90.0),
 		priorWeight = weakPrior.priorWeight
 	  ),
 	  flatPriorR.copy(
 		label = "Strong (90° stim)",
-		stimTheta = 90.0,
+		stimCfg = priorSeriesStimCfg(90.0),
 		priorWeight = strongPrior.priorWeight
 	  )
 	)
   )
 
-  val flatPriorPPC = flatPriorR.copy(label = "Flat", yExtract = MAX_PPC, stimTheta = null)
+  val flatPriorPPCbase = flatPriorR.copy(
+	label = "Flat",
+	stimCfg = priorSeriesStimCfg(null)
+  )
+  val flatPriorPPC = flatPriorPPCbase.copy(
+	yExtractCustom = {
+	  warnOnce("debugging flatPriorPPC yExtract")
+	  /*(1..(if (poissonVar == NONE) 1 else 20)).map {*/
+	  //	  println("gonna look for cell with X=${seriesStim.X0} Y=${seriesStim.Y0} t=${seriesStim.t}")
+	  /*decode*/
+	  /*decodeBeforeGeoMean*/
+	  /*warn("debugging 2 series commented out")*/
+	  val d = decode(
+		ftStim = seriesStim,
+		trialStim = seriesStim,
+	  )/*.mean()*/
+
+	  /*.takeIf { it.count() == 1 }!!.maxOrNull()!!*/ // .mean()/*.first()*/
+	  /*}.mean()*/
+	  /*println("x=$x d=$d")*/
+	  d
+
+	}
+  )
+
   exps += exps.last().copy(
 	name = "S4.C.1",
 	title = "Bayesian Priors: Oblique effect is diminished in Autism (PPCs)", /*Posterior Probability Distributions*/
@@ -301,7 +396,9 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 		label = "Strong",
 		priorWeight = strongPrior.priorWeight
 	  )
-	)
+	),
+	pop = pop2D,
+	xStep = rCfg.CELL_THETA_STEP*rCfg.DEBUG_3D_THETA_MULT
   )
 
   exps += exps.last().copy(
@@ -369,12 +466,36 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	title = "Bayesian Priors: Oblique effect is diminished in Autism (Pop. Gain)",
 	xVar = STIM_AND_PREF_ORIENTATION,
 	series = listOf(
-	  flatPriorPPC.copy(
+	  flatPriorPPCbase.copy(
 		label = "Baseline Activity",
-		yExtract = POP_GAIN,
 		priorWeight = strongPrior.priorWeight
 	  )
 	)
+  )
+
+  fun CCWSeries(
+	relThetaMid: Double,
+	ccwTrials: Int
+  ) = flatPriorPPC.copy(
+	label = "$relThetaMid°",
+	priorWeight = veryStrongPrior,
+	stimCfg = priorSeriesStimCfg(relThetaMid, plusX = true),
+	yExtractCustom = {
+	  val substep = 1.0
+	  (1..ccwTrials).map {
+		val probs = (relThetaMid - (substep*9)..relThetaMid + substep*10 step substep)
+			.mapIndexed { _, theta ->
+			  (decode(
+				ftStim = seriesStim.copy(f = seriesStim.f.copy(t = theta)),
+				trialStim = seriesStim,
+			  ) to if (theta > relThetaMid) 1.0 else 0.0)
+			}
+		(probs.maxByOrNull { it.first }!!.second)
+	  }.mean()
+	},
+	line = true, /*while im waiting for fixes*/
+	markers = true,
+	fit = Gaussian
   )
 
   exps += baseExp.copy(
@@ -387,24 +508,8 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	xVar = REL_STIM_ORIENTATION,
 	xStep = 1.0,
 	series = listOf(
-	  flatPriorPPC.copy(
-		label = "90°",
-		priorWeight = veryStrongPrior,
-		yExtract = CCW,
-		relThetaMid = 90.0,
-		line = true, /*while im waiting for fixes*/
-		markers = true,
-		fit = Gaussian
-	  ),
-	  flatPriorPPC.copy(
-		label = "45°",
-		priorWeight = veryStrongPrior,
-		yExtract = CCW,
-		relThetaMid = 45.0,
-		line = true, /*while im waiting for fixes*/
-		markers = true,
-		fit = Gaussian
-	  )
+	  CCWSeries(relThetaMid = 90.0, ccwTrials = 1),
+	  CCWSeries(relThetaMid = 45.0, ccwTrials = 1)
 	),
 	normToMaxes = false,
 	autoY = true,
@@ -413,16 +518,15 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
   exps += exps.last().copy(
 	name = "S5.2",
 	title = exps.last().title.replace("Deterministic", "Poisson"),
-	series = exps.last().series.map {
-	  it.copy(
-		poissonVar = YES
-	  )
-	}
+	series = listOf(
+	  CCWSeries(relThetaMid = 90.0, ccwTrials = 50).copy(poissonVar = YES),
+	  CCWSeries(relThetaMid = 45.0, ccwTrials = 50).copy(poissonVar = YES)
+	)
   )
   exps += exps.last().copy(
 	name = "S5.3",
 	title = exps.last().title.replace("Poisson", "Fake1 Poisson"),
-	series = exps.last().series.map {
+	series = exps[exps.size - 2].series.map {
 	  it.copy(
 		poissonVar = FAKE1
 	  )
@@ -447,7 +551,10 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	}
   )
 
-  val p0 = SeriesCfg(label = "P=0", yExtract = PPC_UNIT, poissonVarI = 0)
+  val p0 = SeriesCfg(
+	label = "P=0",
+	yExtractCustom = { PPCUnit(ft = x, ri = x + 0)() },
+  )
   exps += baseExp.copy(
 	name = "Ideal Poisson",
 	title = "Ideal Neuronal Responses for PPCs",
@@ -462,10 +569,9 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	xVar = FT,
 	series = listOf(
 	  p0,
-	  p0.copy(label = "P=1", poissonVarI = 1),
-	  p0.copy(label = "P=2", poissonVarI = 2),
-	  p0.copy(label = "P=3", poissonVarI = 3),
-	  p0.copy(label = "P=4", poissonVarI = 4),
+	  *(1..4).map { i ->
+		p0.copy(label = "P=$i", yExtractCustom = { PPCUnit(ft = x, ri = x + i)() })
+	  }.toTypedArray()
 	)
   )
 

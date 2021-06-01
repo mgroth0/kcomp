@@ -4,14 +4,14 @@ package matt.v1.compcache
 
 import matt.kjlib.jmath.BIG_E
 import matt.kjlib.jmath.e
-import matt.kjlib.jmath.simpleFactorial
 import matt.kjlib.str.tab
 import matt.kjlib.stream.onEveryIndexed
 import matt.klib.dmap.withStoringDefault
 import matt.klib.math.sq
 import matt.klib.ranges.step
+import matt.klibexport.klibexport.setAll
 import matt.v1.lab.Experiment.CoreLoop
-import matt.v1.lab.allComplexCells
+import matt.v1.lab.petri.Population
 import matt.v1.model.ComplexCell
 import matt.v1.model.PopulationResponse
 import matt.v1.model.Stimulus
@@ -19,10 +19,12 @@ import org.apache.commons.math3.fitting.GaussianCurveFitter
 import org.apache.commons.math3.fitting.WeightedObservedPoint
 import org.apfloat.Apfloat
 import org.apfloat.ApfloatMath
+import org.apfloat.ApintMath
 import java.math.BigDecimal
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.pow
+import kotlin.math.roundToInt
 import kotlin.math.sin
 import kotlin.math.sqrt
 
@@ -35,6 +37,7 @@ abstract class ComputeCache<I, O> {
 }
 
 abstract class ComputeInput<I, O> {
+  operator fun invoke() = findOrCompute()
   protected abstract val computer: ComputeCache<I, O>
   fun findOrCompute(debug: Boolean = false): O {
 	return if (!debug) {
@@ -127,7 +130,11 @@ data class PPCUnit(
   val ft: Double,
   val ri: /*Double*/Int
 ): ComputeInput<PPCUnit, Double>() {
+
+  constructor(ft: Double, ri: Double): this(ft = ft, ri = ri.roundToInt())
+
   override val computer = Companion
+
 
   protected companion object: ComputeCache<PPCUnit, Double>() {
 	override val compute: PPCUnit.()->Double = {
@@ -136,36 +143,24 @@ data class PPCUnit(
 	  val debugTopLeft = ApfloatMath.pow(debugE, debugNft)/*.alsoPrintln { "debugTopLeft:${this}" }*/
 	  /*println("debugTopRight-ft=${ft}")
 	  println("debugTopRight-ri=${ri}")*/
+	  /*//	  println("ft1=$ft")
+	  //	  println("ri1=$ri")*/
 	  val beforeBD = ft.pow(ri)
-	  /*println("beforeBD=${beforeBD}")*/
-	  val debugTopRight = Apfloat(BigDecimal(beforeBD))/*.alsoPrintln { "debugTopRight:${this}" }*/
+	  val debugTopRight = Apfloat(BigDecimal(beforeBD))
+	  val debugTop = debugTopLeft.multiply(debugTopRight)
+	  val debugBottom = ApintMath.factorial(ri.toLong())
 
-	  val debugBottom =
-		  Apfloat(
-			ri
-				/*.generalizedFactorialOrSimpleIfInfOrNaN()*/
-				.simpleFactorial()
-				/*.alsoPrintln { "ri:${ri},Fact:${this}" }*/
-			/*simpleFactorial()*/
-		  )/*.alsoPrintln { "debugBottom:${this}" }*/
-	  (
-		  (
-			  debugTopLeft
-				  .multiply(
-					debugTopRight
-				  ))
-			  .divide(
-				debugBottom
-			  )
-	  )
-		  .toDouble()
+	  (debugTop.divide(debugBottom)).toDouble() /*NOT FLAT*/
+	  /*debugTop.toDouble() *//*FLAT*/
+	  /*debugBottom.toDouble() *//*FLAT*/
 	}
   }
 }
 
 data class PreDNPopR(
   val stim: Stimulus,
-  val attention: Boolean
+  val attention: Boolean,
+  val pop: Population
 ): ComputeInput<PreDNPopR, PopulationResponse>() {
   override val computer = Companion
 
@@ -173,7 +168,7 @@ data class PreDNPopR(
   companion object: ComputeCache<PreDNPopR, PopulationResponse>() {
 	lateinit var coreLoopForStatusUpdates: CoreLoop
 	override val compute: PreDNPopR.()->PopulationResponse = {
-	  allComplexCells
+	  pop.complexCells
 		  .asSequence()
 		  .onEveryIndexed(10) { i, _ -> coreLoopForStatusUpdates.update(i = i) }
 		  .associateWith {
@@ -266,7 +261,30 @@ data class GaussianCoefCalculator(
 }
 
 
-data class Point(val x: Double, val y: Double)
+data class Point(val x: Double, val y: Double) {
+  fun normDist(other: Point) = sqrt((x - other.x).sq() + (y - other.y).sq())
+}
+
+val Collection<Point>.trough get() = minByOrNull { it.y }
+val Collection<Point>.gradient get() = (maxOf { it.y } - minOf { it.y })/(maxOf { it.x } - minOf { it.x })
+
+fun List<Point>.normalizedToMax(): List<Point> {
+  val max = maxOf { it.y }
+  return map { it.copy(y = it.y/max*100) }
+}
+
+
+fun Iterable<MutableList<Point>>.maxByTroughY() = maxByOrNull { it.trough!!.y }!!
+fun Iterable<MutableList<Point>>.minByTroughY() = minByOrNull { it.trough!!.y }!!
+fun Iterable<MutableList<Point>>.shiftAllByTroughs() {
+  val higherTrough = maxByTroughY()
+  val lowerTrough = minByTroughY()
+  filter { it != lowerTrough }.forEach {
+	it.setAll(higherTrough.map { it.copy(y = it.y - (higherTrough.trough!!.y - lowerTrough.trough!!.y)) })
+  }
+}
+
+
 data class GaussianFit(
   val g: GaussianCoef,
   val xMin: Double,
