@@ -50,6 +50,9 @@ apfloat = { module = "org.apfloat:apfloat", version = "1.10.0" }
 expect = { module = "net.sf.expectit:expectit-core", version = "0.9.0" }
 jsch = { module = "com.github.mwiede:jsch", version = "0.1.62" }
 
+
+graphviz = { module = "guru.nidi:graphviz-java", version = "0.18.1" }
+
 [bundles]
 fx-full = ["fx-base", "fx-controls", "fx-graphics", "fx-web", "fx-media", "fx-swing"]
 multik-full = ["multik-default", 'multik-api']
