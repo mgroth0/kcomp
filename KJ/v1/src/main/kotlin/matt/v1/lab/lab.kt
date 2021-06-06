@@ -11,21 +11,20 @@ import matt.json.prim.loadJson
 import matt.kjlib.commons.DATA_FOLDER
 import matt.kjlib.file.get
 import matt.kjlib.jmath.geometricMean
-import matt.kjlib.jmath.getPoisson
 import matt.kjlib.jmath.mean
 import matt.kjlib.jmath.orth
 import matt.kjlib.jmath.sigFigs
 import matt.kjlib.log.err
+import matt.kjlib.ranges.step
 import matt.kjlib.str.addSpacesUntilLengthIs
 import matt.kjlib.str.prependZeros
 import matt.kjlib.str.taball
 import matt.klib.log.warn
-import matt.klib.log.warnOnce
-import matt.klib.ranges.step
 import matt.klibexport.klibexport.go
 import matt.v1.compcache.BayesianPriorC
+import matt.v1.compcache.GPPCUnit
+import matt.v1.compcache.GPPCUnit.Companion.ftToSigma
 import matt.v1.compcache.GaussianFit
-import matt.v1.compcache.PPCUnit
 import matt.v1.compcache.Point
 import matt.v1.compcache.PreDNPopR
 import matt.v1.compcache.Stimulation
@@ -57,7 +56,8 @@ import matt.v1.model.PopulationResponse
 import matt.v1.model.Stimulus
 import matt.v1.model.tdDivNorm
 import org.apache.commons.math3.exception.ConvergenceException
-import kotlin.math.roundToInt
+import java.util.Random
+import kotlin.math.max
 
 enum class PoissonVar { NONE, YES, FAKE1, FAKE5, FAKE10 }
 
@@ -129,8 +129,8 @@ data class Experiment(
   }
 
   companion object {
-	const val CONTRAST1 = 7.5
-	const val CONTRAST2 = 20.0
+	val CONTRAST1 = 7.5
+	val CONTRAST2 = 20.0
   }
 
 
@@ -175,7 +175,7 @@ data class Experiment(
 		text = xlabel
 		fill = Color.WHITE
 	  }
-	  max = xMetaMax ?: xMax
+	  max = (xMetaMax ?: xMax).toDouble()
 	}
 	(fig.chart.yAxis as DefaultNumericAxis).apply {
 	  name = ylabel
@@ -184,8 +184,8 @@ data class Experiment(
 		fill = Color.WHITE
 	  }
 	  if (!autoY) {
-		max = yMax
-		min = yMin
+		max = (yMax).toDouble()
+		min = yMin.toDouble()
 	  }
 	}
 
@@ -226,7 +226,7 @@ data class Experiment(
 	  }
 	}
 	fig.autorangeY()
-	fig.autorangeXWith(xMin, xMax)
+	fig.autorangeXWith(xMin.toDouble(), xMax.toDouble())
 	runningProp.value = false
   }
 
@@ -238,7 +238,7 @@ data class Experiment(
 		  .runAndExtract {
 			val xForThread = x
 			runLater {
-			  fig.series[0].add(xForThread, it)
+			  fig.series[0].add(xForThread.toDouble(), it.toDouble())
 			}
 			var nextFitIndex = 1
 			series.forEachIndexed { i, s ->
@@ -264,7 +264,7 @@ data class Experiment(
 			  runLater {
 				if (g != null) {
 				  g.forEachIndexed { index, p ->
-					fig.series[nextFitIndex].set(index, p.x, p.y)
+					fig.series[nextFitIndex].set(index, p.x.toDouble(), p.y.toDouble())
 					fig.styleSeries(i = nextFitIndex, line = true, marker = false)
 				  }
 				  nextFitIndex++
@@ -307,11 +307,11 @@ data class Experiment(
 
 		  resultData.forEachIndexed { i, r ->
 			/*println("adding point x=${r.x} y=${r.y}")*/
-			figSeries.set(i, r.x, r.y)
+			figSeries.set(i, r.x.toDouble(), r.y.toDouble())
 		  }
 		  if (g != null) {
 			g.forEachIndexed { index, p ->
-			  fig.series[nextFitIndex].set(index, p.x, p.y)
+			  fig.series[nextFitIndex].set(index, p.x.toDouble(), p.y.toDouble())
 			  fig.styleSeries(i = nextFitIndex, line = true, marker = false)
 			}
 			nextFitIndex++
@@ -328,7 +328,7 @@ data class Experiment(
 		}
 
 		if (autoY) fig.autorangeY()
-		fig.autorangeXWith(xMin, xMax)
+		fig.autorangeXWith(xMin.toDouble(), xMax.toDouble())
 		fig.chart.axes.forEach { a -> a.forceRedraw() }
 		fig.chart.legend.updateLegend(fig.chart.datasets, fig.chart.renderers, true)
 	  }
@@ -405,11 +405,15 @@ data class Experiment(
 	  cell = this,
 	  stim = cfgStim,
 	  popR = popR?.copy(
-		divNorm = if (metaC != null) popR.divNorm.copy(c = metaC!!) else if (priorW != null) popR.divNorm.copy(c = prior()().also {
-		  if (this == stupid) {
-			println("priorC=$it")
-		  }
-		}) else popR.divNorm
+		divNorm = when {
+		  metaC != null  -> popR.divNorm.copy(c = metaC!!)
+		  priorW != null -> popR.divNorm.copy(c = prior()().also {
+			if (this == stupid) {
+			  println("priorC=$it")
+			}
+		  })
+		  else           -> popR.divNorm
+		}
 	  )?.popRCfg(),
 	  attention = attentionExp
 	).findOrCompute(debug = false)
@@ -437,33 +441,40 @@ data class Experiment(
 			ftStim,
 			popR = PreDNPopR(ftStim, attentionExp, pop)()
 		  )
-		  warnOnce("debugging ppc")
+		  //		  warnOnce("debugging ppc")
 		  val preRI = c.cfgStim(
 			cfgStim = trialStim,
 			popR = PreDNPopR(trialStim, attentionExp, pop)()
 		  )
 
+		  /*		  val ri = when (poissonVar) {
+					  NONE   -> preRI.roundToInt().toApint()
+					  YES    -> preRI.getPoisson()
+					  FAKE1  -> (preRI.roundToInt() + 1).toApint()
+					  FAKE5  -> (preRI.roundToInt() + 5).toApint()
+					  FAKE10 -> (preRI.roundToInt() + 10).toApint()
+					}
+					(PPCUnit(
+					  ft = ft.toApfloat(),
+					  ri = ApfloatMath.round(ri, 20, RoundingMode.UNNECESSARY).truncate()
+					).findOrCompute(debug = false))*/
+
+
 		  val ri = when (poissonVar) {
-			NONE   -> preRI.roundToInt()
-			YES    -> preRI.getPoisson()
-			FAKE1  -> preRI.roundToInt() + 1
-			FAKE5  -> preRI.roundToInt() + 5
-			FAKE10 -> preRI.roundToInt() + 10
+			NONE   -> preRI
+			YES    -> max(preRI + Random().nextGaussian()*ftToSigma(preRI)/*GPPCUnit.SIGMA*/, 0.0)
+			FAKE1  -> preRI + 1*ftToSigma(preRI)
+			FAKE5  -> preRI + 5*ftToSigma(preRI)
+			FAKE10 -> preRI + 10*ftToSigma(preRI)
 		  }
-
-		  /*println("ri=$ri")
-		  println("ft=$ft")*/
-		  /*ri.toDouble()*/ /*FLAT*/
-		  /*println("ft:$ft")*/
-		  /*ft*/ /*FLAT*/
-		  /*println("ft:$ft")*/
-		  /*ft*/
-
-		  (PPCUnit(
+		  val g = GPPCUnit(
 			ft = ft,
 			ri = ri
-		  ).findOrCompute(debug = false))
-		  /*(ft - ri) *//*NOT FLAT!*/
+		  ).findOrCompute(debug = false)
+		  /* println("ft=$ft")
+		   println("ri=$ri")
+		   println("g=$g")*/
+		  g
 
 		}
 
@@ -477,10 +488,10 @@ data class Experiment(
 		FAKE1  -> it.mean()
 		FAKE5  -> it.mean()
 		FAKE10 -> it.mean()
-		else   -> it.geometricMean(bump = 5.0)
+		else   -> it.geometricMean(/*bump = 5.0.toApfloat()*/)
 	  }
-	  /*println("y=$y")*/
-	  y
+	  println("y=$y")
+	  y!!
 	}
 	/*How do you add weights to elements in a product?*/
 	/*pt include in any discussions, not in computation. PPC is a proportion so this is legal*/
@@ -506,15 +517,15 @@ data class Experiment(
 	  }
 	  cell = when (xVar) {
 		DIST_4_ATTENTION                                       -> pop.complexCells
-			.filter { it.X0 == pop.complexCells.map { it.X0 }.sorted().first { it >= x } }
+			.filter { it.Y0 == 0.0 }
+			.filter { it.X0 == pop.complexCells.filter { it.Y0 == 0.0 }.map { it.X0 }.sorted().first { it >= x } }
 			.filter { it.t == 0.0 }
-			.filter { it.Y0 == pop.complexCells.map { it.Y0 }.sorted().first { it >= 0.0 } }
 			.takeIf { it.count() == 1 }!!
 			.first()
 		in listOf(PREF_ORIENTATION, STIM_AND_PREF_ORIENTATION) -> pop.complexCells
+			.filter { it.Y0 == 0.0 }
+			.filter { it.X0 == 0.0 }
 			.filter { it.t == pop.complexCells.map { it.t }.sorted().first { it >= x } }
-			.filter { it.X0 == pop.complexCells.map { it.X0 }.sorted().first { it >= 0.0 } }
-			.filter { it.Y0 == pop.complexCells.map { it.Y0 }.sorted().first { it >= 0.0 } }
 			.takeIf {
 			  val b = it.count() == 1
 			  if (!b) {

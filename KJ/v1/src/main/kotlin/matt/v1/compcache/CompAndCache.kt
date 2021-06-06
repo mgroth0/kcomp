@@ -2,13 +2,22 @@
 
 package matt.v1.compcache
 
-import matt.kjlib.jmath.BIG_E
+import matt.kjlib.jmath.Ae
+import matt.kjlib.jmath.PI
+import matt.kjlib.jmath.div
 import matt.kjlib.jmath.e
+import matt.kjlib.jmath.minus
+import matt.kjlib.jmath.plus
+import matt.kjlib.jmath.pow
+import matt.kjlib.jmath.sq
+import matt.kjlib.jmath.sqrt
+import matt.kjlib.jmath.times
+import matt.kjlib.jmath.unaryMinus
+import matt.kjlib.ranges.step
 import matt.kjlib.str.tab
 import matt.kjlib.stream.onEveryIndexed
 import matt.klib.dmap.withStoringDefault
 import matt.klib.math.sq
-import matt.klib.ranges.step
 import matt.klibexport.klibexport.setAll
 import matt.v1.lab.Experiment.CoreLoop
 import matt.v1.lab.petri.Population
@@ -19,13 +28,10 @@ import org.apache.commons.math3.fitting.GaussianCurveFitter
 import org.apache.commons.math3.fitting.WeightedObservedPoint
 import org.apfloat.Apfloat
 import org.apfloat.ApfloatMath
+import org.apfloat.Apint
 import org.apfloat.ApintMath
-import java.math.BigDecimal
-import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.pow
-import kotlin.math.roundToInt
-import kotlin.math.sin
 import kotlin.math.sqrt
 
 abstract class ComputeCache<I, O> {
@@ -102,8 +108,8 @@ data class AttentionAmp(
   override val computer = Companion
 
   protected companion object: ComputeCache<AttentionAmp, Double>() {
-	private const val G = 7.0
-	private const val SIGMA_ATTENTION = 2.0
+	private val G = 7.0
+	private val SIGMA_ATTENTION = 2.0
 	override val compute: AttentionAmp.()->Double = {
 	  1 + G*e.pow(-((norm.findOrCompute().sq())/(2*SIGMA_ATTENTION.sq())))
 	}
@@ -119,7 +125,7 @@ data class BayesianPriorC(
 
   protected companion object: ComputeCache<BayesianPriorC, Double>() {
 	override val compute: BayesianPriorC.()->Double = {
-	  val v = c0 - w0*cos(4*t*PI/180)
+	  val v = c0 - w0*cos(4.0*t*PI/180)
 	  require(v >= 0)
 	  v
 	}
@@ -127,32 +133,54 @@ data class BayesianPriorC(
 }
 
 data class PPCUnit(
-  val ft: Double,
-  val ri: /*Double*/Int
-): ComputeInput<PPCUnit, Double>() {
+  val ft: Apfloat,
+  val ri: /*Double*/Apint
+): ComputeInput<PPCUnit, Apfloat>() {
 
-  constructor(ft: Double, ri: Double): this(ft = ft, ri = ri.roundToInt())
+  /*constructor(ft: Apfloat, ri: Apint): this(ft = ft, ri = ri.roundToInt())*/
 
   override val computer = Companion
 
 
-  protected companion object: ComputeCache<PPCUnit, Double>() {
-	override val compute: PPCUnit.()->Double = {
-	  val debugE = Apfloat(BIG_E)/*.alsoPrintln { "debugE:${this}" }*/
-	  val debugNft = Apfloat(BigDecimal(-ft))/*.alsoPrintln { "debugNft:${this}" }*/
-	  val debugTopLeft = ApfloatMath.pow(debugE, debugNft)/*.alsoPrintln { "debugTopLeft:${this}" }*/
+  protected companion object: ComputeCache<PPCUnit, Apfloat>() {
+	override val compute: PPCUnit.()->Apfloat = {
+	  /*val debugE = Apfloat(BIG_E)*//*.alsoPrintln { "debugE:${this}" }*/
+	  val debugNft = -ft /*Apfloat(BigDecimal(-ft))*//*.alsoPrintln { "debugNft:${this}" }*/
+	  val debugTopLeft = ApfloatMath.pow(Ae, debugNft)/*.alsoPrintln { "debugTopLeft:${this}" }*/
 	  /*println("debugTopRight-ft=${ft}")
 	  println("debugTopRight-ri=${ri}")*/
 	  /*//	  println("ft1=$ft")
 	  //	  println("ri1=$ri")*/
 	  val beforeBD = ft.pow(ri)
-	  val debugTopRight = Apfloat(BigDecimal(beforeBD))
+	  val debugTopRight = beforeBD /*Apfloat(BigDecimal(beforeBD))*/
 	  val debugTop = debugTopLeft.multiply(debugTopRight)
 	  val debugBottom = ApintMath.factorial(ri.toLong())
 
-	  (debugTop.divide(debugBottom)).toDouble() /*NOT FLAT*/
+	  debugTop/debugBottom
+	  /*(debugTop.divide(debugBottom)).toDouble() *//*NOT FLAT*/
 	  /*debugTop.toDouble() *//*FLAT*/
 	  /*debugBottom.toDouble() *//*FLAT*/
+	}
+  }
+}
+
+data class GPPCUnit(
+  val ft: Double,
+  val ri: /*Double*/Double
+): ComputeInput<GPPCUnit, Double>() {
+
+  /*constructor(ft: Apfloat, ri: Apint): this(ft = ft, ri = ri.roundToInt())*/
+
+  override val computer = Companion
+
+
+  companion object: ComputeCache<GPPCUnit, Double>() {
+	fun ftToSigma(ft: Double) = ft
+	override val compute: GPPCUnit.()->Double = {
+	  val SIGMA = ftToSigma(ft) /*the only way to get a monotonic increase*/    /*1.0*/
+	  val NORMALIZER = 1/(sqrt(2*PI)*SIGMA)
+	  val DENOM = 2*SIGMA.sq()
+	  NORMALIZER*e.pow((-(ri - ft).sq()/DENOM))
 	}
   }
 }
@@ -215,7 +243,7 @@ data class XTheta(
 
   companion object: ComputeCache<XTheta, Double>() {
 	override val compute: XTheta.()->Double = {
-	  (cos(t)*(dX) + sin(t)*(dY))
+	  (Math.cos(t)*(dX) + Math.sin(t)*(dY))
 	}
   }
 }
@@ -230,7 +258,7 @@ data class YTheta(
 
   companion object: ComputeCache<YTheta, Double>() {
 	override val compute: YTheta.()->Double = {
-	  (-sin(t)*(dX) + cos(t)*(dY))
+	  (-Math.sin(t)*(dX) + Math.cos(t)*(dY))
 	}
   }
 }
@@ -260,9 +288,12 @@ data class GaussianCoefCalculator(
   }
 }
 
-
 data class Point(val x: Double, val y: Double) {
   fun normDist(other: Point) = sqrt((x - other.x).sq() + (y - other.y).sq())
+}
+
+data class APoint(val x: Apfloat, val y: Apfloat) {
+  fun normDist(other: APoint) = sqrt((x - other.x).sq() + (y - other.y).sq())
 }
 
 val Collection<Point>.trough get() = minByOrNull { it.y }
@@ -328,7 +359,107 @@ data class GaussianPoint(
 
   companion object: ComputeCache<GaussianPoint, Double>() {
 	override val compute: GaussianPoint.()->Double = {
-	  a*e.pow(-(x - b).sq()/(2*c.sq()))
+	  a*e.pow(-(x - b).sq()/(2.0*c.sq()))
+	}
+  }
+}
+
+
+data class Radians(
+  val degrees: Double,
+): ComputeInput<Radians, Double>() {
+  override val computer = Companion
+
+  companion object: ComputeCache<Radians, Double>() {
+	override val compute: Radians.()->Double = {
+	  Math.toRadians(degrees)
+	}
+  }
+}
+
+data class ARadians(
+  val degrees: Apfloat,
+): ComputeInput<ARadians, Apfloat>() {
+  override val computer = Companion
+
+  companion object: ComputeCache<ARadians, Apfloat>() {
+	override val compute: ARadians.()->Apfloat = {
+	  ApfloatMath.toRadians(degrees)
+	}
+  }
+}
+
+data class Sin(
+  val radians: Radians,
+): ComputeInput<Sin, Double>() {
+  override val computer = Companion
+
+  companion object: ComputeCache<Sin, Double>() {
+	override val compute: Sin.()->Double = {
+	  Math.sin(radians())
+	}
+  }
+}
+
+data class Cos(
+  val radians: Radians,
+): ComputeInput<Cos, Double>() {
+  override val computer = Companion
+
+  companion object: ComputeCache<Cos, Double>() {
+	override val compute: Cos.()->Double = {
+	  Math.cos(radians())
+	}
+  }
+}
+
+
+data class ASin(
+  val radians: ARadians,
+): ComputeInput<ASin, Apfloat>() {
+  override val computer = Companion
+
+  companion object: ComputeCache<ASin, Apfloat>() {
+	override val compute: ASin.()->Apfloat = {
+	  ApfloatMath.sin(radians())
+	}
+  }
+}
+
+data class ACos(
+  val radians: ARadians,
+): ComputeInput<ACos, Apfloat>() {
+  override val computer = Companion
+
+  companion object: ComputeCache<ACos, Apfloat>() {
+	override val compute: ACos.()->Apfloat = {
+	  ApfloatMath.cos(radians())
+	}
+  }
+}
+
+data class Polar(
+  val radius: Double,
+  val rads: Radians
+): ComputeInput<Polar, Point>() {
+  override val computer = Companion
+
+  companion object: ComputeCache<Polar, Point>() {
+	override val compute: Polar.()->Point = {
+	  Point(x = radius*Cos(rads)(), y = radius*Sin(rads)())
+	}
+  }
+}
+
+data class APolar(
+  val radius: Apfloat,
+  val rads: ARadians
+): ComputeInput<APolar, APoint>() {
+  override val computer = Companion
+
+  companion object: ComputeCache<APolar, APoint>() {
+	override val compute: APolar.()->APoint = {
+	  APoint(x = radius*ACos(rads)(), y = radius*ASin(rads)())
 	}
   }
 }

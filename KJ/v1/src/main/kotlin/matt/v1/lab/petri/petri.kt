@@ -1,9 +1,10 @@
 package matt.v1.lab.petri
 
-import matt.kjlib.str.taball
-import matt.klib.ranges.step
+import matt.kjlib.ranges.step
 import matt.klibexport.klibexport.allUnique
 import matt.v1.compcache.Point
+import matt.v1.compcache.Polar
+import matt.v1.compcache.Radians
 import matt.v1.lab.rcfg.ResourceUsageCfg.FINAL
 import matt.v1.lab.rcfg.rCfg
 import matt.v1.model.Cell
@@ -15,8 +16,6 @@ import matt.v1.model.SimpleCell
 import matt.v1.model.SimpleCell.Phase
 import matt.v1.model.SimpleCell.Phase.SIN
 import matt.v1.model.Stimulus
-import kotlin.math.cos
-import kotlin.math.sin
 
 val baseField = FieldLocAndOrientation(
   t = rCfg.THETA_MIN,
@@ -57,6 +56,7 @@ class Population(
   conCircles: Boolean = false
 ) {
   init {
+	println("building pop")
 	require(!(alongY && conCircles))
   }
 
@@ -70,17 +70,17 @@ class Population(
   }
 
 
-  private val spacialRange = if (conCircles) (0.0..1.0 step 1.0) else
-	(-rCfg.X0_ABS_MINMAX..rCfg.X0_ABS_MINMAX step (rCfg.X0_STEP*rCfg.CELL_X0_STEP_MULT*(if (alongY) rCfg.DEBUG_3D_SPACIAL_MULT else 1.0)))
+  private val spacialRange = /*if (conCircles) (0.0..1.0 step 1.0) else
+	*/
+	  (-rCfg.X0_ABS_MINMAX..rCfg.X0_ABS_MINMAX step (rCfg.X0_STEP*rCfg.CELL_X0_STEP_MULT))
   private val circle = Circle(radius = rCfg.X0_ABS_MINMAX)
   private val sinCells = spacialRange
 	  .flatMap { x0 ->
-		(rCfg.THETA_MIN..rCfg.THETA_MAX step (rCfg.CELL_THETA_STEP*(if (alongY) rCfg.DEBUG_3D_THETA_MULT else 1.0))).flatMap { t ->
+		(rCfg.THETA_MIN..rCfg.THETA_MAX step (rCfg.CELL_THETA_STEP)).flatMap { t ->
 		  if (conCircles) {
-			if (x0 < 0.0) {
-			  listOf()
-			} else if (x0 == 0.0) {
-			  mutableListOf(
+			when {
+			  x0 < 0.0  -> listOf()
+			  x0 == 0.0 -> mutableListOf(
 				baseSimpleSinCell.copy(
 				  f = baseSimpleSinCell.f.copy(
 					X0 = 0.0,
@@ -89,18 +89,18 @@ class Population(
 				  )
 				)
 			  )
-			} else {
-			  val cells =
-				  mutableListOf<SimpleCell>()
-			  val circleThetaStep = (rCfg.CELL_THETA_STEP*rCfg.DEBUG_3D_THETA_MULT)/*90*//x0
-			  var a = 0.0
-			  while (a < 360.0) {
-				val x = x0*cos(Math.toRadians(a))
-				val y = x0*sin(Math.toRadians(a))
-				cells += baseSimpleSinCell.copy(f = baseSimpleSinCell.f.copy(X0 = x, Y0 = y, t = t))
-				a += circleThetaStep
+			  else      -> {
+				val cells =
+					mutableListOf<SimpleCell>()
+				val circleThetaStep = (rCfg.CELL_THETA_STEP)/*90*//x0
+				var a = 0.0
+				while (a < 360.0) {
+				  val p = Polar(x0, Radians(a))()
+				  cells += baseSimpleSinCell.copy(f = baseSimpleSinCell.f.copy(X0 = p.x, Y0 = p.y, t = t))
+				  a += circleThetaStep
+				}
+				cells
 			  }
-			  cells
 			}
 		  } else {
 			(if (alongY) spacialRange else listOf(0.0)).flatMap { y0 ->
@@ -110,28 +110,33 @@ class Population(
 		}
 
 
+	  }.apply {
 	  }.filter {
 		if (conCircles) true
 		else Point(x = it.X0, y = it.Y0).normDist(circle.center) <= circle.radius
 	  }
 
 	  .also {
-		taball("cells", it)
+		/*taball("cells", it)*/
 		require(it.allUnique())
 		if (rCfg == FINAL) {
 		  require(it.size == rCfg.REQ_SIZE) { "size is ${it.size} but should be $rCfg.REQ_SIZE" }
 		}
 	  }
+
+
   private val cosCells = sinCells.map {
 	it.copy(phase = Phase.COS)
   }
 
+
   val complexCells = sinCells.zip(cosCells).map { ComplexCell(it) }
 }
+
 
 /*val pop1D = Population(conCircles = true).apply {
   println("pop1d size:${complexCells.size}")
 }*/
-val pop2D = Population(/*alongY = true, */conCircles = true).apply {
+val pop2D = Population(alongY = rCfg.CELLS_ALONG_Y, conCircles = rCfg.CON_CIRCLES).apply {
   println("pop2d size:${complexCells.size}")
 }

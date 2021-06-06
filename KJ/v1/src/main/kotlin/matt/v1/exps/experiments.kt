@@ -1,8 +1,10 @@
 package matt.v1.exps
 
+import matt.kjlib.jmath.assertRound
 import matt.kjlib.jmath.mean
+import matt.kjlib.jmath.toApfloat
+import matt.kjlib.ranges.step
 import matt.klib.log.warnOnce
-import matt.klib.ranges.step
 import matt.v1.compcache.PPCUnit
 import matt.v1.compcache.PreDNPopR
 import matt.v1.gui.Figure
@@ -31,6 +33,7 @@ import matt.v1.lab.rcfg.rCfg
 import matt.v1.model.ASD_SIGMA_POOLING
 import matt.v1.model.ATTENTION_SUPP_SIGMA_POOLING
 import matt.v1.model.Stimulus
+import matt.v1.model.tdDivNorm
 import kotlin.math.pow
 
 /*(Rosenberg et al. 2015)*/
@@ -96,7 +99,7 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
   val td = withDN.copy(label = "TD")
   val ascC = td.copy(
 	label = "ASC c",
-	popRcfg = { copy(divNorm = divNorm.copy(c = 7.5*10.0.pow(-5))) },
+	popRcfg = { copy(divNorm = divNorm.copy(c = (tdDivNorm.c*0.75))) },
   )
   val popGainBySize = exps.last().copy(
 	name = "4.C",
@@ -124,7 +127,7 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	name = "5.C",
 	title = "dist. from center of attn. causes ↓ pop. gain and then ↑ (matches b. data)",
 	xMin = 0.0,
-	xMax = 10.0,
+	xMax = rCfg.X0_DIST_MAX,
 	xVar = DIST_4_ATTENTION,
 	xStep = rCfg.F5C_STEP,
 	xlabel = "Distance (Degrees)",
@@ -153,7 +156,7 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 
 		stimCfg = {
 		  it.copy(
-			a = Experiment.CONTRAST1*0.01
+			a = Experiment.CONTRAST1*(0.01)
 		  )
 		},
 
@@ -191,17 +194,21 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	decode(
 	  ftStim = seriesStim,
 	  trialStim = seriesStim.copy(f = seriesStim.f.copy(t = 90.0)),
-	)
+	).toDouble()
   }
   exps += exps.last().copy(
-	name = "S1.B",
+	name = "S1.B.1",
 	xVar = STIM_ORIENTATION,
 	xlabel = "Stimulus Orientation (Degrees)",
 	ylabel = "p(Θ|r)",
 	autoY = true,
 	title = "Probabilistic Population Code (PPC)",
 	stimTrans = { copy(SF = 3.0) },
-	series = exps.last().series.map { it.copy(yExtractCustom = PPC) } + listOf(
+	series = exps.last().series.map { it.copy(yExtractCustom = PPC) }
+  )
+  exps += exps.last().copy(
+	name = "S1.B.2",
+	series = listOf(
 	  contrast1.copy(label = "${contrast1.label} (Poisson)", poissonVar = YES, yExtractCustom = PPC),
 	  contrast2.copy(label = "${contrast2.label} (Poisson)", poissonVar = YES, yExtractCustom = PPC)
 	)
@@ -285,11 +292,11 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 
   val weakPrior = flatPrior.copy(
 	label = "Weak",
-	priorWeight = 2.5*10.0.pow(-5)/* 7*10.0.pow(-5) *//*DEBUG*/ /**/
+	priorWeight = (2.5*10.0.pow(-5))/* 7*10.0.pow(-5) *//*DEBUG*/ /**/
   )
   val strongPrior = flatPrior.copy(
 	label = "Strong",
-	priorWeight = 5*10.0.pow(-5)  /*7.49*10.0.pow(-5)*/
+	priorWeight = (5*10.0.pow(-5))  /*7.49*10.0.pow(-5)*/
   )
   val veryStrongPrior = 7.5*10.0.pow(-5)
   exps += baseExp.copy(
@@ -375,7 +382,7 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	  /*.takeIf { it.count() == 1 }!!.maxOrNull()!!*/ // .mean()/*.first()*/
 	  /*}.mean()*/
 	  /*println("x=$x d=$d")*/
-	  d
+	  d.toDouble()
 
 	}
   )
@@ -398,7 +405,7 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	  )
 	),
 	pop = pop2D,
-	xStep = rCfg.CELL_THETA_STEP*rCfg.DEBUG_3D_THETA_MULT
+	xStep = rCfg.CELL_THETA_STEP
   )
 
   exps += exps.last().copy(
@@ -503,7 +510,7 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	xlabel = "Relative Orientation (Degrees)",
 	ylabel = "Population CCW Response",
 	title = "Psychometric Simulation of the Oblique Effect (Deterministic)",
-	xMin = -10.0,
+	xMin = (-10.0),
 	xMax = 10.0,
 	xVar = REL_STIM_ORIENTATION,
 	xStep = 1.0,
@@ -553,7 +560,7 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 
   val p0 = SeriesCfg(
 	label = "P=0",
-	yExtractCustom = { PPCUnit(ft = x, ri = x + 0)() },
+	yExtractCustom = { PPCUnit(ft = x.toApfloat(), ri = x.toApfloat().assertRound())().toDouble() },
   )
   exps += baseExp.copy(
 	name = "Ideal Poisson",
@@ -570,7 +577,9 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	series = listOf(
 	  p0,
 	  *(1..4).map { i ->
-		p0.copy(label = "P=$i", yExtractCustom = { PPCUnit(ft = x, ri = x + i)() })
+		p0.copy(
+		  label = "P=$i",
+		  yExtractCustom = { PPCUnit(ft = x.toApfloat(), ri = (x + i).toApfloat().assertRound())().toDouble() })
 	  }.toTypedArray()
 	)
   )
