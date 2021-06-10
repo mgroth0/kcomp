@@ -10,7 +10,8 @@ import matt.json.custom.toJsonWriter
 import matt.json.prim.loadJson
 import matt.kjlib.commons.DATA_FOLDER
 import matt.kjlib.file.get
-import matt.kjlib.jmath.geometricMean
+import matt.kjlib.jmath.getPoisson
+import matt.kjlib.jmath.logSum
 import matt.kjlib.jmath.mean
 import matt.kjlib.jmath.orth
 import matt.kjlib.jmath.sigFigs
@@ -25,6 +26,7 @@ import matt.v1.compcache.BayesianPriorC
 import matt.v1.compcache.GPPCUnit
 import matt.v1.compcache.GPPCUnit.Companion.ftToSigma
 import matt.v1.compcache.GaussianFit
+import matt.v1.compcache.LogPoissonPPCUnit
 import matt.v1.compcache.Point
 import matt.v1.compcache.PreDNPopR
 import matt.v1.compcache.Stimulation
@@ -58,6 +60,7 @@ import matt.v1.model.tdDivNorm
 import org.apache.commons.math3.exception.ConvergenceException
 import java.util.Random
 import kotlin.math.max
+import kotlin.math.roundToInt
 
 enum class PoissonVar { NONE, YES, FAKE1, FAKE5, FAKE10 }
 
@@ -418,6 +421,8 @@ data class Experiment(
 	  attention = attentionExp
 	).findOrCompute(debug = false)
 
+	val LOG_FORM = true
+
 	fun decodeBeforeGeoMean(
 	  ftStim: Stimulus,
 	  trialStim: Stimulus,
@@ -447,54 +452,62 @@ data class Experiment(
 			popR = PreDNPopR(trialStim, attentionExp, pop)()
 		  )
 
-		  /*		  val ri = when (poissonVar) {
-					  NONE   -> preRI.roundToInt().toApint()
-					  YES    -> preRI.getPoisson()
-					  FAKE1  -> (preRI.roundToInt() + 1).toApint()
-					  FAKE5  -> (preRI.roundToInt() + 5).toApint()
-					  FAKE10 -> (preRI.roundToInt() + 10).toApint()
-					}
-					(PPCUnit(
-					  ft = ft.toApfloat(),
-					  ri = ApfloatMath.round(ri, 20, RoundingMode.UNNECESSARY).truncate()
-					).findOrCompute(debug = false))*/
 
 
-		  val ri = when (poissonVar) {
-			NONE   -> preRI
-			YES    -> max(preRI + Random().nextGaussian()*ftToSigma(preRI)/*GPPCUnit.SIGMA*/, 0.0)
-			FAKE1  -> preRI + 1*ftToSigma(preRI)
-			FAKE5  -> preRI + 5*ftToSigma(preRI)
-			FAKE10 -> preRI + 10*ftToSigma(preRI)
+		  if (LOG_FORM) {
+			val ri = when (poissonVar) {
+			  NONE   -> preRI.roundToInt()
+			  YES    -> preRI.getPoisson()
+			  FAKE1  -> (preRI.roundToInt() + 1)
+			  FAKE5  -> (preRI.roundToInt() + 5)
+			  FAKE10 -> (preRI.roundToInt() + 10)
+			}
+			val r = LogPoissonPPCUnit(
+			  ft = ft,
+			  ri = ri
+			).findOrCompute(debug = false)
+			/*	println("ft=$ft")
+				println("ri=$ri")
+				println("r=$r")*/
+			r
+		  } else {
+			/*val ri = when (poissonVar) {
+		   NONE   -> preRI.roundToInt().toApint()
+		   YES    -> preRI.getPoisson().toApint()
+		   FAKE1  -> (preRI.roundToInt() + 1).toApint()
+		   FAKE5  -> (preRI.roundToInt() + 5).toApint()
+		   FAKE10 -> (preRI.roundToInt() + 10).toApint()
+		 }
+		 (PPCUnit(
+		   ft = ft.toApfloat(),
+		   ri = ApfloatMath.round(ri, 20, RoundingMode.UNNECESSARY).truncate()
+		 ).findOrCompute(debug = false))*/
+
+
+			val ri = when (poissonVar) {
+			  NONE   -> preRI
+			  YES    -> max(preRI + Random().nextGaussian()*ftToSigma(preRI), 0.0)
+			  FAKE1  -> preRI + 1*ftToSigma(preRI)
+			  FAKE5  -> preRI + 5*ftToSigma(preRI)
+			  FAKE10 -> preRI + 10*ftToSigma(preRI)
+			}
+			GPPCUnit(
+			  ft = ft,
+			  ri = ri
+			).findOrCompute(debug = false)
 		  }
-		  val g = GPPCUnit(
-			ft = ft,
-			ri = ri
-		  ).findOrCompute(debug = false)
-		  /* println("ft=$ft")
-		   println("ri=$ri")
-		   println("g=$g")*/
-		  g
 
 		}
 
 	fun decode(
 	  ftStim: Stimulus,
 	  trialStim: Stimulus,
-	) = decodeBeforeGeoMean(ftStim = ftStim, trialStim = trialStim).let {
-	  /*println("getting geo mean of")*/
-	  /*taball(it.toList())*/
-	  val y = when (poissonVar) {
-		FAKE1  -> it.mean()
-		FAKE5  -> it.mean()
-		FAKE10 -> it.mean()
-		else   -> it.geometricMean(/*bump = 5.0.toApfloat()*/)
+	) = (1..(if (poissonVar == YES) 100 else 1)).map {
+	  decodeBeforeGeoMean(ftStim = ftStim, trialStim = trialStim).run {
+		if (LOG_FORM) sum() else logSum()
 	  }
-	  println("y=$y")
-	  y!!
-	}
-	/*How do you add weights to elements in a product?*/
-	/*pt include in any discussions, not in computation. PPC is a proportion so this is legal*/
+	}.mean()
+
 
 	override fun iteration(): Map<SeriesCfg, MutableList<Point>> {
 

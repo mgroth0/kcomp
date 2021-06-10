@@ -6,6 +6,7 @@ import matt.kjlib.jmath.Ae
 import matt.kjlib.jmath.PI
 import matt.kjlib.jmath.div
 import matt.kjlib.jmath.e
+import matt.kjlib.jmath.logFactorial
 import matt.kjlib.jmath.minus
 import matt.kjlib.jmath.plus
 import matt.kjlib.jmath.pow
@@ -31,6 +32,7 @@ import org.apfloat.ApfloatMath
 import org.apfloat.Apint
 import org.apfloat.ApintMath
 import kotlin.math.cos
+import kotlin.math.ln
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -164,6 +166,23 @@ data class PPCUnit(
   }
 }
 
+data class LogPoissonPPCUnit(
+  val ft: Double,
+  val ri: /*Double*/Int
+): ComputeInput<LogPoissonPPCUnit, Double>() {
+
+  /*constructor(ft: Apfloat, ri: Apint): this(ft = ft, ri = ri.roundToInt())*/
+
+  override val computer = Companion
+
+
+  protected companion object: ComputeCache<LogPoissonPPCUnit, Double>() {
+	override val compute: LogPoissonPPCUnit.()->Double = {
+	  ln(e.pow(-ft)*ft.pow(ri)) - ri.logFactorial()
+	}
+  }
+}
+
 data class GPPCUnit(
   val ft: Double,
   val ri: /*Double*/Double
@@ -175,7 +194,7 @@ data class GPPCUnit(
 
 
   companion object: ComputeCache<GPPCUnit, Double>() {
-	fun ftToSigma(ft: Double) = ft
+	fun ftToSigma(ft: Double) = sqrt(ft) /*from gaussian distribution*/
 	override val compute: GPPCUnit.()->Double = {
 	  val SIGMA = ftToSigma(ft) /*the only way to get a monotonic increase*/    /*1.0*/
 	  val NORMALIZER = 1/(sqrt(2*PI)*SIGMA)

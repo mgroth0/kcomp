@@ -34,7 +34,6 @@ import matt.v1.model.ASD_SIGMA_POOLING
 import matt.v1.model.ATTENTION_SUPP_SIGMA_POOLING
 import matt.v1.model.Stimulus
 import matt.v1.model.tdDivNorm
-import kotlin.math.pow
 
 /*(Rosenberg et al. 2015)*/
 /*(Rosenberg et al. 2015 SI)*/
@@ -56,9 +55,7 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	  cell.cfgStim(
 		cfgStim = seriesStim,
 		popR = PreDNPopR(seriesStim, attentionExp, pop)()
-	  )/*.also {
-		println("cfgStim:$it")
-	  }*/
+	  )
 	}
   )
   val baseExp = Experiment(
@@ -194,7 +191,7 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	decode(
 	  ftStim = seriesStim,
 	  trialStim = seriesStim.copy(f = seriesStim.f.copy(t = 90.0)),
-	).toDouble()
+	)
   }
   exps += exps.last().copy(
 	name = "S1.B.1",
@@ -292,18 +289,18 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 
   val weakPrior = flatPrior.copy(
 	label = "Weak",
-	priorWeight = (2.5*10.0.pow(-5))/* 7*10.0.pow(-5) *//*DEBUG*/ /**/
+	priorWeight = tdDivNorm.c*.25 /*(2.5*10.0.pow(-5))*//* 7*10.0.pow(-5) *//*DEBUG*/ /**/
   )
   val strongPrior = flatPrior.copy(
 	label = "Strong",
-	priorWeight = (5*10.0.pow(-5))  /*7.49*10.0.pow(-5)*/
+	priorWeight = tdDivNorm.c*.5 /*(5*10.0.pow(-5))*/  /*7.49*10.0.pow(-5)*/
   )
-  val veryStrongPrior = 7.5*10.0.pow(-5)
+  val veryStrongPrior = tdDivNorm.c*.75 /*7.5*10.0.pow(-5)*/
   exps += baseExp.copy(
 	name = "S4.A",
 	title = "Bayesian Priors: Suppressive Field Gain Term",
 	xMin = 0.0,
-	xMax = 170.0,
+	xMax = rCfg.THETA_MAX - rCfg.CELL_THETA_STEP,
 	xStep = 1.0,
 	xVar = PREF_ORIENTATION,
 	xlabel = "Preferred Orientation (Degrees)",

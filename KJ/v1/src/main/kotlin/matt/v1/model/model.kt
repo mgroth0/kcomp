@@ -144,10 +144,13 @@ abstract class FieldGenerator(
 	val m = cache ?: mutableListOf(pix(Point(x = 0.0, y = 0.0))).apply {
 	  (rCfg.X0_STEP..field.absLimXY step rCfg.X0_STEP).forEach { r ->
 
-		val circleThetaStep = (rCfg.CELL_THETA_STEP)/r
+		val normR = r * (1.0/rCfg.X0_STEP)
+		val circleThetaStep = (rCfg.CELL_THETA_STEP)/normR
 
 		var a = 0.0
+		/*if (this@FieldGenerator is Stimulus && X0 == 0.0 && Y0 == 0.0 && t in listOf(45.0, 90.0) && r ==1.0) {
 
+		}*/
 		while (a < 360.0) {
 		  val p = pix(Polar(radius = r, rads = Radians(a))())
 		  add(p)
@@ -316,7 +319,12 @@ data class SimpleCell(
 
 
   fun stimulate(stim: Stimulus) = if (rCfg.CON_CIRCLES)
-	stim.concentricCircles dot concentricCircles
+	(stim.concentricCircles dot concentricCircles)/*.also {
+	  if (phase == SIN && X0 == 0.0 && Y0 == 0.0 && t in listOf(45.0, 90.0) && stim.t == t) {
+		println("t=$t concentricCircles.sum=${concentricCircles.sum()} stim.concentricCircles.sum=${stim.concentricCircles.sum()}")
+		taball("concentricCircles", concentricCircles)
+	  }
+	}*/
   else stim.mat dot mat
 }
 
