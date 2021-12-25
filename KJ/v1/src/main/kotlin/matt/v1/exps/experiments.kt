@@ -5,10 +5,11 @@ import matt.kjlib.jmath.mean
 import matt.kjlib.jmath.toApfloat
 import matt.kjlib.ranges.step
 import matt.klib.log.warnOnce
+import matt.v1.compcache.MaybePreDNPopR
 import matt.v1.compcache.PPCUnit
-import matt.v1.compcache.PreDNPopR
 import matt.v1.gui.Figure
 import matt.v1.gui.StatusLabel
+import matt.v1.lab.ExpCategory.LOUIE
 import matt.v1.lab.ExpCategory.OTHER
 import matt.v1.lab.ExpCategory.ROSENBERG
 import matt.v1.lab.Experiment
@@ -22,6 +23,7 @@ import matt.v1.lab.Experiment.XVar.REL_STIM_ORIENTATION
 import matt.v1.lab.Experiment.XVar.SIZE
 import matt.v1.lab.Experiment.XVar.STIM_AND_PREF_ORIENTATION
 import matt.v1.lab.Experiment.XVar.STIM_ORIENTATION
+import matt.v1.lab.Experiment.XVar.TIME
 import matt.v1.lab.Fit.Gaussian
 import matt.v1.lab.PoissonVar.FAKE1
 import matt.v1.lab.PoissonVar.FAKE10
@@ -32,6 +34,7 @@ import matt.v1.lab.petri.pop2D
 import matt.v1.lab.rcfg.rCfg
 import matt.v1.model.ASD_SIGMA_POOLING
 import matt.v1.model.ATTENTION_SUPP_SIGMA_POOLING
+import matt.v1.model.PopulationResponse
 import matt.v1.model.Stimulus
 import matt.v1.model.tdDivNorm
 
@@ -39,7 +42,6 @@ import matt.v1.model.tdDivNorm
 /*(Rosenberg et al. 2015 SI)*/
 
 fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
-
 
   val noDN = SeriesCfg(
 	label = "- D.N.",
@@ -54,7 +56,7 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	yExtractCustom = {
 	  cell.cfgStim(
 		cfgStim = seriesStim,
-		popR = PreDNPopR(seriesStim, attentionExp, pop)()
+		popR = MaybePreDNPopR(seriesStim, attentionExp, pop)()
 	  )
 	}
   )
@@ -147,29 +149,29 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
   )
 
   val contrast1 =
-	  td.copy(
-		label = "${Experiment.CONTRAST1}%",
+	td.copy(
+	  label = "${Experiment.CONTRAST1}%",
 
 
-		stimCfg = {
-		  it.copy(
-			a = Experiment.CONTRAST1*(0.01)
-		  )
-		},
-
-
+	  stimCfg = {
+		it.copy(
+		  a = Experiment.CONTRAST1*(0.01)
 		)
-  val contrast2 =
-	  td.copy(
-		label = "${Experiment.CONTRAST2}%",
+	  },
 
-		stimCfg = {
-		  it.copy(
-			a = Experiment.CONTRAST2*0.01
-		  )
-		}
 
 	  )
+  val contrast2 =
+	td.copy(
+	  label = "${Experiment.CONTRAST2}%",
+
+	  stimCfg = {
+		it.copy(
+		  a = Experiment.CONTRAST2*0.01
+		)
+	  }
+
+	)
 
   exps += baseExp.copy(
 	name = "S1.A",
@@ -198,17 +200,20 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	xVar = STIM_ORIENTATION,
 	xlabel = "Stimulus Orientation (Degrees)",
 	ylabel = "p(Θ|r)",
-	autoY = true,
 	title = "Probabilistic Population Code (PPC)",
 	stimTrans = { copy(SF = 3.0) },
-	series = exps.last().series.map { it.copy(yExtractCustom = PPC) }
+	series = exps.last().series.map { it.copy(yExtractCustom = PPC) },
+	autoY = false,
+	normToMaxes = true /*Not exactly what Rosenberg did, but they did do some sort of normalization that they didn't explicitly document according to Jon*/
   )
   exps += exps.last().copy(
 	name = "S1.B.2",
 	series = listOf(
 	  contrast1.copy(label = "${contrast1.label} (Poisson)", poissonVar = YES, yExtractCustom = PPC),
 	  contrast2.copy(label = "${contrast2.label} (Poisson)", poissonVar = YES, yExtractCustom = PPC)
-	)
+	),
+	autoY = true,
+	normToMaxes = false
   )
 
   val ascV = td.copy(
@@ -296,11 +301,12 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	priorWeight = tdDivNorm.c*.5 /*(5*10.0.pow(-5))*/  /*7.49*10.0.pow(-5)*/
   )
   val veryStrongPrior = tdDivNorm.c*.75 /*7.5*10.0.pow(-5)*/
+  val expThetaMax = rCfg.THETA_MAX - rCfg.CELL_THETA_STEP
   exps += baseExp.copy(
 	name = "S4.A",
 	title = "Bayesian Priors: Suppressive Field Gain Term",
 	xMin = 0.0,
-	xMax = rCfg.THETA_MAX - rCfg.CELL_THETA_STEP,
+	xMax = expThetaMax,
 	xStep = 1.0,
 	xVar = PREF_ORIENTATION,
 	xlabel = "Preferred Orientation (Degrees)",
@@ -371,15 +377,33 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	  /*decode*/
 	  /*decodeBeforeGeoMean*/
 	  /*warn("debugging 2 series commented out")*/
-	  val d = decode(
+	  val d1 = decode(
 		ftStim = seriesStim,
 		trialStim = seriesStim,
 	  )/*.mean()*/
 
+	  val d2 = decode(
+		ftStim = seriesStim.copy(f = seriesStim.f.copy(t = if (seriesStim.f.t == expThetaMax) seriesStim.f.t - rCfg.CELL_THETA_STEP else seriesStim.f.t + rCfg.CELL_THETA_STEP)),
+		trialStim = seriesStim,
+	  )/*.mean()*/
+
+	  /*	  var bottom = seriesStim.f.t - 30
+			if (bottom < 0) {
+			  bottom += 180
+			}
+			val d2 = decode(
+			  ftStim = seriesStim.copy(f = seriesStim.f.copy(t = bottom)),
+			  trialStim = seriesStim,
+			)*//*.mean()*/
+
+	  println("d1=$d1,d2=$d2")
+
+
 	  /*.takeIf { it.count() == 1 }!!.maxOrNull()!!*/ // .mean()/*.first()*/
 	  /*}.mean()*/
 	  /*println("x=$x d=$d")*/
-	  d.toDouble()
+	  d1 - d2 /*certainty = smaller width of PPC*/
+	  /*d.toDouble()*/
 
 	}
   )
@@ -488,12 +512,12 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	  val substep = 1.0
 	  (1..ccwTrials).map {
 		val probs = (relThetaMid - (substep*9)..relThetaMid + substep*10 step substep)
-			.mapIndexed { _, theta ->
-			  (decode(
-				ftStim = seriesStim.copy(f = seriesStim.f.copy(t = theta)),
-				trialStim = seriesStim,
-			  ) to if (theta > relThetaMid) 1.0 else 0.0)
-			}
+		  .mapIndexed { _, theta ->
+			(decode(
+			  ftStim = seriesStim.copy(f = seriesStim.f.copy(t = theta)),
+			  trialStim = seriesStim,
+			) to if (theta > relThetaMid) 1.0 else 0.0)
+		  }
 		(probs.maxByOrNull { it.first }!!.second)
 	  }.mean()
 	},
@@ -580,6 +604,46 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	  }.toTypedArray()
 	)
   )
+
+  val h = 0.01
+
+  var lastPopR: PopulationResponse? = null
+  val preferedCell = SeriesCfg(
+	label = "Preferred Cell",
+	yExtractCustom = {
+	  val xi = itr.indexOf(x)
+	  /*get Rs*/
+	  lastPopR = MaybePreDNPopR(seriesStim, attentionExp, pop, ti = xi, h = h,lastPopR=lastPopR)()
+	  val y= lastPopR!!.m[pop.centralCell]!!
+	  /*println("y=${y}")*/
+
+//	  cell.cfgStim(/*
+//		cfgStim = seriesStim,
+//		popR = lastPopR,
+//	  )*/
+
+	  if (x == itr.last())lastPopR = null
+
+	  y
+	}
+  )
+
+  val louieBaseExp = Experiment(
+	name = "Dynamic",
+	title = "Preferred Cell Response Over Time",
+	xlabel = "Time",
+	ylabel = "Preferred Cell Response",
+	autoY = true,
+	fig = fig,
+	statusLabel = statusLabel,
+	xVar = TIME,
+	xStep = h,
+	series = listOf(preferedCell),
+	normToMaxes = false,
+	category = LOUIE,
+	xMax = 1.0
+  )
+  exps += louieBaseExp
 
   return exps
 }

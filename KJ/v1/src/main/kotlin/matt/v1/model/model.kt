@@ -24,6 +24,7 @@ import matt.v1.compcache.Radians
 import matt.v1.compcache.Weight
 import matt.v1.compcache.XTheta
 import matt.v1.compcache.YTheta
+import matt.v1.lab.petri.pop2D
 import matt.v1.lab.rcfg.rCfg
 import matt.v1.model.NormMethod.ADD_POINT_5
 import matt.v1.model.NormMethod.RATIO
@@ -144,7 +145,7 @@ abstract class FieldGenerator(
 	val m = cache ?: mutableListOf(pix(Point(x = 0.0, y = 0.0))).apply {
 	  (rCfg.X0_STEP..field.absLimXY step rCfg.X0_STEP).forEach { r ->
 
-		val normR = r * (1.0/rCfg.X0_STEP)
+		val normR = r*(1.0/rCfg.X0_STEP)
 		val circleThetaStep = (rCfg.CELL_THETA_STEP)/normR
 
 		var a = 0.0
@@ -330,6 +331,7 @@ data class SimpleCell(
 
 val BASELINE_ACTIVITY = 2.0
 val DC = BASELINE_ACTIVITY
+val DYNAMIC_BASELINE_B = 0.0
 
 val BASE_SIGMA_POOLING = /*5.0*/sqrt(5.0)
 val ASD_SIGMA_POOLING = BASE_SIGMA_POOLING*0.8
@@ -361,31 +363,58 @@ data class ComplexCell(
 	require(sinCell.phase == SIN && cosCell.phase == COS)
   }
 
+  val xiRiMap = mutableMapOf(0 to 0.0)
+  val xiGiMap = mutableMapOf(0 to 0.0)
+
 
   fun stimulate(
 	stim: Stimulus,
 	attention: Boolean = false,
 	popR: PopulationResponse? = null,
+	ti: Int? = null,
+	h: Double? = null
   ): Double {
+	if (ti == 0) return 0.0
 	val divNormS =
-		if (popR != null) getSfor(popR, attention, sigmaPooling = popR.sigmaPooling) else null
-	val debug =
-		(DC + sinCell.stimulate(stim).sq() + cosCell
-			.stimulate(stim)
-			.sq()).let {
-		  if (popR == null) {
-			if (attention) {
-			  it*AttentionAmp(
-				norm = stim.normTo(ATTENTION_CENTER)
-			  ).findOrCompute()
-			} else it
-		  } else popR[this]!!
-		}.let {
-		  popR?.divNorm?.copy(
-			D = it,
-			S = divNormS,
-		  )?.findOrCompute(debug = false) ?: it
-		}
+	  if (popR != null) (if (ti == 0) 0.0 else (ti?.let { xiGiMap[it - 1] } ?: 0.0) + ((h
+		?: 1.0)*(-(ti?.let { xiGiMap[it - 1] } ?: 0.0)) + getSfor(
+		popR,
+		attention,
+		sigmaPooling = popR.sigmaPooling
+	  ))) else null
+	if (divNormS != null && ti != null) xiGiMap[ti - 1] = divNormS
+	var debug =
+	  ((if (ti != null) DYNAMIC_BASELINE_B else DC) + sinCell.stimulate(stim).sq()
+		/*.also { println("debug1:${it}") }*/ + cosCell
+		.stimulate(stim)/*.also { println("debug2:${it}") }*/
+		.sq()/*.also { println("debug3:${it}") }*/).let {
+//		println("debug4:${it} popR=${popR} attention=${attention} ti=${ti}")
+		if (popR == null) {
+		  if (attention) {
+			it*AttentionAmp(
+			  norm = stim.normTo(ATTENTION_CENTER)
+			).findOrCompute()
+		  } else it
+		} else if (ti == null) popR[this]!! /*why... its the same right?*/ else it
+	  }.let {
+		/*println("debug5:${it}")*/
+		popR?.divNorm?.copy(
+		  D = it,
+		  S = divNormS,
+		)?.findOrCompute(debug = false) ?: it
+	  }
+
+	/*if (this == pop2D.complexCells[0]) {
+	  println("debug=${debug}")
+	  println("divNormS=${divNormS}")
+	}*/
+
+	if (ti != null) {
+	  val riLast = xiRiMap[ti - 1]!!
+	  debug = riLast + (h!!*(-riLast + debug))
+	  xiRiMap[ti] = debug
+	}
+
 	return debug  /*/ *//*DEBUG*//*10.0*/
   }
 

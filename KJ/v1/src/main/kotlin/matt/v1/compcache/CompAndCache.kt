@@ -204,30 +204,36 @@ data class GPPCUnit(
   }
 }
 
-data class PreDNPopR(
+data class MaybePreDNPopR(
   val stim: Stimulus,
   val attention: Boolean,
-  val pop: Population
-): ComputeInput<PreDNPopR, PopulationResponse>() {
+  val pop: Population,
+  val ti: Int? = null,
+  val h: Double? = null,
+  val lastPopR: PopulationResponse? = null
+): ComputeInput<MaybePreDNPopR, PopulationResponse>() {
   override val computer = Companion
 
 
-  companion object: ComputeCache<PreDNPopR, PopulationResponse>() {
+  companion object: ComputeCache<MaybePreDNPopR, PopulationResponse>() {
 	lateinit var coreLoopForStatusUpdates: CoreLoop
-	override val compute: PreDNPopR.()->PopulationResponse = {
+	override val compute: MaybePreDNPopR.()->PopulationResponse = {
 	  pop.complexCells
-		  .asSequence()
-		  .onEveryIndexed(10) { i, _ -> coreLoopForStatusUpdates.update(i = i) }
-		  .associateWith {
-			it.stimulate(
-			  stim,
-			  attention = attention
-			)
-		  }.let {
-			PopulationResponse(
-			  m = it
-			)
-		  }
+		.asSequence()
+		.onEveryIndexed(10) { i, _ -> coreLoopForStatusUpdates.update(i = i) }
+		.associateWith {
+		  it.stimulate(
+			stim,
+			attention = attention,
+			popR = lastPopR,
+			ti = ti,
+			h = h
+		  )
+		}.let {
+		  PopulationResponse(
+			m = it
+		  )
+		}
 	}
   }
 }
@@ -236,7 +242,9 @@ data class Stimulation(
   val cell: ComplexCell,
   val stim: Stimulus,
   val popR: PopulationResponse?,
-  val attention: Boolean
+  val attention: Boolean,
+  val ti: Int? = null,
+  val h: Double? = null,
 ): ComputeInput<Stimulation, Double>() {
   override val computer = Companion
 
@@ -246,7 +254,9 @@ data class Stimulation(
 	  cell.stimulate(
 		stim = stim,
 		attention = attention,
-		popR = popR
+		popR = popR,
+		ti = ti,
+		h = h,
 	  )
 	}
   }
@@ -320,9 +330,14 @@ val Collection<Point>.gradient get() = (maxOf { it.y } - minOf { it.y })/(maxOf 
 
 fun List<Point>.normalizedToMax(): List<Point> {
   val max = maxOf { it.y }
-  return map { it.copy(y = it.y/max*100) }
+  return map { it.copy(y = it.y/max*100.0) }
 }
 
+fun List<Point>.normalizedToMinMax(): List<Point> {
+  val min = minOf { it.y }
+  val max = maxOf { it.y } - min
+  return map { it.copy(y = (it.y - min)/max*100.0) }
+}
 
 fun Iterable<MutableList<Point>>.maxByTroughY() = maxByOrNull { it.trough!!.y }!!
 fun Iterable<MutableList<Point>>.minByTroughY() = minByOrNull { it.trough!!.y }!!

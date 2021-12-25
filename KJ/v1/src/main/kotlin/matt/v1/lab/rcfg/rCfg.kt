@@ -23,7 +23,8 @@ enum class ResourceUsageCfg(
   val FS1_STEP: Double = 0.25,
   val CELLS_ALONG_Y: Boolean = false,
   val CON_CIRCLES: Boolean = false,
-  val MAT_CIRCLES: Boolean = false
+  val MAT_CIRCLES: Boolean = false,
+  val DECODE_COUNT: Int = 100,
 ) {
   FINAL(X0_STEP = 0.2),
 
@@ -42,13 +43,27 @@ enum class ResourceUsageCfg(
 	CON_CIRCLES = true,
 	X0_ABS_MINMAX = 3.0,
 	X0_DIST_MAX = 2.0,
-	X0_STEP = 0.5,
-	CELL_X0_STEP_MULT = 2,
-	CELL_THETA_STEP = 45.0,
+	X0_STEP = 1.0,
+	CELL_X0_STEP_MULT = 1,
+	CELL_THETA_STEP = 15.0,
 	F3B_STEP = 20.0,
 	F3C_STEP = 10.0,
 	F3D_STEP = FASTER_SIGMA_STEP,
 	FS1_STEP = 15.0,
+	DECODE_COUNT = 2
+  ),
+  SMALL_CIRCLE(
+	CON_CIRCLES = true,
+	X0_ABS_MINMAX = 3.0,
+	X0_DIST_MAX = 2.0,
+	X0_STEP = 1.0,
+	CELL_X0_STEP_MULT = 1,
+	CELL_THETA_STEP = 30.0,
+	F3B_STEP = 20.0,
+	F3C_STEP = 10.0,
+	F3D_STEP = FASTER_SIGMA_STEP,
+	FS1_STEP = 15.0,
+	DECODE_COUNT = 2
   ),
 
   @Suppress("unused")
@@ -75,7 +90,7 @@ enum class ResourceUsageCfg(
 }
 
 
-val rCfg = ResourceUsageCfg.CIRCLE.apply {
+val rCfg = ResourceUsageCfg.SMALL_CIRCLE.apply {
   Double
   require(X0_ABS_MINMAX.toApfloat()%(X0_STEP.toApfloat()*CELL_X0_STEP_MULT.toApint()) == Apcomplex.ZERO) {
 	"""first mod got $X0_ABS_MINMAX % ($X0_STEP * $CELL_X0_STEP_MULT = ${X0_STEP*CELL_X0_STEP_MULT}) = ${X0_ABS_MINMAX%(X0_STEP*CELL_X0_STEP_MULT)}

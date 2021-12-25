@@ -473,7 +473,7 @@ class StatusLabel(
   var statusExtra = ""
 
   init {
-	prefWidth = 100.0 /*so label is steady*/
+	prefWidth = 150.0 /*so label is steady*/
 	layoutX = 0.0
 	layoutY = 0.0
 	val statusLabel = label("") {

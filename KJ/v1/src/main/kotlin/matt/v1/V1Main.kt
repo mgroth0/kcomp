@@ -7,7 +7,6 @@ import javafx.scene.layout.Border
 import javafx.scene.layout.BorderStroke
 import javafx.scene.layout.BorderStrokeStyle
 import javafx.scene.layout.BorderWidths
-import javafx.scene.layout.FlowPane
 import javafx.scene.layout.Priority.ALWAYS
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
@@ -37,6 +36,7 @@ import matt.hurricanefx.visibleAndManagedProp
 import matt.kjlib.async.daemon
 import matt.kjlib.log.NEVER
 import matt.kjlib.str.addSpacesUntilLengthIs
+import matt.kjlib.str.cap
 import matt.reflect.ismac
 import matt.reflect.onLinux
 import matt.remote.host.Hosts
@@ -48,8 +48,7 @@ import matt.v1.gui.Figure
 import matt.v1.gui.StatusLabel
 import matt.v1.gui.StatusLabel.Status.IDLE
 import matt.v1.gui.StatusLabel.Status.WORKING
-import matt.v1.lab.ExpCategory.OTHER
-import matt.v1.lab.ExpCategory.ROSENBERG
+import matt.v1.lab.ExpCategory
 import matt.v1.vis.IttiKochVisualizer
 import matt.v1.vis.IttiKochVisualizer.Companion.dogFolder
 import matt.v1.vis.IttiKochVisualizer.Companion.ittiKochInput
@@ -161,11 +160,10 @@ fun main(): Unit = GuiApp {
 	  visibleAndManagedProp().bind(ittKochTab.selectedProperty().not())
 	}
 
-	val rosenbergPane = FlowPane()
-	val otherPane = FlowPane()
 	val figButtonBox = expBox.tabpane {
-	  staticTab("Rosenberg", rosenbergPane)
-	  staticTab("Other", otherPane)
+	  ExpCategory.values().forEach {
+		staticTab(it.name.lowercase().cap(), it.pane)
+	  }
 	  exactHeight = 120.0
 	}
 	val fig = Figure().attachTo(expBox)
@@ -181,10 +179,7 @@ fun main(): Unit = GuiApp {
 	val exps = experiments(fig, statusLabel)
 	val allButtons = mutableListOf<Button>()
 	exps.forEach { exp ->
-	  when (exp.category) {
-		ROSENBERG -> rosenbergPane
-		OTHER     -> otherPane
-	  }.button(exp.name.addSpacesUntilLengthIs(4)) {
+	  exp.category.pane.button(exp.name.addSpacesUntilLengthIs(4)) {
 		allButtons += this
 		fun cfgStartButton() {
 		  text = exp.name.addSpacesUntilLengthIs(4)
