@@ -17,7 +17,7 @@ subprojects sub@{
   val sp = this
   val spname = projectDir.name
   val sppath = path
-  println("path example:${sppath}")
+//  println("path example:${sppath}")
 
   val modtype = ModType.valueOf(projectDir.resolve("modtype.txt").readText().trim())
   val isExecutable = modtype in listOf(ModType.APP, ModType.CLAPP)
