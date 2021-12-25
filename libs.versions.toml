@@ -1,7 +1,7 @@
 # this file is hard-linked across 2 projects
 [versions]
 fx = "17-ea+6"
-kotlin = "1.5.0"
+kotlin = "1.6.10"
 ktlang = "1.5"
 java = "13"
 multik = "0.0.1"
@@ -52,6 +52,9 @@ jsch = { module = "com.github.mwiede:jsch", version = "0.1.62" }
 
 
 graphviz = { module = "guru.nidi:graphviz-java", version = "0.18.1" }
+
+spotify = { module = "se.michaelthelin.spotify:spotify-web-api-java", version = "6.5.4" }
+
 
 [bundles]
 fx-full = ["fx-base", "fx-controls", "fx-graphics", "fx-web", "fx-media", "fx-swing"]
