@@ -20,17 +20,27 @@ while (mightHaveDirectSubprojects.isNotEmpty()) {
 	mightHaveDirectSubprojects.clear()
   }.forEach {
 	it
-		.listFiles()!!
-		.filter { "build.gradle.kts" in (it.list() ?: arrayOf()) }
-		.filter { it.name != "buildSrc" }
-		.forEach {
-		  include(it.relativeTo(projectFolder).path.replace(File.separator, ":"))
-		  mightHaveDirectSubprojects.add(it)
-		}
+	  .listFiles()!!
+	  .filter { "build.gradle.kts" in (it.list() ?: arrayOf()) }
+	  .filter { it.name != "buildSrc" }
+	  .forEach {
+		include(it.relativeTo(projectFolder).path.replace(File.separator, ":"))
+		mightHaveDirectSubprojects.add(it)
+	  }
   }
 }
 
 dependencyResolutionManagement {
+
+
+  /*repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)*/
+
+
+  repositories {
+	google() /*from android studio*/
+	mavenCentral() /*also for KJS,klib,mysettingsplugin?*/ /*from android studio*/
+	mavenLocal() /*reflections*/
+  }
   versionCatalogs {
 	create("libs") {
 	  from(files(projectFolder.resolve("libs.versions.toml")))
