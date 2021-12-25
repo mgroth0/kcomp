@@ -4,6 +4,8 @@ import matt.jbuild.greeting.JGreetingPlugin
 import matt.jbuild.jigsaw.JigsawPlugin
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+
+
 val JIGSAW: Boolean by extra(false)
 val verbose = false
 if (verbose) {
@@ -13,6 +15,8 @@ if (JavaVersion.current() != JavaVersion.VERSION_16) {
   throw GradleException("This build must be run with java 16")
 }
 
+
+
 plugins {
   id("org.jetbrains.kotlin.multiplatform") apply false
   id("com.github.johnrengelman.shadow") version "6.1.0"
@@ -21,7 +25,10 @@ plugins {
 	id("com.vanniktech.dependency.graph.generator")
   }
   id("org.barfuin.gradle.taskinfo") version "1.1.1"
+  
 }
+
+
 
 
 
@@ -61,6 +68,7 @@ idea {
 val check = tasks.register("validate", MValidations::class)
 subprojects {
   tasks {
+//	println("projectDir:${projectDir}")
 	if (".git" in projectDir.list()) {
 	  val gitPullSubmodule by creating(Exec::class) {
 		workingDir(projectDir)
@@ -319,6 +327,20 @@ subprojects {
 
   if (JIGSAW) apply<JigsawPlugin>()
   apply<JGreetingPlugin>()
+}
+buildscript {
+
+  repositories {
+	google() /*android*/
+	mavenCentral() /*android*/
+  }
+
+  dependencies {
+	classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.10")
+	classpath("com.android.tools.build:gradle:7.0.3") /*android*/
+  }
+
+
 }
 
 
