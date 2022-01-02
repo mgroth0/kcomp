@@ -2,7 +2,7 @@ package matt.remote.host
 
 import com.jcraft.jsch.JSch
 import com.jcraft.jsch.UserInfo
-import matt.kjlib.commons.HOME_DIR
+import matt.kjlib.commons.USER_HOME
 import matt.kjlib.file.get
 import matt.remote.expect.expect
 import matt.remote.host.Host.Companion.SUB_PROMPT
@@ -22,15 +22,15 @@ class Host(private val hostname: String) {
 	/*used to set shell command-line prompt to UNIQUE_PROMPT.*/
 	const val PROMPT_SET_SH = "PS1='[$SUB_PROMPT]\\$ '"
 
-	val PASS_LONG = HOME_DIR[".passlong"].readText().reversed()
+	val PASS_LONG = USER_HOME[".passlong"].readText().reversed()
   }
 
 
   fun ssh(vararg echos: java.lang.Appendable, op: Expect.()->Unit) {
 
 	val jSch = JSch().apply {
-	  setKnownHosts(HOME_DIR[".ssh"]["known_hosts"].absolutePath)
-	  addIdentity(HOME_DIR[".ssh"]["id_rsa"].absolutePath/*, HOME_DIR[".passlong"].readText()*/)
+	  setKnownHosts(USER_HOME[".ssh"]["known_hosts"].absolutePath)
+	  addIdentity(USER_HOME[".ssh"]["id_rsa"].absolutePath/*, HOME_DIR[".passlong"].readText()*/)
 	}
 	val session = jSch.getSession(OM.USER, hostname).apply {
 	  setPassword(PASS_LONG)
