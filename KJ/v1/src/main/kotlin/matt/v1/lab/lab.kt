@@ -115,6 +115,8 @@ data class Experiment(
   val category: ExpCategory,
   val baseContrast: Double = 0.5,
   val pop: Population = pop2D,
+  val uniformW: Double? = null,
+  val rawInput: Double? = null
 ) {
 
 
@@ -156,7 +158,7 @@ data class Experiment(
 		.forEachIndexed { i, newX ->
 		  isLast = i == itr.size - 1
 		  if (stopped) return
-		  println("i:${i},x:${x},newX:${newX}")
+		  /*println("i:${i},x:${x},newX:${newX}")*/
 		  x = newX
 		  iteration()
 		  if (stopped) return
@@ -169,7 +171,7 @@ data class Experiment(
 		.asSequence()
 		.onEveryIndexed(10) { i, _ -> if (i > 0) coreLoopForStatusUpdates.update() }
 		.forEachIndexed { i, newX ->
-		  println("newX:${newX}")
+		  /*println("newX:${newX}")*/
 		  isLast = i == itr.size - 1
 		  if (stopped) return
 		  x = newX
@@ -436,6 +438,8 @@ data class Experiment(
 		}
 	  )?.popRCfg(),
 	  attention = attentionExp,
+	  uniformW=uniformW,
+	  rawInput=rawInput,
 	  ti = if (xVar == TIME) itr.indexOf(x) else null,
 	  h = if (xVar == TIME) xStep else null,
 	).findOrCompute(debug = true)
@@ -463,13 +467,13 @@ data class Experiment(
 		if (i%10 == 0) update(verb = "decoding", i = i + 1)
 		val ft = c.cfgStim(
 		  ftStim,
-		  popR = MaybePreDNPopR(ftStim, attentionExp, pop)()
-		)
+		  popR = MaybePreDNPopR(ftStim, attentionExp, pop,uniformW,rawInput)()
+		).first
 		//		  warnOnce("debugging ppc")
 		val preRI = c.cfgStim(
 		  cfgStim = trialStim,
-		  popR = MaybePreDNPopR(trialStim, attentionExp, pop)()
-		)
+		  popR = MaybePreDNPopR(trialStim, attentionExp, pop,uniformW,rawInput)()
+		).first
 
 
 

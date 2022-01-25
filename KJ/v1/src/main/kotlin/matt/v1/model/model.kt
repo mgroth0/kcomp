@@ -24,7 +24,6 @@ import matt.v1.compcache.Radians
 import matt.v1.compcache.Weight
 import matt.v1.compcache.XTheta
 import matt.v1.compcache.YTheta
-import matt.v1.lab.petri.pop2D
 import matt.v1.lab.rcfg.rCfg
 import matt.v1.model.NormMethod.ADD_POINT_5
 import matt.v1.model.NormMethod.RATIO
@@ -56,8 +55,7 @@ val NORM = ADD_POINT_5
 
 
 data class Field(
-  val absLimXY: Double,
-  val stepXY: Double
+  val absLimXY: Double, val stepXY: Double
 ) {
   val range = (-absLimXY..absLimXY step stepXY).toList()
   val length = range.size
@@ -77,18 +75,14 @@ interface FieldLocI {
 
   /*TODO: better naming*/
   infix fun normTo(other: FieldLocI) = Norm(
-	dX = X0 - other.X0,
-	dY = Y0 - other.Y0
+	dX = X0 - other.X0, dY = Y0 - other.Y0
   )
 
   infix fun normDistTo(other: FieldLocI) = normTo(other).findOrCompute()
 }
 
 data class FieldLocAndOrientation(
-  override val t: Double,
-  override val X0: Double,
-  override val Y0: Double,
-  override val field: Field
+  override val t: Double, override val X0: Double, override val Y0: Double, override val field: Field
 ): Orientation
 
 interface Orientation: FieldLocI {
@@ -148,8 +142,7 @@ abstract class FieldGenerator(
 		val normR = r*(1.0/rCfg.X0_STEP)
 		val circleThetaStep = (rCfg.CELL_THETA_STEP)/normR
 
-		var a = 0.0
-		/*if (this@FieldGenerator is Stimulus && X0 == 0.0 && Y0 == 0.0 && t in listOf(45.0, 90.0) && r ==1.0) {
+		var a = 0.0        /*if (this@FieldGenerator is Stimulus && X0 == 0.0 && Y0 == 0.0 && t in listOf(45.0, 90.0) && r ==1.0) {
 
 		}*/
 		while (a < 360.0) {
@@ -201,10 +194,7 @@ abstract class FieldGenerator(
 		}
 	  }
 	  ADD_POINT_5 -> {
-		(0 until field.length).forEachNested { x, y ->
-		  /*the fact that the number is sometimes more than 1.0 / less than  0.0 is concerning*/
-		  /*it seems to start at a=0.51*/
-		  /*maybe in the model it doesn't matter since mapping to pixel values is just for visualization*/
+		(0 until field.length).forEachNested { x, y ->        /*the fact that the number is sometimes more than 1.0 / less than  0.0 is concerning*/        /*it seems to start at a=0.51*/        /*maybe in the model it doesn't matter since mapping to pixel values is just for visualization*/
 
 		  if (!mat[x, y].isNaN()) {
 			v[x][y] = max(min(mat[x][y].toApfloat() + 0.5.toApfloat(), 1.0.toApfloat()), 0.0.toApfloat()).toDouble()
@@ -243,12 +233,9 @@ data class ACircle(val radius: Apfloat, val center: APoint = APoint(x = 0.0.toAp
 }
 
 data class Stimulus(
-  override val f: FieldLocAndOrientation,
-  val a: Double, /*ALPHA_CONTRAST*/
+  override val f: FieldLocAndOrientation, val a: Double, /*ALPHA_CONTRAST*/
   val s: Double, /*SIGMA_SIZE*/
-  override val SF: Double,
-  val mask: Stimulus? = null,
-  val gaussianEnveloped: Boolean = true
+  override val SF: Double, val mask: Stimulus? = null, val gaussianEnveloped: Boolean = true
 ): FieldGenerator(f.field), Orientation by f, CommonParams {
   private val sDen = (2*s.sq()).apply {
 	assert(this != 0.0)
@@ -263,13 +250,11 @@ data class Stimulus(
 
 	return ((if (gaussianEnveloped) (a*(e.pow( /*TODO: alpha probably shouldn't be inside of "gaussianEnveloped"*/
 	  -(xTheta(p.x, p.y).sq()/sDen) - (yTheta(
-		p.x,
-		p.y
+		p.x, p.y
 	  ).sq()/sDen)
 	))) else 1.0)*cos(
 	  SF*xTheta(
-		p.x,
-		p.y
+		p.x, p.y
 	  )
 	)).let {
 	  if (mask != null) it + mask.pix(p) else it
@@ -285,12 +270,9 @@ interface Cell: Orientation
 
 
 data class SimpleCell(
-  override val f: FieldLocAndOrientation,
-  val sx: Double, /*SIGMA_WIDTH*/
+  override val f: FieldLocAndOrientation, val sx: Double, /*SIGMA_WIDTH*/
   val sy: Double, /*SIGMA_HEIGHT*/
-  override val SF: Double,
-  val phase: Phase,
-  val gaussianEnveloped: Boolean = true
+  override val SF: Double, val phase: Phase, val gaussianEnveloped: Boolean = true
 ): FieldGenerator(f.field), Orientation by f, CommonParams, Cell {
 
   enum class Phase { SIN, COS }
@@ -307,20 +289,17 @@ data class SimpleCell(
 	if (rCfg.MAT_CIRCLES && !rCfg.CON_CIRCLES && p !in field.circle) return Double.NaN
 	return ((if (gaussianEnveloped) e.pow(
 	  -(xTheta(p.x, p.y).sq()/sxDen) - (yTheta(
-		p.x,
-		p.y
+		p.x, p.y
 	  ).sq()/syDen)
 	) else 1.0)*phaseFun(
 	  SF*xTheta(
-		p.x,
-		p.y
+		p.x, p.y
 	  )
 	))
   }
 
 
-  fun stimulate(stim: Stimulus) = if (rCfg.CON_CIRCLES)
-	(stim.concentricCircles dot concentricCircles)/*.also {
+  fun stimulate(stim: Stimulus) = if (rCfg.CON_CIRCLES) (stim.concentricCircles dot concentricCircles)/*.also {
 	  if (phase == SIN && X0 == 0.0 && Y0 == 0.0 && t in listOf(45.0, 90.0) && stim.t == t) {
 		println("t=$t concentricCircles.sum=${concentricCircles.sum()} stim.concentricCircles.sum=${stim.concentricCircles.sum()}")
 		taball("concentricCircles", concentricCircles)
@@ -354,10 +333,11 @@ val tdDivNorm = DivNorm(
 )
 
 data class ComplexCell(
-  val sinCell: SimpleCell,
-  val cosCell: SimpleCell
+  val sinCell: SimpleCell, val cosCell: SimpleCell
 ): Orientation by sinCell, Cell {
   constructor(cells: Pair<SimpleCell, SimpleCell>): this(cells.first, cells.second)
+
+  var debugging = false
 
   init {
 	require(sinCell.phase == SIN && cosCell.phase == COS)
@@ -369,40 +349,52 @@ data class ComplexCell(
 
   fun stimulate(
 	stim: Stimulus,
+	uniformW: Double?,
+	rawInput: Double?,
 	attention: Boolean = false,
 	popR: PopulationResponse? = null,
 	ti: Int? = null,
-	h: Double? = null
-  ): Double {
-	if (ti == 0) return 0.0
-	val divNormS =
-	  if (popR != null) (if (ti == 0) 0.0 else (ti?.let { xiGiMap[it - 1] } ?: 0.0) + ((h
-		?: 1.0)*(-(ti?.let { xiGiMap[it - 1] } ?: 0.0)) + getSfor(
-		popR,
-		attention,
-		sigmaPooling = popR.sigmaPooling
-	  ))) else null
-	if (divNormS != null && ti != null) xiGiMap[ti - 1] = divNormS
-	var debug =
-	  ((if (ti != null) DYNAMIC_BASELINE_B else DC) + sinCell.stimulate(stim).sq()
-		/*.also { println("debug1:${it}") }*/ + cosCell
-		.stimulate(stim)/*.also { println("debug2:${it}") }*/
-		.sq()/*.also { println("debug3:${it}") }*/).let {
-//		println("debug4:${it} popR=${popR} attention=${attention} ti=${ti}")
-		if (popR == null) {
-		  if (attention) {
-			it*AttentionAmp(
-			  norm = stim.normTo(ATTENTION_CENTER)
-			).findOrCompute()
-		  } else it
-		} else if (ti == null) popR[this]!! /*why... its the same right?*/ else it
-	  }.let {
-		/*println("debug5:${it}")*/
-		popR?.divNorm?.copy(
-		  D = it,
-		  S = divNormS,
-		)?.findOrCompute(debug = false) ?: it
+	h: Double? = null,
+  ): Pair<Double, Double?> {
+	var G: Double? = null
+	if (ti == 0) return 0.0 to G
+	val lastG = ti?.let { xiGiMap[it - 1] } ?: 0.0
+	val divNormS = if (popR == null) null else {
+	  val realH = h ?: 1.0
+	  val S = getSfor(
+		popR, attention, sigmaPooling = popR.sigmaPooling, uniformW = uniformW
+	  )
+	  if (debugging) {
+		println("ti=${ti}")
+		println("realH=${realH}")
+		println("lastG=${lastG}")
+		println("S=${S}")
 	  }
+	  if (ti == 0) 0.0 else {
+		lastG + realH*(-lastG + S)
+	  }
+	}
+
+	if (divNormS != null && ti != null) xiGiMap[ti] = divNormS
+
+	G = divNormS
+
+	val input = rawInput ?: (sinCell.stimulate(stim).sq() + cosCell.stimulate(stim).sq())
+
+	var debug = ((if (ti != null) DYNAMIC_BASELINE_B else DC) + input).let {
+	  if (popR == null) {
+		if (attention) {
+		  it*AttentionAmp(
+			norm = stim.normTo(ATTENTION_CENTER)
+		  ).findOrCompute()
+		} else it
+	  } else if (ti == null) popR[this]!!.first /*why... its the same right?*/ else it
+	}.let {        /*println("debug5:${it}")*/
+	  popR?.divNorm?.copy(
+		D = it,
+		S = divNormS,
+	  )?.findOrCompute(debug = false) ?: it
+	}
 
 	/*if (this == pop2D.complexCells[0]) {
 	  println("debug=${debug}")
@@ -415,33 +407,34 @@ data class ComplexCell(
 	  xiRiMap[ti] = debug
 	}
 
-	return debug  /*/ *//*DEBUG*//*10.0*/
+	return debug to G  /*/ *//*DEBUG*//*10.0*/
   }
 
   private fun getSfor(
-	popActivity: Map<ComplexCell, Double>,
+	popActivity: Map<ComplexCell, Pair<Double, Double?>>,
 	attentionExp: Boolean,
-	sigmaPooling: Double
+	sigmaPooling: Double,
+	uniformW: Double?
   ): Double {
 
 	return popActivity.map {
-	  //	  println("cell=${it.key}")
-	  //	  println("pre=${it.value}")
-	  val W = Weight(norm = normDistTo(it.key), sigmaPool = sigmaPooling)()
-	  //	  println("W=$W")
-	  /*val r = */W*it.value
-	  //	  println("contrib=$r")
-	  /*r*/
+	  println("cell=${it.key}")
+	  println("pre=${it.value}")
+	  val W = uniformW ?: Weight(norm = normDistTo(it.key), sigmaPool = sigmaPooling)()
+	  println("W=$W")
+	  val r = W*it.value.first
+	  println("contrib=$r")
+	  r
 	}.sum()
   }
 }
 
 
 data class PopulationResponse(
-  val m: Map<ComplexCell, Double> = mapOf(),
+  val m: Map<ComplexCell, Pair<Double, Double?>> = mapOf(),
   val sigmaPooling: Double = BASE_SIGMA_POOLING,
   val divNorm: DivNorm = tdDivNorm
-): Map<ComplexCell, Double> by m {
+): Map<ComplexCell, Pair<Double, Double?>> by m {
   override fun toString() = toStringBuilder(::sigmaPooling, ::divNorm)
 }
 

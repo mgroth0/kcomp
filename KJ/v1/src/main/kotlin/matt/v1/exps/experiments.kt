@@ -31,6 +31,7 @@ import matt.v1.lab.PoissonVar.FAKE5
 import matt.v1.lab.PoissonVar.YES
 import matt.v1.lab.SeriesCfg
 import matt.v1.lab.petri.pop2D
+import matt.v1.lab.petri.popLouie
 import matt.v1.lab.rcfg.rCfg
 import matt.v1.model.ASD_SIGMA_POOLING
 import matt.v1.model.ATTENTION_SUPP_SIGMA_POOLING
@@ -48,7 +49,7 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	yExtractCustom = {
 	  cell.cfgStim(
 		cfgStim = seriesStim,
-	  )
+	  ).first
 	}
   )
   val withDN = noDN.copy(
@@ -56,8 +57,8 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	yExtractCustom = {
 	  cell.cfgStim(
 		cfgStim = seriesStim,
-		popR = MaybePreDNPopR(seriesStim, attentionExp, pop)()
-	  )
+		popR = MaybePreDNPopR(seriesStim, attentionExp, pop, null, null)()
+	  ).first
 	}
   )
   val baseExp = Experiment(
@@ -606,24 +607,44 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
   )
 
   val h = 0.01
+  val uniW = 1.0
+  val rInput = 30.0
 
   var lastPopR: PopulationResponse? = null
-  val preferedCell = SeriesCfg(
-	label = "Preferred Cell",
+  val preferedCellR = SeriesCfg(
+	label = "Preferred Cell R",
 	yExtractCustom = {
+
+	  pop.centralCell.debugging = true
+
 	  val xi = itr.indexOf(x)
 	  /*get Rs*/
-	  lastPopR = MaybePreDNPopR(seriesStim, attentionExp, pop, ti = xi, h = h,lastPopR=lastPopR)()
-	  val y= lastPopR!!.m[pop.centralCell]!!
+	  lastPopR = MaybePreDNPopR(
+		seriesStim,
+		attentionExp,
+		pop,
+		uniformW = uniW,
+		rawInput = rInput,
+		ti = xi,
+		h = h,
+		lastPopR = lastPopR
+	  )()
+	  val y = lastPopR!!.m[pop.centralCell]!!.first
 	  /*println("y=${y}")*/
 
-//	  cell.cfgStim(/*
-//		cfgStim = seriesStim,
-//		popR = lastPopR,
-//	  )*/
+	  //	  cell.cfgStim(/*
+	  //		cfgStim = seriesStim,
+	  //		popR = lastPopR,
+	  //	  )*/
 
-	  if (x == itr.last())lastPopR = null
-
+	  y
+	}
+  )
+  val preferedCellG = SeriesCfg(
+	label = "Preferred Cell G",
+	yExtractCustom = {
+	  val y = lastPopR!!.m[pop.centralCell]!!.second ?: 0.0
+	  if (x == itr.last()) lastPopR = null
 	  y
 	}
   )
@@ -638,12 +659,18 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	statusLabel = statusLabel,
 	xVar = TIME,
 	xStep = h,
-	series = listOf(preferedCell),
-	normToMaxes = false,
+	series = listOf(preferedCellR, preferedCellG),
 	category = LOUIE,
-	xMax = 1.0
+	xMax = 10.0,
+	uniformW = uniW,
+	rawInput = rInput,
+	pop = popLouie
   )
   exps += louieBaseExp
+  exps += louieBaseExp.copy(
+	name = louieBaseExp.name + " (normToMaxes)",
+	normToMaxes = true
+  )
 
   return exps
 }

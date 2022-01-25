@@ -208,6 +208,8 @@ data class MaybePreDNPopR(
   val stim: Stimulus,
   val attention: Boolean,
   val pop: Population,
+  val uniformW: Double?,
+  val rawInput: Double?,
   val ti: Int? = null,
   val h: Double? = null,
   val lastPopR: PopulationResponse? = null
@@ -224,10 +226,12 @@ data class MaybePreDNPopR(
 		.associateWith {
 		  it.stimulate(
 			stim,
+			uniformW = uniformW,
+			rawInput = rawInput,
 			attention = attention,
 			popR = lastPopR,
 			ti = ti,
-			h = h
+			h = h,
 		  )
 		}.let {
 		  PopulationResponse(
@@ -243,16 +247,20 @@ data class Stimulation(
   val stim: Stimulus,
   val popR: PopulationResponse?,
   val attention: Boolean,
+  val uniformW: Double?,
+  val rawInput: Double?,
   val ti: Int? = null,
   val h: Double? = null,
-): ComputeInput<Stimulation, Double>() {
+): ComputeInput<Stimulation, Pair<Double,Double?>>() {
   override val computer = Companion
 
 
-  companion object: ComputeCache<Stimulation, Double>() {
-	override val compute: Stimulation.()->Double = {
+  companion object: ComputeCache<Stimulation, Pair<Double,Double?>>() {
+	override val compute: Stimulation.()->Pair<Double,Double?> = {
 	  cell.stimulate(
 		stim = stim,
+		uniformW = uniformW,
+		rawInput = rawInput,
 		attention = attention,
 		popR = popR,
 		ti = ti,

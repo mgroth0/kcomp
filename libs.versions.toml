@@ -55,6 +55,8 @@ graphviz = { module = "guru.nidi:graphviz-java", version = "0.18.1" }
 
 spotify = { module = "se.michaelthelin.spotify:spotify-web-api-java", version = "6.5.4" }
 
+brainflow = {module="org.brainflow:brainflow",version="4.8.2"}
+
 
 [bundles]
 fx-full = ["fx-base", "fx-controls", "fx-graphics", "fx-web", "fx-media", "fx-swing"]

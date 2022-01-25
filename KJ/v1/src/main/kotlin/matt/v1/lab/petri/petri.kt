@@ -53,7 +53,14 @@ fun Cell.perfectStim() = baseStim.copy(f = baseStim.f.copy(t = t, X0 = X0, Y0 = 
 
 class Population(
   alongY: Boolean = false,
-  conCircles: Boolean = false
+  conCircles: Boolean = false,
+  val X0_ABS_MINMAX: Double = rCfg.X0_ABS_MINMAX,
+  val X0_STEP: Double = rCfg.X0_STEP,
+  val CELL_X0_STEP_MULT: Int = rCfg.CELL_X0_STEP_MULT,
+  val THETA_MIN: Double = rCfg.THETA_MIN,
+  val THETA_MAX: Double = rCfg.THETA_MAX,
+  val CELL_THETA_STEP: Double = rCfg.CELL_THETA_STEP,
+  val REQ_SIZE: Int? = if (rCfg == FINAL) rCfg.REQ_SIZE else null
 ) {
   init {
 	println("building pop")
@@ -62,67 +69,65 @@ class Population(
 
   val centralCell by lazy {
 	complexCells
-		.filter { it.t == 0.0 }
-		.filter {
-		  it.X0 >= 0.0 && it.Y0 >= 0.0
-		}
-		.minByOrNull { it.X0 + it.Y0 }!!
+	  .filter { it.t == 0.0 }
+	  .filter {
+		it.X0 >= 0.0 && it.Y0 >= 0.0
+	  }
+	  .minByOrNull { it.X0 + it.Y0 }!!
   }
 
 
-  private val spacialRange = /*if (conCircles) (0.0..1.0 step 1.0) else
-	*/
-	  (-rCfg.X0_ABS_MINMAX..rCfg.X0_ABS_MINMAX step (rCfg.X0_STEP*rCfg.CELL_X0_STEP_MULT))
-  private val circle = Circle(radius = rCfg.X0_ABS_MINMAX)
+  private val spacialRange =
+	(-X0_ABS_MINMAX..X0_ABS_MINMAX step (X0_STEP*CELL_X0_STEP_MULT))
+  private val circle = Circle(radius = X0_ABS_MINMAX)
   private val sinCells = spacialRange
-	  .flatMap { x0 ->
-		(rCfg.THETA_MIN..rCfg.THETA_MAX step (rCfg.CELL_THETA_STEP)).flatMap { t ->
-		  if (conCircles) {
-			when {
-			  x0 < 0.0  -> listOf()
-			  x0 == 0.0 -> mutableListOf(
-				baseSimpleSinCell.copy(
-				  f = baseSimpleSinCell.f.copy(
-					X0 = 0.0,
-					Y0 = 0.0,
-					t = t
-				  )
+	.flatMap { x0 ->
+	  (THETA_MIN..THETA_MAX step (CELL_THETA_STEP)).flatMap { t ->
+		if (conCircles) {
+		  when {
+			x0 < 0.0  -> listOf()
+			x0 == 0.0 -> mutableListOf(
+			  baseSimpleSinCell.copy(
+				f = baseSimpleSinCell.f.copy(
+				  X0 = 0.0,
+				  Y0 = 0.0,
+				  t = t
 				)
 			  )
-			  else      -> {
-				val cells =
-					mutableListOf<SimpleCell>()
-				val circleThetaStep = (rCfg.CELL_THETA_STEP)/*90*//x0
-				var a = 0.0
-				while (a < 360.0) {
-				  val p = Polar(x0, Radians(a))()
-				  cells += baseSimpleSinCell.copy(f = baseSimpleSinCell.f.copy(X0 = p.x, Y0 = p.y, t = t))
-				  a += circleThetaStep
-				}
-				cells
+			)
+			else      -> {
+			  val cells =
+				mutableListOf<SimpleCell>()
+			  val circleThetaStep = (CELL_THETA_STEP)/*90*//x0
+			  var a = 0.0
+			  while (a < 360.0) {
+				val p = Polar(x0, Radians(a))()
+				cells += baseSimpleSinCell.copy(f = baseSimpleSinCell.f.copy(X0 = p.x, Y0 = p.y, t = t))
+				a += circleThetaStep
 			  }
-			}
-		  } else {
-			(if (alongY) spacialRange else listOf(0.0)).flatMap { y0 ->
-			  listOf(baseSimpleSinCell.copy(f = baseSimpleSinCell.f.copy(X0 = x0, Y0 = y0, t = t)))
+			  cells
 			}
 		  }
-		}
-
-
-	  }.apply {
-	  }.filter {
-		if (conCircles) true
-		else Point(x = it.X0, y = it.Y0).normDist(circle.center) <= circle.radius
-	  }
-
-	  .also {
-		/*taball("cells", it)*/
-		require(it.allUnique())
-		if (rCfg == FINAL) {
-		  require(it.size == rCfg.REQ_SIZE) { "size is ${it.size} but should be $rCfg.REQ_SIZE" }
+		} else {
+		  (if (alongY) spacialRange else listOf(0.0)).flatMap { y0 ->
+			listOf(baseSimpleSinCell.copy(f = baseSimpleSinCell.f.copy(X0 = x0, Y0 = y0, t = t)))
+		  }
 		}
 	  }
+
+
+	}.apply {
+	}.filter {
+	  if (conCircles) true
+	  else Point(x = it.X0, y = it.Y0).normDist(circle.center) <= circle.radius
+	}
+
+	.also {
+	  require(it.allUnique())
+	  if (REQ_SIZE != null) {
+		require(it.size == REQ_SIZE) { "size is ${it.size} but should be $rCfg.REQ_SIZE" }
+	  }
+	}
 
 
   private val cosCells = sinCells.map {
@@ -134,9 +139,19 @@ class Population(
 }
 
 
-/*val pop1D = Population(conCircles = true).apply {
-  println("pop1d size:${complexCells.size}")
-}*/
 val pop2D = Population(alongY = rCfg.CELLS_ALONG_Y, conCircles = rCfg.CON_CIRCLES).apply {
   println("pop2d size:${complexCells.size}")
+}
+val popLouie = Population(
+  alongY = false,
+  conCircles = false,
+  X0_ABS_MINMAX = 0.0,
+  X0_STEP = 1.0,
+  CELL_X0_STEP_MULT = 1,
+  THETA_MIN = 0.0,
+  THETA_MAX = 90.0,
+  CELL_THETA_STEP = 100.0,
+  REQ_SIZE = 1
+).apply {
+  println("popLouie size:${complexCells.size}")
 }

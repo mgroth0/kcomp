@@ -40,6 +40,7 @@ dependencyResolutionManagement {
 	google() /*from android studio*/
 	mavenCentral() /*also for KJS,klib,mysettingsplugin?*/ /*from android studio*/
 	mavenLocal() /*reflections*/
+
   }
   versionCatalogs {
 	create("libs") {
