@@ -72,7 +72,7 @@ subprojects {
 	if (".git" in projectDir.list()) {
 	  val gitPullSubmodule by creating(Exec::class) {
 		workingDir(projectDir)
-		commandLine("git", "pull")
+		commandLine("git", "pull","origin","master")
 		if (parent != null && parent != rootProject) {
 		  if (".git" in parent!!.projectDir.list()) {
 			dependsOn(parent!!.tasks["gitPullSubmodule"])
@@ -121,7 +121,7 @@ subprojects {
 		//		  addCommitTask.mustRunAfter(this)
 		//		}
 		workingDir(projectDir)
-		commandLine("git", "push")
+		commandLine("git", "push","origin","master")
 	  }
 	}
   }
@@ -157,7 +157,7 @@ tasks {
 	}
   }
   val gitPullBuildSrc by creating(Exec::class) {
-	commandLine("git", "pull")
+	commandLine("git", "pull","origin","master")
 	workingDir("buildSrc")
   }
   val gitCommitBuildSrc by creating(Exec::class) {
@@ -182,7 +182,7 @@ tasks {
 	}
   }
   val gitPushBuildSrc by creating(Exec::class) {
-	commandLine("git", "push")
+	commandLine("git", "push","origin","master")
 	workingDir("buildSrc")
 	mustRunAfter(gitCommitBuildSrc)
   }
@@ -222,7 +222,7 @@ tasks {
 	}
 	//	mustRunAfter(gitPushSubs)
 	//	gitPushSubs.forEach { mustRunAfter(it) }
-	commandLine("git", "push")
+	commandLine("git", "push", "origin", "master")
   }
 
   val gitAddCommitPush by creating {

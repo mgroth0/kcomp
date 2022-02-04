@@ -76,15 +76,20 @@ subprojects sub@{
 
 
 
-  configurations.all {
-	resolutionStrategy.dependencySubstitution {
-	  listOf("base", "controls", "graphics", "web", "media", "swing").forEach {
-		substitute(module("org.openjfx:javafx-$it"))
-			.using(module("org.openjfx:javafx-$it:${fxVersion}"))
-			.withClassifier(if (isMac) "mac" else "linux")
-	  }
+	configurations.all {
+		resolutionStrategy.dependencySubstitution {
+			listOf("base", "controls", "graphics", "web", "media", "swing").forEach {
+				substitute(module("org.openjfx:javafx-$it"))
+						.using(module("org.openjfx:javafx-$it:${fxVersion}"))
+						.withClassifier(if (isNewMac) run {
+//				println("isNewMac")
+							"mac-aarch64"
+						}else if (isMac) run{
+//				println("isOldMac")
+							"mac"} else "linux")
+			}
+		}
 	}
-  }
 
   if (modtype == ModType.LIB) return@sub
   if (isAnyLib) return@sub

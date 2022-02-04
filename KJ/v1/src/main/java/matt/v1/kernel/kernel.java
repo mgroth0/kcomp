@@ -3,13 +3,13 @@ package matt.v1.kernel;
 import com.aparapi.Kernel;
 import com.aparapi.Range;
 
-public class DotProductGPU {
+public class kernel {
 
     double[] m1;
     double[] m2;
     Kernel kernel;
 
-    public DotProductGPU(double[] m1, double[] m2) {
+    public kernel(double[] m1, double[] m2) {
         this.m1 = m1;
         this.m2 = m2;
     }

@@ -7,7 +7,7 @@ repositories{
 	url = uri("https://maven.pkg.github.com/brainflow-dev/brainflow")
 	credentials {
 	  username = "mgroth0"/*project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")*/
-	  password = "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"/*project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")*/
+	  password = "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"/*project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")*/
 	}
   }
 }

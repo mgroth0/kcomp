@@ -1,6 +1,6 @@
 # this file is hard-linked across 2 projects
 [versions]
-fx = "17-ea+6"
+fx = "18-ea+8"
 kotlin = "1.6.10"
 ktlang = "1.5"
 java = "13"

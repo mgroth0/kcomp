@@ -62,7 +62,7 @@ private enum class STARTUP { ROSENBERG, ITTI_KOCH }
 
 private val startup: STARTUP = STARTUP.ROSENBERG
 private const val REMOTE = false
-private val REMOTE_AND_MAC = REMOTE && ismac()
+private val REMOTE_AND_MAC = REMOTE && ismac
 
 fun main(): Unit = GuiApp {
   val remoteStatus = if (REMOTE_AND_MAC) StatusLabel("remote") else null
