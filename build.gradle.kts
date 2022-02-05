@@ -103,7 +103,7 @@ subprojects {
 			  }
 			}
 		isIgnoreExitValue = true
-		this.setStandardOutput(java.io.ByteArrayOutputStream())
+		this.standardOutput = java.io.ByteArrayOutputStream()
 
 		doLast {
 		  val stdout = standardOutput.toString()
@@ -122,6 +122,7 @@ subprojects {
 		//		}
 		workingDir(projectDir)
 		commandLine("git", "push","origin","master")
+		mustRunAfter(gitAddCommitSubmodule)
 	  }
 	}
   }

@@ -2,6 +2,7 @@
 
 package matt.v1.compcache
 
+import matt.kjlib.async.parChunkAssociateWith
 import matt.kjlib.jmath.Ae
 import matt.kjlib.jmath.PI
 import matt.kjlib.jmath.div
@@ -220,10 +221,12 @@ data class MaybePreDNPopR(
   companion object: ComputeCache<MaybePreDNPopR, PopulationResponse>() {
 	lateinit var coreLoopForStatusUpdates: CoreLoop
 	override val compute: MaybePreDNPopR.()->PopulationResponse = {
+
+
 	  pop.complexCells
 		.asSequence()
 		.onEveryIndexed(10) { i, _ -> coreLoopForStatusUpdates.update(i = i) }
-		.associateWith {
+		.parChunkAssociateWith(numThreads = 20) {
 		  it.stimulate(
 			stim,
 			uniformW = uniformW,
@@ -251,12 +254,12 @@ data class Stimulation(
   val rawInput: Double?,
   val ti: Int? = null,
   val h: Double? = null,
-): ComputeInput<Stimulation, Pair<Double,Double?>>() {
+): ComputeInput<Stimulation, Pair<Double, Double?>>() {
   override val computer = Companion
 
 
-  companion object: ComputeCache<Stimulation, Pair<Double,Double?>>() {
-	override val compute: Stimulation.()->Pair<Double,Double?> = {
+  companion object: ComputeCache<Stimulation, Pair<Double, Double?>>() {
+	override val compute: Stimulation.()->Pair<Double, Double?> = {
 	  cell.stimulate(
 		stim = stim,
 		uniformW = uniformW,

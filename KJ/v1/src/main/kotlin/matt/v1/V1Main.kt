@@ -10,6 +10,7 @@ import javafx.scene.layout.BorderWidths
 import javafx.scene.layout.Priority.ALWAYS
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
+import javafx.stage.Screen
 import javafx.util.StringConverter
 import matt.gui.app.GuiApp
 import matt.gui.core.context.mcontextmenu
@@ -49,6 +50,7 @@ import matt.v1.gui.StatusLabel
 import matt.v1.gui.StatusLabel.Status.IDLE
 import matt.v1.gui.StatusLabel.Status.WORKING
 import matt.v1.lab.ExpCategory
+import matt.v1.lab.petri.pop2D
 import matt.v1.vis.IttiKochVisualizer
 import matt.v1.vis.IttiKochVisualizer.Companion.dogFolder
 import matt.v1.vis.IttiKochVisualizer.Companion.ittiKochInput
@@ -64,7 +66,17 @@ private val startup: STARTUP = STARTUP.ROSENBERG
 private const val REMOTE = false
 private val REMOTE_AND_MAC = REMOTE && ismac
 
+
 fun main(): Unit = GuiApp {
+
+  /*NativeLoader.load()
+
+  Logger.getLogger(OpenCLLoader::class.qualifiedName).level = Level.INFO
+  println("OpenCLLoader.isOpenCLAvailable():${OpenCLLoader.isOpenCLAvailable()}")
+  *//*aparAPITest()*//*
+  val r = kernel(doubleArrayOf(1.0, 2.0), doubleArrayOf(3.0, 4.0)).calc()
+  println("kernel result: ${r}")*/
+
   val remoteStatus = if (REMOTE_AND_MAC) StatusLabel("remote") else null
   if (REMOTE_AND_MAC) {
 	thread {
@@ -113,7 +125,7 @@ fun main(): Unit = GuiApp {
 	alignment = Pos.CENTER
 	val visualizer = tabpane {
 	  this.vgrow = ALWAYS
-	  tabs += lazyTab("Rosenberg") { RosenbergVisualizer() }
+	  tabs += lazyTab("Rosenberg") { RosenbergVisualizer(pop2D) }
 	  tabs += lazyTab("Itti Koch") {
 		VBox(
 		  ComboBox(
@@ -222,6 +234,14 @@ fun main(): Unit = GuiApp {
 	if (REMOTE_AND_MAC) {
 	  remoteStatus!!.attachTo(this)
 	}
+  }
+  stage.apply {
+	/*isMaximized = true*/
+	stage.x = 0.0
+	stage.y = 0.0
+	val screen = Screen.getPrimary()
+	stage.height = screen.bounds.height
+	stage.width = screen.bounds.width
   }
 }.start(
   shutdown = {

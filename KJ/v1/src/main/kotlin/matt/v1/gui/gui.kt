@@ -162,7 +162,7 @@ abstract class ImageVisualizer(
 		props.forEach { p ->
 		  when (p) {
 			is CfgObjProp<*> -> combobox(values = p.values.toList()) {
-//			  println("getting component for CfgObjProp")
+			  //			  println("getting component for CfgObjProp")
 			  value = p.value
 			  /*maxWidthProperty().bind(fp.widthProperty())*/
 			  exactWidthProperty().bind(fp.widthProperty()*.4)
@@ -250,10 +250,10 @@ abstract class GeneratedImageVisualizer(
 ): ImageVisualizer(responsive, imageHW, imgScale, staticImages) {
 
   override fun visualize() =
-	  (0..imageHW)
-		  .forEachNested { x, y ->
-			canv!![x, y] = draw(x, y)
-		  }
+	(0..imageHW)
+	  .forEachNested { x, y ->
+		canv!![x, y] = draw(x, y)
+	  }
 
   abstract fun draw(x: Int, y: Int): Color
 
@@ -359,7 +359,11 @@ class Figure(
 	*//*chart.lookup(".default-color${i}.chart-line-symbol")?.style = if (b) "-fxstroke: transparent" else ""*//*
   }*/
 
-  fun autorangeY() = autorangeYWith(*series.values.toTypedArray())
+  fun autorangeY() {
+//	println("runnning autorangeY")
+	autorangeYWith(*series.values.toTypedArray())
+  }
+
   fun autorangeX() = autorangeXWith(*series.values.toTypedArray())
   fun clear() {
 
@@ -387,10 +391,12 @@ class Figure(
 
 
   private fun autorangeYWith(vararg series: DoubleDataSet) {
-
+//	println("runnning autorangeYWith")
 
 	val min = series.flatMap { it.yValues.toList() }.minOrNull()!!
 	val max = series.flatMap { it.yValues.toList() }.maxOrNull()!!
+//	println("min=${min}")
+//	println("max=${max}")
 	val diff = max - min
 	val tenPercent = 0.1*diff
 	chart.yAxis.min = min - tenPercent
@@ -483,12 +489,12 @@ class StatusLabel(
 
 	val dotItr = (1..3).toList().loopIterator()
 	every(0.05.sec, ownTimer = true) {
-	  when (status.value!!) {
-		IDLE    -> runLaterReturn { statusLabel.text = "" }
-		WORKING -> runLaterReturn {
-		  statusLabel.text = (if (name != null) "$name: " else "") +
-							 (statusExtra.takeIf { it.isNotBlank() }
-							  ?: "working") + (0 until dotItr.next()).joinToString(separator = "") { "." }
+	  runLaterReturn {
+		statusLabel.text = (if (name != null) "$name: " else "") +
+			(statusExtra.takeIf { it.isNotBlank() }
+			  ?: "working") + when (status.value!!) {
+		  IDLE    -> ""
+		  WORKING -> (0 until dotItr.next()).joinToString(separator = "") { "." }
 		}
 	  }
 	}

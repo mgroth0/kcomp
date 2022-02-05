@@ -39,7 +39,7 @@ jLatexMathFX = { module = "com.proudapes:jlatexmathfx", version = "0.3.2" }
 
 multik-default = { module = "org.jetbrains.kotlinx:multik-default", version.ref = "multik" }
 multik-api = { module = "org.jetbrains.kotlinx:multik-api", version.ref = "multik" }
-aparapi = { module = "com.aparapi:aparapi", version = "2.0.0" }
+aparapi = { module = "com.aparapi:aparapi", version = "3.0.0" }
 commons-math = { module = "org.apache.commons:commons-math3", version = "3.5" }
 
 chartFX = { module = "de.gsi.chart:chartfx-chart", version = "11.1.5" }

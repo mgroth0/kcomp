@@ -1,5 +1,6 @@
 package matt.v1.exps
 
+import matt.kjlib.date.tic
 import matt.kjlib.jmath.assertRound
 import matt.kjlib.jmath.mean
 import matt.kjlib.jmath.toApfloat
@@ -32,7 +33,8 @@ import matt.v1.lab.PoissonVar.YES
 import matt.v1.lab.SeriesCfg
 import matt.v1.lab.petri.pop2D
 import matt.v1.lab.petri.popLouie
-import matt.v1.lab.rcfg.rCfg
+import matt.v1.lab.petri.popLouieFullThetaCells
+import matt.v1.lab.petri.popLouieMoreCells
 import matt.v1.model.ASD_SIGMA_POOLING
 import matt.v1.model.ATTENTION_SUPP_SIGMA_POOLING
 import matt.v1.model.PopulationResponse
@@ -61,6 +63,7 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	  ).first
 	}
   )
+  val F3B_STEP = 30.0
   val baseExp = Experiment(
 	name = "3.B",
 	title = "DN causes saturation with ↑ contrast",
@@ -69,10 +72,19 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	fig = fig,
 	statusLabel = statusLabel,
 	xVar = CONTRAST,
-	xStep = rCfg.F3B_STEP,
+	xStep = F3B_STEP,
 	series = listOf(noDN, withDN),
 	normToMaxes = true,
-	category = ROSENBERG
+	category = ROSENBERG,
+
+
+	/*from rCFG*/
+	ATTN_X0_DIST_MAX = 2.0,
+	F3B_STEP = F3B_STEP,
+	F3C_STEP = 10.0,
+	FS1_STEP = 15.0,
+	F3D_STEP = 0.25, /*faster*/
+	DECODE_COUNT = 2
   )
 
 
@@ -83,7 +95,7 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	xlabel = "Mask % Contrast",
 	xMax = 50.0,
 	xVar = MASK,
-	xStep = rCfg.F3C_STEP
+	xStep = baseExp.F3C_STEP
   )
   exps += baseExp.copy(
 	name = "3.D",
@@ -91,8 +103,8 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	xlabel = "Size (Degrees)",
 	xMax = 10.0,
 	xVar = SIZE,
-	xStep = rCfg.F3D_STEP,
-	xMin = rCfg.F3D_STEP,
+	xStep = baseExp.F3D_STEP,
+	xMin = baseExp.F3D_STEP,
 	baseContrast = 1.0
   )
 
@@ -119,7 +131,7 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	xMax = 100.0,
 	xVar = CONTRAST,
 	xlabel = baseExp.xlabel,
-	xStep = rCfg.F3B_STEP
+	xStep = baseExp.F3B_STEP
   )
   exps += contrastSensitivity
 
@@ -127,9 +139,9 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	name = "5.C",
 	title = "dist. from center of attn. causes ↓ pop. gain and then ↑ (matches b. data)",
 	xMin = 0.0,
-	xMax = rCfg.X0_DIST_MAX,
+	xMax = baseExp.ATTN_X0_DIST_MAX,
 	xVar = DIST_4_ATTENTION,
-	xStep = rCfg.F5C_STEP,
+	xStep = baseExp.F5C_STEP,
 	xlabel = "Distance (Degrees)",
 	ylabel = exps.last().ylabel,
 	troughShift = true,
@@ -179,7 +191,7 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	xVar = PREF_ORIENTATION,
 	xMin = 0.0,
 	xMax = 179.0,
-	xStep = rCfg.FS1_STEP,
+	xStep = baseExp.FS1_STEP,
 	stimTrans = { copy(SF = 3.0, f = f.copy(t = 90.0)) },
 	xlabel = "Preferred Orientation (Degrees)",
 	ylabel = "Neural Response",
@@ -302,7 +314,7 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	priorWeight = tdDivNorm.c*.5 /*(5*10.0.pow(-5))*/  /*7.49*10.0.pow(-5)*/
   )
   val veryStrongPrior = tdDivNorm.c*.75 /*7.5*10.0.pow(-5)*/
-  val expThetaMax = rCfg.THETA_MAX - rCfg.CELL_THETA_STEP
+  val expThetaMax = pop2D.prefThetaMax - pop2D.cellPrefThetaStep
   exps += baseExp.copy(
 	name = "S4.A",
 	title = "Bayesian Priors: Suppressive Field Gain Term",
@@ -337,7 +349,7 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	name = "S4.B",
 	title = "Bayesian Priors: Oblique effect is diminished in Autism",
 	ylabel = "Neural Response",
-	xStep = rCfg.CELL_THETA_STEP,
+	xStep = pop2D.cellPrefThetaStep,
 	series = listOf(
 	  flatPriorR,
 	  flatPriorR.copy(
@@ -384,7 +396,7 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	  )/*.mean()*/
 
 	  val d2 = decode(
-		ftStim = seriesStim.copy(f = seriesStim.f.copy(t = if (seriesStim.f.t == expThetaMax) seriesStim.f.t - rCfg.CELL_THETA_STEP else seriesStim.f.t + rCfg.CELL_THETA_STEP)),
+		ftStim = seriesStim.copy(f = seriesStim.f.copy(t = if (seriesStim.f.t == expThetaMax) seriesStim.f.t - pop2D.cellPrefThetaStep else seriesStim.f.t + pop2D.cellPrefThetaStep)),
 		trialStim = seriesStim,
 	  )/*.mean()*/
 
@@ -426,8 +438,8 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 		priorWeight = strongPrior.priorWeight
 	  )
 	),
-	pop = pop2D,
-	xStep = rCfg.CELL_THETA_STEP
+	popCfg = pop2D,
+	xStep = pop2D.cellPrefThetaStep
   )
 
   exps += exps.last().copy(
@@ -607,29 +619,31 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
   )
 
   val h = 0.01
-  val uniW = 1.0
-  val rInput = 30.0
 
   var lastPopR: PopulationResponse? = null
   val preferedCellR = SeriesCfg(
 	label = "Preferred Cell R",
 	yExtractCustom = {
 
-	  pop.centralCell.debugging = true
+	  val t = tic(prefix = "preferedCellR",enabled=false)
+	  /*pop.centralCell.debugging = true*/
 
 	  val xi = itr.indexOf(x)
 	  /*get Rs*/
+	  t.toc("getting lastPopR")
 	  lastPopR = MaybePreDNPopR(
 		seriesStim,
 		attentionExp,
 		pop,
-		uniformW = uniW,
-		rawInput = rInput,
+		uniformW = this.uniformW,
+		rawInput = this.rawInput,
 		ti = xi,
 		h = h,
 		lastPopR = lastPopR
 	  )()
+	  t.toc("getting y")
 	  val y = lastPopR!!.m[pop.centralCell]!!.first
+	  t.toc("got y")
 	  /*println("y=${y}")*/
 
 	  //	  cell.cfgStim(/*
@@ -662,14 +676,43 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	series = listOf(preferedCellR, preferedCellG),
 	category = LOUIE,
 	xMax = 10.0,
-	uniformW = uniW,
-	rawInput = rInput,
-	pop = popLouie
+	uniformW = 1.0,
+	rawInput = 30.0,
+	popCfg = popLouie
   )
   exps += louieBaseExp
   exps += louieBaseExp.copy(
 	name = louieBaseExp.name + " (normToMaxes)",
 	normToMaxes = true
+  )
+
+  exps += louieBaseExp.copy(
+	name = louieBaseExp.name + " (5 cells)",
+	popCfg = popLouieMoreCells
+  )
+
+  exps += louieBaseExp.copy(
+	name = louieBaseExp.name + " (180*5 cells cells)",
+	popCfg = popLouieFullThetaCells
+  )
+  exps += louieBaseExp.copy(
+	name = louieBaseExp.name + " (180*5 cells cells, excitation only)",
+	popCfg = popLouieFullThetaCells,
+	series = listOf(preferedCellR),
+  )
+
+  exps += louieBaseExp.copy(
+	name = louieBaseExp.name + " (180*5 cells, real stimuli, weight kernel)",
+	popCfg = popLouieFullThetaCells,
+	rawInput = null,
+	uniformW = null
+  )
+  exps += louieBaseExp.copy(
+	name = louieBaseExp.name + " (180*5 cells, real stimuli, weight kernel, excitation only)",
+	popCfg = popLouieFullThetaCells,
+	rawInput = null,
+	uniformW = null,
+	series = listOf(preferedCellR),
   )
 
   return exps

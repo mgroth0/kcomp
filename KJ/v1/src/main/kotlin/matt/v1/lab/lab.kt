@@ -6,10 +6,15 @@ import de.gsi.chart.axes.spi.DefaultNumericAxis
 import javafx.scene.layout.FlowPane
 import javafx.scene.paint.Color
 import matt.gui.loop.runLater
+import matt.gui.loop.runLaterReturn
 import matt.hurricanefx.eye.lang.BProp
 import matt.json.custom.toJsonWriter
 import matt.json.prim.loadJson
+import matt.kjlib.async.every
+import matt.kjlib.async.with
 import matt.kjlib.commons.DATA_FOLDER
+import matt.kjlib.date.sec
+import matt.kjlib.date.tic
 import matt.kjlib.file.get
 import matt.kjlib.jmath.getPoisson
 import matt.kjlib.jmath.logSum
@@ -39,6 +44,9 @@ import matt.v1.compcache.shiftAllByTroughs
 import matt.v1.gui.Figure
 import matt.v1.gui.StatusLabel
 import matt.v1.lab.Experiment.CoreLoop
+import matt.v1.lab.Experiment.RUN_STAGE.FIG_COMPLETE
+import matt.v1.lab.Experiment.RUN_STAGE.ITERATING
+import matt.v1.lab.Experiment.RUN_STAGE.WAITING_FOR_FIG
 import matt.v1.lab.Experiment.XVar.CONTRAST
 import matt.v1.lab.Experiment.XVar.DIST_4_ATTENTION
 import matt.v1.lab.Experiment.XVar.MASK
@@ -54,15 +62,16 @@ import matt.v1.lab.PoissonVar.FAKE5
 import matt.v1.lab.PoissonVar.NONE
 import matt.v1.lab.PoissonVar.YES
 import matt.v1.lab.petri.Population
-import matt.v1.lab.petri.perfectStim
+import matt.v1.lab.petri.PopulationConfig
 import matt.v1.lab.petri.pop2D
-import matt.v1.lab.rcfg.rCfg
 import matt.v1.model.ComplexCell
 import matt.v1.model.PopulationResponse
 import matt.v1.model.Stimulus
 import matt.v1.model.tdDivNorm
 import org.apache.commons.math3.exception.ConvergenceException
+import java.lang.Thread.sleep
 import java.util.Random
+import java.util.concurrent.Semaphore
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -114,10 +123,23 @@ data class Experiment(
   val stimTrans: (Stimulus.()->Stimulus)? = null,
   val category: ExpCategory,
   val baseContrast: Double = 0.5,
-  val pop: Population = pop2D,
+  val popCfg: PopulationConfig = pop2D,
   val uniformW: Double? = null,
-  val rawInput: Double? = null
-) {
+  val rawInput: Double? = null,
+
+  val ATTN_X0_DIST_MAX: Double = 10.0,
+  val F3B_STEP: Double = 1.0,
+  val F3C_STEP: Double = 0.005,
+  val F3D_STEP: Double = 0.1, /*base*/
+  val F5C_STEP: Double = 0.2,
+  val F5D_STEP: Double = 10.0,
+  val FS1_STEP: Double = 0.25,
+  val DECODE_COUNT: Int = 100,
+
+
+  ) {
+
+  val pop by lazy { Population(popCfg) }
 
 
   val runningProp = BProp(false)
@@ -143,6 +165,7 @@ data class Experiment(
   companion object {
 	val CONTRAST1 = 7.5
 	val CONTRAST2 = 20.0
+	var firstStim = true
   }
 
 
@@ -204,8 +227,8 @@ data class Experiment(
 		fill = Color.WHITE
 	  }
 	  if (!autoY) {
-		max = (yMax).toDouble()
-		min = yMin.toDouble()
+		max = (yMax)
+		min = yMin
 	  }
 	}
 
@@ -229,7 +252,7 @@ data class Experiment(
 
 	fig.chart.axes.forEach { a -> a.forceRedraw() }
 	fig.chart.legend.updateLegend(fig.chart.datasets, fig.chart.renderers, true)
-
+	fig.autorangeXWith(xMin, xMax)
 
   }
 
@@ -246,31 +269,85 @@ data class Experiment(
 	  }
 	}
 	fig.autorangeY()
-	fig.autorangeXWith(xMin.toDouble(), xMax.toDouble())
+	fig.autorangeXWith(xMin, xMax)
 	runningProp.value = false
   }
 
+  val FIG_REFRESH_PERIOD_SECS = 0.1
+  val fig_sem = Semaphore(1)
+
+  enum class RUN_STAGE {
+	ITERATING,
+	WAITING_FOR_FIG,
+	FIG_COMPLETE
+  }
+
   fun run() {
+	var runStage = ITERATING
+	val t = tic(prefix = name)
+	t.toc("starting experiment")
 	runLater { runningProp.value = true }
 	stopped = false
+
+	val seriesPoints = mutableMapOf<Int, MutableList<Point>>(0 to mutableListOf())
+	val figNextPointsI = mutableMapOf(0 to 0)
+	val timerTask = every(FIG_REFRESH_PERIOD_SECS.sec) {
+	  fig_sem.with {
+
+		if (seriesPoints.all {
+			if (it.key !in figNextPointsI) figNextPointsI[it.key] = 0
+			it.value.size == figNextPointsI[it.key]
+		  } && runStage in listOf(WAITING_FOR_FIG, FIG_COMPLETE)) {
+		  if (stopped) this.cancel()
+		  if (!runningProp.value) this.cancel()
+		}
+	  }
+	  runLaterReturn {
+		fig_sem.with {
+
+		  seriesPoints.forEach { (i, list) ->
+			if (figNextPointsI[i] == 0) {
+			  fig.series[i].set(
+				list.subList(figNextPointsI[i]!!, list.size).map { it.x }.toDoubleArray(),
+				list.subList(figNextPointsI[i]!!, list.size).map { it.y }.toDoubleArray()
+			  )
+			} else if (figNextPointsI[i]!! < seriesPoints[i]!!.size) {
+			  fig.series[i].add(
+				list.subList(figNextPointsI[i]!!, list.size).map { it.x }.toDoubleArray(),
+				list.subList(figNextPointsI[i]!!, list.size).map { it.y }.toDoubleArray()
+			  )
+			}
+			figNextPointsI[i] = seriesPoints[i]!!.size
+			if (runStage == WAITING_FOR_FIG) {
+			  runStage = FIG_COMPLETE
+			}
+		  }
+		  if (autoY) fig.autorangeY()
+		  fig.chart.axes.forEach { a -> a.forceRedraw() } /*sadly this seems neccesary do to internal bugs of the library*/
+		}
+	  }
+	}
+
 	if (metaGain) {
-	  MetaLoop(xMetaMin!!..xMetaMax!! step rCfg.F5D_STEP)
+	  MetaLoop(xMetaMin!!..xMetaMax!! step F5D_STEP)
 		.runAndExtract {
 		  val xForThread = x
-		  runLater {
-			fig.series[0].add(xForThread.toDouble(), it.toDouble())
+		  fig_sem.with {
+			seriesPoints[0]!! += Point(xForThread, it)
 		  }
 		  var nextFitIndex = 1
 		  series.forEachIndexed { i, s ->
-			fig.styleSeries(i = i, line = s.line, marker = s.markers)
-			val g = if (isLast && s.fit == Gaussian && fig.series[0].xValues.size >= 3) {
+			/*fig.styleSeries(i = i, line = s.line, marker = s.markers)*/
+
+			val g = if (isLast && s.fit == Gaussian && seriesPoints[0]!!.size >= 3) {
 
 			  val diff = xMax - xMin
 			  try {
 				GaussianFit(
-				  fig.series[0].xValues.zip(fig.series[0].yValues).map {
+				  seriesPoints[0]!!,
+				  /*seriesPoints[0]!!.map { it.x }.zip(seriesPoints[0]!!.map { it.y }).map {
 					Point(x = it.first, y = it.second)
-				  },
+				  },*/
 				  xMin = xMin,
 				  xStep = (diff/10),
 				  xMax = xMax
@@ -281,22 +358,24 @@ data class Experiment(
 				listOf()
 			  }
 			} else null
-			runLater {
+
+
+			fig_sem.with {
 			  if (g != null) {
+				/*val fitLine = mutableListOf<Point>()
 				g.forEachIndexed { index, p ->
 				  fig.series[nextFitIndex].set(index, p.x.toDouble(), p.y.toDouble())
 				  fig.styleSeries(i = nextFitIndex, line = true, marker = false)
-				}
+				}*/
+				seriesPoints[nextFitIndex] = g.toMutableList()
+				/*fig.styleSeries(i = nextFitIndex, line = true, marker = false)*/
 				nextFitIndex++
 			  }
 			}
 		  }
-		  runLater {
-			if (autoY) fig.autorangeY()
-			fig.chart.axes.forEach { a -> a.forceRedraw() }
-			fig.chart.legend.updateLegend(fig.chart.datasets, fig.chart.renderers, true)
-		  }
 		}
+
+
 	} else buildCoreLoop().runAndExtract {
 	  var nextFitIndex = series.size
 	  if (troughShift && isLast) it.values.shiftAllByTroughs()
@@ -321,13 +400,33 @@ data class Experiment(
 			listOf()
 		  }
 		} else null
-		runLater {
 
+		fig_sem.with {
+		  /*resultData.forEachIndexed { ii, r ->
+			*//*println("adding point x=${r.x} y=${r.y}")*//*
+			seriesPoints[i][ii] = .set(i, r.x, r.y)
+		  }*/
+		  seriesPoints[i] = resultData.toMutableList()
+		  figNextPointsI[i] = 0 /*gotta keep redrawing because of some of the stuff above*/
 
+		  if (g != null) {
+
+			seriesPoints[nextFitIndex] = g.toMutableList()
+			figNextPointsI[nextFitIndex] = 0
+
+			/*g.forEachIndexed { index, p ->
+			  fig.series[nextFitIndex].set(index, p.x, p.y)
+
+			  *//*fig.styleSeries(i = nextFitIndex, line = true, marker = false)*//*
+			}*/
+			nextFitIndex++
+		  }
+
+		}
+		/*runLater {
 		  val figSeries = fig.series[i]
-
 		  resultData.forEachIndexed { i, r ->
-			/*println("adding point x=${r.x} y=${r.y}")*/
+			*//*println("adding point x=${r.x} y=${r.y}")*//*
 			figSeries.set(i, r.x, r.y)
 		  }
 		  if (g != null) {
@@ -337,43 +436,54 @@ data class Experiment(
 			}
 			nextFitIndex++
 		  }
-		}
-
-
+		}*/
 	  }
 
 
-	  runLater {
+	  /*runLater {
 		series.forEachIndexed { i, s ->
 		  fig.styleSeries(i = i, line = s.line, marker = s.markers)
 		}
+	  }*/
+	}
 
-		if (autoY) fig.autorangeY()
-		fig.autorangeXWith(xMin.toDouble(), xMax.toDouble())
-		fig.chart.axes.forEach { a -> a.forceRedraw() }
+
+
+	runStage = WAITING_FOR_FIG
+
+	t.toc("writing json")
+	if (!stopped) {
+	  while (runStage != FIG_COMPLETE) {
+		sleep(10)
+	  }
+	  runLaterReturn {
+		/*if (autoY) fig.autorangeY()*/
+
 		fig.chart.legend.updateLegend(fig.chart.datasets, fig.chart.renderers, true)
 	  }
+	  jsonFile.parentFile.mkdirs()
+	  jsonFile.writeText(JsonArray().apply {
+		fig.chart.datasets.forEach { s ->
+		  add(JsonArray().apply {
+			(0 until s.dataCount).forEach { index ->
+			  add(JsonObject().apply {
+				addProperty("x", s[0, index])
+				addProperty("y", s[1, index])
+			  })
+			}
+		  })
+		}
+	  }.toJsonWriter().toJsonString())
 	}
-	if (!stopped) {
-	  runLater {
-		/*must be in fx thread for now because otherwise theres no way to ensure the datasets are fully filled in time for this*/
-		jsonFile.parentFile.mkdirs()
-		jsonFile.writeText(JsonArray().apply {
-		  fig.chart.datasets.forEach { s ->
-			add(JsonArray().apply {
-			  (0 until s.dataCount).forEach { index ->
-				add(JsonObject().apply {
-				  addProperty("x", s[0, index])
-				  addProperty("y", s[1, index])
-				})
-			  }
-			})
-		  }
-		}.toJsonWriter().toJsonString())
-	  }
 
-	}
+
+
 	runLater { runningProp.value = false }
+	val dur = t.toc("finished experiment")
+	statusLabel.statusExtra = "experiment complete in ${dur}"
+	while (!timerTask.cancelled) {
+	  sleep(10)
+	}
   }
 
   fun buildCoreLoop(): CoreLoop {
@@ -383,10 +493,15 @@ data class Experiment(
 
   val attentionExp = xVar == DIST_4_ATTENTION
 
+
   inner class CoreLoop(
 	itr: List<Double>,
 	val responseSet: Map<SeriesCfg, MutableList<Point>>
   ): ExperimentalLoop<Double, Map<SeriesCfg, MutableList<Point>>>(itr) {
+
+
+	val uniformW get() = this@Experiment.uniformW
+	val rawInput get() = this@Experiment.rawInput
 
 	val attentionExp: Boolean = this@Experiment.attentionExp
 	val pop = this@Experiment.pop
@@ -438,8 +553,8 @@ data class Experiment(
 		}
 	  )?.popRCfg(),
 	  attention = attentionExp,
-	  uniformW=uniformW,
-	  rawInput=rawInput,
+	  uniformW = uniformW,
+	  rawInput = rawInput,
 	  ti = if (xVar == TIME) itr.indexOf(x) else null,
 	  h = if (xVar == TIME) xStep else null,
 	).findOrCompute(debug = true)
@@ -467,12 +582,12 @@ data class Experiment(
 		if (i%10 == 0) update(verb = "decoding", i = i + 1)
 		val ft = c.cfgStim(
 		  ftStim,
-		  popR = MaybePreDNPopR(ftStim, attentionExp, pop,uniformW,rawInput)()
+		  popR = MaybePreDNPopR(ftStim, attentionExp, pop, uniformW, rawInput)()
 		).first
 		//		  warnOnce("debugging ppc")
 		val preRI = c.cfgStim(
 		  cfgStim = trialStim,
-		  popR = MaybePreDNPopR(trialStim, attentionExp, pop,uniformW,rawInput)()
+		  popR = MaybePreDNPopR(trialStim, attentionExp, pop, uniformW, rawInput)()
 		).first
 
 
@@ -529,7 +644,7 @@ data class Experiment(
 	fun decode(
 	  ftStim: Stimulus,
 	  trialStim: Stimulus,
-	) = (1..(if (poissonVar == YES) rCfg.DECODE_COUNT else 1)).map {
+	) = (1..(if (poissonVar == YES) DECODE_COUNT else 1)).map {
 	  decodeBeforeGeoMean(ftStim = ftStim, trialStim = trialStim).run {
 		if (LOG_FORM) sum() else logSum()
 	  }
@@ -542,22 +657,32 @@ data class Experiment(
 
 	override fun iteration(): Map<SeriesCfg, MutableList<Point>> {
 
+	  val t = tic(prefix = "iteration", enabled = false)
+
+	  t.toc("setting up history")
+
 	  if (itr.indexOf(x) == 0) {
 		pop.complexCells.forEach {
-		  it.xiGiMap.clear()
+		  it.r1Back = 0.0
+		/*  it.r2Back = 0.0*/
+		  it.g1Back = 0.0
+		  /*it.g2Back = 0.0*/
+		  /*it.xiGiMap.clear()
 		  it.xiGiMap.putAll(mapOf(0 to 0.0))
 		  it.xiRiMap.clear()
-		  it.xiRiMap.putAll(mapOf(0 to 0.0))
+		  it.xiRiMap.putAll(mapOf(0 to 0.0))*/
 		}
 	  }
 
 	  MaybePreDNPopR.coreLoopForStatusUpdates = this
 
+	  t.toc("getting some variables")
 	  cell = pop.centralCell
-	  stim = cell.perfectStim().copy(a = baseContrast)
+	  stim = pop.cfg.perfectStimFor(cell).copy(a = baseContrast)
 	  priorW = null
 	  popRCfg = { this }
 
+	  t.toc("getting stim")
 	  stim = when (xVar) {
 		CONTRAST                                               -> stim.copy(a = x*0.01)
 		MASK                                                   -> stim withMask stim.copy(
@@ -568,6 +693,11 @@ data class Experiment(
 		in listOf(STIM_ORIENTATION, STIM_AND_PREF_ORIENTATION) -> stim.copy(f = stim.f.copy(t = x))
 		else                                                   -> stim
 	  }
+	  if (firstStim) {
+		println(stim.gaborParamString())
+	  }
+	  firstStim = false
+	  t.toc("getting cell")
 	  cell = when (xVar) {
 		DIST_4_ATTENTION                                       -> pop.complexCells
 		  .filter { it.Y0 == 0.0 }
@@ -593,25 +723,29 @@ data class Experiment(
 	  }
 
 
-
+	  t.toc("maybe doing stimTrans")
 	  if (stimTrans != null) stim = stimTrans.invoke(stim)
 
 
-
+	  t.toc("getting responses")
 	  responseSet.forEach { ser ->
+		t.toc("prepping for a response")
 		if (stopped) return@iteration responseSet
 		val y = ser.key
 		seriesStim = stim
+		t.toc("invoking stimCfg")
 		seriesStim = y.stimCfg.invoke(this, seriesStim)
 		priorW = y.priorWeight
 		/*popRCfg = y.popRCfg*/y.popRcfg.go { idk -> popRCfg = idk }
 		poissonVar = y.poissonVar
+		t.toc("invoking yExtractCustom and getting point")
 		ser.value += Point(
 		  x,
 		  y.yExtractCustom!!.invoke(this)
 		)
-
+		t.toc("got point")
 	  }
+	  t.toc("returning responses")
 	  return responseSet
 	}
   }
