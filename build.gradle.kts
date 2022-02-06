@@ -172,21 +172,22 @@ tasks {
 		}
 
 		val rootFilesPath = ROOT_FILES_FOLDER.absolutePath
+		val rootFilsGitPath = File(rootFilesPath).resolve(".git").absolutePath
 
-		if ("detached" in shell("git", "--git-dir=${rootFilesPath}", "branch", debug = true)) {
+		if ("detached" in shell("git", "--git-dir=${rootFilsGitPath}", "branch", debug = true)) {
 		  println("RootFiles is detatched! dealing")
-		  shell("git", "--git-dir=${rootFilesPath}", "add-commit", "-m", "autocommit", debug = true)
-		  shell("git", "--git-dir=${rootFilesPath}", "branch", "-d", "tmp", debug = true)
-		  shell("git", "--git-dir=${rootFilesPath}", "branch", "tmp", debug = true)
-		  shell("git", "--git-dir=${rootFilesPath}", "checkout", "master", debug = true)
-		  shell("git", "--git-dir=${rootFilesPath}", "merge", "tmp", debug = true)
+		  shell("git", "--git-dir=${rootFilsGitPath}", "add-commit", "-m", "autocommit", debug = true)
+		  shell("git", "--git-dir=${rootFilsGitPath}", "branch", "-d", "tmp", debug = true)
+		  shell("git", "--git-dir=${rootFilsGitPath}", "branch", "tmp", debug = true)
+		  shell("git", "--git-dir=${rootFilsGitPath}", "checkout", "master", debug = true)
+		  shell("git", "--git-dir=${rootFilsGitPath}", "merge", "tmp", debug = true)
 		  println("dealt with it")
 		}
 		println("doing git stuff with RootFiles")
-		shell("git", "--git-dir=${rootFilesPath}", "checkout", "master", debug = true)
-		shell("git", "--git-dir=${rootFilesPath}", "add-commit", "-m", "autocommit", debug = true)
-		shell("git", "--git-dir=${rootFilesPath}", "pull", "origin", "master", debug = true)
-		shell("git", "--git-dir=${rootFilesPath}", "push", "origin", "master", debug = true)
+		shell("git", "--git-dir=${rootFilsGitPath}", "checkout", "master", debug = true)
+		shell("git", "--git-dir=${rootFilsGitPath}", "add-commit", "-m", "autocommit", debug = true)
+		shell("git", "--git-dir=${rootFilsGitPath}", "pull", "origin", "master", debug = true)
+		shell("git", "--git-dir=${rootFilsGitPath}", "push", "origin", "master", debug = true)
 		println("did git stuff with RootFiles")
 
 
