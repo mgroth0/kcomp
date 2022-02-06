@@ -81,6 +81,7 @@ subprojects {
 			shell("git", "checkout", "master")
 			shell("git", "merge", "tmp")
 		  }
+		  shell("git", "checkout", "master")
 		}
 	  }
 	  val gitPullSubmodule by creating(Exec::class) {
