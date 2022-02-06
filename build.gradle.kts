@@ -241,7 +241,24 @@ tasks {
 	  }
 	}
   }
+  val gitCheckoutMasterBuildSrc by creating(Exec::class) {
+	/*workingDir(projectDir)*/
+	/*commandLine("git", "checkout", "master")*/
+	val thisGitPath = rootProject.projectDir.resolve("buildSrc").resolve(".git").absolutePath
+	commandLine("ls")
+	doLast {
+	  if ("detached" in shell("git", "--git-dir=${thisGitPath}", "branch")) {
+		shell("git", "--git-dir=${thisGitPath}", "add-commit", "-m", "autocommit")
+		shell("git", "--git-dir=${thisGitPath}", "branch", "-d", "tmp")
+		shell("git", "--git-dir=${thisGitPath}", "branch", "tmp")
+		shell("git", "--git-dir=${thisGitPath}", "checkout", "master")
+		shell("git", "--git-dir=${thisGitPath}", "merge", "tmp")
+	  }
+	  shell("git", "--git-dir=${thisGitPath}", "checkout", "master")
+	}
+  }
   val gitPullBuildSrc by creating(Exec::class) {
+	dependsOn(gitCheckoutMasterBuildSrc)
 	commandLine("git", "pull", "origin", "master")
 	workingDir("buildSrc")
   }
