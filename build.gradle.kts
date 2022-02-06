@@ -148,6 +148,7 @@ tasks {
 
   val syncRootFiles by creating(Task::class) {
 	doLast {
+	  println("starting syncRootFiles")
 
 	  ROOT_FILES_FOLDER.listFiles()!!.filter {
 		".DS" !in it.name
@@ -158,9 +159,11 @@ tasks {
 		val rootFileInRoot = File(rootFileInFolder.name)
 		if (rootFileInFolder.readText() != rootFileInRoot.readText()) {
 		  if (rootFileInFolder.lastModified() > rootFileInRoot.lastModified()) {
+			println("copying ${rootFileInFolder.name} from sub to root")
 			rootFileInRoot.writeText(rootFileInFolder.readText())
 			needRestart = true
 		  } else if (rootFileInRoot.lastModified() > rootFileInFolder.lastModified()) {
+			println("copying ${rootFileInFolder.name} from root to sub")
 			rootFileInFolder.writeText(rootFileInRoot.readText())
 		  } else err("wow mtimes are same but text not equal")
 		}
@@ -171,37 +174,38 @@ tasks {
 		val rootFilesPath = ROOT_FILES_FOLDER.absolutePath
 
 		if ("detached" in shell("git", "--git-dir=${rootFilesPath}", "branch")) {
+		  println("RootFiles is detatched! dealing")
 		  shell("git", "--git-dir=${rootFilesPath}", "add-commit", "-m", "autocommit")
 		  shell("git", "--git-dir=${rootFilesPath}", "branch", "-d", "tmp")
 		  shell("git", "--git-dir=${rootFilesPath}", "branch", "tmp")
 		  shell("git", "--git-dir=${rootFilesPath}", "checkout", "master")
 		  shell("git", "--git-dir=${rootFilesPath}", "merge", "tmp")
+		  println("dealt with it")
 		}
+		println("doing git stuff with RootFiles")
 		shell("git", "--git-dir=${rootFilesPath}", "checkout", "master")
-
-
 		shell("git", "--git-dir=${rootFilesPath}", "add-commit", "-m", "autocommit")
 		shell("git", "--git-dir=${rootFilesPath}", "pull", "origin", "master")
 		shell("git", "--git-dir=${rootFilesPath}", "push", "origin", "master")
+		println("did git stuff with RootFiles")
 
 
 		needRestart = false
 		if (rootFileInFolder.readText() != rootFileInRoot.readText()) {
 		  if (rootFileInFolder.lastModified() > rootFileInRoot.lastModified()) {
+			println("copying ${rootFileInFolder.name} from sub to root")
 			rootFileInRoot.writeText(rootFileInFolder.readText())
 			needRestart = true
 		  } else if (rootFileInRoot.lastModified() > rootFileInFolder.lastModified()) {
+			println("copying ${rootFileInFolder.name} from root to sub")
 			rootFileInFolder.writeText(rootFileInRoot.readText())
+			needRestart = true
 		  } else err("wow mtimes are same but text not equal")
 		}
 		if (needRestart) {
-		  throw GradleException("need to restart because a root file was updated")
+		  throw GradleException("need to restart because a root/sub file was updated")
 		}
-
-
 	  }
-
-
 	}
   }
 
