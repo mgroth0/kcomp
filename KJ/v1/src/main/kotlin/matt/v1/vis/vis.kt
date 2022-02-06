@@ -24,23 +24,26 @@ class RosenbergVisualizer(
   popCfg: PopulationConfig,
 ): GeneratedImageVisualizer(
   responsive = true,
-  imageHW = 100,
-  imgScale = 3.0,
+  imageHW = 400,
+  imgScale = 0.5,
 ) {
   private var theStim: Stimulus? = null
   private var theCell: SimpleCell? = null
-  private var stimulus by CfgObjProp(popCfg.baseStim.copy(f = popCfg.baseStim.f.copy(X0 = 0.0)), null)
+  private var stimulus by CfgObjProp(
+	popCfg.baseStim.copy(f = popCfg.baseStim.f.copy(X0 = 0.0f)),
+	null
+  )
   private var cell by CfgObjProp(
 	null,
-	popCfg.baseSimpleSinCell.copy(f = popCfg.baseSimpleSinCell.f.copy(X0 = 0.0)),
-	popCfg.baseSimpleSinCell.copy(f = popCfg.baseSimpleSinCell.f.copy(X0 = 0.0), phase = COS),
+	popCfg.baseSimpleSinCell.copy(f = popCfg.baseSimpleSinCell.f.copy(X0 = 0.0f)),
+	popCfg.baseSimpleSinCell.copy(f = popCfg.baseSimpleSinCell.f.copy(X0 = 0.0f), phase = COS),
   )
 
   @Suppress("PrivatePropertyName")
-  private val SF by CfgDoubleProp(0.01 to 1)
-  private val theta by CfgDoubleProp(pop2D.prefThetaMin to pop2D.prefThetaMax)
-  private val sigmaMult by CfgDoubleProp(0.01 to 10)
-  private val gaussian by CfgBoolProp(true)
+  private val SF by CfgFloatProp(0.01 to 10, default = stimulus!!.SF)
+  private val theta by CfgFloatProp(pop2D.prefThetaMin to pop2D.prefThetaMax, default = stimulus!!.t)
+  private val sigmaMult by CfgFloatProp(0.01 to 10, default = stimulus!!.s)
+  private val gaussian by CfgBoolProp(default = stimulus!!.gaussianEnveloped)
   override fun update() {
 	theStim = stimulus?.copy(
 	  SF = SF,
@@ -57,10 +60,11 @@ class RosenbergVisualizer(
 	)
   }
 
+  /*x y here are pixel coordinates of displayed image, ints between 1 and 100 for now*/
   override fun draw(x: Int, y: Int) = run {
 	val rg = theStim?.getVisSample(x/HWd, y/HWd) ?: 0.0
 	val b = theCell?.getVisSample(x/HWd, y/HWd) ?: 0.0
-	Color.color(rg, rg, b)
+	Color.color(rg.toDouble(), rg.toDouble(), b.toDouble())
   }!!
 
   init {

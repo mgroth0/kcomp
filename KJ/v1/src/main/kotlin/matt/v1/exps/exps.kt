@@ -35,6 +35,7 @@ import matt.v1.lab.petri.pop2D
 import matt.v1.lab.petri.popLouie
 import matt.v1.lab.petri.popLouieFullThetaCells
 import matt.v1.lab.petri.popLouieMoreCells
+import matt.v1.latestPop
 import matt.v1.model.ASD_SIGMA_POOLING
 import matt.v1.model.ATTENTION_SUPP_SIGMA_POOLING
 import matt.v1.model.PopulationResponse
@@ -63,7 +64,7 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	  ).first
 	}
   )
-  val F3B_STEP = 30.0
+  val F3B_STEP = 30.0f
   val baseExp = Experiment(
 	name = "3.B",
 	title = "DN causes saturation with ↑ contrast",
@@ -79,11 +80,11 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 
 
 	/*from rCFG*/
-	ATTN_X0_DIST_MAX = 2.0,
+	ATTN_X0_DIST_MAX = 2.0f,
 	F3B_STEP = F3B_STEP,
-	F3C_STEP = 10.0,
-	FS1_STEP = 15.0,
-	F3D_STEP = 0.25, /*faster*/
+	F3C_STEP = 10.0f,
+	FS1_STEP = 15.0f,
+	F3D_STEP = 0.25f, /*faster*/
 	DECODE_COUNT = 2
   )
 
@@ -93,7 +94,7 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	name = "3.C",
 	title = "DN allows suppression",
 	xlabel = "Mask % Contrast",
-	xMax = 50.0,
+	xMax = 50.0f,
 	xVar = MASK,
 	xStep = baseExp.F3C_STEP
   )
@@ -101,23 +102,23 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	name = "3.D",
 	title = "DN causes tuning curve to peak at optimal size",
 	xlabel = "Size (Degrees)",
-	xMax = 10.0,
+	xMax = 10.0f,
 	xVar = SIZE,
 	xStep = baseExp.F3D_STEP,
 	xMin = baseExp.F3D_STEP,
-	baseContrast = 1.0
+	baseContrast = 1.0f
   )
 
   val td = withDN.copy(label = "TD")
   val ascC = td.copy(
 	label = "ASC c",
-	popRcfg = { copy(divNorm = divNorm.copy(c = (tdDivNorm.c*0.75))) },
+	popRcfg = { copy(divNorm = divNorm.copy(c = (tdDivNorm.c*0.75f))) },
   )
   val popGainBySize = exps.last().copy(
 	name = "4.C",
 	title = "↓ D.N. in ASD causes ↑ the absolute pop. gain (matches b. data)",
-	xMax = 6.05,
-	xMin = 1.55,
+	xMax = 6.05f,
+	xMin = 1.55f,
 	series = listOf(td, ascC),
 	ylabel = "Population Gain",
 	autoY = true,
@@ -127,8 +128,8 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
   val contrastSensitivity = exps.last().copy(
 	name = "4.D",
 	title = "pop. gain from ↓ D.N. in ASD diverges from TD as contrast ↑ (matches b. data)",
-	xMin = 0.0,
-	xMax = 100.0,
+	xMin = 0.0f,
+	xMax = 100.0f,
 	xVar = CONTRAST,
 	xlabel = baseExp.xlabel,
 	xStep = baseExp.F3B_STEP
@@ -138,7 +139,7 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
   exps += baseExp.copy(
 	name = "5.C",
 	title = "dist. from center of attn. causes ↓ pop. gain and then ↑ (matches b. data)",
-	xMin = 0.0,
+	xMin = 0.0f,
 	xMax = baseExp.ATTN_X0_DIST_MAX,
 	xVar = DIST_4_ATTENTION,
 	xStep = baseExp.F5C_STEP,
@@ -147,14 +148,14 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	troughShift = true,
 	autoY = true,
 	series = listOf(td, ascC),
-	baseContrast = 1.0,
+	baseContrast = 1.0f,
 	normToMaxes = false
   )
   exps += exps.last().copy(
 	name = "5.D",
 	title = "pop. gain gradient from attn increases with ASD symptomatology (↑c) (matches b. data)",
-	xMetaMin = 0.0,
-	xMetaMax = 50.0,
+	xMetaMin = 0.0f,
+	xMetaMax = 50.0f,
 	xlabel = "Gain Term % Decrease",
 	ylabel = "Population Gain Gradient",
 	metaGain = true,
@@ -168,7 +169,7 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 
 	  stimCfg = {
 		it.copy(
-		  a = Experiment.CONTRAST1*(0.01)
+		  a = Experiment.CONTRAST1*(0.01f)
 		)
 	  },
 
@@ -180,7 +181,7 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 
 	  stimCfg = {
 		it.copy(
-		  a = Experiment.CONTRAST2*0.01
+		  a = Experiment.CONTRAST2*0.01f
 		)
 	  }
 
@@ -189,10 +190,10 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
   exps += baseExp.copy(
 	name = "S1.A",
 	xVar = PREF_ORIENTATION,
-	xMin = 0.0,
-	xMax = 179.0,
+	xMin = 0.0f,
+	xMax = 179.0f,
 	xStep = baseExp.FS1_STEP,
-	stimTrans = { copy(SF = 3.0, f = f.copy(t = 90.0)) },
+	stimTrans = { copy(SF = 3.0f, f = f.copy(t = 90.0f)) },
 	xlabel = "Preferred Orientation (Degrees)",
 	ylabel = "Neural Response",
 	autoY = true,
@@ -202,10 +203,10 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	/*alpha is 0.075 or 0.2*/
 	/*theta ranges from 0 to 180 in 0.25 steps*/
   )
-  val PPC: CoreLoop.()->Double = {
+  val PPC: CoreLoop.()->Float = {
 	decode(
 	  ftStim = seriesStim,
-	  trialStim = seriesStim.copy(f = seriesStim.f.copy(t = 90.0)),
+	  trialStim = seriesStim.copy(f = seriesStim.f.copy(t = 90.0f)),
 	)
   }
   exps += exps.last().copy(
@@ -214,7 +215,7 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	xlabel = "Stimulus Orientation (Degrees)",
 	ylabel = "p(Θ|r)",
 	title = "Probabilistic Population Code (PPC)",
-	stimTrans = { copy(SF = 3.0) },
+	stimTrans = { copy(SF = 3.0f) },
 	series = exps.last().series.map { it.copy(yExtractCustom = PPC) },
 	autoY = false,
 	normToMaxes = true /*Not exactly what Rosenberg did, but they did do some sort of normalization that they didn't explicitly document according to Jon*/
@@ -231,7 +232,7 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 
   val ascV = td.copy(
 	label = "ASC v",
-	popRcfg = { copy(divNorm = divNorm.copy(v = 0.01)) },
+	popRcfg = { copy(divNorm = divNorm.copy(v = 0.01f)) },
   )
   val ascSS = td.copy(
 	label = "ASC σs",
@@ -256,13 +257,13 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
   exps += exps.first { it.name == "5.C" }.copy(
 	name = "S3.B",
 	title = "5.C with low contrast",
-	baseContrast = 0.1,
+	baseContrast = 0.1f,
 	troughShift = false
   )
   exps += exps.first { it.name == "5.D" }.copy(
 	name = "S3.C",
 	title = "5.D with low contrast",
-	baseContrast = 0.1
+	baseContrast = 0.1f
   )
   exps += exps.first { it.name == "5.C" }.copy(
 	name = "S3.D",
@@ -283,23 +284,23 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	series = listOf(
 	  td.copy(label = "TD V1") /*same as TD with different label*/,
 	  td.copy(label = "v = 20000 (2 in paper)",
-		popRcfg = { copy(divNorm = divNorm.copy(v = 20_000.0)) }
+		popRcfg = { copy(divNorm = divNorm.copy(v = 20_000.0f)) }
 	  ),
 	  td.copy(
 		label = "v = 40000 (4 in paper)",
-		popRcfg = { copy(divNorm = divNorm.copy(v = 40_000.0)) },
+		popRcfg = { copy(divNorm = divNorm.copy(v = 40_000.0f)) },
 	  ),
 	  td.copy(
 		label = "v = 60000 (6 in paper)",
-		popRcfg = { copy(divNorm = divNorm.copy(v = 60_000.0)) },
+		popRcfg = { copy(divNorm = divNorm.copy(v = 60_000.0f)) },
 	  )
 	),
   )
 
   val priorSeriesBase = td.copy(
 	label = "Flat",
-	priorWeight = 0.0,
-	popRcfg = { copy(divNorm = divNorm.copy(v = 0.000001)) }, /*DEBUG*/
+	priorWeight = 0.0f,
+	popRcfg = { copy(divNorm = divNorm.copy(v = 0.000001f)) }, /*DEBUG*/
   )
   val flatPrior = priorSeriesBase.copy(
 	yExtractCustom = { cell.prior()() },
@@ -307,20 +308,20 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 
   val weakPrior = flatPrior.copy(
 	label = "Weak",
-	priorWeight = tdDivNorm.c*.25 /*(2.5*10.0.pow(-5))*//* 7*10.0.pow(-5) *//*DEBUG*/ /**/
+	priorWeight = tdDivNorm.c*.25f /*(2.5*10.0.pow(-5))*//* 7*10.0.pow(-5) *//*DEBUG*/ /**/
   )
   val strongPrior = flatPrior.copy(
 	label = "Strong",
-	priorWeight = tdDivNorm.c*.5 /*(5*10.0.pow(-5))*/  /*7.49*10.0.pow(-5)*/
+	priorWeight = tdDivNorm.c*.5f /*(5*10.0.pow(-5))*/  /*7.49*10.0.pow(-5)*/
   )
-  val veryStrongPrior = tdDivNorm.c*.75 /*7.5*10.0.pow(-5)*/
+  val veryStrongPrior = tdDivNorm.c*.75f /*7.5*10.0.pow(-5)*/
   val expThetaMax = pop2D.prefThetaMax - pop2D.cellPrefThetaStep
   exps += baseExp.copy(
 	name = "S4.A",
 	title = "Bayesian Priors: Suppressive Field Gain Term",
-	xMin = 0.0,
+	xMin = 0.0f,
 	xMax = expThetaMax,
-	xStep = 1.0,
+	xStep = 1.0f,
 	xVar = PREF_ORIENTATION,
 	xlabel = "Preferred Orientation (Degrees)",
 	ylabel = "c(Θ)",
@@ -330,20 +331,20 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
   )
 
 
-  fun priorSeriesStimCfg(theta: Double?, plusX: Boolean = false): CoreLoop.(Stimulus)->Stimulus {
+  fun priorSeriesStimCfg(theta: Float?, plusX: Boolean = false): CoreLoop.(Stimulus)->Stimulus {
 	return {
 	  it.copy(
-		SF = 3.0,
+		SF = 3.0f,
 		gaussianEnveloped = false,
-		a = 0.1,
-		f = it.f.takeIf { theta == null && !plusX } ?: it.f.copy(t = theta!! + (if (plusX) x else 0.0))
+		a = 0.1f,
+		f = it.f.takeIf { theta == null && !plusX } ?: it.f.copy(t = theta!! + (if (plusX) x else 0f))
 	  )
 	}
   }
 
   val flatPriorR = priorSeriesBase.copy(
 	label = "Flat (45° stim)",
-	stimCfg = priorSeriesStimCfg(45.0)
+	stimCfg = priorSeriesStimCfg(45.0f)
   )
   exps += exps.last().copy(
 	name = "S4.B",
@@ -362,17 +363,17 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	  ),
 	  flatPriorR.copy(
 		label = "Flat (90° stim)",
-		stimCfg = priorSeriesStimCfg(90.0),
+		stimCfg = priorSeriesStimCfg(90.0f),
 		priorWeight = flatPriorR.priorWeight
 	  ),
 	  flatPriorR.copy(
 		label = "Weak (90° stim)",
-		stimCfg = priorSeriesStimCfg(90.0),
+		stimCfg = priorSeriesStimCfg(90.0f),
 		priorWeight = weakPrior.priorWeight
 	  ),
 	  flatPriorR.copy(
 		label = "Strong (90° stim)",
-		stimCfg = priorSeriesStimCfg(90.0),
+		stimCfg = priorSeriesStimCfg(90.0f),
 		priorWeight = strongPrior.priorWeight
 	  )
 	)
@@ -515,21 +516,21 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
   )
 
   fun CCWSeries(
-	relThetaMid: Double,
+	relThetaMid: Float,
 	ccwTrials: Int
   ) = flatPriorPPC.copy(
 	label = "$relThetaMid°",
 	priorWeight = veryStrongPrior,
 	stimCfg = priorSeriesStimCfg(relThetaMid, plusX = true),
 	yExtractCustom = {
-	  val substep = 1.0
+	  val substep = 1.0f
 	  (1..ccwTrials).map {
 		val probs = (relThetaMid - (substep*9)..relThetaMid + substep*10 step substep)
 		  .mapIndexed { _, theta ->
 			(decode(
 			  ftStim = seriesStim.copy(f = seriesStim.f.copy(t = theta)),
 			  trialStim = seriesStim,
-			) to if (theta > relThetaMid) 1.0 else 0.0)
+			) to if (theta > relThetaMid) 1.0f else 0.0f)
 		  }
 		(probs.maxByOrNull { it.first }!!.second)
 	  }.mean()
@@ -544,13 +545,13 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	xlabel = "Relative Orientation (Degrees)",
 	ylabel = "Population CCW Response",
 	title = "Psychometric Simulation of the Oblique Effect (Deterministic)",
-	xMin = (-10.0),
-	xMax = 10.0,
+	xMin = (-10.0f),
+	xMax = 10.0f,
 	xVar = REL_STIM_ORIENTATION,
-	xStep = 1.0,
+	xStep = 1.0f,
 	series = listOf(
-	  CCWSeries(relThetaMid = 90.0, ccwTrials = 1),
-	  CCWSeries(relThetaMid = 45.0, ccwTrials = 1)
+	  CCWSeries(relThetaMid = 90.0f, ccwTrials = 1),
+	  CCWSeries(relThetaMid = 45.0f, ccwTrials = 1)
 	),
 	normToMaxes = false,
 	autoY = true,
@@ -560,8 +561,8 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	name = "S5.2",
 	title = exps.last().title.replace("Deterministic", "Poisson"),
 	series = listOf(
-	  CCWSeries(relThetaMid = 90.0, ccwTrials = 50).copy(poissonVar = YES),
-	  CCWSeries(relThetaMid = 45.0, ccwTrials = 50).copy(poissonVar = YES)
+	  CCWSeries(relThetaMid = 90.0f, ccwTrials = 50).copy(poissonVar = YES),
+	  CCWSeries(relThetaMid = 45.0f, ccwTrials = 50).copy(poissonVar = YES)
 	)
   )
   exps += exps.last().copy(
@@ -594,7 +595,7 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 
   val p0 = SeriesCfg(
 	label = "P=0",
-	yExtractCustom = { PPCUnit(ft = x.toApfloat(), ri = x.toApfloat().assertRound())().toDouble() },
+	yExtractCustom = { PPCUnit(ft = x.toApfloat(), ri = x.toApfloat().assertRound())().toFloat() },
   )
   exps += baseExp.copy(
 	name = "Ideal Poisson",
@@ -604,28 +605,28 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	autoY = true,
 	normToMaxes = false,
 	category = OTHER,
-	xMin = 0.0,
-	xMax = 5.0,
-	xStep = 0.025,
+	xMin = 0.0f,
+	xMax = 5.0f,
+	xStep = 0.025f,
 	xVar = FT,
 	series = listOf(
 	  p0,
 	  *(1..4).map { i ->
 		p0.copy(
 		  label = "P=$i",
-		  yExtractCustom = { PPCUnit(ft = x.toApfloat(), ri = (x + i).toApfloat().assertRound())().toDouble() })
+		  yExtractCustom = { PPCUnit(ft = x.toApfloat(), ri = (x + i).toApfloat().assertRound())().toFloat() })
 	  }.toTypedArray()
 	)
   )
 
-  val h = 0.01
+  val h = 0.01f
 
   var lastPopR: PopulationResponse? = null
   val preferedCellR = SeriesCfg(
 	label = "Preferred Cell R",
 	yExtractCustom = {
 
-	  val t = tic(prefix = "preferedCellR",enabled=false)
+	  val t = tic(prefix = "preferedCellR", enabled = false)
 	  /*pop.centralCell.debugging = true*/
 
 	  val xi = itr.indexOf(x)
@@ -657,7 +658,7 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
   val preferedCellG = SeriesCfg(
 	label = "Preferred Cell G",
 	yExtractCustom = {
-	  val y = lastPopR!!.m[pop.centralCell]!!.second ?: 0.0
+	  val y = lastPopR!!.m[pop.centralCell]!!.second ?: 0.0f
 	  if (x == itr.last()) lastPopR = null
 	  y
 	}
@@ -675,9 +676,9 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	xStep = h,
 	series = listOf(preferedCellR, preferedCellG),
 	category = LOUIE,
-	xMax = 10.0,
-	uniformW = 1.0,
-	rawInput = 30.0,
+	xMax = 10.0f,
+	uniformW = 1.0f,
+	rawInput = 30.0f,
 	popCfg = popLouie
   )
   exps += louieBaseExp
@@ -713,6 +714,11 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	rawInput = null,
 	uniformW = null,
 	series = listOf(preferedCellR),
+  )
+  exps += exps.last().copy(
+	name = "prev + larger cell spacing, but with 5 degree theta step to reduce #cells",
+	popCfg = latestPop,
+	series = listOf(exps.last().series[0]) /*pointer issue?*/
   )
 
   return exps

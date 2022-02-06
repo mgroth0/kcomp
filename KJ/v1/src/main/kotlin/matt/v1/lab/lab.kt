@@ -80,8 +80,8 @@ enum class PoissonVar { NONE, YES, FAKE1, FAKE5, FAKE10 }
 data class SeriesCfg(
   val label: String,
   val DN: Boolean = false,
-  val priorWeight: Double? = null,
-  val yExtractCustom: (CoreLoop.()->Double)? = null,
+  val priorWeight: Float? = null,
+  val yExtractCustom: (CoreLoop.()->Float)? = null,
   val poissonVar: PoissonVar = NONE,
   val popRcfg: (PopulationResponse.()->PopulationResponse) = { this },
   val stimCfg: CoreLoop.(Stimulus)->Stimulus = { it.copy() },
@@ -105,35 +105,35 @@ data class Experiment(
   val title: String,
   val xlabel: String,
   val ylabel: String,
-  val xMax: Double = 100.0,
-  val xMin: Double = 0.0,
-  val yMax: Double = 100.0,
-  val yMin: Double = 0.0,
+  val xMax: Float = 100.0f,
+  val xMin: Float = 0.0f,
+  val yMax: Float = 100.0f,
+  val yMin: Float = 0.0f,
   val autoY: Boolean = false,
-  val xMetaMin: Double? = null,
-  val xMetaMax: Double? = null,
+  val xMetaMin: Float? = null,
+  val xMetaMax: Float? = null,
   val metaGain: Boolean = false,
   val statusLabel: StatusLabel,
   val fig: Figure,
   val xVar: XVar,
-  val xStep: Double,
+  val xStep: Float,
   val series: List<SeriesCfg>,
   val normToMaxes: Boolean = false,
   val troughShift: Boolean = false,
   val stimTrans: (Stimulus.()->Stimulus)? = null,
   val category: ExpCategory,
-  val baseContrast: Double = 0.5,
+  val baseContrast: Float = 0.5f,
   val popCfg: PopulationConfig = pop2D,
-  val uniformW: Double? = null,
-  val rawInput: Double? = null,
+  val uniformW: Float? = null,
+  val rawInput: Float? = null,
 
-  val ATTN_X0_DIST_MAX: Double = 10.0,
-  val F3B_STEP: Double = 1.0,
-  val F3C_STEP: Double = 0.005,
-  val F3D_STEP: Double = 0.1, /*base*/
-  val F5C_STEP: Double = 0.2,
-  val F5D_STEP: Double = 10.0,
-  val FS1_STEP: Double = 0.25,
+  val ATTN_X0_DIST_MAX: Float = 10.0f,
+  val F3B_STEP: Float = 1.0f,
+  val F3C_STEP: Float = 0.005f,
+  val F3D_STEP: Float = 0.1f, /*base*/
+  val F5C_STEP: Float = 0.2f,
+  val F5D_STEP: Float = 10.0f,
+  val FS1_STEP: Float = 0.25f,
   val DECODE_COUNT: Int = 100,
 
 
@@ -163,8 +163,8 @@ data class Experiment(
   }
 
   companion object {
-	val CONTRAST1 = 7.5
-	val CONTRAST2 = 20.0
+	val CONTRAST1 = 7.5f
+	val CONTRAST2 = 20.0f
 	var firstStim = true
   }
 
@@ -227,8 +227,8 @@ data class Experiment(
 		fill = Color.WHITE
 	  }
 	  if (!autoY) {
-		max = (yMax)
-		min = yMin
+		max = (yMax.toDouble())
+		min = yMin.toDouble()
 	  }
 	}
 
@@ -252,7 +252,7 @@ data class Experiment(
 
 	fig.chart.axes.forEach { a -> a.forceRedraw() }
 	fig.chart.legend.updateLegend(fig.chart.datasets, fig.chart.renderers, true)
-	fig.autorangeXWith(xMin, xMax)
+	fig.autorangeXWith(xMin.toDouble(), xMax.toDouble())
 
   }
 
@@ -269,7 +269,7 @@ data class Experiment(
 	  }
 	}
 	fig.autorangeY()
-	fig.autorangeXWith(xMin, xMax)
+	fig.autorangeXWith(xMin.toDouble(), xMax.toDouble())
 	runningProp.value = false
   }
 
@@ -308,13 +308,13 @@ data class Experiment(
 		  seriesPoints.forEach { (i, list) ->
 			if (figNextPointsI[i] == 0) {
 			  fig.series[i].set(
-				list.subList(figNextPointsI[i]!!, list.size).map { it.x }.toDoubleArray(),
-				list.subList(figNextPointsI[i]!!, list.size).map { it.y }.toDoubleArray()
+				list.subList(figNextPointsI[i]!!, list.size).map { it.x.toDouble() }.toDoubleArray(),
+				list.subList(figNextPointsI[i]!!, list.size).map { it.y.toDouble() }.toDoubleArray()
 			  )
 			} else if (figNextPointsI[i]!! < seriesPoints[i]!!.size) {
 			  fig.series[i].add(
-				list.subList(figNextPointsI[i]!!, list.size).map { it.x }.toDoubleArray(),
-				list.subList(figNextPointsI[i]!!, list.size).map { it.y }.toDoubleArray()
+				list.subList(figNextPointsI[i]!!, list.size).map { it.x.toDouble() }.toDoubleArray(),
+				list.subList(figNextPointsI[i]!!, list.size).map { it.y.toDouble() }.toDoubleArray()
 			  )
 			}
 			figNextPointsI[i] = seriesPoints[i]!!.size
@@ -322,7 +322,7 @@ data class Experiment(
 			  runStage = FIG_COMPLETE
 			}
 		  }
-		  if (autoY) fig.autorangeY()
+		  if (autoY && figNextPointsI.values.any { it != 0 }) fig.autorangeY()
 		  fig.chart.axes.forEach { a -> a.forceRedraw() } /*sadly this seems neccesary do to internal bugs of the library*/
 		}
 	  }
@@ -331,9 +331,9 @@ data class Experiment(
 	if (metaGain) {
 	  MetaLoop(xMetaMin!!..xMetaMax!! step F5D_STEP)
 		.runAndExtract {
-		  val xForThread = x
+		  val xForThread = x.toFloat()
 		  fig_sem.with {
-			seriesPoints[0]!! += Point(xForThread, it)
+			seriesPoints[0]!! += Point(xForThread, it.toFloat())
 		  }
 		  var nextFitIndex = 1
 		  series.forEachIndexed { i, s ->
@@ -495,9 +495,9 @@ data class Experiment(
 
 
   inner class CoreLoop(
-	itr: List<Double>,
+	itr: List<Float>,
 	val responseSet: Map<SeriesCfg, MutableList<Point>>
-  ): ExperimentalLoop<Double, Map<SeriesCfg, MutableList<Point>>>(itr) {
+  ): ExperimentalLoop<Float, Map<SeriesCfg, MutableList<Point>>>(itr) {
 
 
 	val uniformW get() = this@Experiment.uniformW
@@ -506,7 +506,7 @@ data class Experiment(
 	val attentionExp: Boolean = this@Experiment.attentionExp
 	val pop = this@Experiment.pop
 
-	var metaC: Double? = null
+	var metaC: Float? = null
 
 	internal fun update(
 	  verb: String = "stimulating",
@@ -524,7 +524,7 @@ data class Experiment(
 	lateinit var cell: ComplexCell
 	lateinit var stim: Stimulus
 	lateinit var seriesStim: Stimulus
-	var priorW: Double? = null
+	var priorW: Float? = null
 	lateinit var poissonVar: PoissonVar
 	fun ComplexCell.prior() = BayesianPriorC(
 	  c0 = tdDivNorm.c,
@@ -624,7 +624,7 @@ data class Experiment(
 
 		  val ri = when (poissonVar) {
 			NONE   -> preRI
-			YES    -> max(preRI + Random().nextGaussian()*ftToSigma(preRI), 0.0)
+			YES    -> max(preRI + Random().nextGaussian().toFloat()*ftToSigma(preRI), 0.0f)
 			FAKE1  -> preRI + 1*ftToSigma(preRI)
 			FAKE5  -> preRI + 5*ftToSigma(preRI)
 			FAKE10 -> preRI + 10*ftToSigma(preRI)
@@ -663,9 +663,9 @@ data class Experiment(
 
 	  if (itr.indexOf(x) == 0) {
 		pop.complexCells.forEach {
-		  it.r1Back = 0.0
-		/*  it.r2Back = 0.0*/
-		  it.g1Back = 0.0
+		  it.r1Back = 0f
+		  /*  it.r2Back = 0.0*/
+		  it.g1Back = 0f
 		  /*it.g2Back = 0.0*/
 		  /*it.xiGiMap.clear()
 		  it.xiGiMap.putAll(mapOf(0 to 0.0))
@@ -684,9 +684,9 @@ data class Experiment(
 
 	  t.toc("getting stim")
 	  stim = when (xVar) {
-		CONTRAST                                               -> stim.copy(a = x*0.01)
+		CONTRAST                                               -> stim.copy(a = x*0.01f)
 		MASK                                                   -> stim withMask stim.copy(
-		  a = x*0.01,
+		  a = x*0.01f,
 		  f = stim.f.copy(t = orth(stim.f.t))
 		)
 		SIZE                                                   -> stim.copy(s = x)
@@ -700,14 +700,14 @@ data class Experiment(
 	  t.toc("getting cell")
 	  cell = when (xVar) {
 		DIST_4_ATTENTION                                       -> pop.complexCells
-		  .filter { it.Y0 == 0.0 }
-		  .filter { it.X0 == pop.complexCells.filter { it.Y0 == 0.0 }.map { it.X0 }.sorted().first { it >= x } }
-		  .filter { it.t == 0.0 }
+		  .filter { it.Y0 == 0.0f }
+		  .filter { it.X0 == pop.complexCells.filter { it.Y0 == 0.0f }.map { it.X0 }.sorted().first { it >= x } }
+		  .filter { it.t == 0.0f }
 		  .takeIf { it.count() == 1 }!!
 		  .first()
 		in listOf(PREF_ORIENTATION, STIM_AND_PREF_ORIENTATION) -> pop.complexCells
-		  .filter { it.Y0 == 0.0 }
-		  .filter { it.X0 == 0.0 }
+		  .filter { it.Y0 == 0.0f }
+		  .filter { it.X0 == 0.0f }
 		  .filter { it.t == pop.complexCells.map { it.t }.sorted().first { it >= x } }
 		  .takeIf {
 			val b = it.count() == 1
@@ -751,12 +751,12 @@ data class Experiment(
   }
 
 
-  inner class MetaLoop(itr: List<Double>): ExperimentalLoop<Double, Double>(itr) {
-	constructor(r: Iterable<Double>): this(r.toList())
+  inner class MetaLoop(itr: List<Float>): ExperimentalLoop<Float, Float>(itr) {
+	constructor(r: Iterable<Float>): this(r.toList())
 
-	override fun iteration(): Double {
+	override fun iteration(): Float {
 	  val coreLoop = buildCoreLoop().also {
-		it.metaC = tdDivNorm.c*((100.0 - x)/100)
+		it.metaC = tdDivNorm.c*((100.0f - x)/100)
 	  }
 	  println("coreLoop.justRun()")
 	  coreLoop.justRun()

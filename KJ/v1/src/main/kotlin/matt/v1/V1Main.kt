@@ -50,7 +50,7 @@ import matt.v1.gui.StatusLabel
 import matt.v1.gui.StatusLabel.Status.IDLE
 import matt.v1.gui.StatusLabel.Status.WORKING
 import matt.v1.lab.ExpCategory
-import matt.v1.lab.petri.pop2D
+import matt.v1.lab.petri.popLouieFullThetaCells
 import matt.v1.vis.IttiKochVisualizer
 import matt.v1.vis.IttiKochVisualizer.Companion.dogFolder
 import matt.v1.vis.IttiKochVisualizer.Companion.ittiKochInput
@@ -66,8 +66,20 @@ private val startup: STARTUP = STARTUP.ROSENBERG
 private const val REMOTE = false
 private val REMOTE_AND_MAC = REMOTE && ismac
 
+val latestPop = popLouieFullThetaCells.copy(
+  cellX0AbsMinmax = 15.0f,
+  cellX0Step = 5f,
+  cellPrefThetaStep = 15.0f,
+  reqSize = null
+)
 
 fun main(): Unit = GuiApp {
+
+  println("float max: ${Float.MAX_VALUE}")
+  println("float min: ${Float.MIN_VALUE}")
+  println("float max + 1: ${Float.MAX_VALUE + 1}")
+  println("float min - 1: ${Float.MIN_VALUE - 1}")
+  println("float max * 2: ${Float.MAX_VALUE*2}")
 
   /*NativeLoader.load()
 
@@ -125,8 +137,9 @@ fun main(): Unit = GuiApp {
 	alignment = Pos.CENTER
 	val visualizer = tabpane {
 	  this.vgrow = ALWAYS
-	  tabs += lazyTab("Rosenberg") { RosenbergVisualizer(pop2D) }
+	  tabs += lazyTab("Rosenberg") { RosenbergVisualizer(latestPop.copy(matCircles = true)) }
 	  tabs += lazyTab("Itti Koch") {
+		this.isDisable = true /*it throws an error and I dont have time for this right now*/
 		VBox(
 		  ComboBox(
 			dogFolder.listFiles()!!.sorted().toObservable()
@@ -237,15 +250,21 @@ fun main(): Unit = GuiApp {
   }
   stage.apply {
 	/*isMaximized = true*/
+	val MENU_Y_ESTIMATE = 37.0
 	stage.x = 0.0
-	stage.y = 0.0
+	stage.y = MENU_Y_ESTIMATE
 	val screen = Screen.getPrimary()
-	stage.height = screen.bounds.height
+	stage.height = screen.bounds.height - MENU_Y_ESTIMATE
 	stage.width = screen.bounds.width
   }
 }.start(
   shutdown = {
-	println("debug shutdown")
+	/*as long as implcitExit is true, which it is, JavaFX should shutdown if there are 0 open windows and 0 pending runnables. I have confirmed that there are no open windows. So its entirely possible that chartfx or some other javafx library is doing some crazy recursive runLater or something so there are never 0 pending runnables. So I'm ok with forcing an exit. It's the best option available.*/
+	println("shutting down normally")
+	/*exitProcess(0)*/
+	/*System.exit(0)*/
+	/*welp... looks like we have a bigger problem on our hands*/
+	Runtime.getRuntime().halt(0);
   }
 )
 

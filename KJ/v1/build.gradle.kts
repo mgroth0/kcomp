@@ -2,7 +2,7 @@ dependencies {
   implementation(projects.kj.gui)
   implementation(libs.bundles.multik.full)
   /*implementation(libs.aparapi)*/
-  println("testing if newMac")
+  /*println("testing if newMac")*/
   /*    if (isNewMac) {
 		  println("ok this is working...")
 		  implementation(
@@ -28,4 +28,24 @@ dependencies {
   implementation(libs.apfloat)
   implementation(libs.fx.swing)
   implementation(projects.kj.remote)
+  /*implementation("org.tensorflow:tensorflow-core-api:0.4.0")*/
+  /*implementation("org.tensorflow:tensorflow-core-platform:0.4.0")*/
+  /*implementation(
+	files(
+	  "/Users/matthewgroth/registered/kcomp/KJ/jar/tensorflow-core-api-0.4.0-SNAPSHOT.jar",
+	  "/Users/matthewgroth/registered/kcomp/KJ/jar/tensorflow-core-api-0.4.0-SNAPSHOT-macosx-arm64.jar",
+	  "/Users/matthewgroth/registered/kcomp/KJ/jar/tensorflow-core-generator-0.4.0-SNAPSHOT.jar",
+	  "/Users/matthewgroth/registered/kcomp/KJ/jar/tensorflow-core-platform-0.4.0-SNAPSHOT.jar",
+	  "/Users/matthewgroth/registered/kcomp/KJ/jar/tensorflow-framework-0.4.0-SNAPSHOT.jar",
+	)
+  )*/
 }
+
+/*
+configurations.all {
+  resolutionStrategy.dependencySubstitution {
+    substitute(module("org.tensorflow:tensorflow-core-api"))
+      .using(module("org.tensorflow:tensorflow-core-api:0.4.0"))
+      .withClassifier("macosx-x86_64")
+  }
+}*/

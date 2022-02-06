@@ -14,19 +14,20 @@ import matt.v1.model.SimpleCell
 import matt.v1.model.SimpleCell.Phase
 import matt.v1.model.SimpleCell.Phase.SIN
 import matt.v1.model.Stimulus
+import matt.v1.model.ZERO
 
 
 data class PopulationConfig(
 
-  val cellX0AbsMinmax: Double = 15.0,
-  val cellX0Step: Double = 0.2,
+  val cellX0AbsMinmax: Float = 15.0.toFloat(),
+  val cellX0Step: Float = 0.2.toFloat(),
   val cellX0StepMult: Int = 1,
-  val prefThetaMin: Double = 0.0,
-  val prefThetaMax: Double = 179.0,
-  val popCCSpacingThetaStep: Double = 90.0,
-  val reqSize: Int = 27_180, /*sanity*/
-  val cellPrefThetaStep: Double = 1.0,
-  val stimRecCCThetaStep: Double = 90.0,
+  val prefThetaMin: Float = 0.0.toFloat(),
+  val prefThetaMax: Float = 179.0.toFloat(),
+  val popCCSpacingThetaStep: Float = 90.0.toFloat(),
+  val reqSize: Int? = null, /*27_180=rosenberg*/ /*sanity*/
+  val cellPrefThetaStep: Float = 1.0.toFloat(),
+  val stimRecCCThetaStep: Float = 90.0.toFloat(),
   val matCircles: Boolean = false,
   val alongY: Boolean = false,
   val conCircles: Boolean = false,
@@ -34,15 +35,20 @@ data class PopulationConfig(
   ) {
 
   val FIELD_SIZE_MULT = 1/*complete guess*/
+  /*val FIELD_SAMPLE_STEP_MULT = 1*/
 
   val fieldAbsMinMax = cellX0AbsMinmax*FIELD_SIZE_MULT
 
+
   val baseField by lazy {
 	FieldLocAndOrientation(
-	  t = 0.0,
+	  t = ZERO,
 	  X0 = -cellX0AbsMinmax,
-	  Y0 = 0.0,
-	  field = Field(absLimXY = fieldAbsMinMax, stepXY = cellX0Step)/*complete guess*/
+	  Y0 = ZERO,
+	  field = Field(
+		absLimXY = fieldAbsMinMax,
+		stepXY = 0.2f /*rosenberg=0.2*/ /*cellX0Step * FIELD_SAMPLE_STEP_MULT*/ /*complete guess*/
+	  )
 	)
   }
 
@@ -51,9 +57,9 @@ data class PopulationConfig(
 	Stimulus(
 	  popCfg = this,
 	  f = baseField,
-	  a = 0.5,
-	  s = 1.55,
-	  SF = 5.75,
+	  a = 0.5f,
+	  s = 1.55f,
+	  SF = 5.75f,
 	)
   }
 
@@ -64,13 +70,13 @@ data class PopulationConfig(
 	  f = baseField,
 
 
-	  sx = 0.7,
-	  sy = 1.2,
+	  sx = 0.7f,
+	  sy = 1.2f,
 	  /*Rosenberg used an elliptical receptive field without explanation. This may interfere with some orientation-based results*/
 	  /*sx = 0.95,
 	  sy = 0.95,*/
 
-	  SF = 4.0,
+	  SF = 4.0f,
 	  phase = SIN
 	)
   }
@@ -91,7 +97,7 @@ class Population(
 
   val centralCell by lazy {
 	complexCells
-	  .filter { it.t == 0.0 }
+	  .filter { it.t == 0.0f }
 	  .filter {
 		it.X0 >= 0.0 && it.Y0 >= 0.0
 	  }
@@ -103,25 +109,25 @@ class Population(
 	(-cfg.cellX0AbsMinmax..cfg.cellX0AbsMinmax step (cfg.cellX0Step*cfg.cellX0StepMult))
   private val circle = Circle(radius = cfg.cellX0AbsMinmax)
   private val sinCells = spacialRange
-	.flatMap { x0 ->
+	.flatMapIndexed { circI, x0 ->
 	  (cfg.prefThetaMin..cfg.prefThetaMax step (cfg.cellPrefThetaStep)).flatMap { t ->
 		if (cfg.conCircles) {
 		  when {
-			x0 < 0.0  -> listOf()
-			x0 == 0.0 -> mutableListOf(
+			x0 < 0.0   -> listOf()
+			x0 == 0.0f -> mutableListOf(
 			  cfg.baseSimpleSinCell.copy(
 				f = cfg.baseSimpleSinCell.f.copy(
-				  X0 = 0.0,
-				  Y0 = 0.0,
+				  X0 = 0.0f,
+				  Y0 = 0.0f,
 				  t = t
 				)
 			  )
 			)
-			else      -> {
+			else       -> {
 			  val cells =
 				mutableListOf<SimpleCell>()
-			  val circleThetaStep = (cfg.popCCSpacingThetaStep)/*90*//x0
-			  var a = 0.0
+			  val circleThetaStep = (cfg.popCCSpacingThetaStep)/*90*//(circI + 1)
+			  var a = 0.0f
 			  while (a < 360.0) {
 				val p = Polar(x0, Radians(a))()
 				cells += cfg.baseSimpleSinCell.copy(f = cfg.baseSimpleSinCell.f.copy(X0 = p.x, Y0 = p.y, t = t))
@@ -131,7 +137,7 @@ class Population(
 			}
 		  }
 		} else {
-		  (if (cfg.alongY) spacialRange else listOf(0.0)).flatMap { y0 ->
+		  (if (cfg.alongY) spacialRange else listOf(0.0f)).flatMap { y0 ->
 			listOf(cfg.baseSimpleSinCell.copy(f = cfg.baseSimpleSinCell.f.copy(X0 = x0, Y0 = y0, t = t)))
 		  }
 		}
@@ -163,27 +169,27 @@ class Population(
 
 val pop2D = PopulationConfig(
   conCircles = true,
-  cellX0AbsMinmax = 3.0,
-  cellX0Step = 1.0,
-  cellPrefThetaStep = 30.0,
-  stimRecCCThetaStep = 30.0,
+  cellX0AbsMinmax = 3.0f,
+  cellX0Step = 1.0f,
+  cellPrefThetaStep = 30.0f,
+  stimRecCCThetaStep = 30.0f,
 )
 val popLouie = pop2D.copy(
-  cellX0AbsMinmax = 0.0,
-  prefThetaMax = 90.0,
-  popCCSpacingThetaStep = 500.0,
-  cellPrefThetaStep = 500.0,
+  cellX0AbsMinmax = 0.0f,
+  prefThetaMax = 90.0f,
+  popCCSpacingThetaStep = 500.0f,
+  cellPrefThetaStep = 500.0f,
   reqSize = 1
 )
 val popLouieMoreCells = popLouie.copy(
   conCircles = true,
-  cellX0AbsMinmax = 1.0,
-  prefThetaMax = 10.0,
-  popCCSpacingThetaStep = 90.0,
+  cellX0AbsMinmax = 1.0f,
+  prefThetaMax = 10.0f,
+  popCCSpacingThetaStep = 90.0f,
   reqSize = 5
 )
 val popLouieFullThetaCells = popLouieMoreCells.copy(
-  prefThetaMax = 179.0,
-  cellPrefThetaStep = 1.0,
+  prefThetaMax = 179.0f,
+  cellPrefThetaStep = 1.0f,
   reqSize = 180*5
 )

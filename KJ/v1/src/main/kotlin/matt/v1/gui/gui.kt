@@ -58,7 +58,7 @@ abstract class ImageVisualizer(
   imgScale: Double,
   staticImages: List<ObjectProperty<File>> = listOf()
 ): VBox() {
-  protected val HWd = imageHW.toDouble()
+  protected val HWd = imageHW.toFloat()
   open fun update() {}
 
   val props = mutableListOf<CfgProp<*>>()
@@ -143,8 +143,12 @@ abstract class ImageVisualizer(
 	}
   }
 
-  inner class CfgDoubleProp(val range: Pair<Number, Number>): CfgProp<Double>(), SliderProp {
-	override var value: Any? = ((range.second.toDouble() + range.first.toDouble())/2.0) + range.first.toDouble()
+  inner class CfgFloatProp(val range: Pair<Number, Number>,default: Float?=null): CfgProp<Float>(), SliderProp {
+	override var value: Any? = default ?: (((range.second.toFloat() + range.first.toFloat())/2.0f) + range.first.toFloat())
+  }
+
+  inner class CfgDoubleProp(val range: Pair<Number, Number>,default: Double?=null): CfgProp<Double>(), SliderProp {
+	override var value: Any? =  default ?: (((range.second.toDouble() + range.first.toDouble())/2.0) + range.first.toDouble())
   }
 
   inner class CfgBoolProp(default: Boolean): CfgProp<Boolean>() {
@@ -190,6 +194,7 @@ abstract class ImageVisualizer(
 			  when (p) {
 				is CfgIntProp    -> slider(min = p.range.first, max = p.range.last, value = (p.value as Int).toDouble())
 				is CfgDoubleProp -> slider(min = p.range.first, max = p.range.second, value = p.value as Double)
+				is CfgFloatProp -> slider(min = p.range.first, max = p.range.second, value = p.value as Float)
 			  }.apply {
 
 				/*maxWidthProperty().bind(fp.widthProperty())*/
@@ -205,6 +210,7 @@ abstract class ImageVisualizer(
 				  text = when (p) {
 					is CfgIntProp    -> "${p.name}:${floor(value)}"
 					is CfgDoubleProp -> "${p.name}:${value.sigFigs(3)}"
+					is CfgFloatProp -> "${p.name}:${value.sigFigs(3)}"
 				  }
 				}
 				updateText()
