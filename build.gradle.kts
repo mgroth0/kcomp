@@ -173,20 +173,20 @@ tasks {
 
 		val rootFilesPath = ROOT_FILES_FOLDER.absolutePath
 
-		if ("detached" in shell("git", "--git-dir=${rootFilesPath}", "branch")) {
+		if ("detached" in shell("git", "--git-dir=${rootFilesPath}", "branch", debug = true)) {
 		  println("RootFiles is detatched! dealing")
-		  shell("git", "--git-dir=${rootFilesPath}", "add-commit", "-m", "autocommit")
-		  shell("git", "--git-dir=${rootFilesPath}", "branch", "-d", "tmp")
-		  shell("git", "--git-dir=${rootFilesPath}", "branch", "tmp")
-		  shell("git", "--git-dir=${rootFilesPath}", "checkout", "master")
-		  shell("git", "--git-dir=${rootFilesPath}", "merge", "tmp")
+		  shell("git", "--git-dir=${rootFilesPath}", "add-commit", "-m", "autocommit", debug = true)
+		  shell("git", "--git-dir=${rootFilesPath}", "branch", "-d", "tmp", debug = true)
+		  shell("git", "--git-dir=${rootFilesPath}", "branch", "tmp", debug = true)
+		  shell("git", "--git-dir=${rootFilesPath}", "checkout", "master", debug = true)
+		  shell("git", "--git-dir=${rootFilesPath}", "merge", "tmp", debug = true)
 		  println("dealt with it")
 		}
 		println("doing git stuff with RootFiles")
-		shell("git", "--git-dir=${rootFilesPath}", "checkout", "master")
-		shell("git", "--git-dir=${rootFilesPath}", "add-commit", "-m", "autocommit")
-		shell("git", "--git-dir=${rootFilesPath}", "pull", "origin", "master")
-		shell("git", "--git-dir=${rootFilesPath}", "push", "origin", "master")
+		shell("git", "--git-dir=${rootFilesPath}", "checkout", "master", debug = true)
+		shell("git", "--git-dir=${rootFilesPath}", "add-commit", "-m", "autocommit", debug = true)
+		shell("git", "--git-dir=${rootFilesPath}", "pull", "origin", "master", debug = true)
+		shell("git", "--git-dir=${rootFilesPath}", "push", "origin", "master", debug = true)
 		println("did git stuff with RootFiles")
 
 
