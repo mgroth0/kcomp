@@ -23,6 +23,7 @@ while (mightHaveDirectSubprojects.isNotEmpty()) {
 	  .listFiles()!!
 	  .filter { "build.gradle.kts" in (it.list() ?: arrayOf()) }
 	  .filter { it.name != "buildSrc" }
+	  .filter { it.name != "RootFiles" }
 	  .forEach {
 		include(it.relativeTo(projectFolder).path.replace(File.separator, ":"))
 		mightHaveDirectSubprojects.add(it)

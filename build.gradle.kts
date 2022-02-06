@@ -1,11 +1,6 @@
 /*this file is hard-linked across 2 projects*/
 
-import matt.jbuild.greeting.JGreetingPlugin
-import matt.jbuild.jigsaw.JigsawPlugin
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-
-val JIGSAW: Boolean by extra(false)
 val verbose = false
 if (verbose) {
   println("JDK Version: ${JavaVersion.current()}")
@@ -65,6 +60,7 @@ idea {
   }
 }
 
+
 val check = tasks.register("validate", MValidations::class)
 subprojects {
   val thisGitPath = File(this.projectDir.path).resolve(".git")
@@ -78,6 +74,7 @@ subprojects {
 		doLast {
 		  if ("detached" in shell("git", "--git-dir=${thisGitPath}", "branch")) {
 			shell("git", "--git-dir=${thisGitPath}", "add-commit", "-m", "autocommit")
+			shell("git", "--git-dir=${thisGitPath}", "branch", "-d", "tmp")
 			shell("git", "--git-dir=${thisGitPath}", "branch", "tmp")
 			shell("git", "--git-dir=${thisGitPath}", "checkout", "master")
 			shell("git", "--git-dir=${thisGitPath}", "merge", "tmp")
@@ -141,10 +138,72 @@ subprojects {
 		mustRunAfter(gitAddCommitSubmodule)
 	  }
 	}
+	Unit
   }
 }
 
+val ROOT_FILES_FOLDER = File("RootFiles")
+
 tasks {
+
+  val syncRootFiles by creating(Task::class) {
+	doLast {
+
+	  ROOT_FILES_FOLDER.listFiles()!!.filter {
+		".DS" !in it.name
+			&& !it.isDirectory
+	  }.forEach { rootFileInFolder ->
+		var needRestart = false
+		val rootFileInRoot = File(rootFileInFolder.name)
+		if (rootFileInFolder.readText() != rootFileInRoot.readText()) {
+		  if (rootFileInFolder.lastModified() > rootFileInRoot.lastModified()) {
+			rootFileInRoot.writeText(rootFileInFolder.readText())
+			needRestart = true
+		  } else if (rootFileInRoot.lastModified() > rootFileInFolder.lastModified()) {
+			rootFileInFolder.writeText(rootFileInRoot.readText())
+		  } else err("wow mtimes are same but text not equal")
+		}
+		if (needRestart) {
+		  throw GradleException("need to restart because a root file was updated")
+		}
+
+		val rootFilesPath = ROOT_FILES_FOLDER.absolutePath
+
+		if ("detached" in shell("git", "--git-dir=${rootFilesPath}", "branch")) {
+		  shell("git", "--git-dir=${rootFilesPath}", "add-commit", "-m", "autocommit")
+		  shell("git", "--git-dir=${rootFilesPath}", "branch", "-d", "tmp")
+		  shell("git", "--git-dir=${rootFilesPath}", "branch", "tmp")
+		  shell("git", "--git-dir=${rootFilesPath}", "checkout", "master")
+		  shell("git", "--git-dir=${rootFilesPath}", "merge", "tmp")
+		}
+		shell("git", "--git-dir=${rootFilesPath}", "checkout", "master")
+
+
+		shell("git", "--git-dir=${rootFilesPath}", "add-commit", "-m", "autocommit")
+		shell("git", "--git-dir=${rootFilesPath}", "pull", "origin", "master")
+		shell("git", "--git-dir=${rootFilesPath}", "push", "origin", "master")
+
+
+		needRestart = false
+		if (rootFileInFolder.readText() != rootFileInRoot.readText()) {
+		  if (rootFileInFolder.lastModified() > rootFileInRoot.lastModified()) {
+			rootFileInRoot.writeText(rootFileInFolder.readText())
+			needRestart = true
+		  } else if (rootFileInRoot.lastModified() > rootFileInFolder.lastModified()) {
+			rootFileInFolder.writeText(rootFileInRoot.readText())
+		  } else err("wow mtimes are same but text not equal")
+		}
+		if (needRestart) {
+		  throw GradleException("need to restart because a root file was updated")
+		}
+
+
+	  }
+
+
+	}
+  }
+
 
   val gitPull by creating(Exec::class) {
 	commandLine("git", "pull", "origin", "master")
@@ -246,7 +305,7 @@ tasks {
   }
 
   val gitAddCommitPush by creating {
-
+	mustRunAfter(syncRootFiles)
 	val theTask = this
 
 	subprojects {
@@ -275,13 +334,16 @@ tasks {
   }
 
   val kbuild by creating {
+	dependsOn(syncRootFiles)
 	dependsOn(gitAddCommitPush)
   }
   allprojects {
 	tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
+	  mustRunAfter(syncRootFiles)
 	  kbuild.dependsOn(this)
 	}
 	tasks.withType<PublishToMavenRepository> {
+	  mustRunAfter(syncRootFiles)
 	  kbuild.dependsOn(this)
 	}
   }
@@ -296,14 +358,11 @@ tasks {
 
 
 }
-
-
-
 allprojects {
   tasks.withType<JavaCompile> {
 	dependsOn(check)
   }
-  tasks.withType<KotlinCompile> {
+  tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 	dependsOn(check)
 	kotlinOptions {
 	  mventionKotlinJvmOptions()
@@ -313,6 +372,9 @@ allprojects {
 	kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.contracts.ExperimentalContracts"
   }
 }
+
+
+val JIGSAW: Boolean by extra(false)
 
 subprojects {
 
@@ -346,24 +408,25 @@ subprojects {
 	}
   }
 
-  if (JIGSAW) apply<JigsawPlugin>()
-  apply<JGreetingPlugin>()
-}
-buildscript {
 
-  repositories {
-	//	google() /*android*/
-	//	mavenCentral() /*android*/
-  }
-
-  dependencies {
-	classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.10")
-	//	classpath("com.android.tools.build:gradle:7.0.3") /*android*/
-  }
-
-
+  if (JIGSAW) apply<matt.jbuild.jigsaw.JigsawPlugin>()
+  apply<matt.jbuild.greeting.JGreetingPlugin>()
 }
 
 
+//buildscript {
+//
+//  repositories {
+//	//	google() /*android*/
+//	//	mavenCentral() /*android*/
+//  }
+//
+//  dependencies {
+//	classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.10")
+//	//	classpath("com.android.tools.build:gradle:7.0.3") /*android*/
+//  }
+//
+//
+//}
 
 

@@ -37,3 +37,6 @@
 [submodule "KJ/kjcl"]
 	path = KJ/kjcl
 	url = https://github.com/mgroth0/kjcl
+[submodule "RootFiles"]
+	path = RootFiles
+	url = ./RootFiles

@@ -1,3 +1,5 @@
+
+
 /*This file is currently hard-linked across 2 projects*/
 
 import com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
@@ -132,9 +134,10 @@ subprojects sub@{
   configure<JavaApplication> {
 	if (JIGSAW) mainModule.set(mainPackage)
 	mainClass.set("${mainPackage}.${spname.capitalize()}MainKt")
+	mainClassName = mainClass.get()
 	this.applicationDefaultJvmArgs = jvmRuntimeArgs
   }
-  apply(from = shadowGradle)
+
 
   tasks.withType<JavaExec> {
 	enableAssertions = true
