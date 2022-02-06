@@ -5,7 +5,6 @@ import matt.jbuild.jigsaw.JigsawPlugin
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 
-
 val JIGSAW: Boolean by extra(false)
 val verbose = false
 if (verbose) {
@@ -25,7 +24,7 @@ plugins {
 	id("com.vanniktech.dependency.graph.generator")
   }
   id("org.barfuin.gradle.taskinfo") version "1.1.1"
-  
+
 }
 
 
@@ -67,12 +66,27 @@ idea {
 
 val check = tasks.register("validate", MValidations::class)
 subprojects {
+  val thisGitPath = File(this.projectDir.path).resolve(".git")
   tasks {
-//	println("projectDir:${projectDir}")
+	//	println("projectDir:${projectDir}")
 	if (".git" in projectDir.list()) {
+	  val gitCheckoutMasterSub by creating(Exec::class) {
+		/*workingDir(projectDir)*/
+		/*commandLine("git", "checkout", "master")*/
+		commandLine("ls")
+		doLast {
+		  if ("detatched" in shell("git", "--git-dir=${thisGitPath}", "branch")) {
+			shell("git", "add-commit", "-m", "autocommit")
+			shell("git", "branch", "tmp")
+			shell("git", "checkout", "master")
+			shell("git", "merge", "tmp")
+		  }
+		}
+	  }
 	  val gitPullSubmodule by creating(Exec::class) {
+		mustRunAfter(gitCheckoutMasterSub)
 		workingDir(projectDir)
-		commandLine("git", "pull","origin","master")
+		commandLine("git", "pull", "origin", "master")
 		if (parent != null && parent != rootProject) {
 		  if (".git" in parent!!.projectDir.list()) {
 			dependsOn(parent!!.tasks["gitPullSubmodule"])
@@ -91,17 +105,17 @@ subprojects {
 		commandLine("git", "add-commit", "-m", "autocommit")
 		dependsOn(check)
 		this@subprojects
-			.subprojects
-			.filter {
-			  ".git" in it.projectDir!!.list()
-			}
-			.forEach {
-			  it.tasks.withType {
-				if (name == "gitAddCommitSubmodule") {
-				  addCommitTask.dependsOn(this)
-				}
+		  .subprojects
+		  .filter {
+			".git" in it.projectDir!!.list()
+		  }
+		  .forEach {
+			it.tasks.withType {
+			  if (name == "gitAddCommitSubmodule") {
+				addCommitTask.dependsOn(this)
 			  }
 			}
+		  }
 		isIgnoreExitValue = true
 		this.standardOutput = java.io.ByteArrayOutputStream()
 
@@ -121,9 +135,10 @@ subprojects {
 		//		  addCommitTask.mustRunAfter(this)
 		//		}
 		workingDir(projectDir)
-		commandLine("git", "push","origin","master")
+		commandLine("git", "push", "origin", "master")
 		mustRunAfter(gitAddCommitSubmodule)
 	  }
+
 	}
   }
 }
@@ -158,7 +173,7 @@ tasks {
 	}
   }
   val gitPullBuildSrc by creating(Exec::class) {
-	commandLine("git", "pull","origin","master")
+	commandLine("git", "pull", "origin", "master")
 	workingDir("buildSrc")
   }
   val gitCommitBuildSrc by creating(Exec::class) {
@@ -183,7 +198,7 @@ tasks {
 	}
   }
   val gitPushBuildSrc by creating(Exec::class) {
-	commandLine("git", "push","origin","master")
+	commandLine("git", "push", "origin", "master")
 	workingDir("buildSrc")
 	mustRunAfter(gitCommitBuildSrc)
   }
@@ -232,7 +247,7 @@ tasks {
 
 	subprojects {
 	  tasks.withType {
-		if (name in listOf("gitPushSub", "gitAddCommitSubmodule", "gitPullSubmodule")) {
+		if (name in listOf("gitPushSub", "gitAddCommitSubmodule", "gitPullSubmodule", "gitCheckoutMasterSub")) {
 		  theTask.dependsOn(this)
 		}
 	  }
