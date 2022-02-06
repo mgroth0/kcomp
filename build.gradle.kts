@@ -75,13 +75,13 @@ subprojects {
 		/*commandLine("git", "checkout", "master")*/
 		commandLine("ls")
 		doLast {
-		  if ("detatched" in shell("git", "--git-dir=${thisGitPath}", "branch")) {
-			shell("git", "add-commit", "-m", "autocommit")
-			shell("git", "branch", "tmp")
-			shell("git", "checkout", "master")
-			shell("git", "merge", "tmp")
+		  if ("detached" in shell("git", "--git-dir=${thisGitPath}", "branch")) {
+			shell("git", "--git-dir=${thisGitPath}", "add-commit", "-m", "autocommit")
+			shell("git", "--git-dir=${thisGitPath}", "branch", "tmp")
+			shell("git", "--git-dir=${thisGitPath}", "checkout", "master")
+			shell("git", "--git-dir=${thisGitPath}", "merge", "tmp")
 		  }
-		  shell("git", "checkout", "master")
+		  shell("git", "--git-dir=${thisGitPath}", "checkout", "master")
 		}
 	  }
 	  val gitPullSubmodule by creating(Exec::class) {
