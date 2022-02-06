@@ -39,4 +39,4 @@
 	url = https://github.com/mgroth0/kjcl
 [submodule "RootFiles"]
 	path = RootFiles
-	url = ./RootFiles
+	url = https://github.com/mgroth0/RootFiles
