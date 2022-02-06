@@ -142,7 +142,7 @@ subprojects {
   }
 }
 
-val ROOT_FILES_FOLDER = File("RootFiles")
+val ROOT_FILES_FOLDER = rootProject.projectDir.resolve("RootFiles")
 
 tasks {
 
