@@ -10,8 +10,9 @@ val verbose = false
 if (verbose) {
   println("JDK Version: ${JavaVersion.current()}")
 }
+//if (JavaVersion.current() != JavaVersion.VERSION_17) {
 if (JavaVersion.current() != JavaVersion.VERSION_16) {
-  throw GradleException("This build must be run with java 16")
+  throw GradleException("This build must be run with java 16 (could try 17, but currently trying to make intelliJ resolve core java packages and no idea why its not working)")
 }
 
 
@@ -19,7 +20,7 @@ if (JavaVersion.current() != JavaVersion.VERSION_16) {
 plugins {
   id("org.jetbrains.kotlin.multiplatform") apply false
   id("com.github.johnrengelman.shadow") version "6.1.0"
-  idea
+  idea /*this was auto inserted by IntelliJ on New Mac but I'll let it be*/
   if ("mac" in System.getProperty("os.name").toLowerCase()) {
 	id("com.vanniktech.dependency.graph.generator")
   }
@@ -139,13 +140,15 @@ subprojects {
 		commandLine("git", "push", "origin", "master")
 		mustRunAfter(gitAddCommitSubmodule)
 	  }
-
 	}
   }
 }
 
 tasks {
 
+  val gitPull by creating(Exec::class) {
+	commandLine("git", "pull", "origin", "master")
+  }
   val gitCommit by creating(Exec::class) {
 	val gcTask = this
 	subprojects {
@@ -256,6 +259,7 @@ tasks {
 
 	//	dependsOn(gitUpdateSubmodules)
 
+	dependsOn(gitPull)
 	dependsOn(gitCommit)
 	dependsOn(gitPush)
 
@@ -348,13 +352,13 @@ subprojects {
 buildscript {
 
   repositories {
-	google() /*android*/
-	mavenCentral() /*android*/
+	//	google() /*android*/
+	//	mavenCentral() /*android*/
   }
 
   dependencies {
 	classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.10")
-	classpath("com.android.tools.build:gradle:7.0.3") /*android*/
+	//	classpath("com.android.tools.build:gradle:7.0.3") /*android*/
   }
 
 
