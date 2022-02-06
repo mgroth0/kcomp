@@ -151,6 +151,7 @@ tasks {
 
 	  ROOT_FILES_FOLDER.listFiles()!!.filter {
 		".DS" !in it.name
+			&& ".git" !in it.name /*might actually be a file*/
 			&& !it.isDirectory
 	  }.forEach { rootFileInFolder ->
 		var needRestart = false
