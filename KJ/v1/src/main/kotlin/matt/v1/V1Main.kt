@@ -1,6 +1,8 @@
 package matt.v1
 
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.geometry.Pos
+import javafx.geometry.Pos.TOP_CENTER
 import javafx.scene.control.Button
 import javafx.scene.control.ComboBox
 import javafx.scene.layout.Border
@@ -10,7 +12,6 @@ import javafx.scene.layout.BorderWidths
 import javafx.scene.layout.Priority.ALWAYS
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
-import javafx.stage.Screen
 import javafx.util.StringConverter
 import matt.gui.app.GuiApp
 import matt.gui.core.context.mcontextmenu
@@ -19,11 +20,10 @@ import matt.gui.loop.runLaterReturn
 import matt.gui.resize.DragResizer
 import matt.hurricanefx.dragsSnapshot
 import matt.hurricanefx.exactHeight
-import matt.hurricanefx.exactHeightProperty
 import matt.hurricanefx.eye.collect.toObservable
 import matt.hurricanefx.eye.lang.BProp
 import matt.hurricanefx.eye.lib.onChange
-import matt.hurricanefx.eye.prop.times
+import matt.hurricanefx.eye.prop.doubleBinding
 import matt.hurricanefx.lazyTab
 import matt.hurricanefx.op
 import matt.hurricanefx.tornadofx.control.button
@@ -35,6 +35,7 @@ import matt.hurricanefx.tornadofx.tab.staticTab
 import matt.hurricanefx.tornadofx.tab.tabpane
 import matt.hurricanefx.visibleAndManagedProp
 import matt.kjlib.async.daemon
+import matt.kjlib.date.tic
 import matt.kjlib.log.NEVER
 import matt.kjlib.str.addSpacesUntilLengthIs
 import matt.kjlib.str.cap
@@ -44,13 +45,14 @@ import matt.remote.host.Hosts
 import matt.remote.runThisOnOM
 import matt.remote.slurm.SRun
 import matt.v1.STARTUP.ITTI_KOCH
+import matt.v1.exps.ExpCategory
 import matt.v1.exps.experiments
-import matt.v1.gui.Figure
-import matt.v1.gui.StatusLabel
-import matt.v1.gui.StatusLabel.Status.IDLE
-import matt.v1.gui.StatusLabel.Status.WORKING
-import matt.v1.lab.ExpCategory
+import matt.v1.gui.fig.Figure
+import matt.v1.gui.status.StatusLabel
+import matt.v1.gui.status.StatusLabel.Status.IDLE
+import matt.v1.gui.status.StatusLabel.Status.WORKING
 import matt.v1.lab.petri.popLouieFullThetaCells
+import matt.v1.lab.petri.rosenbergPop
 import matt.v1.vis.IttiKochVisualizer
 import matt.v1.vis.IttiKochVisualizer.Companion.dogFolder
 import matt.v1.vis.IttiKochVisualizer.Companion.ittiKochInput
@@ -65,21 +67,23 @@ private enum class STARTUP { ROSENBERG, ITTI_KOCH }
 private val startup: STARTUP = STARTUP.ROSENBERG
 private const val REMOTE = false
 private val REMOTE_AND_MAC = REMOTE && ismac
+val squareFigProp = SimpleBooleanProperty(true)
 
-val latestPop = popLouieFullThetaCells.copy(
-  cellX0AbsMinmax = 15.0f,
-  cellX0Step = 5f,
-  cellPrefThetaStep = 15.0f,
-  reqSize = null
-)
+val latestPop by lazy {
+  popLouieFullThetaCells.copy(
+	cellX0AbsMinmax = 15.0,
+	cellX0Step = 5.0,
+	cellPrefThetaStep = 15.0,
+	reqSize = null
+  )
+}
 
-fun main(): Unit = GuiApp {
+val visualizer by lazy { RosenbergVisualizer(rosenbergPop) }
 
-  println("float max: ${Float.MAX_VALUE}")
-  println("float min: ${Float.MIN_VALUE}")
-  println("float max + 1: ${Float.MAX_VALUE + 1}")
-  println("float min - 1: ${Float.MIN_VALUE - 1}")
-  println("float max * 2: ${Float.MAX_VALUE*2}")
+fun main(): Unit = GuiApp(screenIndex = 2) {
+  /*simplePrinting = true*/
+  val t = tic(prefix = "V1Main")
+  t.toc("top of V1Main main()")
 
   /*NativeLoader.load()
 
@@ -93,6 +97,7 @@ fun main(): Unit = GuiApp {
   if (REMOTE_AND_MAC) {
 	thread {
 	  remoteStatus!!.status.value = WORKING
+	  println("WORKING 2")
 	  Hosts.POLESTAR.ssh(object: Appendable {
 		var clearOnNext = false
 		override fun append(csq: CharSequence?): java.lang.Appendable {
@@ -124,6 +129,7 @@ fun main(): Unit = GuiApp {
 		runThisOnOM(srun = SRun(timeMin = 15))
 	  }
 	  remoteStatus.status.value = IDLE
+	  println("IDLE 2")
 	}
   }
   onLinux {
@@ -132,12 +138,12 @@ fun main(): Unit = GuiApp {
   }
 
 
-
+  t.toc("doing gui stuff")
   vbox {
-	alignment = Pos.CENTER
+	alignment = Pos.TOP_CENTER
+	/*val figHeightProp = DProp(500.0)*/
 	val visualizer = tabpane {
-	  this.vgrow = ALWAYS
-	  tabs += lazyTab("Rosenberg") { RosenbergVisualizer(latestPop.copy(matCircles = true)) }
+	  tabs += lazyTab("Rosenberg") { visualizer.node }
 	  tabs += lazyTab("Itti Koch") {
 		this.isDisable = true /*it throws an error and I dont have time for this right now*/
 		VBox(
@@ -156,7 +162,7 @@ fun main(): Unit = GuiApp {
 			  }
 
 			}
-		  }, IttiKochVisualizer()
+		  }, IttiKochVisualizer().node
 		).apply { alignment = Pos.CENTER }
 	  }
 	  when (startup) {
@@ -164,28 +170,36 @@ fun main(): Unit = GuiApp {
 		ITTI_KOCH         -> selectionModel.select(tabs.last())
 	  }
 
-	  DragResizer.makeResizable(this)
+	  /*DragResizer.makeResizable(this) {
+		figHeightProp.value = kotlin.math.max(kotlin.math.min(figHeightProp.value - it, 600.0), 300.0)
+	  }*/
 	  border = Border(
 		BorderStroke(
 		  null, null, Color.GRAY, null, null, null, BorderStrokeStyle.SOLID, null, null,
 		  BorderWidths(0.0, 0.0, DragResizer.RESIZE_MARGIN.toDouble(), 0.0), null
 		)
 	  )
+
 	}
 
 	val ittKochTab = visualizer.tabs[1]
 
 	val loadProp = BProp(false)
+
+
 	val expBox = vbox {
+	  alignment = TOP_CENTER
 	  this.vgrow = ALWAYS
-	  exactHeightProperty().bind(stage.heightProperty()*0.75)
+	  /*exactHeightProperty().bind(figHeightProp)*/
 	  mcontextmenu {
 		checkitem("load", loadProp)
+		"toggle square fig" toggles squareFigProp
 	  }
 	  visibleAndManagedProp().bind(ittKochTab.selectedProperty().not())
 	}
 
 	val figButtonBox = expBox.tabpane {
+	  this.vgrow = ALWAYS
 	  ExpCategory.values().forEach {
 		staticTab(it.name.lowercase().cap(), it.pane)
 	  }
@@ -193,6 +207,9 @@ fun main(): Unit = GuiApp {
 	}
 	val fig = Figure().attachTo(expBox)
 	val statusLabel = StatusLabel().attachTo(expBox)
+	fig.maxWidthProperty().bind(squareFigProp.doubleBinding(fig.heightProperty()) {
+	  if (it!!) fig.height else Double.MAX_VALUE
+	})
 	fig.vgrow = ALWAYS
 	/*fig.exactHeightProperty()
 		.bind(
@@ -213,8 +230,22 @@ fun main(): Unit = GuiApp {
 			allButtons.filter { it != this }.forEach {
 			  it.styleClass -= "greenBackground"
 			}
+			statusLabel.counters.clear()
 			statusLabel.status.value = WORKING
-			exp.setupFig()
+			println("WORKING 1")
+			fig.clear()
+			fig.setup(
+			  title = exp.title,
+			  xlabel = exp.xlabel,
+			  ylabel = exp.ylabel,
+			  autoY = exp.autoY,
+			  autoX = exp.autoX,
+			  yMax = exp.yMax,
+			  yMin = exp.yMin,
+			  seriesCfgs = exp.series,
+			  xMin = if (exp.metaGain) exp.xMetaMin!!.toDouble() else exp.xMin,
+			  xMax = if (exp.metaGain) exp.xMetaMax!!.toDouble() else exp.xMax
+			)
 			daemon {
 			  if (loadProp.value) {
 				runLater {
@@ -223,6 +254,7 @@ fun main(): Unit = GuiApp {
 			  } else exp.run()
 			  runLaterReturn {
 				statusLabel.status.value = IDLE
+				println("IDLE 1 ")
 			  }
 			}
 		  }
@@ -250,13 +282,14 @@ fun main(): Unit = GuiApp {
   }
   stage.apply {
 	/*isMaximized = true*/
-	val MENU_Y_ESTIMATE = 37.0
+	/*
 	stage.x = 0.0
-	stage.y = MENU_Y_ESTIMATE
+	stage.y = NEW_MAC_MENU_Y_ESTIMATE
 	val screen = Screen.getPrimary()
-	stage.height = screen.bounds.height - MENU_Y_ESTIMATE
-	stage.width = screen.bounds.width
+	stage.height = screen.bounds.height - NEW_MAC_MENU_Y_ESTIMATE
+	stage.width = screen.bounds.width*/
   }
+  println("bottom of V1 main()")
 }.start(
   shutdown = {
 	/*as long as implcitExit is true, which it is, JavaFX should shutdown if there are 0 open windows and 0 pending runnables. I have confirmed that there are no open windows. So its entirely possible that chartfx or some other javafx library is doing some crazy recursive runLater or something so there are never 0 pending runnables. So I'm ok with forcing an exit. It's the best option available.*/

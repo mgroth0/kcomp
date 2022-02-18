@@ -1,5 +1,3 @@
-
-
 /*This file is currently hard-linked across 2 projects*/
 
 import com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
@@ -19,7 +17,7 @@ subprojects sub@{
   val sp = this
   val spname = projectDir.name
   val sppath = path
-//  println("path example:${sppath}")
+  //  println("path example:${sppath}")
 
   val modtype = ModType.valueOf(projectDir.resolve("modtype.txt").readText().trim())
   val isExecutable = modtype in listOf(ModType.APP, ModType.CLAPP)
@@ -78,20 +76,21 @@ subprojects sub@{
 
 
 
-	configurations.all {
-		resolutionStrategy.dependencySubstitution {
-			listOf("base", "controls", "graphics", "web", "media", "swing").forEach {
-				substitute(module("org.openjfx:javafx-$it"))
-						.using(module("org.openjfx:javafx-$it:${fxVersion}"))
-						.withClassifier(if (isNewMac) run {
-//				println("isNewMac")
-							"mac-aarch64"
-						}else if (isMac) run{
-//				println("isOldMac")
-							"mac"} else "linux")
-			}
-		}
+  configurations.all {
+	resolutionStrategy.dependencySubstitution {
+	  listOf("base", "controls", "graphics", "web", "media", "swing").forEach {
+		substitute(module("org.openjfx:javafx-$it"))
+		  .using(module("org.openjfx:javafx-$it:${fxVersion}"))
+		  .withClassifier(if (isNewMac) run {
+			//				println("isNewMac")
+			"mac-aarch64"
+		  } else if (isMac) run {
+			//				println("isOldMac")
+			"mac"
+		  } else "linux")
+	  }
 	}
+  }
 
   if (modtype == ModType.LIB) return@sub
   if (isAnyLib) return@sub
@@ -128,7 +127,8 @@ subprojects sub@{
   }
 
   val jvmRuntimeArgs = listOf(
-	"-Xmx6g"
+	if (isNewMac) "-Xmx30g" else "-Xmx6g",
+	/*"-agentpath:"*/ /*jProfiler*/
   )
 
   configure<JavaApplication> {
@@ -152,17 +152,17 @@ subprojects sub@{
   tasks.withType<ShadowJar> {
 	doLast {
 	  val sjar = buildDir.resolve("libs")
-		  .listFiles()!!
-		  .first { it.name.contains("-all.jar") }
+		.listFiles()!!
+		.first { it.name.contains("-all.jar") }
 	  print("copying ${sjar.name}... ")
 	  sjar
-		  .copyTo(
-			rootDir
-				.resolve("bin/jar/")
-				.apply { mkdirs() }
-				.resolve(sjar.name),
-			overwrite = true
-		  )
+		.copyTo(
+		  rootDir
+			.resolve("bin/jar/")
+			.apply { mkdirs() }
+			.resolve(sjar.name),
+		  overwrite = true
+		)
 	  println("done")
 	}
   }

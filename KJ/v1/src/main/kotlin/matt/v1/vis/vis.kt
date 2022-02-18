@@ -1,17 +1,18 @@
 package matt.v1.vis
 
 import javafx.beans.property.SimpleObjectProperty
-import javafx.scene.paint.Color
 import matt.hurricanefx.eye.lib.onChange
 import matt.kjlib.commons.DATA_FOLDER
 import matt.kjlib.file.get
+import matt.kjlib.jmath.floorInt
 import matt.klib.dmap.withStoringDefault
 import matt.v1.gui.FilteredImageVisualizer
 import matt.v1.gui.GeneratedImageVisualizer
 import matt.v1.lab.petri.PopulationConfig
 import matt.v1.lab.petri.pop2D
+import matt.v1.model.FieldGenerator
+import matt.v1.model.Phase.COS
 import matt.v1.model.SimpleCell
-import matt.v1.model.SimpleCell.Phase.COS
 import matt.v1.model.Stimulus
 import matt.v1.salience.FeatureDef
 import matt.v1.salience.FeatureType
@@ -24,48 +25,64 @@ class RosenbergVisualizer(
   popCfg: PopulationConfig,
 ): GeneratedImageVisualizer(
   responsive = true,
-  imageHW = 400,
-  imgScale = 0.5,
+  imageHW = popCfg.fieldHW.floorInt().apply {
+	println("DEBUG:${this}")
+  },
+  imgScale = 0.05,
 ) {
-  private var theStim: Stimulus? = null
-  private var theCell: SimpleCell? = null
-  private var stimulus by CfgObjProp(
-	popCfg.baseStim.copy(f = popCfg.baseStim.f.copy(X0 = 0.0f)),
+
+  fun addStim(stim: FieldGenerator) {
+	theStim = stim
+	visualize()
+  }
+
+
+  private var gen by CfgObjProp<FieldGenerator?>(
+	popCfg.baseStim.copy(f = popCfg.baseStim.f.copy(X0 = 0.0)),
+	popCfg.baseSimpleSinCell.copy(f = popCfg.baseSimpleSinCell.f.copy(X0 = 0.0)),
+	popCfg.baseSimpleSinCell.copy(f = popCfg.baseSimpleSinCell.f.copy(X0 = 0.0), phase = COS),
 	null
-  )
-  private var cell by CfgObjProp(
-	null,
-	popCfg.baseSimpleSinCell.copy(f = popCfg.baseSimpleSinCell.f.copy(X0 = 0.0f)),
-	popCfg.baseSimpleSinCell.copy(f = popCfg.baseSimpleSinCell.f.copy(X0 = 0.0f), phase = COS),
   )
 
   @Suppress("PrivatePropertyName")
-  private val SF by CfgFloatProp(0.01 to 10, default = stimulus!!.SF)
-  private val theta by CfgFloatProp(pop2D.prefThetaMin to pop2D.prefThetaMax, default = stimulus!!.t)
-  private val sigmaMult by CfgFloatProp(0.01 to 10, default = stimulus!!.s)
-  private val gaussian by CfgBoolProp(default = stimulus!!.gaussianEnveloped)
+  private val SF by CfgDoubleProp(0.01 to 10, default = (gen as Stimulus).SF)
+  private val theta by CfgDoubleProp(pop2D.prefThetaMin to pop2D.prefThetaMax, default = (gen as Stimulus).tDegrees)
+  private val sigmaMult by CfgDoubleProp(0.01 to 10, default = 1.0)
+  private val sampleStep by CfgDoubleProp(0.1 to 20, default = (gen as Stimulus).field.sampleStep)
+  private val gaussian by CfgBoolProp(default = (gen as Stimulus).gaussianEnveloped)
   override fun update() {
-	theStim = stimulus?.copy(
-	  SF = SF,
-	  f = stimulus!!.f.copy(t = theta),
-	  s = stimulus!!.s*sigmaMult,
-	  gaussianEnveloped = gaussian
-	)
-	theCell = cell?.copy(
-	  SF = SF,
-	  f = cell!!.f.copy(t = theta),
-	  sx = cell!!.sx*sigmaMult,
-	  sy = cell!!.sy*sigmaMult,
-	  gaussianEnveloped = gaussian
-	)
+	val g = gen
+	if (g is Stimulus) {
+	  theStim = g.copy(
+		SF = SF,
+		f = g.f.copy(tDegrees = theta, field = g.f.field.copy(sampleStep = sampleStep)),
+		s = g.s*sigmaMult,
+		gaussianEnveloped = gaussian,
+	  )
+	} else if (g is SimpleCell) {
+	  theStim = g.copy(
+		SF = SF,
+		f = g.f.copy(tDegrees = theta, field = g.f.field.copy(sampleStep = sampleStep)),
+		sx = g.sx*sigmaMult,
+		sy = g.sy*sigmaMult,
+		gaussianEnveloped = gaussian
+	  )
+	}
+	/*(theStim as Stimulus).debug = true
+	println("DEBUG1=${theStim!!.pix(Point(x = 0.0, y = 0.0))}")
+	println("DEBUG2=${theStim!!.pix(Point(x = 5.0, y = 0.0))}")
+	println("DEBUG3=${theStim!!.pix(Point(x = 0.0, y = 5.0))}")
+	println("DEBUG4=${theStim!!.pix(Point(x = 5.0, y = 5.0))}")
+	(theStim as Stimulus).debug = false*/
   }
 
-  /*x y here are pixel coordinates of displayed image, ints between 1 and 100 for now*/
+
+  /*x y here are pixel coordinates of displayed image, ints between 1 and 100 for now*//*
   override fun draw(x: Int, y: Int) = run {
 	val rg = theStim?.getVisSample(x/HWd, y/HWd) ?: 0.0
 	val b = theCell?.getVisSample(x/HWd, y/HWd) ?: 0.0
-	Color.color(rg.toDouble(), rg.toDouble(), b.toDouble())
-  }!!
+	Color.color(rg, rg, b)
+  }!!*/
 
   init {
 	update()
@@ -73,8 +90,6 @@ class RosenbergVisualizer(
   }
 }
 
-/*1*2^8+1 = 257*/
-/*2*2^8+1 = 513*/
 class IttiKochVisualizer: FilteredImageVisualizer(
   responsive = true,
   imageHW = 513 /*works for the 8 pyramid downscales used in itti koch*/,
