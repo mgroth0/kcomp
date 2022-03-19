@@ -2,6 +2,7 @@ dependencies {
   implementation(projects.kj.gui)
   implementation(libs.bundles.multik.full)
   /*implementation(libs.aparapi)*/
+  implementation(libs.mat)
   /*println("testing if newMac")*/
   /*    if (isNewMac) {
 		  println("ok this is working...")

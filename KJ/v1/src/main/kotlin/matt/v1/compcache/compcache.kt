@@ -56,6 +56,7 @@ import kotlin.math.sqrt
 import kotlin.reflect.full.companionObjectInstance
 
 const val MAX_CACHE_SIZE = 1_000_000
+const val PRINT_REPORTS = false
 
 /*val e = *//*= eFloat*/
 
@@ -133,15 +134,17 @@ abstract class ComputeInput<I, O> {
   companion object {
 
 	init {
-	  every(5.sec) {
-		println("ComputeCache Report")
-		tab("Name\t\tSize\t\tFull")
-		ComputeInput::class.subclasses().forEach {
-		  val cache = (it.companionObjectInstance as ComputeCache<*, *>)
-		  val s = if (cache.enableCache) cache.computeCache.size else "DISABLED"
-		  tab(
-			"${it.simpleName!!.addSpacesUntilLengthIs(30).truncate(30)}\t\t${s}\t\t${cache.full}"
-		  )
+	  if (PRINT_REPORTS) {
+		every(5.sec) {
+		  println("ComputeCache Report")
+		  tab("Name\t\tSize\t\tFull")
+		  ComputeInput::class.subclasses().forEach {
+			val cache = (it.companionObjectInstance as ComputeCache<*, *>)
+			val s = if (cache.enableCache) cache.computeCache.size else "DISABLED"
+			tab(
+			  "${it.simpleName!!.addSpacesUntilLengthIs(30).truncate(30)}\t\t${s}\t\t${cache.full}"
+			)
+		  }
 		}
 	  }
 	}
@@ -232,7 +235,10 @@ data class SamplePhase(
 
   companion object: ComputeCache<SamplePhase, Double>() {
 	override val compute: SamplePhase.()->Double = {
-	  phase.comp(xT().xTheta*SF*2*PI) /*cycles per degree*/
+	  phase.comp(
+		xT().xTheta*SF
+		/**2*PI*/
+	  ) /*cycles per degree*/
 	}
   }
 }

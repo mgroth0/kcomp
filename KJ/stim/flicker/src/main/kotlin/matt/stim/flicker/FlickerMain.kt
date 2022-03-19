@@ -19,7 +19,7 @@ fun main() = GuiApp {
 
 
 
-  pane {
+  rootPane {
 	circle(centerX = 300.0, centerY = 300.0, radius = 50.0) {
 	  isCache = true
 	  cacheHint = CacheHint.SPEED

@@ -1,6 +1,5 @@
 package matt.v1.lab.petri
 
-import matt.kjlib.jmath.PI
 import matt.kjlib.jmath.div
 import matt.kjlib.jmath.sqrt
 import matt.kjlib.jmath.times
@@ -33,7 +32,7 @@ data class PopulationConfig(
   val cellX0AbsMinmax: Double = 15.0,
   val cellX0Step: Double = 0.2,
   val sampleStep: Double = 0.2, /*"much smaller"*/
-  val cellX0StepMult: Int = 1,
+  val cellX0StepMult: Double = 1.0,
   val prefThetaMin: Apfloat = Apfloat(0.0),
   val prefThetaMax: Apfloat = Apfloat(179.0),
   val popCCSpacingThetaStep: Double = 90.0,
@@ -47,9 +46,9 @@ data class PopulationConfig(
   val cellSFmin: Apfloat = 4.0.toApfloat(),
   val cellSFmax: Apfloat = 4.0.toApfloat(),
   val cellSFstep: Apfloat = 1.0.toApfloat(),
-  val stimSF: Double = 5.75 / (2 * PI),
+  val stimSF: Double = 5.75 ,/*/ (2 * PI),*/
   val stimSigma: Double = 1.55,
-  val baseContrast: Double = 0.5, /*technically part of stim not pop*/
+  val baseContrast: Double = 1.0, /*technically part of stim not pop*/
   val DC_BASELINE_ACTIVITY: Double = 2.0,
   val baseDNGain: Double = ROSENBERG_TD_C,
   val semiSaturationConstant: Double = 1.0,
@@ -130,7 +129,7 @@ class Population(
 	require(!(cfg.alongY && cfg.conCircles))
   }
 
-  val centralCell by lazy {
+  val centralCell: ComplexCell by lazy {
 	complexCells
 	  .filter { it.tDegrees == cfg.prefThetaMin.toDouble() }
 	  .filter { it.SF == cfg.cellSFmin.toDouble() }
@@ -149,16 +148,20 @@ class Population(
 	.minByOrNull { it.X0 + it.Y0 }!!
 
 
+  /*must ue apfloat here to get exact values and avoid double artifacts and match matlab!*/
   private val cellSpacialRange =
-	(-cfg.cellX0AbsMinmax..cfg.cellX0AbsMinmax step (cfg.cellX0Step*cfg.cellX0StepMult))
+	(Apfloat(-cfg.cellX0AbsMinmax)..Apfloat(cfg.cellX0AbsMinmax) step (Apfloat(cfg.cellX0Step)*Apfloat(cfg.cellX0StepMult)))
 
 
   private val circle by lazy { Circle(radius = cfg.cellX0AbsMinmax) }
   private val sinCells by lazy {
 	cellSpacialRange
-	  .flatMapIndexed { circI, x0 ->
+	  .flatMapIndexed { circI, x0F ->
+		val x0 = x0F.toDouble()
+		/*must use apfloat here for accurate range!*/
 		(cfg.prefThetaMin..cfg.prefThetaMax step (cfg.cellPrefThetaStep.toApfloat())).flatMap { t ->
 		  /*println("t=${t}")*/
+		  /*must use apfloat here for accurate range!*/
 		  (cfg.cellSFmin..cfg.cellSFmax step (cfg.cellSFstep)).flatMap { sf ->
 			/*println("sf1=${sf}")*/
 			if (cfg.conCircles) {
@@ -188,8 +191,8 @@ class Population(
 					/*println("a1=${a},p.x=${p.x},p.y=${p.y}")*/
 					val theNew = cfg.baseSimpleSinCell.copy(
 					  f = cfg.baseSimpleSinCell.f.copy(
-						X0 = p.x.toDouble(),
-						Y0 = p.y.toDouble(),
+						X0 = p.x,
+						Y0 = p.y,
 						tDegrees = t.toDouble()
 					  ),
 					  SF = sf.toDouble(),
@@ -251,27 +254,28 @@ class Population(
   }
 
 
-  val complexCells by lazy { sinCells.zip(cosCells).map { ComplexCell(it) } }
+  val complexCells: List<ComplexCell> by lazy { sinCells.zip(cosCells).map { ComplexCell(it) } }
 }
 
 val rosenbergPop = PopulationConfig(
   cellX0AbsMinmax = 15.0,
   cellX0Step = 0.2,
-  cellX0StepMult = 1,
+  cellX0StepMult = 1.0,
   prefThetaMin = 0.0.toApfloat(),
   prefThetaMax = 179.0.toApfloat(),
   cellPrefThetaStep = 1.0,
-  reqSize = 27_180,
+  /*reqSize = 27_180,*/
   matCircles = false,
   alongY = false,
   conCircles = false,
   proportionalCellSigmas = false,
+  baseContrast = 1.0,
 
   /*cellSFmin = (1.0 / 4.0).toApfloat(),
   cellSFmax = (1.0 / 4.0).toApfloat(),*/
 
-  cellSFmin = (4.0/(2.0*PI)).toApfloat(),
-  cellSFmax = (4.0/(2.0*PI)).toApfloat(),
+  cellSFmin = (4.0/*/(2.0*PI)*/).toApfloat(),
+  cellSFmax = (4.0/*/(2.0*PI)*/).toApfloat(),
 
   cellSFstep = 100.0.toApfloat(),
 )

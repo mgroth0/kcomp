@@ -3,6 +3,8 @@
 package matt.v1.model
 
 import matt.kjlib.cache.LRUCache
+import matt.kjlib.commons.USER_HOME
+import matt.kjlib.file.get
 import matt.kjlib.jmath.div
 import matt.kjlib.jmath.dot
 import matt.kjlib.jmath.plus
@@ -37,6 +39,7 @@ import matt.v1.model.Phase.SIN
 import matt.v1.scaling.requireIsSafe
 import org.apfloat.Apfloat
 import org.apfloat.Apint
+import us.hebi.matlab.mat.format.Mat5
 import kotlin.collections.set
 import kotlin.math.abs
 import kotlin.math.cos
@@ -59,8 +62,9 @@ val NORM = ADD_POINT_5
 data class Field(
   val absLimXY: Double, val sampleStep: Double
 ) {
-  val fullRange = (-absLimXY..absLimXY step sampleStep).toList()
-  val halfRange by lazy { (sampleStep..absLimXY step sampleStep) }
+  /*need apfloat here to get same mat size as matlab*/
+  val fullRange = (-Apfloat(absLimXY)..Apfloat(absLimXY) step Apfloat(sampleStep)).toList().map { it.toDouble() }
+  val halfRange by lazy { (Apfloat(sampleStep)..Apfloat(absLimXY) step Apfloat(sampleStep)).map { it.toDouble() } }
   val length = fullRange.size
   val circle = Circle(radius = absLimXY)
   val visCircle = Circle(radius = absLimXY, Point(x = absLimXY/2, y = absLimXY/2))
@@ -233,7 +237,7 @@ abstract class FieldGenerator(
   private val vis by lazy {
 	val v = (0 until field.length).map { DoubleArray(field.length) }.toTypedArray()
 	when (NORM) {
-	  RATIO       -> {
+	  RATIO -> {
 		err("No")
 		val matMin by lazy {
 		  mat.flatten().filter { it != null }.minOf { it!!.toDouble() }
@@ -350,6 +354,12 @@ data class Stimulus(
 
 	/*println("getting stim px: ${p}")*/
 
+	/*var debug = false
+	if (p.x < -2.4 && p.x > -2.6 && p.y < -2.4 && p.y > -2.6) {
+	  println("GOT IT STIM: ${p}")
+	  debug = true
+	}*/
+
 	if (popCfg.matCircles && !popCfg.conCircles && p !in field.circle) {
 	  return null /*Double.NaN*/
 	}
@@ -359,18 +369,27 @@ data class Stimulus(
 	val yT = yTheta(x = p.x, y = p.y)*/
 
 
+	/*if (debug) {
+	  println("\txyt=${xyt()}")
+	  println("\tX0=${this.X0}")
+	  println("\tY0=${this.Y0}")
+	  println("\ta=${this.a}")
+	}*/
+
 	val envelope = SigmaDenominator(s).let { sd ->
 	  Envelope(
 		gaussianEnveloped = gaussianEnveloped, xyt = xyt, sigmaX = sd, sigmaY = sd
-	  )()
+	  )()/*.apply { if (debug) println("\tenv=${this}") }*/
 	}
 
-	val phase = SamplePhase(xT = xyt, SF = SF, phase = COS)()
+	val phase = SamplePhase(xT = xyt, SF = SF, phase = COS)()/*.apply { if (debug) println("\tphase=${this}") }*/
 	val base = (a*envelope*phase)
 
 	return base.let {
 	  if (mask != null) it + mask.pix(p)!! else it
-	}.toFloat()
+	}.toFloat()/*.apply {
+	 if (debug) println("\tfinal=${this}")
+	}*/
   }
 
   infix fun withMask(other: Stimulus) = copy(mask = other)
@@ -403,13 +422,23 @@ data class SimpleCell(
 
   /*TODO: should combine with stimulus pix function*/
   override fun pix(p: Point): Float? {
+	/*	var debug = false
+		if (p.x < -2.4 && p.x > -2.6 && p.y < -2.4 && p.y > -2.6) {
+		  println("GOT IT: ${p}")
+		  debug = true
+		}*/
 	if (popCfg.matCircles && !popCfg.conCircles && p !in field.circle) return null
 	val xyt = xyTheta(x = p.x, y = p.y)
+	/*if (debug) {
+	  println("\txyt=${xyt()}")
+	  println("\tX0=${this.X0}")
+	  println("\tY0=${this.Y0}")
+	}*/
 	return (Envelope(
 	  gaussianEnveloped = gaussianEnveloped, xyt = xyt, sigmaX = SigmaDenominator(sx), sigmaY = SigmaDenominator(sy)
-	)()*SamplePhase(
+	)()/*.apply { if (debug) println("\tenv=${this}") }*/*SamplePhase(
 	  xT = xyt, SF = SF, phase = phase
-	)()).toFloat()
+	)()/*.apply { if (debug) println("\tphase=${this}") }*/).toFloat()
   }
 
 
@@ -453,7 +482,7 @@ data class ComplexCell(
 	require(sinCell.phase == SIN && cosCell.phase == COS)
   }
 
-  var lastResponse = Response(R = 0.0, G_S = 0.0)
+  var lastResponse = Response(R = 0.0, G_S = 0.0, debugSinR = 0.0)
 
   fun stimulate(
 	stim: Stimulus,
@@ -466,7 +495,9 @@ data class ComplexCell(
   ): Response {    /*val t = tic(prefix = "stimulate complex cell")*/    //	return t.sampleEveryByPrefix(100) {
 	//	  t.toc("start")
 	var G: Double? = null
-	if (ti == Apfloat.ZERO) return/*@sampleEveryByPrefix*/ Response(R = 0.0, G_S = G)    //	  t.toc("getting divNormS")
+	if (ti == Apfloat.ZERO) return/*@sampleEveryByPrefix*/ Response(
+	  R = 0.0, G_S = G, debugSinR = 0.0
+	)    //	  t.toc("getting divNormS")
 	val divNormS = if (popR == null) null else {
 	  val realH = h ?: 1.0.toApfloat()
 	  val S = getSfor(
@@ -476,10 +507,12 @@ data class ComplexCell(
 		lastResponse.G_S!!.toApfloat() + realH*(-lastResponse.G_S!!.toApfloat() + S)
 	  }
 	}    /*val g1Back = if (divNormS != null && ti != null) divNormS else 0.0*/    //	  t.toc("getting input")
+	var sinR: Float? = null
+	var cosR: Float? = null
 	val input = rawInput ?: run {    //		t.toc("getting input 1")
-	  val sinR = sinCell.stimulate(stim)    //		t.toc("getting input 2")
-	  val cosR = cosCell.stimulate(stim)    //		t.toc("getting input 3")
-	  val inp = sinR.sq() + cosR.sq()    //		t.toc("getting input 4")
+	  sinR = sinCell.stimulate(stim)    //		t.toc("getting input 2")
+	  cosR = cosCell.stimulate(stim)    //		t.toc("getting input 3")
+	  val inp = sinR!!.sq() + cosR!!.sq()    //		t.toc("getting input 4")
 	  inp
 	}    //	  t.toc("getting G")
 	G = divNormS?.toDouble()    //	  t.toc("getting r")
@@ -504,7 +537,8 @@ data class ComplexCell(
 	  r = riLast.toApfloat() + (h!!*(-riLast.toApfloat() + r))
 	}    //	  t.toc("getting Response")
 	val resp = Response(
-	  R = r.toDouble(), G_S = G
+	  R = r.toDouble(), G_S = G, debugSinR = sinR!!.toDouble(),
+	  debugCosR = cosR!!.toDouble()
 	)
 	if (h != null) {
 	  lastResponse = resp
@@ -514,13 +548,54 @@ data class ComplexCell(
 
   val weightMaps = mutableMapOf<Apfloat, MutableMap<ComplexCell, Double>>().withStoringDefault { sigmaPooling ->
 	mutableMapOf<ComplexCell, Double>().withStoringDefault {
-	  Weight(norm = normDistTo(it).toApfloat(), sigmaPool = sigmaPooling)()
+	 /* if (it.X0 > 2 && it.X0 < 4) {
+		println("normDist = ${normDistTo(it)}")
+		println("sigmaPooling = $sigmaPooling")
+		val num = (-(normDistTo(it).sq()))
+		val denom = (2.0*sigmaPooling.toDouble().sq())
+		println("num=${num}")
+		println("denom=${denom}")
+		println("exponent = ${num/denom}")
+		println("W1=${ApE.pow(num/denom)}")
+		println("WFFF=${E.pow(num/denom)}")
+	  }*/
+	  val w = Weight(norm = normDistTo(it).toApfloat(), sigmaPool = sigmaPooling)()
+	 /* if (it.X0 > 2 && it.X0 < 4) {
+		println("w2=${w}")
+	  }*/
+	  w
 	}
   }
 
   private fun getSfor(
-	popActivity: Map<ComplexCell, Response>, sigmaPooling: Apfloat, uniformW: Double?
+	popActivity: Map<ComplexCell, Response>, sigmaPooling: Apfloat, uniformW: Double?, debug: Boolean = false
   ): Apfloat {
+	if (debug) {
+	  println("SAVING MAT")
+
+	  val matFile = Mat5.newMatFile()
+		.addArray(
+		  "WRXYT", Mat5.newMatrix(5, popActivity.size).apply {
+			popActivity.entries.forEachIndexed { index, entry ->
+			  this.setDouble(
+				0, index, weightMaps[sigmaPooling][entry.key]!!
+			  )
+			  this.setDouble(
+				1, index, entry.value.R
+			  )
+			  this.setDouble(
+				2, index, entry.key.X0
+			  )
+			  this.setDouble(
+				3, index, entry.key.Y0
+			  )
+			  this.setDouble(
+				4, index, entry.key.tDegrees
+			  )
+			}
+		  })
+	  Mat5.writeToFile(matFile, USER_HOME["desktop"]["S.mat"])
+	}
 	return popActivity.entries.sumOf {
 	  val contrib = ((uniformW ?: weightMaps[sigmaPooling][it.key]!!)*it.value.R /*W * r*/)
 	  contrib.requireIsSafe()
@@ -530,7 +605,10 @@ data class ComplexCell(
 }
 
 data class Response(
-  val R: Double, val G_S: Double?
+  val R: Double,
+  val G_S: Double?,
+  val debugSinR: Double? = null,
+  val debugCosR: Double? = null
 )
 
 

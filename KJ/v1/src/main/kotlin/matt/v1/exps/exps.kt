@@ -1,7 +1,8 @@
 package matt.v1.exps
 
 import javafx.scene.layout.FlowPane
-import matt.kjlib.jmath.PI
+import matt.kjlib.commons.USER_HOME
+import matt.kjlib.file.get
 import matt.kjlib.jmath.assertRound
 import matt.kjlib.jmath.logSum
 import matt.kjlib.jmath.mean
@@ -55,6 +56,7 @@ import matt.v1.model.ASD_SIGMA_POOLING
 import matt.v1.model.ATTENTION_SUPP_SIGMA_POOLING
 import matt.v1.model.ComplexCell
 import matt.v1.model.PopulationResponse
+import matt.v1.model.Response
 import matt.v1.model.Stimulus
 import matt.v1.scaling.PerformanceMode.LONG_ACCURATE
 import matt.v1.scaling.PerformanceMode.ORIG_BUT_NEEDS_GPU
@@ -63,6 +65,7 @@ import matt.v1.scaling.performanceMode
 import matt.v1.scaling.rescaleCellSpatialRange
 import matt.v1.scaling.rescalePrefThetaDensity
 import matt.v1.scaling.rescaleSampleDensity
+import us.hebi.matlab.mat.format.Mat5
 
 
 enum class ExpCategory {
@@ -73,9 +76,12 @@ enum class ExpCategory {
 
 
 fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
+
+  val CONTRAST_A_STEP = 0.01
+
   fun contrastExp(
-	maxContrastPortion: Double = 1.0,
-	aStep: Double = 0.01,
+	/*aStep: Double = 0.01,*/
+	baseContrast: Double = 1.0,
 	xOp: Stimulus.(Double)->Stimulus,
 	accuratePerfOp: (PopulationConfig)->PopulationConfig,
 	quickPerfOp: (PopulationConfig)->PopulationConfig,
@@ -100,7 +106,9 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	autoY = false,
 	v2 = sequence {
 	  val pop = Population(
-		rosenbergPop.let {
+		rosenbergPop.copy(
+		  baseContrast = baseContrast
+		).let {
 		  when (performanceMode) {
 			ORIG_BUT_NEEDS_GPU -> it
 			LONG_ACCURATE      -> accuratePerfOp(it).copy(
@@ -112,20 +120,82 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 		  }
 		}
 	  )
+
+	  println("central cell shape = ${pop.centralCell.sinCell.mat.size},${pop.centralCell.sinCell.mat[0].size}")
+	  println(
+		"central cell first 3 = ${pop.centralCell.sinCell.mat[0][0]},${pop.centralCell.sinCell.mat[0][1]},${pop.centralCell.sinCell.mat[0][2]}"
+	  )
+
 	  val series1 = mutableListOf<Point>()
 	  val series2 = mutableListOf<Point>()
 	  val series3 = mutableListOf<Point>()
-	  val xRange = (0.0..maxContrastPortion step aStep).toList()
+	  val xRange = (0.0.toApfloat()..1.0.toApfloat() step CONTRAST_A_STEP.toApfloat()).toList()
+	  /*val xRange = (0.0.toApfloat()..0.0.toApfloat() step CONTRAST_A_STEP.toApfloat()).toList()*/
+	  var debug: Response? = null
+	  var first = true
+	  var second = false
 	  xRange.forEach { x ->
+
 		statusLabel.counters["x:"] = xRange.indexOf(x) + 1 to xRange.size
-		val stim = pop.cfg.perfectStimFor(pop.centralCell).xOp(x)
+		val stim = pop.cfg.perfectStimFor(pop.centralCell).xOp(x.toDouble())
 		series1 += Point(
-		  x = x, y = Stimulation(
+		  x = x.toDouble(), y = Stimulation(
 			cell = pop.centralCell,
 			stim = stim,
-		  ).findOrCompute().R
+		  ).findOrCompute().apply {
+			debug = this
+		  }.apply {
+			println("R=${this}")
+			// Create MAT file with a scalar in a nested struct
+			// Create MAT file with a scalar in a nested struct
+			if (second && false) {
+			  println("SAVING MAT")
+			  val matFile = Mat5.newMatFile()
+				.addArray(
+				  "sinRF", Mat5.newMatrix(pop.centralCell.sinCell.mat[0].size, pop.centralCell.sinCell.mat.size).apply {
+					pop.centralCell.sinCell.mat.forEachIndexed { rIndex, row ->
+					  row.forEachIndexed { cIndex, v ->
+						this.setDouble(
+						  cIndex, rIndex, v.toDouble()
+						) /*trust me, this is the order of col,row that matches rosenberg's code. dont know if its generally the right way but this is something i find arbitrary*/
+					  }
+					}
+				  })
+				.addArray(
+				  "cosRF", Mat5.newMatrix(pop.centralCell.cosCell.mat[0].size, pop.centralCell.cosCell.mat.size).apply {
+					pop.centralCell.cosCell.mat.forEachIndexed { rIndex, row ->
+					  row.forEachIndexed { cIndex, v ->
+						this.setDouble(
+						  cIndex, rIndex, v.toDouble()
+						) /*trust me, this is the order of col,row that matches rosenberg's code. dont know if its generally the right way but this is something i find arbitrary*/
+					  }
+					}
+				  })
+				.addArray(
+				  "stim", Mat5.newMatrix(stim.mat[0].size, stim.mat.size).apply {
+					stim.mat.forEachIndexed { rIndex, row ->
+					  row.forEachIndexed { cIndex, v ->
+						this.setDouble(
+						  cIndex, rIndex, v.toDouble()
+						) /*trust me, this is the order of col,row that matches rosenberg's code. dont know if its generally the right way but this is something i find arbitrary*/
+					  }
+					}
+				  })
+				.addArray("R", Mat5.newScalar(this.R))
+				.addArray("sinR", Mat5.newScalar(this.debugSinR!!))
+				.addArray("cosR", Mat5.newScalar(this.debugCosR!!))
+			  /*.addArray("var2", Mat5.newScalar(7.0))
+			  .addArray("var3", Mat5.newStruct().set("x", Mat5.newScalar(42.0)))*/
+			  Mat5.writeToFile(matFile, USER_HOME["desktop"]["RF.mat"])
+			  second = false
+			} else if (first) {
+			  first = false
+			  second = true
+			}
+		  }.R
 		)
 		val DN_Response = run {
+		  /*  debug!!.copy(G_S = 1.0)*/
 		  val popR = MaybePreDNPopR(
 			stim = stim,
 			pop = pop,
@@ -136,13 +206,18 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 			cell = pop.centralCell,
 			stim = stim,
 			popR = popR
-		  ).findOrCompute()
+		  ).findOrCompute().apply {
+			println("DN_X=${x}")
+			println("DN_R=${this.R}")
+			println("DN_G=${this.G_S}")
+		  }
+
 		}
 		series2 += Point(
-		  x = x, y = DN_Response.R
+		  x = x.toDouble(), y = DN_Response.R
 		)
 		series3 += Point(
-		  x = x, y = DN_Response.G_S!!
+		  x = x.toDouble(), y = DN_Response.G_S!!
 		)
 		yieldAll(
 		  listOf(
@@ -250,7 +325,7 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	xOp = {
 	  copy(
 		a = it*popCfg.baseContrast,
-		SF = (5.75/(2*PI))
+		SF = (5.75/*/(2*PI)*/)
 	  )
 	},
 	accuratePerfOp = {
@@ -269,8 +344,7 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	baseExp
   )
   exps += contrastExp(
-	maxContrastPortion = 0.5,
-	aStep = 0.005,
+	baseContrast = 0.5,
 	xOp = {
 	  val realThis = this.copy(
 		SF = 5.75

@@ -85,6 +85,8 @@ fun main(): Unit = GuiApp(screenIndex = 2) {
   val t = tic(prefix = "V1Main")
   t.toc("top of V1Main main()")
 
+
+
   /*NativeLoader.load()
 
   Logger.getLogger(OpenCLLoader::class.qualifiedName).level = Level.INFO
@@ -139,7 +141,7 @@ fun main(): Unit = GuiApp(screenIndex = 2) {
 
 
   t.toc("doing gui stuff")
-  vbox {
+  rootVbox {
 	alignment = Pos.TOP_CENTER
 	/*val figHeightProp = DProp(500.0)*/
 	val visualizer = tabpane {
