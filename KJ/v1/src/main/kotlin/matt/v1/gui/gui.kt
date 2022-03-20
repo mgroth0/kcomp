@@ -15,6 +15,7 @@ import matt.hurricanefx.dragsSnapshot
 import matt.hurricanefx.exactHeight
 import matt.hurricanefx.exactHeightProperty
 import matt.hurricanefx.eye.lib.onChange
+import matt.hurricanefx.eye.lib.onNonNullChange
 import matt.hurricanefx.eye.prop.plus
 import matt.hurricanefx.stage
 import matt.hurricanefx.tornadofx.control.imageview
@@ -81,7 +82,14 @@ abstract class ImageVisualizer(
 	  val cfgPane = configPane().apply {
 		exactHeight = 150.0
 	  }
-	  cfgPane.prefWrapLengthProperty().bind(node.stage!!.widthProperty())
+
+	  if (node.scene!=null){
+		cfgPane.prefWrapLengthProperty().bind(node.stage!!.widthProperty())
+	  }
+	  node.sceneProperty().onNonNullChange {
+		cfgPane.prefWrapLengthProperty().bind(node.stage!!.widthProperty())
+	  }
+
 	  node.add(cfgPane)
 	  node.minHeightProperty().bind(imageBox.heightProperty() + cfgPane.heightProperty() /*+ 350.0*/)
 	}
