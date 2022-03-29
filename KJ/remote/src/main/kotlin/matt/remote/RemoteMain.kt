@@ -27,7 +27,7 @@ import net.sf.expectit.Expect
 const val REBUILD_VAGRANT = false
 const val REBUILD_SINGULARITY = false
 
-fun main() = CommandLineApp("Hello remote") {
+fun main() = CommandLineApp(mainPrompt="Hello remote") {
 
   Hosts.POLESTAR.ssh {
 
