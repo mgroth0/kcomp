@@ -129,6 +129,7 @@ subprojects sub@{
   val jvmRuntimeArgs = listOf(
 	if (isNewMac) "-Xmx30g" else "-Xmx6g",
 	/*"-agentpath:"*/ /*jProfiler*/
+  "-Djava.library.path=/Users/matthewgroth/registered/kcomp/KJ/dylib"
   )
 
   configure<JavaApplication> {

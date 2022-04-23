@@ -1,6 +1,7 @@
 dependencies {
 	implementation(projects.kj.gui)
-  implementation(libs.brainflow)
+//  implementation(libs.brainflow)
+  implementation(files("/Users/matthewgroth/registered/kcomp/KJ/jar/brainflow-jar-with-dependencies.jar"))
 }
 repositories{
   maven {
