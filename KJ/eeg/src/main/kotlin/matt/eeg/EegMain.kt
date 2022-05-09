@@ -2,34 +2,68 @@ package matt.eeg
 
 import brainflow.BoardIds
 import brainflow.BoardShim
+import brainflow.BrainFlowError
 import brainflow.BrainFlowInputParams
 import brainflow.LogLevels.LEVEL_INFO
 import matt.gui.app.GuiApp
+import matt.kjlib.shell.execReturn
 import java.util.Arrays
+import kotlin.system.exitProcess
 
 
 fun main(): Unit = GuiApp {
 
-/*//  println(execPython(python))
-//
-//  val testString = "${'$'}{something}"*/
+  val bt = "State: On" in execReturn("/usr/sbin/system_profiler", "SPBluetoothDataType")
 
-  getDataFromBoard()
+  if (bt) {
+	getDataFromBoard()
+  } else {
+	println("please turn on bluetooth")
+	exitProcess(1)
+  }
+
+  /*//  println(execPython(python))
+  //
+  //  val testString = "${'$'}{something}"*/
+
 
 }.start()
 
 private fun getDataFromBoard() {
   BoardShim.enable_board_logger()
+  BoardShim.set_log_level(0)
   val params = BrainFlowInputParams()
-  params.serial_port = "/ dev/cu.usbmodem11"
+  params.serial_port = "/dev/cu.usbmodem11"
+  params.mac_address
   val board_id = BoardIds.GANGLION_BOARD._code
   val board_shim = BoardShim(board_id, params)
 
-  board_shim.prepare_session()
+  try {
+	board_shim.prepare_session()
+//    val instanceProp = BoardShim::class.memberProperties.first { it.name == "instance" }
+//    instanceProp.isAccessible = true
+//    val ec = instanceProp.get(board_shim).prepare_session(board_shim.board_id, board_shim.input_json)
+//    if (ec != STATUS_OK._code) {
+//      throw BrainFlowError("Error in prepare_session", ec)
+//    }
+  } catch (e: BrainFlowError) {
+    println("e.message=${e.message}")
+    e.printStackTrace()
+	println("Is the Ganglion turned on?")
+	exitProcess(2)
+  }
   // board_shim.start_stream (); // use this for default options
   // board_shim.start_stream (); // use this for default options
   board_shim.start_stream(450000, "file://file_stream.csv:w")
   BoardShim.log_message(LEVEL_INFO._code, "Start sleeping in the main thread")
+
+//  board_shim.
+
+
+  print("board_shim.board_id=${board_shim.board_id}")
+
+//  board_shim.config_board()
+
   Thread.sleep(5000)
   board_shim.stop_stream()
   println(board_shim._board_data_count)
@@ -40,7 +74,7 @@ private fun getDataFromBoard() {
   // double[][] data = board_shim.get_board_data (); // get all data and flush
   // from ring buffer
   for (i in data.indices) {
-    System.out.println(Arrays.toString(data[i]))
+	println(Arrays.toString(data[i]))
   }
   board_shim.release_session()
 
@@ -52,11 +86,22 @@ private fun getDataFromBoard() {
   println("get_timestamp_channel= ${BoardShim.get_timestamp_channel(BoardIds.GANGLION_BOARD._code)}")
 
 
+
+
+
+
   /*this throws an error?*/
   /*println("get_other_channels= ${BoardShim.get_other_channels(BoardIds.GANGLION_BOARD._code)}")*/
 
   println("data.size=${data.size}")
   println("data[0].size=${data[0].size}")
+
+  println("\n\n")
+  println("|||||||||||||||||||||||||||||||||||||||||||||||")
+  println("REMEMBER TO TURN OFF THE GANGLION AND BLUETOOTH")
+  println("|||||||||||||||||||||||||||||||||||||||||||||||")
+  println("\n\n")
+  exitProcess(0)
 
 }
 

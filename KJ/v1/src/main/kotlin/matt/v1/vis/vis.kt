@@ -28,7 +28,7 @@ class RosenbergVisualizer(
   imageHW = popCfg.fieldHW.floorInt().apply {
 	println("DEBUG:${this}")
   },
-  imgScale = 0.05,
+  imgScale = 0.5,
 ) {
 
   fun addStim(stim: FieldGenerator) {

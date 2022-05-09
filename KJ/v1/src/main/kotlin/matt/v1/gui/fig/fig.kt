@@ -156,7 +156,7 @@ class FigureUpdater(
 
   var nextSeriesUpdateIndex = 0
   fun update(figureUpdate: FigureUpdate) {
-	println("GOT FIGURE UPDATE: ${figureUpdate}")
+	/*println("GOT FIGURE UPDATE: ${figureUpdate}")*/
 	figSem.with {
 	  figureUpdate.updates.forEach {
 		val index = it.seriesIndex ?: run {
