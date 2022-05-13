@@ -100,7 +100,7 @@ data class Experiment(
 
   /*ALL TO GO*/
   val attnX0DistMax: Apfloat = 10.0.toApfloat(),
-  val f3dStep: Apfloat = 0.1.toApfloat(), /*base*/
+//  val f3dStep: Apfloat = 0.1.toApfloat(), /*base*/
   val f5cStep: Apfloat = 0.2.toApfloat(),
 
   /*

@@ -9,6 +9,11 @@ import matt.v1.scaling.PerformanceMode.QUICK_ROUGH
 import kotlin.math.abs
 import kotlin.math.pow
 
+fun PopulationConfig.copyWith(perfMode: PerformanceMode) = when (perfMode) {
+  ORIG_BUT_NEEDS_GPU -> this
+  LONG_ACCURATE      -> this.rescaleSampleDensity(0.75).copy(reqSize = null)
+  QUICK_ROUGH        -> this.rescalePrefThetaDensity(0.1).rescaleSampleDensity(0.5).copy(reqSize = null)
+}
 
 enum class PerformanceMode {
   ORIG_BUT_NEEDS_GPU,
@@ -16,23 +21,18 @@ enum class PerformanceMode {
   QUICK_ROUGH
 }
 
-val performanceMode = ORIG_BUT_NEEDS_GPU
-
 fun PopulationConfig.rescaleSampleDensity(d: Double) = copy(
   sampleStep = sampleStep/d,
   baseContrast = baseContrast/(d.sq()),
   /*DC_BASELINE_ACTIVITY = DC_BASELINE_ACTIVITY*(d.sq())*10.0.pow(-5),
   semiSaturationConstant = semiSaturationConstant*(d.sq())*10.0.pow(-5)*/
-).apply {
-  require(performanceMode >= LONG_ACCURATE)
-}
+)
 
 fun PopulationConfig.rescalePrefThetaDensity(d: Double) = copy(
   cellPrefThetaStep = cellPrefThetaStep/d,
   baseDNGain = baseDNGain/d,/* NOT ENOUGH BC MOST SUPPRESSION FROM NEARBY THETAS*/
   /*baseDNGain = baseDNGain*(1_000_000_000.0)*/
 ).apply {
-  require(performanceMode >= QUICK_ROUGH)
   warn(
 	"rescalePrefThetaDensity will unavoidably lead to much lower suppression because nearby thetas provided majority of suppression. Expect this to modify all results."
   )
@@ -48,3 +48,5 @@ fun Double.requireIsSafe() {
   val a = abs(this)
   require(a < DOUBLE_SAFE_MAX && a > DOUBLE_SAFE_PRECISION)
 }
+
+

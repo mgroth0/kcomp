@@ -40,3 +40,6 @@
 [submodule "RootFiles"]
 	path = RootFiles
 	url = https://github.com/mgroth0/RootFiles
+[submodule "kj/hotkey"]
+	path = kj/hotkey
+	url = https://github.com/mgroth0/hotkey

@@ -9,6 +9,7 @@ import javafx.scene.layout.Border
 import javafx.scene.layout.BorderStroke
 import javafx.scene.layout.BorderStrokeStyle
 import javafx.scene.layout.BorderWidths
+import javafx.scene.layout.FlowPane
 import javafx.scene.layout.Priority.ALWAYS
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
@@ -36,7 +37,10 @@ import matt.hurricanefx.tornadofx.tab.tabpane
 import matt.hurricanefx.visibleAndManagedProp
 import matt.kjlib.async.daemon
 import matt.kjlib.date.tic
+import matt.kjlib.file.text
 import matt.kjlib.log.NEVER
+import matt.kjlib.log.err
+import matt.kjlib.recurse.recurse
 import matt.kjlib.str.addSpacesUntilLengthIs
 import matt.kjlib.str.cap
 import matt.reflect.ismac
@@ -64,6 +68,8 @@ import kotlin.system.exitProcess
 
 private enum class STARTUP { ROSENBERG, ITTI_KOCH }
 
+
+
 private val startup: STARTUP = STARTUP.ROSENBERG
 private const val REMOTE = false
 private val REMOTE_AND_MAC = REMOTE && ismac
@@ -81,10 +87,23 @@ val latestPop by lazy {
 val visualizer by lazy { RosenbergVisualizer(rosenbergPop) }
 
 fun main(): Unit = GuiApp(screenIndex = 2) {
+
+
   /*simplePrinting = true*/
   val t = tic(prefix = "V1Main")
   t.toc("top of V1Main main()")
 
+  thread {
+	File("/Users/matthewgroth/registered/kcomp/KJ")
+	  .recurse { it.listFiles()?.toList() ?: listOf() }
+	  .filter { it.extension == "kt" && it.absolutePath != "/Users/matthewgroth/registered/kcomp/KJ/v1/src/main/kotlin/matt/v1/V1Main.kt" }
+	  .forEach {
+		if ("ApfloatMath.euler" in it.text) {
+		  err("ApfloatMath.euler is NOT what you think it is")
+		}
+	  }
+
+  }
 
 
   /*NativeLoader.load()
@@ -142,7 +161,7 @@ fun main(): Unit = GuiApp(screenIndex = 2) {
 
   t.toc("doing gui stuff")
   rootVbox {
-	alignment = Pos.TOP_CENTER
+	alignment = TOP_CENTER
 	/*val figHeightProp = DProp(500.0)*/
 	val visualizer = tabpane {
 	  tabs += lazyTab("Rosenberg") { visualizer.node }
@@ -200,10 +219,14 @@ fun main(): Unit = GuiApp(screenIndex = 2) {
 	  visibleAndManagedProp().bind(ittKochTab.selectedProperty().not())
 	}
 
+	val expCatPanes by lazy {
+	  ExpCategory.values().associateWith { FlowPane() }
+	}
+
 	val figButtonBox = expBox.tabpane {
 	  this.vgrow = ALWAYS
 	  ExpCategory.values().forEach {
-		staticTab(it.name.lowercase().cap(), it.pane)
+		staticTab(it.name.lowercase().cap(), expCatPanes[it]!!)
 	  }
 	  exactHeight = 120.0
 	}
@@ -223,7 +246,7 @@ fun main(): Unit = GuiApp(screenIndex = 2) {
 	val exps = experiments(fig, statusLabel)
 	val allButtons = mutableListOf<Button>()
 	exps.forEach { exp ->
-	  exp.category.pane.button(exp.name.addSpacesUntilLengthIs(4)) {
+	  expCatPanes[exp.category]!!.button(exp.name.addSpacesUntilLengthIs(4)) {
 		allButtons += this
 		fun cfgStartButton() {
 		  text = exp.name.addSpacesUntilLengthIs(4)
@@ -299,7 +322,7 @@ fun main(): Unit = GuiApp(screenIndex = 2) {
 	/*exitProcess(0)*/
 	/*System.exit(0)*/
 	/*welp... looks like we have a bigger problem on our hands*/
-	Runtime.getRuntime().halt(0);
+	Runtime.getRuntime().halt(0)
   }
 )
 

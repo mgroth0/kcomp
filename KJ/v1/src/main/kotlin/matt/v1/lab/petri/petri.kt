@@ -1,5 +1,7 @@
 package matt.v1.lab.petri
 
+import matt.kjlib.commons.USER_HOME
+import matt.kjlib.file.get
 import matt.kjlib.jmath.div
 import matt.kjlib.jmath.sqrt
 import matt.kjlib.jmath.times
@@ -12,6 +14,8 @@ import matt.v1.compcache.DivNorm
 import matt.v1.compcache.Point
 import matt.v1.compcache.Polar
 import matt.v1.compcache.Radians
+import matt.v1.mat.MatMat
+import matt.v1.mat.saveMatFile
 import matt.v1.model.AZERO
 import matt.v1.model.Cell
 import matt.v1.model.Circle
@@ -46,7 +50,7 @@ data class PopulationConfig(
   val cellSFmin: Apfloat = 4.0.toApfloat(),
   val cellSFmax: Apfloat = 4.0.toApfloat(),
   val cellSFstep: Apfloat = 1.0.toApfloat(),
-  val stimSF: Double = 5.75 ,/*/ (2 * PI),*/
+  val stimSF: Double = 5.75,/*/ (2 * PI),*/
   val stimSigma: Double = 1.55,
   val baseContrast: Double = 1.0, /*technically part of stim not pop*/
   val DC_BASELINE_ACTIVITY: Double = 2.0,
@@ -129,6 +133,7 @@ class Population(
 	require(!(cfg.alongY && cfg.conCircles))
   }
 
+
   val centralCell: ComplexCell by lazy {
 	complexCells
 	  .filter { it.tDegrees == cfg.prefThetaMin.toDouble() }
@@ -137,6 +142,17 @@ class Population(
 		it.X0 >= 0.0 && it.Y0 >= 0.0
 	  }
 	  .minByOrNull { it.X0 + it.Y0 }!!
+  }
+
+  val sampleMatSize get() = intArrayOf(centralCell.sinCell.mat[0].size, centralCell.sinCell.mat.size)
+
+  fun saveDebugMat(stim: Stimulus, r: Double) {
+	mapOf(
+	  "sinRF" to MatMat(centralCell.sinCell.mat),
+	  "cosRF" to MatMat(centralCell.cosCell.mat),
+	  "stim" to MatMat(stim.mat),
+	  "R" to r,
+	).saveMatFile(USER_HOME["desktop"]["temp.mat"])
   }
 
   fun centralCellWithSF(sf: Apfloat) = complexCells
@@ -150,7 +166,9 @@ class Population(
 
   /*must ue apfloat here to get exact values and avoid double artifacts and match matlab!*/
   private val cellSpacialRange =
-	(Apfloat(-cfg.cellX0AbsMinmax)..Apfloat(cfg.cellX0AbsMinmax) step (Apfloat(cfg.cellX0Step)*Apfloat(cfg.cellX0StepMult)))
+	(Apfloat(-cfg.cellX0AbsMinmax)..Apfloat(cfg.cellX0AbsMinmax) step (Apfloat(cfg.cellX0Step)*Apfloat(
+	  cfg.cellX0StepMult
+	)))
 
 
   private val circle by lazy { Circle(radius = cfg.cellX0AbsMinmax) }
@@ -255,6 +273,9 @@ class Population(
 
 
   val complexCells: List<ComplexCell> by lazy { sinCells.zip(cosCells).map { ComplexCell(it) } }
+
+
+
 }
 
 val rosenbergPop = PopulationConfig(

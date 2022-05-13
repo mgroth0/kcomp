@@ -484,7 +484,7 @@ val Collection<Point>.gradient get() = (maxOf { it.y } - minOf { it.y })/(maxOf 
 
 fun List<Point>.normalizeYToMax(): List<Point> {
   val max = maxOf { it.y }
-  return map { it.copy(y = it.y/max*100.0.toDouble()) }
+  return map { it.copy(y = it.y/max*100.0) }
 }
 
 fun List<Point>.derivative(n: Int = 1): List<Point> {/*could make this recursive but functionally equivalent*/
@@ -515,6 +515,14 @@ fun List<Point>.normalizeXToMinMax(): List<Point> {
   val min = minOf { it.x }
   val max = maxOf { it.x } - min
   return map { it.copy(x = (it.x - min)/max*100.0) }
+}
+
+fun List<Point>.showXAsPercent(): List<Point> {
+  return map { it.copy(x = it.x*100) }
+}
+
+fun List<Point>.showYAsPercent(): List<Point> {
+  return map { it.copy(y = it.y*100) }
 }
 
 fun Iterable<MutableList<Point>>.maxByTroughY() = maxByOrNull { it.trough!!.y }!!

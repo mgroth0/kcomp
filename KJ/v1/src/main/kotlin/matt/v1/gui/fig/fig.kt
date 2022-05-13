@@ -17,6 +17,7 @@ import matt.json.prim.loadJson
 import matt.kjlib.async.every
 import matt.kjlib.async.with
 import matt.kjlib.date.sec
+import matt.kjlib.log.err
 import matt.klib.dmap.withStoringDefault
 import matt.v1.comp.Fit.Gaussian
 import matt.v1.compcache.Point
@@ -37,9 +38,7 @@ interface FigUpdate {
 }
 
 fun replaceNextSeries(points: List<Point>) = SeriesUpdate(
-  type = REPLACE,
-  seriesIndex = null,
-  points = points
+  type = REPLACE, seriesIndex = null, points = points
 )
 
 class FigureUpdate(
@@ -58,15 +57,11 @@ enum class SeriesUpdateType {
 }
 
 infix fun Int.replaceWith(points: List<Point>) = SeriesUpdate(
-  type = REPLACE,
-  seriesIndex = this,
-  points = points
+  type = REPLACE, seriesIndex = this, points = points
 )
 
 data class SeriesUpdate(
-  val type: SeriesUpdateType,
-  val seriesIndex: Int?,
-  val points: List<Point>
+  val type: SeriesUpdateType, val seriesIndex: Int?, val points: List<Point>
 ): FigUpdate {
   constructor(type: SeriesUpdateType, seriesIndex: Int, x: Double, y: Double): this(
 	type = type, seriesIndex = seriesIndex, p = Point(x = x, y = y)
@@ -128,8 +123,7 @@ class FigureUpdater(
 			  list.subList(figNextPointsI[i]!!, list.size).map { it.y }.toDoubleArray()
 			)
 		  }
-		  figNextPointsI[i] = seriesPoints[i]!!.size
-		  /*  if (getRunStage() == WAITING_FOR_FIG) {
+		  figNextPointsI[i] = seriesPoints[i]!!.size        /*  if (getRunStage() == WAITING_FOR_FIG) {
 			  setRunStage(FIG_COMPLETE)
 			}*/
 		}
@@ -155,8 +149,7 @@ class FigureUpdater(
   }
 
   var nextSeriesUpdateIndex = 0
-  fun update(figureUpdate: FigureUpdate) {
-	/*println("GOT FIGURE UPDATE: ${figureUpdate}")*/
+  fun update(figureUpdate: FigureUpdate) {    /*println("GOT FIGURE UPDATE: ${figureUpdate}")*/
 	figSem.with {
 	  figureUpdate.updates.forEach {
 		val index = it.seriesIndex ?: run {
@@ -181,8 +174,7 @@ class FigureUpdater(
 }
 
 
-class Figure(
-  //  var line: Boolean = true
+class Figure( //  var line: Boolean = true
 ): Pane() {
 
 
@@ -239,11 +231,35 @@ class Figure(
 	  }
 	}
 
-	chart.axes.forEach { a -> a.forceRedraw() }
-	chart.legend.updateLegend(chart.datasets, chart.renderers, true)
-	/*if (autoX) {
+
+	chart.xAxis.tickUnit = when {
+	  xMin == 0.0 && xMax == 100.0 -> 10.0
+	  else                         -> err("what tick unit to use for xMin=${xMin} and xMax = $xMax?")
+	}
+
+	chart.yAxis.tickUnit = when {
+	  yMin == 0.0 && yMax == 100.0 -> 10.0
+	  else                         -> err("what tick unit to use for yMin=${yMin} and yMax = $yMax?")
+	}
+
+	chart.axes.forEach { a ->
+	  (a as DefaultNumericAxis).apply {
+		println("chart.xAxis.tickUnit=${chart.xAxis.tickUnit}")
+		println("chart.yAxis.tickUnit=${chart.yAxis.tickUnit}")
+		recomputeTickMarks()
+		println("finished recomputeTickMarks")
+	  }
+	  a.forceRedraw()
+	}
+
+
+
+
+	chart.legend.updateLegend(chart.datasets, chart.renderers, true)    /*if (autoX) {
 	  autorangeXWith(xMin, xMax)
 	}*/
+
+
   }
 
 
@@ -273,14 +289,8 @@ class Figure(
   var debugPrepName = "New Dataset"
 
   val seriesColors = listOf(
-	"darkblue",
-	"yellow",
-	"lightgreen",
-	"red",
-	"pink",
-	"white"
-  )
-  //
+	"darkblue", "yellow", "lightgreen", "red", "pink", "white"
+  ) //
   //  val seriesStyles = listOf(
   //	"markerColor=darkblue; markerType=circle;strokeColor=darkblue;strokeWidth=2;",
   //	"markerColor=yellow; markerType=circle;strokeColor=yellow;strokeWidth=2;"
@@ -295,9 +305,7 @@ class Figure(
 	}
 	s += if (line) {
 	  "strokeColor: ${seriesColors[i]}; strokeWidth: 2;"
-	} else {
-	  /*for now keep stroke color same as marker color for the legend*/
-	  /*s += "strokeColor: ${seriesColors[i]}; strokeWidth: 2;"*/
+	} else {    /*for now keep stroke color same as marker color for the legend*/    /*s += "strokeColor: ${seriesColors[i]}; strokeWidth: 2;"*/
 	  "strokeColor: transparent; strokeWidth: 0;"
 	}
 	series[i].style = s
@@ -311,20 +319,15 @@ class Figure(
   val series = mutableMapOf<Int, DoubleDataSet>().withStoringDefault {
 	while (it + 1 > chart.datasets.size) {
 	  val ds = DoubleDataSet(debugPrepName)
-	  chart.datasets.add(ds)
-	  /*  if (it <= seriesStyles.size-1) {
+	  chart.datasets.add(ds)    /*  if (it <= seriesStyles.size-1) {
 		  ds.setStyle(seriesStyles[it])
 		  *//*ds.addDataStyle(seriesStyles[it])*//*
-	  } */
-	  //	  ds.style = seriesStyles[it]
-	  chart.renderers.add(ErrorDataSetRenderer().apply {
-		/*	markerSize = 10.0
-			isDrawMarker = true*/
-		/*polyLineStyle = LineStyle.NONE*/
+	  } */    //	  ds.style = seriesStyles[it]
+	  chart.renderers.add(ErrorDataSetRenderer().apply {        /*	markerSize = 10.0
+			isDrawMarker = true*/        /*polyLineStyle = LineStyle.NONE*/
 		datasets.add(ds)
 	  })
-	  styleSeries(i = it, marker = false, line = true)
-	  //	  chart.series("")
+	  styleSeries(i = it, marker = false, line = true)    //	  chart.series("")
 	}
 	chart.datasets[it] as DoubleDataSet
   }
@@ -355,8 +358,7 @@ class Figure(
 
   fun autorangeX() = autorangeXWith(*series.values.toTypedArray())
 
-  fun clear() {
-	/*found this method to be the least buggy and fastest, most responsive*/
+  fun clear() {    /*found this method to be the least buggy and fastest, most responsive*/
 	series.clear()
 	children.remove(chart)
 	newChart()
@@ -391,7 +393,12 @@ class Figure(
 	  isAutoRanging = false
 	  isTickMarkVisible = true
 	  isTickLabelsVisible = true
-	  minorTickCount = 5
+	  isMinorTickVisible = false
+
+
+	  /*minorTickCount = 5*/
+
+
 	  /*maxMajorTickLabelCount = 5
 	  tick
 	  tickUnitProperty().bind(maxProperty().minus(minProperty()).div(5))*/
@@ -401,9 +408,14 @@ class Figure(
 	  isAutoRanging = false
 	  isTickMarkVisible = true
 	  isTickLabelsVisible = true
-	  minorTickCount = 5
+	  isMinorTickVisible = false
+
+
+	  /*minorTickCount = 5*/
+
+
 	  /*tickUnitProperty().bind(maxProperty().minus(minProperty()).div(5))
-	  *//*tickLabelFormatter = BYTE_SIZE_FORMATTER*/
+		*//*tickLabelFormatter = BYTE_SIZE_FORMATTER*/
 	}
 	chart =
 
@@ -416,15 +428,12 @@ class Figure(
 		  axis1,
 		  axis2
 		) {}*/
-	chart.apply {
-	  //	  (this as? LineChart)?.createSymbols = false
+	chart.apply {    //	  (this as? LineChart)?.createSymbols = false
 	  /*if (scene != null) {
 		exactWidthProperty().bind(scene.widthProperty()*0.9)
-	  }*/
-	  /*sceneProperty().onNonNullChange {
+	  }*/    /*sceneProperty().onNonNullChange {
 		exactWidthProperty().bind(it.widthProperty()*0.9)
-	  }*/
-	  //		this.ani
+	  }*/    //		this.ani
 	  //	  this.animated = false
 	  layoutX = 0.0
 	  layoutY = 0.0
