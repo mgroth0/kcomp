@@ -24,9 +24,9 @@ import matt.v1.compcache.normalizeYToMax
 import matt.v1.compcache.normalizeYToMinMax
 import matt.v1.compcache.shiftAllByTroughs
 import matt.v1.exps.ExpCategory
-import matt.v1.gui.fig.FigUpdate
 import matt.v1.gui.fig.Figure
-import matt.v1.gui.fig.FigureUpdater
+import matt.v1.gui.fig.update.FigUpdate
+import matt.v1.gui.fig.update.FigureUpdater
 import matt.v1.gui.status.StatusLabel
 import matt.v1.lab.Experiment.CoreLoop
 import matt.v1.lab.Experiment.RunStage.FIG_COMPLETE
@@ -76,6 +76,8 @@ data class Experiment(
   val title: String,
   val xlabel: String,
   val ylabel: String,
+  val xUnit: String = "UNIT",
+  val yUnit: String = "UNIT",
   val xMax: Double = 100.0,
   val xMin: Double = 0.0,
   val yMax: Double = 100.0,
@@ -100,7 +102,7 @@ data class Experiment(
 
   /*ALL TO GO*/
   val attnX0DistMax: Apfloat = 10.0.toApfloat(),
-//  val f3dStep: Apfloat = 0.1.toApfloat(), /*base*/
+  //  val f3dStep: Apfloat = 0.1.toApfloat(), /*base*/
   val f5cStep: Apfloat = 0.2.toApfloat(),
 
   /*

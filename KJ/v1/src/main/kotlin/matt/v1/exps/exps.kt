@@ -32,7 +32,7 @@ import matt.v1.exps.ExpCategory.LOUIE
 import matt.v1.exps.ExpCategory.OTHER
 import matt.v1.exps.ExpCategory.ROSENBERG
 import matt.v1.gui.fig.Figure
-import matt.v1.gui.fig.replaceNextSeries
+import matt.v1.gui.fig.update.replaceNextSeries
 import matt.v1.gui.status.StatusLabel
 import matt.v1.lab.Experiment
 import matt.v1.lab.Experiment.Companion.USE_GPPC
@@ -65,6 +65,7 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	title: String,
 	xlabel: String,
 	baseContrast: Double = 1.0,
+	xUnit: String = "percent",
 	xMin: Double = 0.0,
 	xMax: Double = 1.0,
 	xStep: Double = 0.01,
@@ -75,6 +76,8 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
 	title = title,
 	xlabel = xlabel,
 	ylabel = "Neural Response % Maximum",
+	yUnit = "percent",
+	xUnit = xUnit,
 	fig = fig,
 	statusLabel = statusLabel,
 	series = listOf(
@@ -165,7 +168,8 @@ fun experiments(fig: Figure, statusLabel: StatusLabel): List<Experiment> {
   exps += varyingStimExp(
 	name = "3.D",
 	title = "DN causes tuning curve to peak at optimal size",
-	xlabel = "Size (Degrees)",
+	xlabel = "Size",
+	xUnit = "degrees",
 	showXAsPercent = false,
 	xMin = f3dStep,
 	xMax = 10.0,

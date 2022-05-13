@@ -260,9 +260,11 @@ fun main(): Unit = GuiApp(screenIndex = 2) {
 			println("WORKING 1")
 			fig.clear()
 			fig.setup(
-			  title = exp.title,
+			  chartTitle = exp.title,
 			  xlabel = exp.xlabel,
 			  ylabel = exp.ylabel,
+			  xUnit = exp.xUnit,
+			  yUnit = exp.yUnit,
 			  autoY = exp.autoY,
 			  autoX = exp.autoX,
 			  yMax = exp.yMax,
