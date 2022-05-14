@@ -134,7 +134,12 @@ subprojects sub@{
 
   configure<JavaApplication> {
 	if (JIGSAW) mainModule.set(mainPackage)
-	mainClass.set("${mainPackage}.${spname.capitalize()}MainKt")
+	if (FixedFile(projectDir)["src"]["main"]["kotlin"].exists()) {
+	  mainClass.set("${mainPackage}.${spname.capitalize()}MainKt")
+	} else {
+	  mainClass.set("${mainPackage}.${spname.capitalize()}Main")
+	}
+
 	mainClassName = mainClass.get()
 	this.applicationDefaultJvmArgs = jvmRuntimeArgs
   }

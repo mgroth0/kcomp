@@ -1,3 +1,4 @@
 dependencies {
-	implementation(projects.kj.gui)
+  implementation(libs.chartFX)
+  implementation(projects.kj.gui)
 }
