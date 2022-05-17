@@ -1,11 +1,27 @@
 package matt.v1.gui.vis
 
 import javafx.beans.property.SimpleObjectProperty
+import javafx.geometry.Pos.CENTER
+import javafx.scene.control.ComboBox
+import javafx.scene.control.TabPane
+import javafx.scene.layout.Border
+import javafx.scene.layout.BorderStroke
+import javafx.scene.layout.BorderStrokeStyle
+import javafx.scene.layout.BorderWidths
+import javafx.scene.layout.VBox
+import javafx.scene.paint.Color
+import javafx.util.StringConverter
+import matt.gui.resize.DragResizer
+import matt.hurricanefx.eye.collect.toObservable
 import matt.hurricanefx.eye.lib.onChange
+import matt.hurricanefx.lazyTab
 import matt.kjlib.commons.DATA_FOLDER
 import matt.kjlib.file.get
 import matt.kjlib.jmath.floorInt
+import matt.kjlib.log.NEVER
 import matt.klib.dmap.withStoringDefault
+import matt.v1.gui.GuiMode
+import matt.v1.gui.GuiMode.ITTI_KOCH
 import matt.v1.gui.vis.vismodel.FilteredImageVisualizer
 import matt.v1.gui.vis.vismodel.GeneratedImageVisualizer
 import matt.v1.lab.petri.pop2D
@@ -18,9 +34,53 @@ import matt.v1.model.combined.CombinedConfig
 import matt.v1.salience.FeatureDef
 import matt.v1.salience.FeatureType
 import matt.v1.salience.Salience
+import matt.v1.visualizer
 import org.jetbrains.kotlinx.multik.ndarray.data.D2
 import org.jetbrains.kotlinx.multik.ndarray.data.NDArray
 import java.io.File
+
+class VisualizerPane(startup: GuiMode): TabPane() {
+  init{
+	tabs += lazyTab("Rosenberg") { visualizer.node }
+	tabs += lazyTab("Itti Koch") {
+	  this.isDisable = true /*it throws an error and I dont have time for this right now*/
+	  VBox(
+		ComboBox(
+		  IttiKochVisualizer.dogFolder.listFiles()!!.sorted().toObservable()
+		).apply {
+		  valueProperty().bindBidirectional(
+			IttiKochVisualizer.ittiKochInput
+		  )		/*simpleCellFactory { it.name to null }*/
+		  this.converter = object: StringConverter<File>() {
+			override fun toString(`object`: File?): String {
+			  return `object`!!.name
+			}
+
+			override fun fromString(string: String?): File {
+			  NEVER
+			}
+
+		  }
+		}, IttiKochVisualizer().node
+	  ).apply { alignment = CENTER }
+	}
+	when (startup) {
+	  GuiMode.ROSENBERG -> selectionModel.select(tabs.first())
+	  ITTI_KOCH         -> selectionModel.select(tabs.last())
+	}
+
+	/*DragResizer.makeResizable(this) {
+	  figHeightProp.value = kotlin.math.max(kotlin.math.min(figHeightProp.value - it, 600.0), 300.0)
+	}*/
+	border = Border(
+	  BorderStroke(
+		null, null, Color.GRAY, null, null, null, BorderStrokeStyle.SOLID, null, null,
+		BorderWidths(0.0, 0.0, DragResizer.RESIZE_MARGIN.toDouble(), 0.0), null
+	  )
+	)
+
+  }
+}
 
 class RosenbergVisualizer(
   popCfg: CombinedConfig,

@@ -29,6 +29,8 @@ dependencies {
   implementation(libs.apfloat)
   implementation(libs.fx.swing)
   implementation(projects.kj.remote)
+  implementation(projects.kj.fxlib.console)
+
   /*implementation("org.tensorflow:tensorflow-core-api:0.4.0")*/
   /*implementation("org.tensorflow:tensorflow-core-platform:0.4.0")*/
   /*implementation(

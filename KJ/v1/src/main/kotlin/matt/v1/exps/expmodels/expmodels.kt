@@ -16,7 +16,7 @@ import matt.v1.lab.petri.Population
 import matt.v1.model.Stimulus
 import matt.v1.model.activity.ARI_ASD_DN_CFG
 import matt.v1.model.combined.ARI_BASE_CFG
-import matt.v1.scaling.PerformanceMode.ORIG_BUT_NEEDS_GPU
+import matt.v1.scaling.PerformanceMode.DEBUG
 import matt.v1.scaling.copyWith
 
 enum class ExpCategory { ROSENBERG, LOUIE, OTHER; }
@@ -46,7 +46,7 @@ fun varyingStimExp(
 	val allSeries = mutableListsOf<JsonPoint>(5)
 	val (s1, s2, s3, s4, s5) = allSeries
 
-	val cfg = ARI_BASE_CFG.copyWith(ORIG_BUT_NEEDS_GPU)
+	val cfg = ARI_BASE_CFG.copyWith(DEBUG)
 	val pop = Population(cfg)
 	val xRange = inputRange.toList()
 	xRange.forEachIndexed { xIndex, x ->

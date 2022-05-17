@@ -23,12 +23,12 @@ class StatusLabel(
   val counters = mutableMapOf<String, Pair<Int, Int?>>()
   var statusExtra = ""
 
-  fun countersString(): String {
+  private fun countersString(): String {
 	return counters.entries.joinToString(separator = " ") {
 	  val i = it.value.first
 	  val total = it.value.second
 	  val totalS = if (total != null) "/${total}" else ""
-	  if (i != null) "${it.key} ${i.prependZeros(3)}${totalS}" else ""
+	  "${it.key} ${i.prependZeros(3)}${totalS}"
 	}
   }
 
@@ -45,7 +45,7 @@ class StatusLabel(
 	every(0.05.sec, ownTimer = true) {
 	  runLaterReturn {
 		statusLabel.text =
-		  status.value.toString() + " " + (if (name != null) "$name: " else "") + countersString() + " " + statusExtra + " " + when (status.value) {
+		  status.value.toString() + " " + (if (name != null) "$name: " else "") + countersString() + " " + statusExtra + " " + when (status.value!!) {
 			IDLE    -> ""
 			WORKING -> (0 until dotItr.next()).joinToString(separator = "") { "." }
 		  }

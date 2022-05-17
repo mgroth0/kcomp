@@ -657,3 +657,11 @@ fun experiments(): List<Experiment> {
 
 }
 
+//val latestPop by lazy {
+//  popLouieFullThetaCells.copy(
+//	cellX0AbsMinmax = 15.0,
+//	cellX0Step = 5.0,
+//	cellPrefThetaStep = 15.0,
+//	reqSize = null
+//  )
+//}

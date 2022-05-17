@@ -35,7 +35,7 @@ import matt.v1.figmodels.AxisConfig
 import matt.v1.figmodels.SeriesCfg
 import matt.v1.figmodels.SeriesCfgV2
 import matt.v1.figmodels.SeriesCfgs
-import matt.v1.gui.ExpGui
+import matt.v1.gui.expbox.ExpGui
 import matt.v1.gui.fig.update.FigUpdate
 import matt.v1.gui.fig.update.FigureUpdate
 import matt.v1.gui.fig.update.FigureUpdater
@@ -108,7 +108,8 @@ data class Experiment(
   }
 
   private var stopped = false
-  private val jsonFile = DATA_FOLDER["kcomp"]["v1"]["exps"]["$name.json"]
+
+
 
   lateinit var pop: Population /*neverinit*/
 
@@ -116,7 +117,10 @@ data class Experiment(
 	const val CONTRAST1 = 7.5
 	const val CONTRAST2 = 20.0
 	const val USE_GPPC = true
+	val EXPS_DATA_FOLDER = DATA_FOLDER["kcomp"]["v1"]["exps"]
   }
+
+  private val jsonFile = EXPS_DATA_FOLDER["$name.json"]
 
 
   enum class RunStage {
@@ -153,20 +157,24 @@ data class Experiment(
 	  require(xMetaMax == null)
 	  apply {
 		if (fromJson) {
-		  jsonFile.text.parseJsonObjs().forEach {
-			val update = FigureUpdate.new(listOf()).apply {
-			  loadProperties(it)
+		  if (jsonFile.exists()) {
+			jsonFile.text.parseJsonObjs().forEach {
+			  val update = FigureUpdate.new(listOf()).apply {
+				loadProperties(it)
+			  }
+			  figUpdater.update(update)
+			  if (stopped) return@apply
 			}
-			figUpdater.update(update)
-			if (stopped) return@apply
+		  } else {
+			gui.console.println("$jsonFile does not exist")
 		  }
 		} else {
 		  figUpdates = mutableListOf()
-		  runBlocking {
-			try {
+		  try {
+			runBlocking {
 			  v2!!.collect {
 				when (it) {
-				  is FigUpdate    -> {
+				  is FigUpdate -> {
 					it.toFigUpdate().go {
 					  figUpdates!! += it
 					  figUpdater.update(it)
@@ -176,9 +184,9 @@ data class Experiment(
 				}
 				if (stopped) cancel()
 			  }
-			} catch (e: CancellationException) {
-				println("job cancelled: $e")
 			}
+		  } catch (e: CancellationException) {
+			println("job cancelled 123: $e")
 		  }
 		}
 	  }
@@ -285,7 +293,7 @@ data class Experiment(
 	lateinit var seriesStim: Stimulus
 	internal var priorW: Apfloat? = null
 	lateinit var poissonVar: PoissonVar
-	var popRCfg: (Map<ComplexCell,Response>.()->Map<ComplexCell,Response>) = { this }
+	var popRCfg: (Map<ComplexCell, Response>.()->Map<ComplexCell, Response>) = { this }
 	var ti: Apint? = null
 	var h: Apfloat? = null
 	override fun iteration(): Map<SeriesCfg, MutableList<Point>> {

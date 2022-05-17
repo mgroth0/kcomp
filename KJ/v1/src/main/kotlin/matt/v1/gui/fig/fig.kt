@@ -40,11 +40,21 @@ class Figure: Pane() {
 	}
   }
 
+  companion object {
+	private val DEFAULT_AXIS_CONFIG = AxisConfig(
+	  min = null,
+	  max = null,
+	  unit = null,
+	  label = "insert axis label here"
+	)
+  }
+
+
   fun setup(
-	chartTitle: String,
-	xAxisConfig: AxisConfig,
-	yAxisConfig: AxisConfig,
-	seriesCfgs: List<SeriesCfgs>,
+	chartTitle: String = "insert title here",
+	xAxisConfig: AxisConfig = DEFAULT_AXIS_CONFIG,
+	yAxisConfig: AxisConfig = DEFAULT_AXIS_CONFIG,
+	seriesCfgs: List<SeriesCfgs> = listOf(),
   ) {
 	val xAxis = ControlledNumericAxis(xAxisConfig).apply {
 	  println("calcing for ${xAxisConfig.min},${xAxisConfig.max}")
@@ -64,15 +74,16 @@ class Figure: Pane() {
 	  exactWidthProperty().bind(this@Figure.widthProperty())
 	  this@Figure.children.add(this)
 	  title = chartTitle
+	  triggerDistance = 0.0
 	}
-	seriesCfgs.forEachIndexed { i, s ->	/* debugPrepName = s.label*/ /*fixes bug a few lines below where setting name does nothing*/
+	seriesCfgs.forEachIndexed { i, s ->    /* debugPrepName = s.label*/ /*fixes bug a few lines below where setting name does nothing*/
 	  @Suppress("UNUSED_VARIABLE") val make = series[i]
 	  styleSeries(i = i, line = s.line, marker = s.markers)
 	  series[i].name = s.label
 	}
 	var nextFitIndex = series.size
 	seriesCfgs.forEach {
-	  if ((it as? SeriesCfg)?.fit == Gaussian) {		/*debugPrepName = "${it.label} (Gaussian fit)"*/
+	  if ((it as? SeriesCfg)?.fit == Gaussian) {        /*debugPrepName = "${it.label} (Gaussian fit)"*/
 		@Suppress("UNUSED_VARIABLE") val make = series[nextFitIndex]
 		styleSeries(i = nextFitIndex, line = true, marker = false)
 		series[nextFitIndex].name = "${it.label} (Gaussian fit)"
@@ -248,4 +259,8 @@ class Figure: Pane() {
 
   var chart: XYChart? = null
 	private set
+
+  init {
+	setup() /*so the figure is drawn and takes up space even before any data is added, which is expected behavior in matlab and similar platforms*/
+  }
 }
