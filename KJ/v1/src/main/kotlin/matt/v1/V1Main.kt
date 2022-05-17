@@ -16,7 +16,6 @@ import javafx.scene.paint.Color
 import javafx.util.StringConverter
 import matt.gui.app.GuiApp
 import matt.gui.core.context.mcontextmenu
-import matt.gui.loop.runLater
 import matt.gui.loop.runLaterReturn
 import matt.gui.resize.DragResizer
 import matt.hurricanefx.dragsSnapshot
@@ -49,25 +48,25 @@ import matt.remote.host.Hosts
 import matt.remote.runThisOnOM
 import matt.remote.slurm.SRun
 import matt.v1.STARTUP.ITTI_KOCH
-import matt.v1.exps.ExpCategory
 import matt.v1.exps.experiments
+import matt.v1.exps.expmodels.ExpCategory
+import matt.v1.gui.ExpGui
 import matt.v1.gui.fig.Figure
 import matt.v1.gui.status.StatusLabel
 import matt.v1.gui.status.StatusLabel.Status.IDLE
 import matt.v1.gui.status.StatusLabel.Status.WORKING
+import matt.v1.gui.vis.IttiKochVisualizer
+import matt.v1.gui.vis.IttiKochVisualizer.Companion.dogFolder
+import matt.v1.gui.vis.IttiKochVisualizer.Companion.ittiKochInput
+import matt.v1.gui.vis.RosenbergVisualizer
 import matt.v1.lab.petri.popLouieFullThetaCells
-import matt.v1.lab.petri.rosenbergPop
-import matt.v1.vis.IttiKochVisualizer
-import matt.v1.vis.IttiKochVisualizer.Companion.dogFolder
-import matt.v1.vis.IttiKochVisualizer.Companion.ittiKochInput
-import matt.v1.vis.RosenbergVisualizer
+import matt.v1.model.combined.ARI_BASE_CFG
 import java.io.File
 import kotlin.concurrent.thread
 import kotlin.system.exitProcess
 
 
 private enum class STARTUP { ROSENBERG, ITTI_KOCH }
-
 
 
 private val startup: STARTUP = STARTUP.ROSENBERG
@@ -84,7 +83,7 @@ val latestPop by lazy {
   )
 }
 
-val visualizer by lazy { RosenbergVisualizer(rosenbergPop) }
+val visualizer by lazy { RosenbergVisualizer(ARI_BASE_CFG) }
 
 fun main(): Unit = GuiApp(screenIndex = 2) {
 
@@ -223,7 +222,7 @@ fun main(): Unit = GuiApp(screenIndex = 2) {
 	  ExpCategory.values().associateWith { FlowPane() }
 	}
 
-	val figButtonBox = expBox.tabpane {
+	expBox.tabpane {
 	  this.vgrow = ALWAYS
 	  ExpCategory.values().forEach {
 		staticTab(it.name.lowercase().cap(), expCatPanes[it]!!)
@@ -236,16 +235,9 @@ fun main(): Unit = GuiApp(screenIndex = 2) {
 	  if (it!!) fig.height else Double.MAX_VALUE
 	})
 	fig.vgrow = ALWAYS
-	/*fig.exactHeightProperty()
-		.bind(
-		  expBox.heightProperty()
-		  - figButtonBox.heightProperty()
-		  - statusLabel.heightProperty()
-		)*/
 	fig.dragsSnapshot()
-	val exps = experiments(fig, statusLabel)
 	val allButtons = mutableListOf<Button>()
-	exps.forEach { exp ->
+	experiments().forEach { exp ->
 	  expCatPanes[exp.category]!!.button(exp.name.addSpacesUntilLengthIs(4)) {
 		allButtons += this
 		fun cfgStartButton() {
@@ -261,24 +253,13 @@ fun main(): Unit = GuiApp(screenIndex = 2) {
 			fig.clear()
 			fig.setup(
 			  chartTitle = exp.title,
-			  xlabel = exp.xlabel,
-			  ylabel = exp.ylabel,
-			  xUnit = exp.xUnit,
-			  yUnit = exp.yUnit,
-			  autoY = exp.autoY,
-			  autoX = exp.autoX,
-			  yMax = exp.yMax,
-			  yMin = exp.yMin,
+			  xAxisConfig = exp.xAxisConfig,
+			  yAxisConfig = exp.yAxisConfig,
 			  seriesCfgs = exp.series,
-			  xMin = if (exp.metaGain) exp.xMetaMin!!.toDouble() else exp.xMin,
-			  xMax = if (exp.metaGain) exp.xMetaMax!!.toDouble() else exp.xMax
 			)
 			daemon {
-			  if (loadProp.value) {
-				runLater {
-				  exp.load()
-				}
-			  } else exp.run()
+			  val gui = ExpGui(fig = fig, statusLabel = statusLabel)
+			  exp.run(gui, fromJson = loadProp.value)
 			  runLaterReturn {
 				statusLabel.status.value = IDLE
 				println("IDLE 1 ")

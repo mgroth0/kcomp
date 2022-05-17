@@ -1,4 +1,4 @@
-package matt.v1.vis
+package matt.v1.gui.vis
 
 import javafx.beans.property.SimpleObjectProperty
 import matt.hurricanefx.eye.lib.onChange
@@ -6,14 +6,15 @@ import matt.kjlib.commons.DATA_FOLDER
 import matt.kjlib.file.get
 import matt.kjlib.jmath.floorInt
 import matt.klib.dmap.withStoringDefault
-import matt.v1.gui.FilteredImageVisualizer
-import matt.v1.gui.GeneratedImageVisualizer
-import matt.v1.lab.petri.PopulationConfig
+import matt.v1.gui.vis.vismodel.FilteredImageVisualizer
+import matt.v1.gui.vis.vismodel.GeneratedImageVisualizer
 import matt.v1.lab.petri.pop2D
+import matt.v1.low.PhaseType.COS
 import matt.v1.model.FieldGenerator
-import matt.v1.model.Phase.COS
+import matt.v1.model.Orientation
 import matt.v1.model.SimpleCell
 import matt.v1.model.Stimulus
+import matt.v1.model.combined.CombinedConfig
 import matt.v1.salience.FeatureDef
 import matt.v1.salience.FeatureType
 import matt.v1.salience.Salience
@@ -22,10 +23,10 @@ import org.jetbrains.kotlinx.multik.ndarray.data.NDArray
 import java.io.File
 
 class RosenbergVisualizer(
-  popCfg: PopulationConfig,
+  popCfg: CombinedConfig,
 ): GeneratedImageVisualizer(
   responsive = true,
-  imageHW = popCfg.fieldHW.floorInt().apply {
+  imageHW = popCfg.fieldConfig.fieldHW.floorInt().apply {
 	println("DEBUG:${this}")
   },
   imgScale = 0.5,
@@ -38,41 +39,49 @@ class RosenbergVisualizer(
 
 
   private var gen by CfgObjProp<FieldGenerator?>(
-	popCfg.baseStim.copy(f = popCfg.baseStim.f.copy(X0 = 0.0)),
-	popCfg.baseSimpleSinCell.copy(f = popCfg.baseSimpleSinCell.f.copy(X0 = 0.0)),
-	popCfg.baseSimpleSinCell.copy(f = popCfg.baseSimpleSinCell.f.copy(X0 = 0.0), phase = COS),
+	popCfg.baseStim.copy(
+	  fieldLoc = popCfg.baseStim.fieldLoc.clone(newX = 0)
+	),
+	popCfg.baseSimpleSinCell.copy(
+	  fieldLoc = popCfg.baseSimpleSinCell.fieldLoc.clone(newX = 0)
+	),
+	popCfg.baseSimpleSinCell.toCellWithPhase(COS).copy(
+	  fieldLoc = popCfg.baseSimpleSinCell.fieldLoc.clone(newX = 0)
+	),
 	null
   )
 
   @Suppress("PrivatePropertyName")
   private val SF by CfgDoubleProp(0.01 to 10, default = (gen as Stimulus).SF)
-  private val theta by CfgDoubleProp(pop2D.prefThetaMin to pop2D.prefThetaMax, default = (gen as Stimulus).tDegrees)
+  private val theta by CfgDoubleProp(pop2D.prefThetaMin to pop2D.prefThetaMax, default = (gen as Stimulus).o.tDegrees)
   private val sigmaMult by CfgDoubleProp(0.01 to 10, default = 1.0)
-  private val sampleStep by CfgDoubleProp(0.1 to 20, default = (gen as Stimulus).field.sampleStep)
+  private val sampleStep by CfgDoubleProp(0.1 to 20, default = (gen as Stimulus).fieldCfg.sampleStep)
   private val gaussian by CfgBoolProp(default = (gen as Stimulus).gaussianEnveloped)
   override fun update() {
 	val g = gen
 	if (g is Stimulus) {
 	  theStim = g.copy(
 		SF = SF,
-		f = g.f.copy(tDegrees = theta, field = g.f.field.copy(sampleStep = sampleStep)),
+		o = Orientation(theta),
+		fieldCfg = g.fieldCfg.copy(sampleStep=sampleStep),
 		s = g.s*sigmaMult,
 		gaussianEnveloped = gaussian,
 	  )
-	} else if (g is SimpleCell) {
+	} else if (g is SimpleCell<*>) {
 	  theStim = g.copy(
 		SF = SF,
-		f = g.f.copy(tDegrees = theta, field = g.f.field.copy(sampleStep = sampleStep)),
+		o = Orientation(theta),
+		fieldCfg = g.fieldCfg.copy(sampleStep=sampleStep),
 		sx = g.sx*sigmaMult,
 		sy = g.sy*sigmaMult,
 		gaussianEnveloped = gaussian
 	  )
 	}
 	/*(theStim as Stimulus).debug = true
-	println("DEBUG1=${theStim!!.pix(Point(x = 0.0, y = 0.0))}")
-	println("DEBUG2=${theStim!!.pix(Point(x = 5.0, y = 0.0))}")
-	println("DEBUG3=${theStim!!.pix(Point(x = 0.0, y = 5.0))}")
-	println("DEBUG4=${theStim!!.pix(Point(x = 5.0, y = 5.0))}")
+	println("DEBUG1=${theStim!!.pix(matt.v1.mathexport.point.matt.kjlib.jmath.point.Point(x = 0.0, y = 0.0))}")
+	println("DEBUG2=${theStim!!.pix(matt.v1.mathexport.point.matt.kjlib.jmath.point.Point(x = 5.0, y = 0.0))}")
+	println("DEBUG3=${theStim!!.pix(matt.v1.mathexport.point.matt.kjlib.jmath.point.Point(x = 0.0, y = 5.0))}")
+	println("DEBUG4=${theStim!!.pix(matt.v1.mathexport.point.matt.kjlib.jmath.point.Point(x = 5.0, y = 5.0))}")
 	(theStim as Stimulus).debug = false*/
   }
 

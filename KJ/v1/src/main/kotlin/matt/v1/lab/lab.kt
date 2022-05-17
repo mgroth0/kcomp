@@ -1,94 +1,71 @@
 package matt.v1.lab
 
+import com.google.gson.JsonArray
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.runBlocking
 import matt.exec.interapp.waitFor
 import matt.gui.loop.runLater
 import matt.hurricanefx.eye.lang.BProp
+import matt.json.prim.parseJsonObjs
 import matt.kjlib.commons.DATA_FOLDER
 import matt.kjlib.date.tic
 import matt.kjlib.file.get
+import matt.kjlib.file.text
+import matt.kjlib.file.write
+import matt.kjlib.jmath.point.Point
+import matt.kjlib.jmath.point.PointDim.Y
+import matt.kjlib.jmath.point.gradient
+import matt.kjlib.jmath.point.normalizeToMax
+import matt.kjlib.jmath.point.normalizeToMinMax
+import matt.kjlib.jmath.point.shiftAllByTroughs
+import matt.kjlib.jmath.point.toBasicPoints
 import matt.kjlib.jmath.times
 import matt.kjlib.jmath.toApfloat
+import matt.kjlib.log.err
 import matt.kjlib.ranges.step
-import matt.kjlib.str.writeToFile
 import matt.kjlib.stream.onEveryIndexed
-import matt.klib.log.warn
 import matt.klibexport.klibexport.go
-import matt.v1.comp.Fit
+import matt.v1.activity.Response
 import matt.v1.comp.Fit.Gaussian
 import matt.v1.comp.PoissonVar
-import matt.v1.comp.PoissonVar.NONE
-import matt.v1.compcache.GaussianFit
-import matt.v1.compcache.Point
-import matt.v1.compcache.gradient
-import matt.v1.compcache.normalizeYToMax
-import matt.v1.compcache.normalizeYToMinMax
-import matt.v1.compcache.shiftAllByTroughs
-import matt.v1.exps.ExpCategory
-import matt.v1.gui.fig.Figure
+import matt.v1.exps.expmodels.ExpCategory
+import matt.v1.figmodels.AxisConfig
+import matt.v1.figmodels.SeriesCfg
+import matt.v1.figmodels.SeriesCfgV2
+import matt.v1.figmodels.SeriesCfgs
+import matt.v1.gui.ExpGui
 import matt.v1.gui.fig.update.FigUpdate
+import matt.v1.gui.fig.update.FigureUpdate
 import matt.v1.gui.fig.update.FigureUpdater
-import matt.v1.gui.status.StatusLabel
-import matt.v1.lab.Experiment.CoreLoop
+import matt.v1.gui.fig.update.GuiUpdate
+import matt.v1.gui.fig.update.StatusUpdate
+import matt.v1.gui.fig.update.toGson
+import matt.v1.jsonpoint.JsonPoint
+import matt.v1.jsonpoint.toJsonPoints
 import matt.v1.lab.Experiment.RunStage.FIG_COMPLETE
 import matt.v1.lab.Experiment.RunStage.ITERATING
 import matt.v1.lab.Experiment.RunStage.WAITING_FOR_FIG
 import matt.v1.lab.petri.Population
 import matt.v1.lab.petri.PopulationConfig
-import matt.v1.lab.petri.ROSENBERG_TD_C
 import matt.v1.lab.petri.pop2D
-import matt.v1.model.ComplexCell
-import matt.v1.model.PopulationResponse
-import matt.v1.model.Response
+import matt.v1.low.GaussianFit
 import matt.v1.model.Stimulus
+import matt.v1.model.activity.ARI_TD_DN_CFG
+import matt.v1.model.complexcell.ComplexCell
 import org.apfloat.Apfloat
 import org.apfloat.Apint
-
-
-interface SeriesCfgs {
-  val label: String
-  val line: Boolean
-  val markers: Boolean
-}
-
-var globalStatusLabel: StatusLabel? = null
-
-data class SeriesCfg(
-  val priorWeight: Apfloat? = null,
-  val yExtractCustom: (CoreLoop.()->Number)? = null,
-  val poissonVar: PoissonVar = NONE,
-  val popRcfg: (PopulationResponse.()->PopulationResponse) = { this },
-  val stimCfg: CoreLoop.(Stimulus)->Stimulus = { it.copy() },
-  val fit: Fit? = null,
-  override val label: String,
-  override val line: Boolean = true,
-  override val markers: Boolean = false,
-): SeriesCfgs
-
-data class SeriesCfgV2(
-  override val label: String,
-  override val line: Boolean = true,
-  override val markers: Boolean = false,
-): SeriesCfgs
 
 
 data class Experiment(
   val name: String,
   val title: String,
-  val xlabel: String,
-  val ylabel: String,
-  val xUnit: String = "UNIT",
-  val yUnit: String = "UNIT",
-  val xMax: Double = 100.0,
-  val xMin: Double = 0.0,
-  val yMax: Double = 100.0,
-  val yMin: Double = 0.0,
-  val autoY: Boolean = false,
-  val autoX: Boolean = true,
+  val xAxisConfig: AxisConfig,
+  val yAxisConfig: AxisConfig,
   val xMetaMin: Apfloat? = null,
   val xMetaMax: Apfloat? = null,
   val metaGain: Boolean = false,
-  val statusLabel: StatusLabel,
-  val fig: Figure,
   val xStep: Double? = null, /*TO GO*/
   val xOp: CoreLoop.(Apfloat)->Unit = {}, /*TO GO*/
   val series: List<SeriesCfgs>,
@@ -102,16 +79,9 @@ data class Experiment(
 
   /*ALL TO GO*/
   val attnX0DistMax: Apfloat = 10.0.toApfloat(),
-  //  val f3dStep: Apfloat = 0.1.toApfloat(), /*base*/
   val f5cStep: Apfloat = 0.2.toApfloat(),
 
-  /*
-  *
-  * f3cStep = 10.0.toApfloat(),
-	fs1Step = 15.0.toApfloat(),
-	f3dStep = 0.25.toApfloat(), /*faster*/
-  *
-  * */
+  /*fs1Step = 15.0.toApfloat(),*/
 
 
   val f5dStep: Apfloat = 10.0.toApfloat(),
@@ -122,10 +92,15 @@ data class Experiment(
 
   val useAttentionMask: Boolean = false,
 
-  val v2: Sequence<FigUpdate>? = null
+  val v2: Flow<GuiUpdate>? = null
 
 
 ) {
+  init {
+	if (xMetaMin != null || xMetaMax != null) {
+	  err("this no longer does anything")
+	}
+  }
 
   val runningProp = BProp(false)
   fun stop() {
@@ -134,7 +109,8 @@ data class Experiment(
 
   private var stopped = false
   private val jsonFile = DATA_FOLDER["kcomp"]["v1"]["exps"]["$name.json"]
-  val pop by lazy { Population(popCfg) }
+
+  lateinit var pop: Population /*neverinit*/
 
   companion object {
 	const val CONTRAST1 = 7.5
@@ -142,39 +118,31 @@ data class Experiment(
 	const val USE_GPPC = true
   }
 
-  fun load() {
-	runningProp.value = true
-	stopped = false
-	if (jsonFile.exists()) {
-	  fig.loadJson(jsonFile)
-	}
-	warn("shouldn't I sometimes respect max y and x here????")
-	fig.autorangeY()
-	fig.autorangeX()
-	warn("shouldn't I sometimes respect max y and x here????")    /*fig.autorangeXWith(
-	  if (metaGain) xMetaMin!!.toDouble() else xMin.toDouble(),
-	  if (metaGain) xMetaMax!!.toDouble() else xMax.toDouble()
-	)*/
-	warn("shouldn't I sometimes respect max y and x here????")
-	runningProp.value = false
-  }
-
 
   enum class RunStage {
 	ITERATING, WAITING_FOR_FIG, FIG_COMPLETE
   }
 
-  fun run() {
-	globalStatusLabel = statusLabel
+  fun run(gui: ExpGui, fromJson: Boolean = false) {
 	var runStage = ITERATING
 	val t = tic(prefix = name)
 	t.toc("starting experiment")
 	runLater { runningProp.value = true }
 	stopped = false
 	val figUpdater =
-	  FigureUpdater(fig = fig, autoY = autoY, autoX = autoX, getRunStage = { runStage }, getStopped = { stopped },
-		getRunning = { runningProp.value }, setRunStage = { runStage = it })
+	  FigureUpdater(
+		fig = gui.fig,
+		autoYmin = yAxisConfig.min == null,
+		autoXmin = xAxisConfig.min == null,
+		autoYmax = yAxisConfig.max == null,
+		autoXmax = xAxisConfig.max == null,
+		getRunStage = { runStage },
+		getStopped = { stopped },
+		getRunning = { runningProp.value },
+		setRunStage = { runStage = it }
+	  )
 
+	var figUpdates: MutableList<FigureUpdate>? = null
 	if (v2 != null) {
 	  require(series.all { it is SeriesCfgV2 })
 	  require(!normToMinMax)
@@ -184,9 +152,34 @@ data class Experiment(
 	  require(xMetaMin == null)
 	  require(xMetaMax == null)
 	  apply {
-		v2!!.forEach {
-		  figUpdater.update(it.toFigUpdate())
-		  if (stopped) return@apply
+		if (fromJson) {
+		  jsonFile.text.parseJsonObjs().forEach {
+			val update = FigureUpdate.new(listOf()).apply {
+			  loadProperties(it)
+			}
+			figUpdater.update(update)
+			if (stopped) return@apply
+		  }
+		} else {
+		  figUpdates = mutableListOf()
+		  runBlocking {
+			try {
+			  v2!!.collect {
+				when (it) {
+				  is FigUpdate    -> {
+					it.toFigUpdate().go {
+					  figUpdates!! += it
+					  figUpdater.update(it)
+					}
+				  }
+				  is StatusUpdate -> gui.statusLabel.counters[it.counterName + ":"] = it.count to it.total
+				}
+				if (stopped) cancel()
+			  }
+			} catch (e: CancellationException) {
+				println("job cancelled: $e")
+			}
+		  }
 		}
 	  }
 	} else {
@@ -195,7 +188,10 @@ data class Experiment(
 	  } else buildCoreLoop()
 
 	  fun gaussian(points: List<Point>) = GaussianFit(
-		points, xMin = xMin, xStep = ((xMax - xMin)/10), xMax = xMax
+		points.toBasicPoints(),
+		xMin = xAxisConfig.min!!.toDouble(),
+		xStep = ((xAxisConfig.max!!.toDouble() - xAxisConfig.min.toDouble())/10),
+		xMax = xAxisConfig.max.toDouble()
 	  ).findOrCompute()
 
 	  loop.runExp {
@@ -204,18 +200,21 @@ data class Experiment(
 		}
 		var nextFitIndex = series.size
 
-		@Suppress("UNCHECKED_CAST") val points =
-		  if (this is CoreLoop) it as Map<SeriesCfg, MutableList<Point>> else mapOf<SeriesCfg?, MutableList<Point>>(
+		@Suppress("UNCHECKED_CAST") val points: Map<SeriesCfg, MutableList<Point>> =
+		  if (this is CoreLoop) it as Map<SeriesCfg, MutableList<Point>> else mapOf(
 			(series[0] as SeriesCfg) to (figUpdater.seriesPoints[0]!! + listOf(
-			  Point(x = x.toDouble(), y = (it as? Apfloat)?.toDouble() ?: (it as Number).toDouble())
-			)).toMutableList()
+			  JsonPoint(x = x.toDouble(), y = (it as? Apfloat)?.toDouble() ?: (it as Number).toDouble())
+			)
+				).toMutableList()
 		  )
 		if (troughShift && isLast) points.values.shiftAllByTroughs()
 		points.entries.forEachIndexed { i, series ->
 		  val resultData =
-			(if (normToMinMax) series.value.normalizeYToMinMax() else if (normToMax) series.value.normalizeYToMax() else series.value).toList()
+			(if (normToMinMax) series.value.normalizeToMinMax(Y) else if (normToMax) series.value.normalizeToMax(
+			  Y
+			) else series.value).toList()
 		  figUpdater.sendPoints(
-			seriesIndex = i, points = resultData
+			seriesIndex = i, points = resultData.toJsonPoints()
 		  )
 		  val g =
 			if (isLast && (this@Experiment.series[i] as SeriesCfg).fit == Gaussian && figUpdater.seriesPoints[i]!!.size >= 3) {
@@ -223,7 +222,7 @@ data class Experiment(
 			} else null
 		  if (g != null) {
 			figUpdater.sendPoints(
-			  seriesIndex = nextFitIndex, points = g
+			  seriesIndex = nextFitIndex, points = g.toJsonPoints()
 			)
 			nextFitIndex++
 		  }
@@ -231,19 +230,27 @@ data class Experiment(
 	  }
 	}
 	runStage = WAITING_FOR_FIG
-	if (!stopped) {
+	if (!stopped && figUpdates != null) {
 	  waitFor(10) { runStage == FIG_COMPLETE }
-	  fig.dataToJson().writeToFile(jsonFile)
+	  jsonFile.write(
+		JsonArray().apply {
+		  figUpdates!!.map { it.toGson() }.forEach {
+			add(it)
+		  }
+		}.toString()
+	  )
 	}
 	runLater { runningProp.value = false }
-	val dur = t.toc("finished experiment")
-	statusLabel.statusExtra = "experiment complete in $dur"
+
+	val verb = if (fromJson) "loaded" else "finished"
+	val dur = t.toc("$verb experiment")
+	gui.statusLabel.statusExtra = "experiment $verb in $dur"
 	waitFor(10) { figUpdater.timerTask.cancelled }
   }
 
 
   fun buildCoreLoop(): CoreLoop {
-	val range = xMin..xMax step xStep!!
+	val range = xAxisConfig.min!!.toDouble()..xAxisConfig.max!!.toDouble() step xStep!!
 	return CoreLoop(range.toList().map { it.toApfloat() },
 	  (series.map { it as SeriesCfg }.associateWith { mutableListOf() })
 	)
@@ -258,7 +265,7 @@ data class Experiment(
 	protected abstract fun iteration(): Y
 	fun runExp(extraction: (ExperimentalLoop<X, Y>.(Y)->Unit)? = null) {
 	  itr.asSequence().onEveryIndexed(10) { i, _ ->
-		if (extraction != null && i > 0) statusLabel.counters["idk"] = i to itr.size
+		err("""if (extraction != null && i > 0) statusLabel.counters["idk"] = i to itr.size""")
 	  }.forEachIndexed { i, newX ->
 		isLast = i == itr.size - 1
 		x = newX
@@ -278,17 +285,17 @@ data class Experiment(
 	lateinit var seriesStim: Stimulus
 	internal var priorW: Apfloat? = null
 	lateinit var poissonVar: PoissonVar
-	var popRCfg: (PopulationResponse.()->PopulationResponse) = { this }
+	var popRCfg: (Map<ComplexCell,Response>.()->Map<ComplexCell,Response>) = { this }
 	var ti: Apint? = null
 	var h: Apfloat? = null
 	override fun iteration(): Map<SeriesCfg, MutableList<Point>> {
 	  if (itr.indexOf(x) == 0) {
 		pop.complexCells.forEach {
-		  it.lastResponse = Response(R = 0.0, G_S = 0.0)
+		  err("it.lastResponse = Response(R = 0.0, G_S = 0.0)")
 		}
 	  }    /*coreLoopForStatusUpdates = this*/
 	  cell = pop.centralCell
-	  stim = pop.cfg.perfectStimFor(cell).copy(a = pop.cfg.baseContrast)
+	  stim = pop.cfg.perfectStimFor(cell).copy(a = pop.cfg.stimConfig.baseContrast)
 	  priorW = null
 	  popRCfg = { this }
 	  xOp(x)
@@ -299,9 +306,9 @@ data class Experiment(
 		  this, seriesStim
 		)
 		priorW = y.priorWeight
-		y.popRcfg.go { idk -> popRCfg = idk }
+		y.popRcfg.go { err("idk -> popRCfg = idk") }
 		poissonVar = y.poissonVar
-		ser.value += Point(
+		ser.value += JsonPoint(
 		  x.toDouble(), y.yExtractCustom!!.invoke(this).toDouble()
 		)
 	  }
@@ -314,7 +321,7 @@ data class Experiment(
 
 	override fun iteration(): Apfloat {
 	  val coreLoop = buildCoreLoop().also {
-		it.metaC = ROSENBERG_TD_C.toApfloat()*((100.0 - x.toDouble())/100.0).toApfloat()
+		it.metaC = ARI_TD_DN_CFG.gainC.toApfloat()*((100.0 - x.toDouble())/100.0).toApfloat()
 	  }
 	  coreLoop.runExp(extraction = null)
 	  return coreLoop.responseSet.values.first().gradient.toApfloat()

@@ -1,30 +1,86 @@
 package matt.v1.gui.fig.update
 
-import matt.v1.gui.fig.update.SeriesUpdateType.APPEND
-import matt.v1.gui.fig.update.SeriesUpdateType.REPLACE
+import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 import matt.gui.loop.runLaterReturn
+import matt.json.custom.GsonParser
+import matt.json.custom.SimpleJson
+import matt.json.prim.parseJsonObj
+import matt.json.prim.toGson
 import matt.kjlib.async.every
 import matt.kjlib.async.with
 import matt.kjlib.date.sec
-import matt.v1.compcache.Point
+import matt.kjlib.jmath.point.Point
+import matt.reflect.NoArgConstructor
 import matt.v1.gui.fig.Figure
+import matt.v1.gui.fig.update.SeriesUpdateType.APPEND
+import matt.v1.gui.fig.update.SeriesUpdateType.REPLACE
+import matt.v1.jsonpoint.JsonPoint
+import matt.v1.jsonpoint.toJsonPoints
 import matt.v1.lab.Experiment.RunStage
 import matt.v1.lab.Experiment.RunStage.FIG_COMPLETE
 import matt.v1.lab.Experiment.RunStage.WAITING_FOR_FIG
 import java.util.concurrent.Semaphore
 
-interface FigUpdate {
-  fun toFigUpdate(): FigureUpdate
-
+fun GuiUpdate.toGson(): JsonObject {
+  return when (this) {
+	is StatusUpdate -> this.toGson().parseJsonObj()
+	is FigureUpdate -> this.toGson().parseJsonObj()
+	is FigUpdate    -> this.toFigUpdate().toGson().parseJsonObj()
+  }
 }
 
-fun replaceNextSeries(points: List<Point>) = SeriesUpdate(
-  type = REPLACE, seriesIndex = null, points = points
-)
+sealed interface GuiUpdate
 
-class FigureUpdate(
-  val updates: List<SeriesUpdate>
-): FigUpdate {
+@NoArgConstructor
+class StatusUpdate private constructor(
+  counterName: String? = null,
+  count: Int? = null,
+  total: Int? = null
+): GuiUpdate, SimpleJson<StatusUpdate>(typekey = null) {
+
+  companion object {
+	fun new(
+	  counterName: String,
+	  count: Int,
+	  total: Int,
+	) = StatusUpdate(
+	  counterName = counterName,
+	  count = count,
+	  total = total
+	)
+  }
+
+  val counterName by JsonStringProp(counterName)
+  val count by JsonIntProp(count)
+  val total by JsonIntProp(total)
+}
+
+interface FigUpdate: GuiUpdate {
+  fun toFigUpdate(): FigureUpdate
+}
+
+
+@NoArgConstructor
+class FigureUpdate private constructor(
+  updates: List<SeriesUpdate>? = null
+): FigUpdate, SimpleJson<FigureUpdate>(typekey = null) {
+
+  companion object {
+	fun new(
+	  updates: List<SeriesUpdate>
+	) = FigureUpdate(updates)
+  }
+
+  val updates by JsonJsonListProp(
+	builder = object: GsonParser<SeriesUpdate> {
+	  override fun fromGson(jv: JsonElement): SeriesUpdate {
+		return SeriesUpdate.new(REPLACE, 0, listOf(JsonPoint())).apply { loadProperties(jv) }
+	  }
+	},
+	default = updates
+  )
+
   override fun toFigUpdate() = this
   override fun toString(): String {
 	var s = "matt.v1.gui.fig.update.FigureUpdate:"
@@ -37,22 +93,58 @@ enum class SeriesUpdateType {
   REPLACE, APPEND
 }
 
-infix fun Int.replaceWith(points: List<Point>) = SeriesUpdate(
-  type = REPLACE, seriesIndex = this, points = points
-)
 
-data class SeriesUpdate(
-  val type: SeriesUpdateType, val seriesIndex: Int?, val points: List<Point>
-): FigUpdate {
-  constructor(type: SeriesUpdateType, seriesIndex: Int, x: Double, y: Double): this(
-	type = type, seriesIndex = seriesIndex, p = Point(x = x, y = y)
+@NoArgConstructor
+class SeriesUpdate private constructor(
+  type: SeriesUpdateType? = null,
+  seriesIndex: Int? = null,
+  points: List<JsonPoint>? = null
+): FigUpdate, SimpleJson<SeriesUpdate>(typekey = null) {
+
+
+  companion object {
+	fun replaceNextSeries(points: List<Point>) = SeriesUpdate(
+	  type = REPLACE, seriesIndex = null, points = points.toJsonPoints()
+	)
+
+	infix fun Int.replaceWith(points: List<JsonPoint>) = SeriesUpdate(
+	  type = REPLACE, seriesIndex = this, points = points
+	)
+
+	fun new(
+	  type: SeriesUpdateType,
+	  seriesIndex: Int?,
+	  points: List<JsonPoint>?
+	) = SeriesUpdate(
+	  type = type,
+	  seriesIndex = seriesIndex,
+	  points = points
+	)
+  }
+
+  val type by JsonEnumProp(SeriesUpdateType::class, type)
+  val seriesIndex by JsonIntPropN(seriesIndex)
+  val points by JsonJsonListProp(
+	object: GsonParser<JsonPoint> {
+	  override fun fromGson(jv: JsonElement): JsonPoint {
+		return JsonPoint().apply {
+		  loadProperties(jv)
+		}
+	  }
+	},
+	default = points
   )
 
-  constructor(type: SeriesUpdateType, seriesIndex: Int, p: Point): this(
+  constructor(type: SeriesUpdateType, seriesIndex: Int, x: Double, y: Double): this(
+	type = type, seriesIndex = seriesIndex, p = JsonPoint(x = x, y = y)
+  )
+
+  constructor(type: SeriesUpdateType, seriesIndex: Int, p: JsonPoint): this(
 	type = type, seriesIndex = seriesIndex, points = listOf(p)
   )
 
-  override fun toFigUpdate() = FigureUpdate(listOf(this))
+  override fun toFigUpdate() = FigureUpdate.new(listOf(this))
+
   override fun toString(): String {
 	var s = "matt.v1.gui.fig.update.SeriesUpdate type=${type}, seriesIndex=${seriesIndex}, points:"
 	points.forEach {
@@ -65,8 +157,10 @@ data class SeriesUpdate(
 
 class FigureUpdater(
   val fig: Figure,
-  autoY: Boolean,
-  autoX: Boolean,
+  autoYmin: Boolean,
+  autoXmin: Boolean,
+  autoYmax: Boolean,
+  autoXmax: Boolean,
   getRunStage: ()->RunStage,
   getStopped: ()->Boolean,
   getRunning: ()->Boolean,
@@ -77,7 +171,7 @@ class FigureUpdater(
 	val figSem = Semaphore(1)
   }
 
-  val seriesPoints = mutableMapOf<Int, MutableList<Point>>(0 to mutableListOf())
+  val seriesPoints = mutableMapOf<Int, MutableList<JsonPoint>>(0 to mutableListOf())
   val figNextPointsI = mutableMapOf(0 to 0)
   private var lastLegendUpdate = 0
   val timerTask = every(FIG_REFRESH_PERIOD_SECS.sec) {
@@ -108,8 +202,21 @@ class FigureUpdater(
 			  setRunStage(FIG_COMPLETE)
 			}*/
 		}
-		if (autoY && figNextPointsI.values.any { it != 0 }) fig.autorangeY()
-		if (autoX && figNextPointsI.values.any { it != 0 }) fig.autorangeX()
+		if (figNextPointsI.values.any { it != 0 }) {
+		  when {
+			autoYmin && autoYmax -> fig.autorangeY()
+			autoYmin             -> fig.autorangeYmin()
+			autoYmax             -> fig.autorangeYmax()
+		  }
+		  when {
+			autoXmin && autoXmax -> fig.autorangeX()
+			autoXmin             -> fig.autorangeXmin()
+			autoXmax             -> fig.autorangeXmax()
+		  }
+		}
+
+//		if (autoY && figNextPointsI.values.any { it != 0 }) fig.autorangeY()
+//		if (autoX && figNextPointsI.values.any { it != 0 }) fig.autorangeX()
 		//		fig.chart.axes.forEach { a -> a.forceRedraw() } /*sadly this seems necessary do to internal bugs of the library*/
 		/*fig.lessForcefullRedraw()*/ /*sadly this seems necessary do to internal bugs of the library*/
 		if (lastLegendUpdate < figNextPointsI.size) {
@@ -123,7 +230,7 @@ class FigureUpdater(
 	}
   }
 
-  fun sendPoints(seriesIndex: Int, points: List<Point>) {
+  fun sendPoints(seriesIndex: Int, points: List<JsonPoint>) {
 	figSem.with {
 	  seriesPoints[seriesIndex] = points.toMutableList()
 	  figNextPointsI[seriesIndex] = 0

@@ -4,9 +4,9 @@ import matt.kjlib.jmath.getPoisson
 import matt.kjlib.jmath.toApfloat
 import matt.kjlib.jmath.toApint
 import matt.kjlib.log.err
-import matt.v1.compcache.GPPCUnit
-import matt.v1.compcache.LogPoissonPPCUnit
-import matt.v1.compcache.PPCUnit
+import matt.v1.low.GPPCUnit
+import matt.v1.low.LogPoissonPPCUnit
+import matt.v1.low.PPCUnit
 import org.apfloat.ApfloatMath
 import java.math.RoundingMode.UNNECESSARY
 import java.util.Random
@@ -26,7 +26,7 @@ enum class PoissonVar(val op: Double.()->Int, val gaussianOp: Double.()->Double)
   },
 	gaussianOp = {
 	  kotlin.math.max(
-		this + Random().nextGaussian()*GPPCUnit.ftToSigma(this),
+		this + Random().nextGaussian()*matt.v1.low.GPPCUnit.ftToSigma(this),
 		0.0
 	  )
 	}),
@@ -34,19 +34,19 @@ enum class PoissonVar(val op: Double.()->Int, val gaussianOp: Double.()->Double)
 	roundToInt() + 1
   },
 	gaussianOp = {
-	  this + 1*GPPCUnit.ftToSigma(this)
+	  this + 1*matt.v1.low.GPPCUnit.ftToSigma(this)
 	}),
   FAKE5(op = {
 	roundToInt() + 5
   },
 	gaussianOp = {
-	  this + 5*GPPCUnit.ftToSigma(this)
+	  this + 5*matt.v1.low.GPPCUnit.ftToSigma(this)
 	}),
   FAKE10(op = {
 	roundToInt() + 10
   },
 	gaussianOp = {
-	  this + 10*GPPCUnit.ftToSigma(this)
+	  this + 10*matt.v1.low.GPPCUnit.ftToSigma(this)
 	})
 }
 
