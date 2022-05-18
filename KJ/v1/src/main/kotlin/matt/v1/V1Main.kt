@@ -1,7 +1,9 @@
 package matt.v1
 
 import matt.gui.app.GuiApp
+import matt.kjlib.commons.DATA_FOLDER
 import matt.kjlib.date.simplePrinting
+import matt.kjlib.file.get
 import matt.reflect.ismac
 import matt.reflect.onLinux
 import matt.remote.host.Hosts
@@ -23,6 +25,11 @@ private const val REMOTE = false
 private val REMOTE_AND_MAC = REMOTE && ismac
 
 val visualizer by lazy { RosenbergVisualizer(ARI_BASE_CFG) }
+
+val V1_DATA_FOLDER = DATA_FOLDER["kcomp"]["v1"]
+val V1_USER_CFG_FILE = V1_DATA_FOLDER["usercfg.json"]
+
+
 
 fun main(): Unit = GuiApp(screenIndex = 2) {
 

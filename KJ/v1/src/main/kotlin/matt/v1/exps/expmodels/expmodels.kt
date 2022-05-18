@@ -5,6 +5,7 @@ import matt.kjlib.async.emitAll
 import matt.kjlib.stream.mutableListsOf
 import matt.v1.activity.MaybePreDNPopR
 import matt.v1.activity.Stimulation
+import matt.v1.cfg.user.UserConfig
 import matt.v1.exps.expmodels.ExpCategory.ROSENBERG
 import matt.v1.figmodels.AxisConfig
 import matt.v1.figmodels.SeriesCfgV2
@@ -16,7 +17,6 @@ import matt.v1.lab.petri.Population
 import matt.v1.model.Stimulus
 import matt.v1.model.activity.ARI_ASD_DN_CFG
 import matt.v1.model.combined.ARI_BASE_CFG
-import matt.v1.scaling.PerformanceMode.DEBUG
 import matt.v1.scaling.copyWith
 
 enum class ExpCategory { ROSENBERG, LOUIE, OTHER; }
@@ -46,7 +46,7 @@ fun varyingStimExp(
 	val allSeries = mutableListsOf<JsonPoint>(5)
 	val (s1, s2, s3, s4, s5) = allSeries
 
-	val cfg = ARI_BASE_CFG.copyWith(DEBUG)
+	val cfg = ARI_BASE_CFG.copyWith(UserConfig.scale)
 	val pop = Population(cfg)
 	val xRange = inputRange.toList()
 	xRange.forEachIndexed { xIndex, x ->
@@ -97,4 +97,6 @@ fun varyingStimExp(
 	}
   }
 )
+
+
 

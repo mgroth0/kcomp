@@ -45,13 +45,13 @@ interface Subregioned {
   val SF: Double
 }
 
-private const val CACHE_SIZE = 30_000 /*just over rosenberg's cell count*/
+private const val CACHE_SIZE = 60_000 /*just over rosenberg's simple cell count*/
 
-val stimCache = LRUCache<Stimulus, Array<FloatArray>>(CACHE_SIZE)
-val cellCache = LRUCache<Cell, Array<FloatArray>>(CACHE_SIZE)
+val stimCache by lazy { LRUCache<Stimulus, Array<FloatArray>>(CACHE_SIZE) }
+val cellCache by lazy { LRUCache<Cell, Array<FloatArray>>(CACHE_SIZE) }
 
-val stimCacheCC = LRUCache<Stimulus, Array<Float>>(CACHE_SIZE)
-val cellCacheCC = LRUCache<Cell, Array<Float>>(CACHE_SIZE)
+val stimCacheCC by lazy { LRUCache<Stimulus, Array<Float>>(CACHE_SIZE) }
+val cellCacheCC by lazy { LRUCache<Cell, Array<Float>>(CACHE_SIZE) }
 
 abstract class FieldGenerator(
   open val fieldCfg: FieldConfig,

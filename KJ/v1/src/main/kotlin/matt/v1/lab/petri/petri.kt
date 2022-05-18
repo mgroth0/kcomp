@@ -121,12 +121,6 @@ class Population(
 				x0 == 0.0 -> mutableListOf(
 				  cfg.baseSimpleSinCell.copy(
 					fieldLoc = BasicPoint(0, 0),
-					//					o =
-					//					f = cfg.baseSimpleSinCell.f.copy(
-					//					  X0 = 0.0,
-					//					  Y0 = 0.0,
-					//					  tDegrees = t.toDouble(),
-					//					),
 					SF = sf.toDouble(),
 					sx = (if (cfg.populationConfig.proportionalCellSigmas) (cfg.populationConfig.baseSx*cfg.populationConfig.cellSFmin)/sf else cfg.populationConfig.baseSx).toDouble(),
 					sy = (if (cfg.populationConfig.proportionalCellSigmas) (cfg.populationConfig.baseSy*cfg.populationConfig.cellSFmin)/sf else cfg.populationConfig.baseSy).toDouble(),
@@ -234,31 +228,4 @@ val rosenbergPop = PopulationConfig(
   cellSFmax = (4.0/*/(2.0*PI)*/).toApfloat(),
 
   cellSFstep = 100.0.toApfloat(),
-)
-
-val pop2D = PopulationConfig(
-  popShape = CON_CIRCLES,
-  cellX0AbsMinmax = 3.0,
-  cellX0Step = 1.0,
-  cellPrefThetaStep = 30.0,
-  /*stimRecCCThetaStep = 30.0,*/
-)
-val popLouie = pop2D.copy(
-  cellX0AbsMinmax = 0.0,
-  prefThetaMax = 90.0.toApfloat(),
-  popCCSpacingThetaStep = 500.0,
-  cellPrefThetaStep = 500.0,
-  reqSize = 1
-)
-val popLouieMoreCells = popLouie.copy(
-  popShape = CON_CIRCLES,
-  cellX0AbsMinmax = 1.0,
-  prefThetaMax = 10.0.toApfloat(),
-  popCCSpacingThetaStep = 90.0,
-  reqSize = 5
-)
-val popLouieFullThetaCells = popLouieMoreCells.copy(
-  prefThetaMax = 179.0.toApfloat(),
-  cellPrefThetaStep = 1.0,
-  reqSize = 180*5
 )

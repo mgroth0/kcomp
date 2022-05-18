@@ -6,11 +6,15 @@ import de.gsi.chart.XYChart
 import de.gsi.chart.renderer.LineStyle
 import de.gsi.chart.renderer.spi.ErrorDataSetRenderer
 import de.gsi.dataset.spi.DoubleDataSet
+import javafx.scene.control.ContentDisplay.RIGHT
 import javafx.scene.layout.Pane
+import javafx.scene.layout.VBox
 import matt.gui.clip.copyToClipboard
 import matt.gui.core.context.mcontextmenu
 import matt.hurricanefx.exactHeightProperty
 import matt.hurricanefx.exactWidthProperty
+import matt.hurricanefx.tornadofx.control.label
+import matt.hurricanefx.tornadofx.control.textfield
 import matt.json.custom.toJsonWriter
 import matt.json.prim.loadJson
 import matt.kjlib.ranges.step
@@ -256,6 +260,11 @@ class Figure: Pane() {
 	chart!!.xAxis.max = max + fivePercent
   }
 
+  fun controlBox() = VBox().apply {
+	label(text = "xMin", graphic = textfield(chart!!.xAxis.minProperty())) {
+	  contentDisplay = RIGHT
+	}
+  }
 
   var chart: XYChart? = null
 	private set

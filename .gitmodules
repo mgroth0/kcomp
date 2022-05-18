@@ -49,3 +49,6 @@
 [submodule "kj/fxlib"]
 	path = kj/fxlib
 	url = https://github.com/mgroth0/fxlib
+[submodule "kj/dataman"]
+	path = kj/dataman
+	url = https://github.com/mgroth0/dataman

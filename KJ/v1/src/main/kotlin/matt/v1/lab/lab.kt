@@ -1,6 +1,5 @@
 package matt.v1.lab
 
-import com.google.gson.JsonArray
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
@@ -9,7 +8,6 @@ import matt.exec.interapp.waitFor
 import matt.gui.loop.runLater
 import matt.hurricanefx.eye.lang.BProp
 import matt.json.prim.parseJsonObjs
-import matt.kjlib.commons.DATA_FOLDER
 import matt.kjlib.date.tic
 import matt.kjlib.file.get
 import matt.kjlib.file.text
@@ -27,6 +25,7 @@ import matt.kjlib.log.err
 import matt.kjlib.ranges.step
 import matt.kjlib.stream.onEveryIndexed
 import matt.klibexport.klibexport.go
+import matt.v1.V1_DATA_FOLDER
 import matt.v1.activity.Response
 import matt.v1.comp.Fit.Gaussian
 import matt.v1.comp.PoissonVar
@@ -41,7 +40,7 @@ import matt.v1.gui.fig.update.FigureUpdate
 import matt.v1.gui.fig.update.FigureUpdater
 import matt.v1.gui.fig.update.GuiUpdate
 import matt.v1.gui.fig.update.StatusUpdate
-import matt.v1.gui.fig.update.toGson
+import matt.v1.gui.fig.update.jsonString
 import matt.v1.jsonpoint.JsonPoint
 import matt.v1.jsonpoint.toJsonPoints
 import matt.v1.lab.Experiment.RunStage.FIG_COMPLETE
@@ -49,7 +48,6 @@ import matt.v1.lab.Experiment.RunStage.ITERATING
 import matt.v1.lab.Experiment.RunStage.WAITING_FOR_FIG
 import matt.v1.lab.petri.Population
 import matt.v1.lab.petri.PopulationConfig
-import matt.v1.lab.petri.pop2D
 import matt.v1.low.GaussianFit
 import matt.v1.model.Stimulus
 import matt.v1.model.activity.ARI_TD_DN_CFG
@@ -73,7 +71,7 @@ data class Experiment(
   val normToMax: Boolean = false,
   val troughShift: Boolean = false,
   val category: ExpCategory,
-  val popCfg: PopulationConfig = pop2D,/*TO GO*/
+  val popCfg: PopulationConfig? = null,/*TO GO*/
   val uniformW: Apfloat? = null,/*TO GO*/
   val rawInput: Apfloat? = null,/*TO GO*/
 
@@ -110,14 +108,14 @@ data class Experiment(
   private var stopped = false
 
 
-
   lateinit var pop: Population /*neverinit*/
 
   companion object {
 	const val CONTRAST1 = 7.5
 	const val CONTRAST2 = 20.0
 	const val USE_GPPC = true
-	val EXPS_DATA_FOLDER = DATA_FOLDER["kcomp"]["v1"]["exps"]
+
+	val EXPS_DATA_FOLDER = V1_DATA_FOLDER["exps"]
   }
 
   private val jsonFile = EXPS_DATA_FOLDER["$name.json"]
@@ -158,6 +156,7 @@ data class Experiment(
 	  apply {
 		if (fromJson) {
 		  if (jsonFile.exists()) {
+			gui.statusLabel.statusExtra = "loading experiment"
 			jsonFile.text.parseJsonObjs().forEach {
 			  val update = FigureUpdate.new(listOf()).apply {
 				loadProperties(it)
@@ -169,6 +168,7 @@ data class Experiment(
 			gui.console.println("$jsonFile does not exist")
 		  }
 		} else {
+		  gui.statusLabel.statusExtra = "running experiment"
 		  figUpdates = mutableListOf()
 		  try {
 			runBlocking {
@@ -240,13 +240,7 @@ data class Experiment(
 	runStage = WAITING_FOR_FIG
 	if (!stopped && figUpdates != null) {
 	  waitFor(10) { runStage == FIG_COMPLETE }
-	  jsonFile.write(
-		JsonArray().apply {
-		  figUpdates!!.map { it.toGson() }.forEach {
-			add(it)
-		  }
-		}.toString()
-	  )
+	  jsonFile.write("[" + figUpdates!!.map { it.jsonString() }.joinToString(",") + "]")
 	}
 	runLater { runningProp.value = false }
 

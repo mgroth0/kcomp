@@ -30,6 +30,7 @@ dependencies {
   implementation(libs.fx.swing)
   implementation(projects.kj.remote)
   implementation(projects.kj.fxlib.console)
+  implementation(projects.kj.dataman)
 
   /*implementation("org.tensorflow:tensorflow-core-api:0.4.0")*/
   /*implementation("org.tensorflow:tensorflow-core-platform:0.4.0")*/

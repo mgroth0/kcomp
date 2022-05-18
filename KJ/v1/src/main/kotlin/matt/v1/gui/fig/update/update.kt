@@ -1,12 +1,9 @@
 package matt.v1.gui.fig.update
 
 import com.google.gson.JsonElement
-import com.google.gson.JsonObject
 import matt.gui.loop.runLaterReturn
 import matt.json.custom.GsonParser
 import matt.json.custom.SimpleJson
-import matt.json.prim.parseJsonObj
-import matt.json.prim.toGson
 import matt.kjlib.async.every
 import matt.kjlib.async.with
 import matt.kjlib.date.sec
@@ -22,11 +19,11 @@ import matt.v1.lab.Experiment.RunStage.FIG_COMPLETE
 import matt.v1.lab.Experiment.RunStage.WAITING_FOR_FIG
 import java.util.concurrent.Semaphore
 
-fun GuiUpdate.toGson(): JsonObject {
+fun GuiUpdate.jsonString(): String {
   return when (this) {
-	is StatusUpdate -> this.toGson().parseJsonObj()
-	is FigureUpdate -> this.toGson().parseJsonObj()
-	is FigUpdate    -> this.toFigUpdate().toGson().parseJsonObj()
+	is StatusUpdate -> this.toJson().toJsonString()
+	is FigureUpdate -> this.toJson().toJsonString()
+	is FigUpdate    -> this.toFigUpdate().jsonString()
   }
 }
 

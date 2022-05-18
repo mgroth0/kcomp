@@ -24,7 +24,6 @@ import matt.v1.gui.GuiMode
 import matt.v1.gui.GuiMode.ITTI_KOCH
 import matt.v1.gui.vis.vismodel.FilteredImageVisualizer
 import matt.v1.gui.vis.vismodel.GeneratedImageVisualizer
-import matt.v1.lab.petri.pop2D
 import matt.v1.low.PhaseType.COS
 import matt.v1.model.FieldGenerator
 import matt.v1.model.Orientation
@@ -113,7 +112,7 @@ class RosenbergVisualizer(
 
   @Suppress("PrivatePropertyName")
   private val SF by CfgDoubleProp(0.01 to 10, default = (gen as Stimulus).SF)
-  private val theta by CfgDoubleProp(pop2D.prefThetaMin to pop2D.prefThetaMax, default = (gen as Stimulus).o.tDegrees)
+  private val theta by CfgDoubleProp(popCfg.populationConfig.prefThetaMin to popCfg.populationConfig.prefThetaMax, default = (gen as Stimulus).o.tDegrees)
   private val sigmaMult by CfgDoubleProp(0.01 to 10, default = 1.0)
   private val sampleStep by CfgDoubleProp(0.1 to 20, default = (gen as Stimulus).fieldCfg.sampleStep)
   private val gaussian by CfgBoolProp(default = (gen as Stimulus).gaussianEnveloped)

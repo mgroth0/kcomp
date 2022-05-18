@@ -19,13 +19,12 @@ import matt.hurricanefx.addr
 import matt.hurricanefx.dragsSnapshot
 import matt.hurricanefx.exactHeight
 import matt.hurricanefx.exactWidthProperty
-import matt.hurricanefx.eye.lang.BProp
 import matt.hurricanefx.eye.lib.onChange
 import matt.hurricanefx.eye.prop.doubleBinding
 import matt.hurricanefx.op
 import matt.hurricanefx.tornadofx.control.button
 import matt.hurricanefx.tornadofx.control.checkbox
-import matt.hurricanefx.tornadofx.control.text
+import matt.hurricanefx.tornadofx.item.choicebox
 import matt.hurricanefx.tornadofx.layout.hbox
 import matt.hurricanefx.tornadofx.layout.vbox
 import matt.hurricanefx.tornadofx.nodes.add
@@ -37,6 +36,7 @@ import matt.kjlib.async.daemon
 import matt.kjlib.map.lazyMap
 import matt.kjlib.str.addSpacesUntilLengthIs
 import matt.kjlib.str.cap
+import matt.v1.cfg.user.UserConfig
 import matt.v1.exps.experiments
 import matt.v1.exps.expmodels.ExpCategory
 import matt.v1.gui.fig.Figure
@@ -44,6 +44,7 @@ import matt.v1.gui.status.StatusLabel
 import matt.v1.gui.status.StatusLabel.Status.IDLE
 import matt.v1.gui.status.StatusLabel.Status.WORKING
 import matt.v1.lab.Experiment.Companion.EXPS_DATA_FOLDER
+import matt.v1.scaling.PerformanceMode
 import java.io.PrintWriter
 
 val expCategoryPanes = lazyMap<ExpCategory, FlowPane> { FlowPane() }
@@ -75,17 +76,22 @@ class ExpGui(
 )
 
 val squareFigProp = SimpleBooleanProperty(true)
-
-private val loadProp = BProp(true)
+val somethingRunningProp = SimpleBooleanProperty(false)
 
 fun EventTarget.figBox(statusLabel: StatusLabel, opp: HBox.()->Unit) = hbox {
   alignment = CENTER
+  val exps = experiments()
   vbox {
-	checkbox("load", loadProp)
+	checkbox("load", UserConfig.loadExpsProp) {
+	  disableWhen { somethingRunningProp }
+	}
+	choicebox<PerformanceMode>(UserConfig.scaleProp, PerformanceMode.values().toList()) {
+	  disableWhen { somethingRunningProp }
+	}
 	button("open data folder") withAction EXPS_DATA_FOLDER::subl
   }
   mcontextmenu {
-	checkitem("load", loadProp)
+	checkitem("load", UserConfig.loadExpsProp)
 	"toggle square fig" toggles squareFigProp
   }
   val fig = addr(Figure()) {
@@ -95,10 +101,8 @@ fun EventTarget.figBox(statusLabel: StatusLabel, opp: HBox.()->Unit) = hbox {
 	})
 	dragsSnapshot()
   }
-  val rightBox = vbox {
-	text("fig controls")
-	//	blue()
-  }
+  var figControlBox: VBox? = null
+  val rightBox = vbox()
   val expConsole = rightBox.customConsole(takesInput = false) {
 	//	red()
   }
@@ -108,7 +112,7 @@ fun EventTarget.figBox(statusLabel: StatusLabel, opp: HBox.()->Unit) = hbox {
 	//	yellow()
   }
   val allButtons = mutableListOf<Button>()
-  experiments().forEach { exp ->
+  exps.forEach { exp ->
 	exp.category.pane.button(exp.name.addSpacesUntilLengthIs(4)) {
 	  allButtons += this
 	  fun cfgStartButton() {
@@ -120,6 +124,7 @@ fun EventTarget.figBox(statusLabel: StatusLabel, opp: HBox.()->Unit) = hbox {
 		  }
 		  statusLabel.counters.clear()
 		  statusLabel.status.value = WORKING
+		  rightBox.children.remove(figControlBox)
 		  fig.clear()
 		  fig.setup(
 			chartTitle = exp.title,
@@ -127,9 +132,10 @@ fun EventTarget.figBox(statusLabel: StatusLabel, opp: HBox.()->Unit) = hbox {
 			yAxisConfig = exp.yAxisConfig,
 			seriesCfgs = exp.series,
 		  )
+		  rightBox.children.add(0,fig.controlBox())
 		  daemon {
 			val gui = ExpGui(fig = fig, statusLabel = statusLabel, console = writer)
-			exp.run(gui, fromJson = loadProp.value)
+			exp.run(gui, fromJson = UserConfig.loadExps)
 			runLaterReturn {
 			  statusLabel.status.value = IDLE
 			}
@@ -140,17 +146,19 @@ fun EventTarget.figBox(statusLabel: StatusLabel, opp: HBox.()->Unit) = hbox {
 	  exp.runningProp.onChange {
 		when (it) {
 		  true  -> {
+			somethingRunningProp.value = true
 			text = "stop"
 			op = exp::stop
 		  }
-		  false -> cfgStartButton()
+		  false -> {
+			cfgStartButton()
+			somethingRunningProp.value = exps.any { it.runningProp.value }
+		  }
 		}
 	  }
 	  cfgStartButton()
-
-
 	}.also {
-	  it.disableWhen { statusLabel.status.isEqualTo(WORKING).and(exp.runningProp.not()) }
+	  it.disableWhen { somethingRunningProp }
 	}
   }
   opp()

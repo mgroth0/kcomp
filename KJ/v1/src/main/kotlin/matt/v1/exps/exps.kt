@@ -77,43 +77,18 @@ fun experiments(): List<Experiment> {
 	)
   )
 
-
-//  /*STUPID STUPID STUPID*/
-//  warn("STUPID STUPID STUPID")/*val td = withDN.copy(label = "TD")*/
-//  val td = matt.v1.figmodels.SeriesCfg(
-//	label = "STUPID"
-//  )
-
-//
-//  val ascC = td.copy(
-//	label = "ASC c",
-//	popRcfg = {
-//	  copy(
-//		divNorm = divNorm.copy(
-//		  c = ARI_TD_DN_CFG.gainC.toApfloat()*0.75f
-//		)
-//	  )
-//	},
-//  )
-
   val popGainBySize = varyingStimExp(
 	expID = 4 to 'C',
 	title = "↓ D.N. in ASD causes ↑ the absolute pop. gain (matches b. data)",
-	xAxisConfig = degreesXConfig.copy(
-	  min = 1.55,
-	  max = 6.05,
-	),
-	inputRange = degreesXStep..degreesXMax step degreesXStep,
+	xAxisConfig = degreesXConfig.copy(min = 0, max = 7),
+	inputRange = 1.55..6.05 step degreesXStep,
 	yAxisConfig = AxisConfig(
 	  min = 20,
 	  max = 45,
 	  label = "Population Gain",
 	  unit = null
 	),
-
 	/*series = listOf(td, ascC),*/ /*just check or uncheck series?*/
-
-
 	xStimOp = { copy(s = it) }
   )
   exps += popGainBySize
@@ -665,3 +640,33 @@ fun experiments(): List<Experiment> {
 //	reqSize = null
 //  )
 //}
+
+
+
+
+//val pop2D = PopulationConfig(
+//  popShape = CON_CIRCLES,
+//  cellX0AbsMinmax = 3.0,
+//  cellX0Step = 1.0,
+//  cellPrefThetaStep = 30.0,
+//  /*stimRecCCThetaStep = 30.0,*/
+//)
+//val popLouie = pop2D.copy(
+//  cellX0AbsMinmax = 0.0,
+//  prefThetaMax = 90.0.toApfloat(),
+//  popCCSpacingThetaStep = 500.0,
+//  cellPrefThetaStep = 500.0,
+//  reqSize = 1
+//)
+//val popLouieMoreCells = popLouie.copy(
+//  popShape = CON_CIRCLES,
+//  cellX0AbsMinmax = 1.0,
+//  prefThetaMax = 10.0.toApfloat(),
+//  popCCSpacingThetaStep = 90.0,
+//  reqSize = 5
+//)
+//val popLouieFullThetaCells = popLouieMoreCells.copy(
+//  prefThetaMax = 179.0.toApfloat(),
+//  cellPrefThetaStep = 1.0,
+//  reqSize = 180*5
+//)
