@@ -9,6 +9,7 @@ import javafx.scene.layout.FlowPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Priority.ALWAYS
 import javafx.scene.layout.VBox
+import matt.auto.openInFinder
 import matt.auto.subl
 import matt.fxlib.console.customConsole
 import matt.fxlib.console.interceptConsole
@@ -33,6 +34,8 @@ import matt.hurricanefx.tornadofx.nodes.vgrow
 import matt.hurricanefx.tornadofx.tab.staticTab
 import matt.hurricanefx.tornadofx.tab.tabpane
 import matt.kjlib.async.daemon
+import matt.kjlib.compcache.COMP_CACHE_FOLDER
+import matt.kjlib.compcache.ComputeCache
 import matt.kjlib.map.lazyMap
 import matt.kjlib.str.addSpacesUntilLengthIs
 import matt.kjlib.str.cap
@@ -44,6 +47,7 @@ import matt.v1.gui.status.StatusLabel
 import matt.v1.gui.status.StatusLabel.Status.IDLE
 import matt.v1.gui.status.StatusLabel.Status.WORKING
 import matt.v1.lab.Experiment.Companion.EXPS_DATA_FOLDER
+import matt.v1.low.Norm
 import matt.v1.scaling.PerformanceMode
 import java.io.PrintWriter
 
@@ -82,6 +86,9 @@ fun EventTarget.figBox(statusLabel: StatusLabel, opp: HBox.()->Unit) = hbox {
   alignment = CENTER
   val exps = experiments()
   vbox {
+	checkbox("save", UserConfig.saveExpsProp) {
+	  disableWhen { somethingRunningProp }
+	}
 	checkbox("load", UserConfig.loadExpsProp) {
 	  disableWhen { somethingRunningProp }
 	}
@@ -89,6 +96,10 @@ fun EventTarget.figBox(statusLabel: StatusLabel, opp: HBox.()->Unit) = hbox {
 	  disableWhen { somethingRunningProp }
 	}
 	button("open data folder") withAction EXPS_DATA_FOLDER::subl
+	button("open cache folder") withAction COMP_CACHE_FOLDER::openInFinder
+	button("save norm cache") withAction {
+	  ComputeCache.saveCache<Norm,Double>()
+	}
   }
   mcontextmenu {
 	checkitem("load", UserConfig.loadExpsProp)
@@ -132,7 +143,7 @@ fun EventTarget.figBox(statusLabel: StatusLabel, opp: HBox.()->Unit) = hbox {
 			yAxisConfig = exp.yAxisConfig,
 			seriesCfgs = exp.series,
 		  )
-		  rightBox.children.add(0,fig.controlBox())
+		  rightBox.children.add(0, fig.controlBox())
 		  daemon {
 			val gui = ExpGui(fig = fig, statusLabel = statusLabel, console = writer)
 			exp.run(gui, fromJson = UserConfig.loadExps)

@@ -27,6 +27,7 @@ import matt.kjlib.stream.onEveryIndexed
 import matt.klibexport.klibexport.go
 import matt.v1.V1_DATA_FOLDER
 import matt.v1.activity.Response
+import matt.v1.cfg.user.UserConfig
 import matt.v1.comp.Fit.Gaussian
 import matt.v1.comp.PoissonVar
 import matt.v1.exps.expmodels.ExpCategory
@@ -238,7 +239,7 @@ data class Experiment(
 	  }
 	}
 	runStage = WAITING_FOR_FIG
-	if (!stopped && figUpdates != null) {
+	if (!stopped && figUpdates != null && UserConfig.saveExps) {
 	  waitFor(10) { runStage == FIG_COMPLETE }
 	  jsonFile.write("[" + figUpdates!!.map { it.jsonString() }.joinToString(",") + "]")
 	}

@@ -1,3 +1,4 @@
 shadow {
     mainClassName = application.mainClass.get()
 }
+

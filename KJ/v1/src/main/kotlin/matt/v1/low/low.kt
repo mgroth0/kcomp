@@ -1,6 +1,13 @@
+@file:UseSerializers(ApfloatSerializer::class, ApintSerializer::class)
+
 package matt.v1.low
 
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.plus
 import matt.kjlib.commons.REGISTERED_FOLDER
+import matt.kjlib.compcache.ComputeCache
 import matt.kjlib.compcache.ComputeInput
 import matt.kjlib.file.filterHasExtenion
 import matt.kjlib.file.get
@@ -22,6 +29,8 @@ import matt.kjlib.jmath.times
 import matt.kjlib.jmath.toApfloat
 import matt.kjlib.jmath.unaryMinus
 import matt.kjlib.ranges.step
+import matt.kjlib.ser.ApfloatSerializer
+import matt.kjlib.ser.ApintSerializer
 import matt.klib.log.warn
 import matt.klib.math.sq
 import org.apache.commons.math3.exception.ConvergenceException
@@ -39,6 +48,7 @@ import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.math.sqrt
 
+
 fun eulerBugChecker() = thread {
   val KCOMP_FOLDER = REGISTERED_FOLDER["kcomp"]
   val badEuler = KCOMP_FOLDER["KJ"]["v1"]["badEuler.txt"].text /*so that this kotlin file can be searched too*/
@@ -51,21 +61,45 @@ fun eulerBugChecker() = thread {
 	}
 }
 
+@Serializable
 data class Norm(
   val dX: Double,
   val dY: Double,
 ): ComputeInput<Double>() {
+  //  fun loadCache() = loadCacheInline<Double,Norm>()
   override fun compute() = sqrt(dX.sq() + dY.sq())
 }
 
+
+private val module = SerializersModule {
+  polymorphic(Any::class, Norm::class, Norm.serializer())
+}.also {
+  val oldMod = ComputeCache.jsonFormat.serializersModule
+  println("oldMod = $oldMod")
+  val newMod = oldMod + it
+  println("newMod = $newMod")
+  val oldFormat = ComputeCache.jsonFormat
+  println("oldFormat=${oldFormat}")
+  val newPolyFormat = ComputeCache.buildJsonFormat(newMod)
+  ComputeCache.jsonFormat = newPolyFormat
+  println("newPolyFormat=${newPolyFormat}")
+  println("ComputeCache.jsonFormat=${ComputeCache.jsonFormat}")
+}
+
+@Serializable
 data class Weight(
   val norm: Double,
   val sigmaPool: Double,
 ): ComputeInput<Double>() {
+  //  override fun <T: ComputeInput<Double>> loadCache(): ComputeCache<T, Double> {
+  //	TODO("Not yet implemented")
+  //  }
+
   override fun compute() = E.pow((-(norm.sq()))/(2*sigmaPool.sq()))
 }
 
 
+@Serializable
 data class Envelope(
   val gaussianEnveloped: Boolean, val xyt: XYThetas, val sigmaX: SigmaDenominator, val sigmaY: SigmaDenominator
 ): ComputeInput<Double>() {
@@ -74,6 +108,7 @@ data class Envelope(
   ) else 1.0)
 }
 
+@Serializable
 data class SamplePhase(
   val xT: XYThetas, val SF: Double, val phase: PhaseType
 ): ComputeInput<Double>() {
@@ -83,13 +118,14 @@ data class SamplePhase(
   ) /*cycles per degree*/
 }
 
+@Serializable
 data class SigmaDenominator(
   val sigma: Double
 ): ComputeInput<Double>() {
   override fun compute() = (2.0*sigma.sq())
 }
 
-
+@Serializable
 data class BayesianPriorC(
   val c0: Apfloat, val w0: Apfloat, val t: Apfloat
 ): ComputeInput<Apfloat>() {
@@ -102,6 +138,7 @@ data class BayesianPriorC(
 
 }
 
+@Serializable
 data class PPCUnit(
   val ft: Apfloat, val ri: /*Double*/Apint
 ): ComputeInput<Apfloat>() {
@@ -124,6 +161,7 @@ data class PPCUnit(
 
 }
 
+@Serializable
 data class LogPoissonPPCUnit(
   val ft: Double, val ri: /*Double*/Int
 ): ComputeInput<Double>() {
@@ -134,6 +172,7 @@ data class LogPoissonPPCUnit(
   override fun compute() = ln(e.pow(-ft)*ft.pow(ri)) - ri.logFactorial()
 }
 
+@Serializable
 data class GPPCUnit(
   val ft: Double, val ri: /*Double*/Double
 ): ComputeInput<Double>() {
@@ -153,10 +192,12 @@ data class GPPCUnit(
   }
 }
 
+@Serializable
 data class XYTheta(
   val xTheta: Double, val yTheta: Double
 )
 
+@Serializable
 data class XYThetas(
   val tRadians: Double, val dX: Double, val dY: Double
 ): ComputeInput<XYTheta>() {
@@ -170,10 +211,12 @@ data class XYThetas(
   )
 }
 
+@Serializable
 data class GaussianCoef(
   val a: Double, val b: Double, val c: Double
 )
 
+@Serializable
 data class GaussianCoefCalculator(
   val points: List<BasicPoint>
 ): ComputeInput<GaussianCoef>() {
@@ -189,7 +232,7 @@ data class GaussianCoefCalculator(
   }
 }
 
-
+@Serializable
 data class GaussianFit(
   val g: GaussianCoef, val xMin: Double, val xStep: Double, val xMax: Double
 ): ComputeInput<List<BasicPoint>>() {
@@ -217,6 +260,7 @@ data class GaussianFit(
 
 }
 
+@Serializable
 data class GaussianPoint(
   val a: Double, val b: Double, val c: Double, val x: Double
 ): ComputeInput<Double>() {
@@ -225,7 +269,7 @@ data class GaussianPoint(
 
 }
 
-
+@Serializable
 data class Radians(
   val degrees: Double,
 ): ComputeInput<Double>() {
@@ -234,6 +278,7 @@ data class Radians(
 
 }
 
+@Serializable
 data class ARadians(
   val degrees: Apfloat,
 ): ComputeInput<Apfloat>() {
@@ -243,6 +288,7 @@ data class ARadians(
 
 }
 
+@Serializable
 data class Sin(
   val radians: Radians,
 ): ComputeInput<Double>() {
@@ -251,6 +297,7 @@ data class Sin(
 
 }
 
+@Serializable
 data class Cos(
   val radians: Radians,
 ): ComputeInput<Double>() {
@@ -259,7 +306,7 @@ data class Cos(
   override fun compute() = cos(radians())
 }
 
-
+@Serializable
 data class ASin(
   val radians: ARadians,
 ): ComputeInput<Apfloat>() {
@@ -268,6 +315,7 @@ data class ASin(
   override fun compute() = ApfloatMath.sin(radians())
 }
 
+@Serializable
 data class ACos(
   val radians: ARadians,
 ): ComputeInput<Apfloat>() {
@@ -276,6 +324,7 @@ data class ACos(
   override fun compute() = ApfloatMath.cos(radians())
 }
 
+@Serializable
 data class Polar(
   val radius: Double, val rads: Radians
 ): ComputeInput<BasicPoint>() {
@@ -286,6 +335,7 @@ data class Polar(
   )
 }
 
+@Serializable
 data class APolar(
   val radius: Apfloat, val rads: ARadians
 ): ComputeInput<APoint>() {
@@ -312,6 +362,7 @@ infix fun Point.normDistTo(other: Point) = normTo(other).findOrCompute()
   }
 }*/
 
+@Serializable
 sealed class PhaseType {
   abstract fun comp(d: Double): Double
 
@@ -325,6 +376,7 @@ sealed class PhaseType {
 }
 
 
+@Serializable
 data class Circle(val radius: Double, val center: BasicPoint = BasicPoint(0, 0)) {
   operator fun contains(p: BasicPoint): Boolean {
 
@@ -333,6 +385,7 @@ data class Circle(val radius: Double, val center: BasicPoint = BasicPoint(0, 0))
 
 }
 
+@Serializable
 data class ACircle(val radius: Apfloat, val center: APoint = APoint(x = 0.0.toApfloat(), y = 0.0.toApfloat())) {
   operator fun contains(p: APoint): Boolean {
 

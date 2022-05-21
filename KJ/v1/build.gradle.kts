@@ -43,6 +43,9 @@ dependencies {
 	  "/Users/matthewgroth/registered/kcomp/KJ/jar/tensorflow-framework-0.4.0-SNAPSHOT.jar",
 	)
   )*/
+
+
+
 }
 
 /*
@@ -53,3 +56,8 @@ configurations.all {
       .withClassifier("macosx-x86_64")
   }
 }*/
+
+
+plugins {
+  kotlin("plugin.serialization") version tomlVersion("kotlin")
+}

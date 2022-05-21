@@ -43,6 +43,10 @@ subprojects sub@{
   }
 
   apply<KotlinPluginWrapper>()
+//  apply(serGradle)
+
+
+  //  apply(SerializationPluginContext)
 
   if (projectDir.resolve("src").resolve("test").exists()) {
 	apply<matt.jbuild.test.ThisBuildIncludesTests>()
@@ -129,7 +133,7 @@ subprojects sub@{
   val jvmRuntimeArgs = listOf(
 	if (isNewMac) "-Xmx30g" else "-Xmx6g",
 	/*"-agentpath:"*/ /*jProfiler*/
-  "-Djava.library.path=/Users/matthewgroth/registered/kcomp/KJ/dylib"
+	"-Djava.library.path=/Users/matthewgroth/registered/kcomp/KJ/dylib"
   )
 
   configure<JavaApplication> {

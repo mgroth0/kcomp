@@ -26,6 +26,13 @@ class UserConfig: SimpleJson<UserConfig>(typekey = null) {
 
 	  }
 	val loadExpsProp = instance.loadExpsProp
+	var saveExps
+	  get() = instance.saveExps
+	  set(value) {
+		instance.saveExps = value
+
+	  }
+	val saveExpsProp = instance.saveExpsProp
 	var scale
 	  get() = instance.scale
 	  set(value) {
@@ -34,6 +41,8 @@ class UserConfig: SimpleJson<UserConfig>(typekey = null) {
 	val scaleProp = instance.scaleProp
   }
 
+  var saveExps by JsonBoolProp(optional = true, default = true)
+  val saveExpsProp by FXB(bind = ::saveExps)
 
   var loadExps by JsonBoolProp(optional = true, default = true)
   val loadExpsProp by FXB(bind = ::loadExps)
