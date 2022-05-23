@@ -8,10 +8,15 @@
 /.gradle/
 /.vagrant/
 /Kj/v1/tmp/*
-/gradle.properties
 /.idea
 /.DS_Store
 
 # RootFiles
 /build.gradle.kts
 /settings.gradle.kts
+/gradle.properties
+
+
+/gradle
+/gradlew
+/gradlew.bat
