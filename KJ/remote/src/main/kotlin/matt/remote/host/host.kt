@@ -2,7 +2,8 @@ package matt.remote.host
 
 import com.jcraft.jsch.JSch
 import com.jcraft.jsch.UserInfo
-import matt.kjlib.commons.USER_HOME
+import matt.kbuild.USER_HOME
+//import matt.kjlib.commons.USER_HOME
 import matt.kjlib.file.get
 import matt.remote.expect.expect
 import matt.remote.host.Host.Companion.SUB_PROMPT

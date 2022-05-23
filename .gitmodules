@@ -52,3 +52,6 @@
 [submodule "kj/dataman"]
 	path = kj/dataman
 	url = https://github.com/mgroth0/dataman
+[submodule "KJ/kbuild"]
+	path = KJ/kbuild
+	url = https://github.com/mgroth0/kbuild

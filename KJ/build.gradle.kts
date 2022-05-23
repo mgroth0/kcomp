@@ -88,7 +88,7 @@ subprojects sub@{
 		  .withClassifier(if (isNewMac) run {
 			//				println("isNewMac")
 			"mac-aarch64"
-		  } else if (isMac) run {
+		  } else if (ismac) run {
 			//				println("isOldMac")
 			"mac"
 		  } else "linux")
@@ -160,6 +160,7 @@ subprojects sub@{
 	this.jvmArgs = jvmRuntimeArgs
   }
   tasks.withType<ShadowJar> {
+	this.isZip64 = true
 	doLast {
 	  val sjar = buildDir.resolve("libs")
 		.listFiles()!!

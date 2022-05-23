@@ -1,6 +1,7 @@
 package matt.v1.lab.petri
 
-import matt.kjlib.commons.USER_HOME
+//import matt.kjlib.commons.USER_HOME
+import matt.kbuild.USER_HOME
 import matt.kjlib.file.get
 import matt.kjlib.jmath.div
 import matt.kjlib.jmath.point.BasicPoint
