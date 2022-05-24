@@ -1,3 +1,5 @@
+@file:Suppress("UNREACHABLE_CODE")
+
 package matt.stim.flicker.psykt
 
 import javafx.animation.KeyFrame
