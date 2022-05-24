@@ -55,6 +55,9 @@ subprojects sub@{
   apply<KotlinPluginWrapper>()
   //  apply(serGradle)
 
+  this.tasks.withType<KotlinCompile>() {
+	dependsOn(project(":KJ:kbuild").tasks["gitPullSubmodule"])
+  }
 
   //  apply(SerializationPluginContext)
 
