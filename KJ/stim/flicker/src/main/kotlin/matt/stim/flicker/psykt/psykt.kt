@@ -298,7 +298,7 @@ class APVT: Task() {
 	  err("")
 	  ExperimentStage.addEventFilter(KeyEvent.KEY_PRESSED, spaceResponseHandler)
 	  while (!canFinishTrial) {
-		Thread.sleep(1)
+		sleep(1)
 	  }
 	  removeAllStim()
 	  respondToSpace = false
@@ -321,7 +321,7 @@ class APVT: Task() {
 }
 
 class CVT: Task() {
-  lateinit var thread: Thread
+//  lateinit var thread: Thread
   var stimImage: Shape? = null
   var shouldYes: Boolean = false
   var canFinishTrial = false
@@ -369,7 +369,7 @@ class CVT: Task() {
 	  } else {
 		stimulate(xImage)
 	  }
-	  Thread.sleep(1000)
+	  sleep(1000)
 	  removeAllStim()
 	  givingFeedback = false
 	}
@@ -399,13 +399,13 @@ class CVT: Task() {
 	  correct = (shouldYes == responseYes)
 	  logger.data["correct"] = correct
 	  while (!canFinishTrial) {
-		Thread.sleep(1)
+		sleep(1)
 	  }
 	  removeAllStim()
 	  respondToSpace = false
 	  feedback()
 	  while (givingFeedback) {
-		Thread.sleep(10)
+		sleep(10)
 	  }
 	  removeAllStim()
 	}
@@ -533,18 +533,18 @@ class DigitSpan: Task() {
 
 	  stimulate(l)
 
-	  Thread.sleep(2500)
+	  sleep(2500)
 
 	  removeAllStim()
 
-	  Thread.sleep(1000)
+	  sleep(1000)
 
-	  for ((i, digit) in digits.withIndex()) {
+	  for ((i, _) in digits.withIndex()) {
 		stimulate(stims[i])
 		if (i < digits.size - 1) {
-		  Thread.sleep(1000)
+		  sleep(1000)
 		  removeAllStim()
-		  Thread.sleep(20)
+		  sleep(20)
 		}
 
 	  }
@@ -552,7 +552,7 @@ class DigitSpan: Task() {
 
 	override fun hide() {
 	  removeAllStim()
-	  Thread.sleep(20)
+	  sleep(20)
 	}
   }
 
@@ -572,7 +572,7 @@ class DigitSpan: Task() {
   class DigitRemover {
 	var cancel = false
 	fun run() {
-	  Thread.sleep(SHOW_DIGIT_T)
+	  sleep(SHOW_DIGIT_T)
 	  if (!cancel) {
 		removeAllStim()
 	  }
@@ -630,9 +630,9 @@ class DigitSpan: Task() {
 	ExperimentRoot.background = Background(BackgroundFill(Color.GRAY, null, null))
 	ExperimentStage.addEventFilter(KeyEvent.KEY_PRESSED, digitResponseHandler)
 	while (!canFinishTrial) {
-	  Thread.sleep(10)
+	  sleep(10)
 	}
-	Thread.sleep(SHOW_DIGIT_T)
+	sleep(SHOW_DIGIT_T)
 	ExperimentRoot.background = Background(BackgroundFill(Color.WHITE, null, null))
 	ExperimentStage.removeEventFilter(KeyEvent.KEY_PRESSED, digitResponseHandler)
 	println("raw responses:")
@@ -723,7 +723,7 @@ class DigitSpan: Task() {
 	  n_current += 1
 	  //            nCorrect.clear()
 	}
-	Thread.sleep(1000)
+	sleep(1000)
 	removeAllStim()
   }
 
@@ -787,7 +787,7 @@ class DigitSpan: Task() {
 	  font = Font(50.0)
 	})
 
-	Thread.sleep(5000)
+	sleep(5000)
 
 	endExperiment()
 
@@ -851,24 +851,21 @@ class ECEO: Task() {
 			println("SPACE KEY... LOGGING BLINK")
 			logger.log("blink" to currentTimeMillis())
 		  }
-		  else          -> {
-		  }
+		  else          -> Unit
 		}
 	  }
 	}
   }
 
   override fun stimulus() = object: Stimulus {
-	override fun generate() {
-	}
+	override fun generate() = Unit
 
 	override fun show() {
 	  stimulate(currentSoundClip!!)
 	  respondToSpace = true
 	}
 
-	override fun hide() {
-	}
+	override fun hide()  = Unit
   }
 
   override val logHeaders = arrayOf(
@@ -946,7 +943,7 @@ class ECEO: Task() {
 	MediaPlayer(sound)
   }
 
-  var currentClip: MediaPlayer? = null
+//  var currentClip: MediaPlayer? = null
   val clips by lazy {
 	arrayOf(closeSoundClip, openSoundClip)
   }
@@ -1041,19 +1038,17 @@ class NBack: Task() {
 	  } else {
 		stimulate(xImage)
 	  }
-	  Thread.sleep(1000)
+	  sleep(1000)
 	  removeAllStim()
 	  givingFeedback = false
 	}
 
 	val nBackSpaceHandler = EventHandler<KeyEvent> {
 
-	  if (it.code == KeyCode.SPACE) {
-		if (respondToSpace) {
-		  didPress = true
-		  println("didPress!")
-		  thread.interrupt()
-		}
+	  if (it.code == KeyCode.SPACE && respondToSpace) {
+		didPress = true
+		println("didPress!")
+		thread.interrupt()
 	  }
 	}
 	ExperimentStage.addEventFilter(KeyEvent.KEY_PRESSED, nBackSpaceHandler)
@@ -1068,7 +1063,7 @@ class NBack: Task() {
 	  if (logger.currentTrial > n.get()) feedback()
 	  else removeAllStim()
 	  while (givingFeedback) {
-		Thread.sleep(10)
+		sleep(10)
 	  }
 	}
 	ExperimentStage.removeEventFilter(KeyEvent.KEY_PRESSED, nBackSpaceHandler)
@@ -1098,8 +1093,7 @@ class ScreenFlicker1: Task() {
   }
 
   override fun stimulus() = object: Stimulus {
-	override fun generate() {
-	}
+	override fun generate() = Unit
 
 	override fun show() {
 	  if (currentSoundClip != lastSoundClip) {
@@ -1111,17 +1105,16 @@ class ScreenFlicker1: Task() {
 
 	}
 
-	override fun hide() {
-	}
+	override fun hide() = Unit
   }
 
   override val logHeaders = arrayOf(
 	"phase"
   )
 
-  val FREQ_MIN = 1
+  /*val FREQ_MIN = 1
   val FREQ_MAX = 40
-  val SEIZURE_RANGE = 15..25
+  val SEIZURE_RANGE = 15..25*/
 
   val phases = mutableListOf<Pair<Phase, Int>>().apply {
 	//        for (p in FREQ_MIN..FREQ_MAX) {
@@ -1729,7 +1722,7 @@ class SpeedReading: Task() {
 	  }
 	  try {
 		while (true) {
-		  Thread.sleep(100)
+		  sleep(100)
 		}
 	  } catch (e: InterruptedException) {
 
@@ -2229,7 +2222,7 @@ class Stroop: Task() {
 	  }
 	  ExperimentStage.addEventFilter(KeyEvent.KEY_PRESSED, digitResponseHandler)
 	  while (!canFinishTrial) {
-		Thread.sleep(10)
+		sleep(10)
 	  }
 	  logger.data["response"] = if (response!!) "RIGHT" else "LEFT"
 	  val choice = if (response!!) right else left
@@ -2239,7 +2232,7 @@ class Stroop: Task() {
 	  val xImage = defaultImage("images/x.png")
 	  val feedback = if (correct) checkImage else xImage
 	  stimulate(feedback)
-	  Thread.sleep(1000)
+	  sleep(1000)
 	  removeAllStim()
 	  //            Platform.runLater {
 	  //                ExperimentRoot.children.remove(feedback)
@@ -2376,7 +2369,7 @@ class VPVT: Task() {
 	runTrials {
 	  ExperimentStage.addEventFilter(KeyEvent.KEY_PRESSED, spaceResponseHandler)
 	  while (!canFinishTrial) {
-		Thread.sleep(1)
+		sleep(1)
 	  }
 	  removeAllStim()
 	  respondToSpace = false
@@ -2472,7 +2465,7 @@ fun Task.runTrials(block: ()->Unit) {
 	  (this@runTrials as? NBack)?.thread = Thread.currentThread()
 	  show()
 	  try {
-		Thread.sleep(stimDur)
+		sleep(stimDur)
 	  } catch (e: InterruptedException) {
 		println("thread interrupt")
 	  }
@@ -2480,7 +2473,7 @@ fun Task.runTrials(block: ()->Unit) {
 	}
 	block()
 	logger.endTrial((t == trials))
-	Thread.sleep(isi)
+	sleep(isi)
   }
 
   ExperimentScene.cursor = Cursor.DEFAULT
