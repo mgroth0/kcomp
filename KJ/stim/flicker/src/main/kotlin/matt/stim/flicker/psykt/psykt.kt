@@ -1,4 +1,4 @@
-@file:Suppress("UNREACHABLE_CODE")
+@file:Suppress("UNREACHABLE_CODE", "unused")
 
 package matt.stim.flicker.psykt
 
@@ -168,7 +168,7 @@ class Logger {
 
   private fun writeLine() {
 	var i = 0
-	data.forEach { k, v ->
+	data.forEach { _, v ->
 	  if (i > 0) {
 		logFile.appendText(",")
 	  }
@@ -265,16 +265,14 @@ class APVT: Task() {
 			logger.data["responseTime"] = currentTimeMillis()
 			canFinishTrial = true
 		  }
-		  else          -> {
-		  }
+		  else          -> Unit
 		}
 	  }
 	}
   }
 
   override fun stimulus() = object: Stimulus {
-	override fun generate() {
-	}
+	override fun generate() = Unit
 
 	override fun show() {
 	  stimulate(soundClip)

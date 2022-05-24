@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED_PARAMETER")
+
 package matt.remote
 
 import matt.exec.app.appName
