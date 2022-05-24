@@ -55,6 +55,3 @@
 [submodule "KJ/kbuild"]
 	path = KJ/kbuild
 	url = https://github.com/mgroth0/kbuild
-[submodule "KJ/kjg"]
-	path = KJ/kjg
-	url = https://github.com/mgroth0/kjg
