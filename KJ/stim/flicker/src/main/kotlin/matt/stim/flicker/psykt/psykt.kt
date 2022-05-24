@@ -1,4 +1,4 @@
-@file:Suppress("UNREACHABLE_CODE", "unused")
+@file:Suppress("UNREACHABLE_CODE", "unused", "UNUSED_VARIABLE")
 
 package matt.stim.flicker.psykt
 
@@ -1911,7 +1911,7 @@ class SSVEPverify: Task() {
 		//                stimulate(currentSoundClip!!)
 	  }
 	  runLater {
-		updateFreqLabel(currentFreq!!)
+		updateFreqLabel(currentFreq)
 		stimulate(currentStim!!)
 	  }
 	}
@@ -2625,7 +2625,7 @@ object Presenter {
 		  }
 		} catch (e: NumberFormatException) {
 		  taskParam.set(0)
-		  textProperty().addListener { _, _, n ->
+		  textProperty().addListener { _, _, _ ->
 			taskParam.set(0)
 		  }
 		}
