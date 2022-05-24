@@ -22,7 +22,7 @@ import matt.kjlib.jmath.point.shiftAllByTroughs
 import matt.kjlib.jmath.point.toBasicPoints
 import matt.kjlib.jmath.times
 import matt.kjlib.jmath.toApfloat
-import matt.kjlib.log.err
+import matt.kjlib.lang.err
 import matt.kjlib.ranges.step
 import matt.kjlib.stream.onEveryIndexed
 import matt.klibexport.klibexport.go

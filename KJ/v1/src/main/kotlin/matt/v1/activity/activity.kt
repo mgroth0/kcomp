@@ -5,7 +5,7 @@ import matt.kjlib.compcache.ComputeInput
 import matt.kjlib.compcache.UpdaterComputeInput
 import matt.kjlib.jmath.e
 import matt.kjlib.jmath.point.BasicPoint
-import matt.kjlib.log.err
+import matt.kjlib.lang.err
 import matt.klib.dmap.withStoringDefault
 import matt.klib.math.sq
 import matt.v1.activity.AttentionAmp.Companion.ATTENTION_CENTER

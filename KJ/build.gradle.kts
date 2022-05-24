@@ -1,5 +1,6 @@
 /*This file is currently hard-linked across 2 projects*/
 
+import com.github.jengelman.gradle.plugins.shadow.ShadowExtension
 import com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
 import com.github.jengelman.gradle.plugins.shadow.internal.JavaJarExec
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
@@ -173,23 +174,33 @@ subprojects sub@{
 	/*this.args = jvmRuntimeArgs*/
 	this.jvmArgs = jvmRuntimeArgs
   }
+  configure<ShadowExtension>() {
+  }
   tasks.withType<ShadowJar> {
+
+
+
+	/*this.minimize()*/
+	/*seems maybe a bit faster (like 10-20% faster, but just maybe), but its not worth it. Right away had an error because jfx wasn't included
+	* yes you can exclude/include things or whatever. But I think if I properly modularize this shouldn't be a big issue anyway
+	* and I don't want the added layer of complexity of not being sure that something will be included in the shadowJar
+	* because now if it works in the gradle run task I pretty much know it will work as a shadow. I dont want to lose that.*/
+
+
 	this.isZip64 = true
 	doLast {
 	  if (this.didWork) {
-		val sjar = buildDir.resolve("libs")
+		val shadowJar = buildDir.resolve("libs")
 		  .listFiles()!!
 		  .first { it.name.contains("-all.jar") }
-		//	  print("copying ${sjar.name}... ")
-		sjar
+		shadowJar
 		  .copyTo(
 			rootDir
 			  .resolve("bin/jar/")
 			  .apply { mkdirs() }
-			  .resolve(sjar.name),
+			  .resolve(shadowJar.name),
 			overwrite = true
 		  )
-		//	  println("done")
 	  }
 	}
   }

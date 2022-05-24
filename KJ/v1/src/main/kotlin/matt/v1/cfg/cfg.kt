@@ -18,7 +18,7 @@ import matt.hurricanefx.tornadofx.item.combobox
 import matt.hurricanefx.tornadofx.layout.hbox
 import matt.hurricanefx.tornadofx.nodes.add
 import matt.kjlib.jmath.sigFigs
-import matt.kjlib.log.NEVER
+import matt.kjlib.lang.NEVER
 import matt.kjlib.str.truncateWithElipses
 import matt.klibexport.tfx.isDouble
 import matt.klibexport.tfx.isFloat

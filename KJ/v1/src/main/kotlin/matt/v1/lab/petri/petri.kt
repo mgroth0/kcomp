@@ -7,7 +7,7 @@ import matt.kjlib.jmath.div
 import matt.kjlib.jmath.point.BasicPoint
 import matt.kjlib.jmath.times
 import matt.kjlib.jmath.toApfloat
-import matt.kjlib.log.err
+import matt.kjlib.lang.err
 import matt.kjlib.ranges.step
 import matt.kjlib.stream.forEachPairing
 import matt.klibexport.klibexport.allUnique

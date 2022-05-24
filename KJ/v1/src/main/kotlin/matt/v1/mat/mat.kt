@@ -1,6 +1,6 @@
 package matt.v1.mat
 
-import matt.kjlib.log.err
+import matt.kjlib.lang.err
 import us.hebi.matlab.mat.format.Mat5
 import us.hebi.matlab.mat.types.Matrix
 import java.io.File

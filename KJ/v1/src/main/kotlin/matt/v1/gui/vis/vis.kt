@@ -19,7 +19,7 @@ import matt.kbuild.DATA_FOLDER
 //import matt.kjlib.commons.DATA_FOLDER
 import matt.kjlib.file.get
 import matt.kjlib.jmath.floorInt
-import matt.kjlib.log.NEVER
+import matt.kjlib.lang.NEVER
 import matt.klib.dmap.withStoringDefault
 import matt.v1.gui.GuiMode
 import matt.v1.gui.GuiMode.ITTI_KOCH
