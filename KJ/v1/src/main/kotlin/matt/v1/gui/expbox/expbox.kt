@@ -33,12 +33,12 @@ import matt.hurricanefx.tornadofx.nodes.disableWhen
 import matt.hurricanefx.tornadofx.nodes.vgrow
 import matt.hurricanefx.tornadofx.tab.staticTab
 import matt.hurricanefx.tornadofx.tab.tabpane
+import matt.kbuild.cap
 import matt.kjlib.async.daemon
 import matt.kjlib.compcache.COMP_CACHE_FOLDER
 import matt.kjlib.compcache.ComputeCache
 import matt.kjlib.map.lazyMap
 import matt.kjlib.str.addSpacesUntilLengthIs
-import matt.kjlib.str.cap
 import matt.v1.cfg.user.UserConfig
 import matt.v1.exps.experiments
 import matt.v1.exps.expmodels.ExpCategory

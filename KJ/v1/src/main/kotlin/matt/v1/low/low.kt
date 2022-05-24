@@ -10,7 +10,7 @@ import matt.kbuild.REGISTERED_FOLDER
 //import matt.kjlib.commons.REGISTERED_FOLDER
 import matt.kjlib.compcache.ComputeCache
 import matt.kjlib.compcache.ComputeInput
-import matt.kjlib.file.filterHasExtenion
+import matt.kjlib.file.filterHasExtension
 import matt.kjlib.file.get
 import matt.kjlib.file.recursiveChildren
 import matt.kjlib.file.text
@@ -54,7 +54,7 @@ fun eulerBugChecker() = thread {
   val KCOMP_FOLDER = REGISTERED_FOLDER["kcomp"]
   val badEuler = KCOMP_FOLDER["KJ"]["v1"]["badEuler.txt"].text /*so that this kotlin file can be searched too*/
   KCOMP_FOLDER["KJ"].recursiveChildren()
-	.filterHasExtenion("kt")
+	.filterHasExtension("kt")
 	.forEach {
 	  require(badEuler !in it.text) {
 		"$badEuler is NOT what you think it is"

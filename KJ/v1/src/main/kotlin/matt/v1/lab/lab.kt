@@ -5,8 +5,8 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.runBlocking
 import matt.exec.interapp.waitFor
-import matt.gui.loop.runLater
 import matt.hurricanefx.eye.lang.BProp
+import matt.hurricanefx.tornadofx.async.runLater
 import matt.json.prim.parseJsonObjs
 import matt.kjlib.date.tic
 import matt.kjlib.file.get

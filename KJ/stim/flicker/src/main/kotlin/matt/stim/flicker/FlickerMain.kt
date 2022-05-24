@@ -6,9 +6,9 @@ import javafx.scene.CacheHint
 import javafx.scene.paint.Color
 import javafx.util.Duration
 import matt.gui.app.GuiApp
-import matt.gui.loop.runLater
 import matt.hurricanefx.tornadofx.animation.keyframe
 import matt.hurricanefx.tornadofx.animation.timeline
+import matt.hurricanefx.tornadofx.async.runLater
 import matt.hurricanefx.tornadofx.shapes.circle
 
 const val HZ = 10.0

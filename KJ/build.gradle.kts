@@ -40,10 +40,20 @@ subprojects sub@{
   apply<JavaPlugin>()
   configure<JavaPluginExtension> {
 	modularity.inferModulePath.set(JIGSAW)
+	val javaLangVersion = JavaLanguageVersion.of(tomlVersion("java"))
+	val javaVersion = JavaVersion.toVersion(tomlVersion("java"))
+	toolchain {
+	  languageVersion.set(javaLangVersion)
+	}
+
+  /*"The new Java toolchain feature cannot be used at the project level in combination with source and/or target compatibility"*/
+	/*sourceCompatibility = javaVersion
+	targetCompatibility = javaVersion*/
+
   }
 
   apply<KotlinPluginWrapper>()
-//  apply(serGradle)
+  //  apply(serGradle)
 
 
   //  apply(SerializationPluginContext)
@@ -116,14 +126,11 @@ subprojects sub@{
 
 
   val createAppNameResource by tasks.creating {
-	val f = FixedFile(projectDir)["src"]["main"][
-		"resources"
-	]["matt"]["appname.txt"]
-	this.outputs.file(f.absolutePath)
+	val f = FixedFile(projectDir)["src"]["main"]["resources"]["matt"]["appname.txt"]
+	this.onlyIf { !f.exists() || f.readText() != spname }
 	doLast {
-	  if (!f.exists()) {
-		f.writeText(spname)
-	  }
+	  f.parentFile.mkdirs()
+	  f.writeText(spname)
 	}
   }
   tasks.withType<ProcessResources> {
@@ -144,7 +151,11 @@ subprojects sub@{
 	  mainClass.set("${mainPackage}.${spname.capitalize()}Main")
 	}
 
-	mainClassName = mainClass.get()
+
+	/*getting deprecation warnings for this*/
+	/*mainClassName = mainClass.get()*/
+
+
 	this.applicationDefaultJvmArgs = jvmRuntimeArgs
   }
 
@@ -162,19 +173,21 @@ subprojects sub@{
   tasks.withType<ShadowJar> {
 	this.isZip64 = true
 	doLast {
-	  val sjar = buildDir.resolve("libs")
-		.listFiles()!!
-		.first { it.name.contains("-all.jar") }
-	  print("copying ${sjar.name}... ")
-	  sjar
-		.copyTo(
-		  rootDir
-			.resolve("bin/jar/")
-			.apply { mkdirs() }
-			.resolve(sjar.name),
-		  overwrite = true
-		)
-	  println("done")
+	  if (this.didWork) {
+		val sjar = buildDir.resolve("libs")
+		  .listFiles()!!
+		  .first { it.name.contains("-all.jar") }
+		//	  print("copying ${sjar.name}... ")
+		sjar
+		  .copyTo(
+			rootDir
+			  .resolve("bin/jar/")
+			  .apply { mkdirs() }
+			  .resolve(sjar.name),
+			overwrite = true
+		  )
+		//	  println("done")
+	  }
 	}
   }
 }
