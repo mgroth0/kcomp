@@ -26,12 +26,12 @@ import matt.kjlib.jmath.point.APoint
 import matt.kjlib.jmath.point.BasicPoint
 import matt.kjlib.jmath.point.Point
 import matt.kjlib.jmath.pow
+import matt.kjlib.jmath.ser.ApfloatSerializer
+import matt.kjlib.jmath.ser.ApintSerializer
 import matt.kjlib.jmath.times
 import matt.kjlib.jmath.toApfloat
 import matt.kjlib.jmath.unaryMinus
 import matt.kjlib.ranges.step
-import matt.kjlib.ser.ApfloatSerializer
-import matt.kjlib.ser.ApintSerializer
 import matt.klib.log.warn
 import matt.klib.math.sq
 import org.apache.commons.math3.exception.ConvergenceException
