@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 
 val ktVersion: String by extra
 
@@ -50,6 +49,52 @@ subprojects {
 	  }
 	}
   }
+
+
+
+
+
+
+
+
+
+  if (projectDir.name == "klib") {
+	sp.apply<MavenPublishPlugin>()
+
+
+	/*for whatever reasons, the maven publish plugin is behaving much better with the kotlin multiplatofrm plugin than it is with the kotlin jvm plugin. its actually coming with default publications, so I don't need to add any of my own.*/
+
+
+	/*	configure<PublishingExtension>() {
+		  this.publications {
+			this.forEach {
+			  println("klib:pub:${it.name}")
+			}
+			register("jvm"*//*"mavenJava"*//*, MavenPublication::class) {
+		  this.from(components["java"])
+		}
+	  }
+	}*/
+
+
+	sp.setupMavenTasks("compileKotlinJvm")
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   if (JIGSAW) {
 	tasks.withType<JavaCompile> {

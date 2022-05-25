@@ -91,54 +91,32 @@ subprojects sub@{
   if (isAnyLib) {
 	apply<JavaLibraryPlugin>()
 
-	if (projectDir.name == "kbuild" || (projectDir.parentFile.name == "kjlib" && projectDir.name == "lang")) {
-//	  println("here:${sp}")
+	/*unlike with the kotlin multiplatform plugin, publications are not being added automatically here. no idea why. but adding it myself below is working*/
+	/*actually, registering a gradle plugin might have saved me with kjlib!*/
+
+
+	val isKbuild = projectDir.name == "kbuild"
+	val isLang = (projectDir.parentFile.name == "kjlib" && projectDir.name == "lang")
+	if (isKbuild || isLang) {
 	  sp.apply<MavenPublishPlugin>()
-	  //	sp.apply<PublishingPlugin>()
 
-	  configure<PublishingExtension>() {
-		this.publications {
-		  register("mavenJava",MavenPublication::class) {
-			this.from(components["java"])
-			//		  this.
-			//		  this.from()
-		  }
-		 /* (this["mavenJava"] as MavenPublication).apply {
-
-		  }*/
-		}
-	  }
-	  val lastVersionFile = sp.projectDir.resolve("lastversion.txt")
-	  var firstPublish = !lastVersionFile.exists()
-	  if (firstPublish) lastVersionFile.writeText("0")
-	  var thisVersion = lastVersionFile.readText().toInt() + 1
-	  sp.version = thisVersion.toString()
-	  sp.tasks {
-		val ck = this["compileKotlin"]
-		ck.doLast {
-		  if (firstPublish || this.didWork) {
-			lastVersionFile.writeText(thisVersion.toString())
-		  }
-		}
-		this["publishToMavenLocal"].apply {
-		  dependsOn(sp.tasks["jar"])
-		  onlyIf {
-			firstPublish || ck.didWork
-		  }
-		}
-
-		//	  kjProj.afterEvaluate {
-
-		sp.afterEvaluate {
-		  /*this is only for gradle plugins*/
-		  if (sp.tasks.map{it.name}.contains("publishPluginMavenPublicationToMavenLocal")) {
-			get("publishPluginMavenPublicationToMavenLocal").onlyIf {
-			  firstPublish || get("compileKotlin").didWork
+	  if (isLang) {
+		sp.configure<PublishingExtension>() {
+		  this.publications {
+			//		  println("itrating kbuild pubs")
+			this.forEach {
+			  println("kbuild:pub:${it.name}")
+			}
+			this.register("mavenJava", MavenPublication::class) {
+			  this.from(components["java"])
 			}
 		  }
 		}
 	  }
-	  //	}
+
+
+
+	  sp.setupMavenTasks("compileKotlin")
 	}
   }
 
