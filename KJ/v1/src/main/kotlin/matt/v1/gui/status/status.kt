@@ -7,8 +7,8 @@ import matt.hurricanefx.eye.lang.Prop
 import matt.hurricanefx.tornadofx.control.label
 import matt.kjlib.async.every
 import matt.kjlib.date.sec
-import matt.kjlib.itr.loopIterator
 import matt.kjlib.str.prependZeros
+import matt.kjlib.stream.itr.loopIterator
 import matt.v1.gui.status.StatusLabel.Status.IDLE
 import matt.v1.gui.status.StatusLabel.Status.WORKING
 
