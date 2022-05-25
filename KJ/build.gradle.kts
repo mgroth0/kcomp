@@ -95,24 +95,26 @@ subprojects sub@{
 	/*actually, registering a gradle plugin might have saved me with kjlib!*/
 
 
-	val isKbuild = projectDir.name == "kbuild"
 	val isLang = (projectDir.parentFile.name == "kjlib" && projectDir.name == "lang")
-	if (isKbuild || isLang) {
+	if (LAST_VERSION_TXT in projectDir.list()) {
 	  sp.apply<MavenPublishPlugin>()
 
-	  if (isLang) {
-		sp.configure<PublishingExtension>() {
-		  this.publications {
-			//		  println("itrating kbuild pubs")
-			this.forEach {
-			  println("kbuild:pub:${it.name}")
-			}
-			this.register("mavenJava", MavenPublication::class) {
-			  this.from(components["java"])
+	  sp.afterEvaluate {
+		if (!sp.pluginManager.hasPlugin("org.gradle.java-gradle-plugin")) {
+		  sp.configure<PublishingExtension>() {
+			this.publications {
+			  //		  println("itrating kbuild pubs")
+			  this.forEach {
+				println("kbuild:pub:${it.name}")
+			  }
+			  this.register("mavenJava", MavenPublication::class) {
+				this.from(components["java"])
+			  }
 			}
 		  }
 		}
 	  }
+
 
 
 

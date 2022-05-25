@@ -58,7 +58,7 @@ subprojects {
 
 
 
-  if (projectDir.name == "klib") {
+  if (LAST_VERSION_TXT in projectDir.list()) {
 	sp.apply<MavenPublishPlugin>()
 
 
