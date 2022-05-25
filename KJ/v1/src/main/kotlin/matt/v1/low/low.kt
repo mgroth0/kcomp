@@ -6,7 +6,6 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.plus
-import matt.kbuild.REGISTERED_FOLDER
 //import matt.kjlib.commons.REGISTERED_FOLDER
 import matt.kjlib.compcache.ComputeCache
 import matt.kjlib.compcache.ComputeInput
@@ -32,6 +31,7 @@ import matt.kjlib.jmath.times
 import matt.kjlib.jmath.toApfloat
 import matt.kjlib.jmath.unaryMinus
 import matt.kjlib.ranges.step
+import matt.klib.REGISTERED_FOLDER
 import matt.klib.log.warn
 import matt.klib.math.sq
 import org.apache.commons.math3.exception.ConvergenceException

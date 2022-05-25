@@ -6,6 +6,7 @@ import com.github.jengelman.gradle.plugins.shadow.internal.JavaJarExec
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import kotlin.script.experimental.jvm.util.hasParentNamed
 
 val fxVersion = tomlVersion("fx") // .resolve()
 val JIGSAW: Boolean by rootProject.extra
@@ -70,7 +71,8 @@ subprojects sub@{
   gradle.projectsEvaluated {
 	sp.configurations.forEach { c ->
 	  c.dependencies.withType<ProjectDependency>().forEach { dep ->
-		dep.dependencyProject.tasks.getByName("test").let { t ->
+		val testName = if (dep.dependencyProject.projectDir.hasParentNamed("k")) "jvmTest" else "test"
+		dep.dependencyProject.tasks.getByName(testName).let { t ->
 		  sp.tasks.withType<KotlinCompile> {
 			dependsOn(t)
 		  }
@@ -118,7 +120,10 @@ subprojects sub@{
 
 
 
-	  sp.setupMavenTasks("compileKotlin")
+	  sp.setupMavenTasks(
+		compileKotlinJvmTaskName = "compileKotlin",
+		jarTaskName = "jar"
+	  )
 	}
   }
 

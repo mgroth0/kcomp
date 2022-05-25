@@ -11,7 +11,7 @@ subprojects {
   val sp = this
 
   sp.apply<org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper>()
-  sp.apply<JavaLibraryPlugin>()
+  //  sp.apply<JavaLibraryPlugin>()
 
   sp.configure<JavaPluginExtension> {
 	modularity.inferModulePath.set(JIGSAW)
@@ -38,7 +38,12 @@ subprojects {
 	  //	  kotlinOptions.mventionKotlinJvmOptions()
 	  //	}
 
+	  1
+	}
 
+	this.js(IR) {
+	  browser()
+	  /*nodejs()*/
 	}
 
 	sourceSets {
@@ -77,7 +82,10 @@ subprojects {
 	}*/
 
 
-	sp.setupMavenTasks("compileKotlinJvm")
+	sp.setupMavenTasks(
+	  compileKotlinJvmTaskName = "compileKotlinJvm",
+	  jarTaskName = "jvmJar"
+	)
   }
 
 
