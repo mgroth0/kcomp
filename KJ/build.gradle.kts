@@ -92,7 +92,7 @@ subprojects sub@{
 	apply<JavaLibraryPlugin>()
 
 	if (projectDir.name == "kbuild" || (projectDir.parentFile.name == "kjlib" && projectDir.name == "lang")) {
-	  println("here:${sp}")
+//	  println("here:${sp}")
 	  sp.apply<MavenPublishPlugin>()
 	  //	sp.apply<PublishingPlugin>()
 
