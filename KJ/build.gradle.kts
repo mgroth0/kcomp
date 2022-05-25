@@ -13,6 +13,7 @@ val thelibs = libs
 val theMatt = projects
 val shadowGradle = projectDir.resolve("shadow.gradle")
 
+val kjProj = this
 
 subprojects sub@{
   val sp = this
@@ -47,7 +48,7 @@ subprojects sub@{
 	  languageVersion.set(javaLangVersion)
 	}
 
-  /*"The new Java toolchain feature cannot be used at the project level in combination with source and/or target compatibility"*/
+	/*"The new Java toolchain feature cannot be used at the project level in combination with source and/or target compatibility"*/
 	/*sourceCompatibility = javaVersion
 	targetCompatibility = javaVersion*/
 
@@ -89,7 +90,60 @@ subprojects sub@{
 
   if (isAnyLib) {
 	apply<JavaLibraryPlugin>()
+
+	if (projectDir.name == "kbuild" || (projectDir.parentFile.name == "kjlib" && projectDir.name == "lang")) {
+	  println("here:${sp}")
+	  sp.apply<MavenPublishPlugin>()
+	  //	sp.apply<PublishingPlugin>()
+
+	  configure<PublishingExtension>() {
+		this.publications {
+		  register("mavenJava",MavenPublication::class) {
+			this.from(components["java"])
+			//		  this.
+			//		  this.from()
+		  }
+		 /* (this["mavenJava"] as MavenPublication).apply {
+
+		  }*/
+		}
+	  }
+	  val lastVersionFile = sp.projectDir.resolve("lastversion.txt")
+	  var firstPublish = !lastVersionFile.exists()
+	  if (firstPublish) lastVersionFile.writeText("0")
+	  var thisVersion = lastVersionFile.readText().toInt() + 1
+	  sp.version = thisVersion.toString()
+	  sp.tasks {
+		val ck = this["compileKotlin"]
+		ck.doLast {
+		  if (firstPublish || this.didWork) {
+			lastVersionFile.writeText(thisVersion.toString())
+		  }
+		}
+		this["publishToMavenLocal"].apply {
+		  dependsOn(sp.tasks["jar"])
+		  onlyIf {
+			firstPublish || ck.didWork
+		  }
+		}
+
+		//	  kjProj.afterEvaluate {
+
+		sp.afterEvaluate {
+		  /*this is only for gradle plugins*/
+		  if (sp.tasks.map{it.name}.contains("publishPluginMavenPublicationToMavenLocal")) {
+			get("publishPluginMavenPublicationToMavenLocal").onlyIf {
+			  firstPublish || get("compileKotlin").didWork
+			}
+		  }
+		}
+	  }
+	  //	}
+	}
   }
+
+
+
 
 
 
@@ -169,6 +223,10 @@ subprojects sub@{
 	/*this.args = jvmRuntimeArgs*/
 	this.jvmArgs = jvmRuntimeArgs
   }
+
+
+
+
   tasks.withType<JavaJarExec> {
 	enableAssertions = true
 	/*this.args = jvmRuntimeArgs*/
@@ -177,7 +235,6 @@ subprojects sub@{
   configure<ShadowExtension>() {
   }
   tasks.withType<ShadowJar> {
-
 
 
 	/*this.minimize()*/
