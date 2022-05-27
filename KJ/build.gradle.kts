@@ -4,8 +4,10 @@ import com.github.jengelman.gradle.plugins.shadow.ShadowExtension
 import com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
 import com.github.jengelman.gradle.plugins.shadow.internal.JavaJarExec
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import matt.kbuild.shell
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.lang.System.currentTimeMillis
 import kotlin.script.experimental.jvm.util.hasParentNamed
 
 val fxVersion = tomlVersion("fx") // .resolve()
@@ -235,14 +237,21 @@ subprojects sub@{
 		val shadowJar = buildDir.resolve("libs")
 		  .listFiles()!!
 		  .first { it.name.contains("-all.jar") }
-		shadowJar
-		  .copyTo(
-			rootDir
-			  .resolve("bin/jar/")
-			  .apply { mkdirs() }
-			  .resolve(shadowJar.name),
-			overwrite = true
-		  )
+		val dest = rootDir
+		  .resolve("bin/jar/")
+		  .apply { mkdirs() }
+		  .resolve(shadowJar.name)
+
+		//		val t1 = currentTimeMillis()
+
+		/*what a SHAM. This can take over 10 times as long as cp*/
+		/*shadowJar.copyTo(dest, overwrite = true)*/
+
+		//		val t2 = currentTimeMillis()
+		shell("cp", "-rf", shadowJar.absolutePath, dest.absolutePath)
+		//		val t3 = currentTimeMillis()
+		//		println("$sp :copyTo took ${(t2 - t1)/1000.0} secs")
+		//		println("$sp :cp took ${(t3 - t2)/1000.0} secs")
 	  }
 	}
   }
