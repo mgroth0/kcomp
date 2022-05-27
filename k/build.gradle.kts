@@ -47,10 +47,11 @@ subprojects {
 	}
 
 	sourceSets {
-	  all {
-		/*https://kotlinlang.org/docs/opt-in-requirements.html#module-wide-opt-in*/
-		//	  languageSettings.optIn("org.mylibrary.OptInAnnotation")
-		//	  languageSettings.useExperimentalAnnotation("org.mylibrary.OptInAnnotation")
+
+	  val commonMain by getting {
+		dependencies {
+		  implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
+		}
 	  }
 	}
   }
@@ -70,16 +71,6 @@ subprojects {
 	/*for whatever reasons, the maven publish plugin is behaving much better with the kotlin multiplatofrm plugin than it is with the kotlin jvm plugin. its actually coming with default publications, so I don't need to add any of my own.*/
 
 
-	/*	configure<PublishingExtension>() {
-		  this.publications {
-			this.forEach {
-			  println("klib:pub:${it.name}")
-			}
-			register("jvm"*//*"mavenJava"*//*, MavenPublication::class) {
-		  this.from(components["java"])
-		}
-	  }
-	}*/
 
 
 	sp.setupMavenTasks(
@@ -122,3 +113,6 @@ subprojects {
 
 
 }
+
+
+/*NPM INSTALL TASK IS DISABLED IN ROOT BUILDSCRIPT BECAUSE IT PRODUCES OBNOXIOUS WARNING. WILL NEED TO ENABLE THAT TO INSTALL DEPENDENCIES PROBABLY*/

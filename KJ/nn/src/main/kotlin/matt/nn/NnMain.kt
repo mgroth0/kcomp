@@ -4,8 +4,8 @@ import matt.gui.app.GuiApp
 import matt.kjlib.jmath.nextUnitDouble
 import matt.kjlib.jmath.sigmoid
 import matt.kjlib.jmath.sigmoidDerivative
-import matt.kjlib.lang.jlang.os
 import matt.kjlib.stream.applyEach
+import matt.klib.commons.os
 import matt.klib.math.sq
 import matt.nn.NeuralNetwork.Companion.INPUT_LENGTH
 //import matt.reflect.os

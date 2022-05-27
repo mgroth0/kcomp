@@ -1,11 +1,11 @@
 package matt.v1
 
 import matt.gui.app.GuiApp
-import matt.kbuild.DATA_FOLDER
 //import matt.kjlib.commons.DATA_FOLDER
 import matt.kjlib.date.simplePrinting
-import matt.kjlib.file.get
-import matt.kjlib.lang.jlang.ismac
+import matt.klib.commons.DATA_FOLDER
+import matt.klib.commons.get
+import matt.klib.commons.ismac
 //import matt.reflect.ismac
 import matt.reflect.onLinux
 import matt.remote.host.Hosts

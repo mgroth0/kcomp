@@ -10,7 +10,6 @@ import kotlinx.serialization.modules.plus
 import matt.kjlib.compcache.ComputeCache
 import matt.kjlib.compcache.ComputeInput
 import matt.kjlib.file.filterHasExtension
-import matt.kjlib.file.get
 import matt.kjlib.file.recursiveChildren
 import matt.kjlib.file.text
 import matt.kjlib.jmath.API
@@ -31,7 +30,8 @@ import matt.kjlib.jmath.times
 import matt.kjlib.jmath.toApfloat
 import matt.kjlib.jmath.unaryMinus
 import matt.kjlib.ranges.step
-import matt.klib.REGISTERED_FOLDER
+import matt.klib.commons.REGISTERED_FOLDER
+import matt.klib.commons.get
 import matt.klib.log.warn
 import matt.klib.math.sq
 import org.apache.commons.math3.exception.ConvergenceException

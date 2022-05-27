@@ -15,11 +15,11 @@ import matt.gui.resize.DragResizer
 import matt.hurricanefx.eye.collect.toObservable
 import matt.hurricanefx.eye.lib.onChange
 import matt.hurricanefx.lazyTab
-import matt.kbuild.DATA_FOLDER
 //import matt.kjlib.commons.DATA_FOLDER
-import matt.kjlib.file.get
 import matt.kjlib.jmath.floorInt
 import matt.kjlib.lang.NEVER
+import matt.klib.commons.DATA_FOLDER
+import matt.klib.commons.get
 import matt.klib.dmap.withStoringDefault
 import matt.v1.gui.GuiMode
 import matt.v1.gui.GuiMode.ITTI_KOCH

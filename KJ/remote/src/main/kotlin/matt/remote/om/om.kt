@@ -1,6 +1,6 @@
 package matt.remote.om
 
-import matt.kjlib.file.get
+import matt.klib.commons.get
 import java.io.File
 
 object OM {

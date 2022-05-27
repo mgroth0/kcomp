@@ -60,9 +60,15 @@ subprojects sub@{
   apply<KotlinPluginWrapper>()
   //  apply(serGradle)
 
-  this.tasks.withType<KotlinCompile>() {
-	dependsOn(project(":KJ:kbuild").tasks["gitPullSubmodule"])
+
+  val ENABLE_GIT: Boolean by rootProject.extra
+
+  if (ENABLE_GIT) {
+	this.tasks.withType<KotlinCompile>() {
+	  dependsOn(project(":KJ:kbuild").tasks["gitPullSubmodule"])
+	}
   }
+
 
   //  apply(SerializationPluginContext)
 
@@ -121,7 +127,7 @@ subprojects sub@{
 
 
 
-
+	  println("sp.group:${sp.group},sp.name=${sp.name}")
 	  sp.setupMavenTasks(
 		compileKotlinJvmTaskName = "compileKotlin",
 		jarTaskName = "jar"
@@ -140,13 +146,24 @@ subprojects sub@{
 	  listOf("base", "controls", "graphics", "web", "media", "swing").forEach {
 		substitute(module("org.openjfx:javafx-$it"))
 		  .using(module("org.openjfx:javafx-$it:${fxVersion}"))
-		  .withClassifier(if (isNewMac) run {
-			//				println("isNewMac")
-			"mac-aarch64"
-		  } else if (ismac) run {
-			//				println("isOldMac")
-			"mac"
-		  } else "linux")
+		  .withClassifier(
+
+
+			when (thisMachine) {
+			  NEW_MAC -> "mac-aarch64"
+			  OLD_MAC -> "mac"
+			  else    -> "linux"
+			}
+
+
+			//			if (isNewMac) run {
+			//			  //				println("isNewMac")
+			//
+			//			} else if (ismac) run {
+			//			  //				println("isOldMac")
+			//			  "mac"
+			//			} else "linux"
+		  )
 	  }
 	}
   }
