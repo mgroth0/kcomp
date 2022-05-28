@@ -10,7 +10,7 @@ import matt.kjlib.ranges.step
 import matt.kjlib.stream.forEachPairing
 import matt.klib.commons.USER_HOME
 import matt.klib.commons.get
-import matt.klibexport.klibexport.allUnique
+import matt.klib.stream.allUnique
 import matt.v1.lab.petri.PopShape.CON_CIRCLES
 import matt.v1.lab.petri.PopShape.HLINE
 import matt.v1.lab.petri.PopShape.MAT_CIRCLE

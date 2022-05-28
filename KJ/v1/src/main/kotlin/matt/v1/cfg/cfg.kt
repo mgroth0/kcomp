@@ -20,9 +20,9 @@ import matt.hurricanefx.tornadofx.nodes.add
 import matt.kjlib.jmath.sigFigs
 import matt.kjlib.lang.NEVER
 import matt.kjlib.str.truncateWithElipses
-import matt.klibexport.tfx.isDouble
-import matt.klibexport.tfx.isFloat
-import matt.klibexport.tfx.isInt
+import matt.klib.tfx.isDouble
+import matt.klib.tfx.isFloat
+import matt.klib.tfx.isInt
 import kotlin.math.floor
 import kotlin.reflect.KProperty
 

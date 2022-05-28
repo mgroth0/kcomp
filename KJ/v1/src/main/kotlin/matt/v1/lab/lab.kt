@@ -25,7 +25,7 @@ import matt.kjlib.lang.err
 import matt.kjlib.ranges.step
 import matt.kjlib.stream.onEveryIndexed
 import matt.klib.commons.get
-import matt.klibexport.klibexport.go
+import matt.klib.lang.go
 import matt.v1.V1_DATA_FOLDER
 import matt.v1.activity.Response
 import matt.v1.cfg.user.UserConfig

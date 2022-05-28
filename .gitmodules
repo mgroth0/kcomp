@@ -1,9 +1,6 @@
 [submodule "buildSrc"]
 	path = buildSrc
 	url = https://github.com/mgroth0/buildSrc
-[submodule "KJ/klibexport"]
-	path = KJ/klibexport
-	url = https://github.com/mgroth0/klibexport
 [submodule "KJ/reflect"]
 	path = KJ/reflect
 	url = https://github.com/mgroth0/reflect
