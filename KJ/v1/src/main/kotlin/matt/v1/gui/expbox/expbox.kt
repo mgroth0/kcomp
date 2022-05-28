@@ -37,8 +37,8 @@ import matt.hurricanefx.tornadofx.nodes.vgrow
 import matt.hurricanefx.tornadofx.tab.staticTab
 import matt.hurricanefx.tornadofx.tab.tabpane
 import matt.kjlib.map.lazyMap
-import matt.kjlib.str.addSpacesUntilLengthIs
 import matt.klib.lang.cap
+import matt.klib.str.addSpacesUntilLengthIs
 import matt.v1.cfg.user.UserConfig
 import matt.v1.exps.experiments
 import matt.v1.exps.expmodels.ExpCategory
