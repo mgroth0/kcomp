@@ -58,3 +58,6 @@
 [submodule "KJ/caching"]
 	path = KJ/caching
 	url = https://github.com/mgroth0/caching
+[submodule "k/stream"]
+	path = k/stream
+	url = https://github.com/mgroth0/stream

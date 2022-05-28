@@ -9,8 +9,8 @@ import matt.kjlib.jmath.dot
 import matt.kjlib.jmath.plus
 import matt.kjlib.jmath.point.BasicPoint
 import matt.kjlib.jmath.point.Point
-import matt.kjlib.stream.flatten
-import matt.kjlib.stream.forEachNested
+import matt.stream.flatten
+import matt.stream.forEachNested
 import matt.klib.math.sq
 import matt.v1.low.Envelope
 import matt.v1.low.PhaseType

@@ -26,7 +26,7 @@ import matt.hurricanefx.tornadofx.nodes.add
 import matt.hurricanefx.tornadofx.nodes.clear
 import matt.kjlib.image.resize
 import matt.kjlib.image.toSquare
-import matt.kjlib.stream.forEachNested
+import matt.stream.forEachNested
 import matt.v1.cfg.GuiConfigurable
 import matt.v1.model.FieldGenerator
 import org.jetbrains.kotlinx.multik.ndarray.data.D2

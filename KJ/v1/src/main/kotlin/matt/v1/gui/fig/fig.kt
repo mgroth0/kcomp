@@ -18,7 +18,7 @@ import matt.hurricanefx.tornadofx.control.textfield
 import matt.json.custom.toJsonWriter
 import matt.json.prim.loadJson
 import matt.kjlib.ranges.step
-import matt.kjlib.stream.applyEach
+import matt.stream.applyEach
 import matt.klib.dmap.withStoringDefault
 import matt.v1.comp.Fit.Gaussian
 import matt.v1.figmodels.AxisConfig

@@ -21,7 +21,7 @@ import matt.kjlib.jmath.point.toBasicPoints
 import matt.kjlib.jmath.times
 import matt.kjlib.jmath.toApfloat
 import matt.kjlib.ranges.step
-import matt.kjlib.stream.onEveryIndexed
+import matt.stream.onEveryIndexed
 import matt.klib.commons.get
 import matt.klib.lang.err
 import matt.klib.lang.go
