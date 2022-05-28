@@ -4,7 +4,7 @@ import com.github.jengelman.gradle.plugins.shadow.ShadowExtension
 import com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
 import com.github.jengelman.gradle.plugins.shadow.internal.JavaJarExec
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import matt.kbuild.shell
+import matt.kjlib.shell.shell
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.lang.System.currentTimeMillis
@@ -236,9 +236,15 @@ subprojects sub@{
 	/*this.args = jvmRuntimeArgs*/
 	this.jvmArgs = jvmRuntimeArgs
   }
-  configure<ShadowExtension>() {
-  }
+  //  configure<ShadowExtension>() {
+  //	this@configure.archive
+  //  }
   tasks.withType<ShadowJar> {
+
+	/*the default? it worked until I started adding versions into my subprojects.*/
+	/*archiveFileName.set("${archiveBaseName}-${archiveVersion}-${archiveClassifier}.${archiveExtension}")*/
+	/*[archiveBaseName]-[archiveAppendix]-[archiveVersion]-[archiveClassifier].[archiveExtension]*/
+	archiveFileName.set("${archiveBaseName.get()}-all.${archiveExtension.get()}")
 
 
 	/*this.minimize()*/
