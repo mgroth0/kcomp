@@ -127,7 +127,7 @@ subprojects sub@{
 
 
 
-	  println("sp.group:${sp.group},sp.name=${sp.name}")
+//	  println("sp.group:${sp.group},sp.name=${sp.name}")
 	  sp.setupMavenTasks(
 		compileKotlinJvmTaskName = "compileKotlin",
 		jarTaskName = "jar"
