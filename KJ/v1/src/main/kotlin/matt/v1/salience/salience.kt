@@ -1,7 +1,7 @@
 package matt.v1.salience
 
+import matt.async.date.withStopwatch
 import matt.hurricanefx.intColorToFXColor
-import matt.kjlib.date.withStopwatch
 import matt.kjlib.jmath.convolve
 import matt.kjlib.jmath.intMean
 import matt.klib.lang.go

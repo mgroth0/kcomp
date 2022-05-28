@@ -1,12 +1,12 @@
 package matt.v1.gui.fig.update
 
 import com.google.gson.JsonElement
+import matt.async.date.sec
+import matt.caching.every
+import matt.caching.with
 import matt.gui.loop.runLaterReturn
 import matt.json.custom.GsonParser
 import matt.json.custom.SimpleJson
-import matt.kjlib.async.every
-import matt.kjlib.async.with
-import matt.kjlib.date.sec
 import matt.kjlib.jmath.point.Point
 import matt.reflect.NoArgConstructor
 import matt.v1.gui.fig.Figure

@@ -1,7 +1,7 @@
 package matt.v1.exps.expmodels
 
 import kotlinx.coroutines.flow.flow
-import matt.kjlib.async.emitAll
+import matt.async.emitAll
 import matt.kjlib.stream.mutableListsOf
 import matt.v1.activity.MaybePreDNPopR
 import matt.v1.activity.Stimulation

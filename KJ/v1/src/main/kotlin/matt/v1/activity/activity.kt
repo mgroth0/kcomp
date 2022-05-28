@@ -1,8 +1,8 @@
 package matt.v1.activity
 
-import matt.kjlib.async.parAssociateWith
-import matt.kjlib.compcache.ComputeInput
-import matt.kjlib.compcache.UpdaterComputeInput
+import matt.caching.compcache.ComputeInput
+import matt.caching.compcache.UpdaterComputeInput
+import matt.caching.parAssociateWith
 import matt.kjlib.jmath.e
 import matt.kjlib.jmath.point.BasicPoint
 import matt.kjlib.lang.err

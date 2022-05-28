@@ -6,9 +6,9 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.plus
+import matt.caching.compcache.ComputeCache
+import matt.caching.compcache.ComputeInput
 //import matt.kjlib.commons.REGISTERED_FOLDER
-import matt.kjlib.compcache.ComputeCache
-import matt.kjlib.compcache.ComputeInput
 import matt.kjlib.file.filterHasExtension
 import matt.kjlib.file.recursiveChildren
 import matt.kjlib.file.text

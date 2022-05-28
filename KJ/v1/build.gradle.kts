@@ -3,6 +3,8 @@ dependencies {
   implementation(libs.bundles.multik.full)
   /*implementation(libs.aparapi)*/
   implementation(libs.mat)
+  api(projects.kj.caching)
+  api(projects.kj.async)
   /*println("testing if newMac")*/
   /*    if (isNewMac) {
 		  println("ok this is working...")
@@ -43,7 +45,6 @@ dependencies {
 	  "/Users/matthewgroth/registered/kcomp/KJ/jar/tensorflow-framework-0.4.0-SNAPSHOT.jar",
 	)
   )*/
-
 
 
 }

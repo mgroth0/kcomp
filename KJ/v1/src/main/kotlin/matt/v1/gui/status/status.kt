@@ -2,11 +2,11 @@ package matt.v1.gui.status
 
 import javafx.scene.layout.HBox
 import javafx.scene.text.Font
+import matt.async.date.sec
+import matt.caching.every
 import matt.gui.loop.runLaterReturn
 import matt.hurricanefx.eye.lang.Prop
 import matt.hurricanefx.tornadofx.control.label
-import matt.kjlib.async.every
-import matt.kjlib.date.sec
 import matt.kjlib.str.prependZeros
 import matt.kjlib.stream.itr.loopIterator
 import matt.v1.gui.status.StatusLabel.Status.IDLE

@@ -2,9 +2,9 @@
 
 package matt.remote
 
+import matt.async.date.tic
 import matt.exec.app.appName
 import matt.exec.cmd.CommandLineApp
-import matt.kjlib.date.tic
 import matt.remote.expect.cd
 import matt.remote.expect.exit
 import matt.remote.expect.hostname

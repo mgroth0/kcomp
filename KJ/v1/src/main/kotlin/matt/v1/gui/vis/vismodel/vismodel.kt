@@ -9,6 +9,7 @@ import javafx.scene.control.ContentDisplay.TOP
 import javafx.scene.image.Image
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
+import matt.caching.with
 import matt.gui.loop.runLaterReturn
 import matt.gui.proto.ScaledCanvas
 import matt.hurricanefx.dragsSnapshot
@@ -23,7 +24,6 @@ import matt.hurricanefx.tornadofx.control.label
 import matt.hurricanefx.tornadofx.layout.hbox
 import matt.hurricanefx.tornadofx.nodes.add
 import matt.hurricanefx.tornadofx.nodes.clear
-import matt.kjlib.async.with
 import matt.kjlib.image.resize
 import matt.kjlib.image.toSquare
 import matt.kjlib.stream.forEachNested

@@ -52,3 +52,9 @@
 [submodule "k/klib"]
 	path = k/klib
 	url = https://github.com/mgroth0/klib
+[submodule "KJ/async"]
+	path = KJ/async
+	url = https://github.com/mgroth0/async
+[submodule "KJ/caching"]
+	path = KJ/caching
+	url = https://github.com/mgroth0/caching

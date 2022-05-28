@@ -1,8 +1,8 @@
 package matt.v1
 
+import matt.async.date.simplePrinting
 import matt.gui.app.GuiApp
 //import matt.kjlib.commons.DATA_FOLDER
-import matt.kjlib.date.simplePrinting
 import matt.klib.commons.DATA_FOLDER
 import matt.klib.commons.get
 import matt.klib.commons.ismac

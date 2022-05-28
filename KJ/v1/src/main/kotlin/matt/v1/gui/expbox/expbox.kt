@@ -9,8 +9,11 @@ import javafx.scene.layout.FlowPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Priority.ALWAYS
 import javafx.scene.layout.VBox
+import matt.async.daemon
 import matt.auto.openInFinder
 import matt.auto.subl
+import matt.caching.compcache.COMP_CACHE_FOLDER
+import matt.caching.compcache.ComputeCache
 import matt.fxlib.console.customConsole
 import matt.fxlib.console.interceptConsole
 import matt.gui.core.context.mcontextmenu
@@ -33,9 +36,6 @@ import matt.hurricanefx.tornadofx.nodes.disableWhen
 import matt.hurricanefx.tornadofx.nodes.vgrow
 import matt.hurricanefx.tornadofx.tab.staticTab
 import matt.hurricanefx.tornadofx.tab.tabpane
-import matt.kjlib.async.daemon
-import matt.kjlib.compcache.COMP_CACHE_FOLDER
-import matt.kjlib.compcache.ComputeCache
 import matt.kjlib.map.lazyMap
 import matt.kjlib.str.addSpacesUntilLengthIs
 import matt.klib.lang.cap
