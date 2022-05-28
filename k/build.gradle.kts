@@ -15,8 +15,8 @@ subprojects {
 
   sp.configure<JavaPluginExtension> {
 	modularity.inferModulePath.set(JIGSAW)
-	val javaLangVersion = JavaLanguageVersion.of(tomlVersion("java"))
-	val javaVersion = JavaVersion.toVersion(tomlVersion("java"))
+	val javaLangVersion = JavaLanguageVersion.of(matt.kbuild.tomlVersion("java"))
+	val javaVersion = JavaVersion.toVersion(matt.kbuild.tomlVersion("java"))
 	toolchain {
 	  languageVersion.set(javaLangVersion)
 	}

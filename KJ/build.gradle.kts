@@ -5,12 +5,13 @@ import com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
 import com.github.jengelman.gradle.plugins.shadow.internal.JavaJarExec
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import matt.kjlib.shell.shell
+import matt.klib.commons.get
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.lang.System.currentTimeMillis
 import kotlin.script.experimental.jvm.util.hasParentNamed
 
-val fxVersion = tomlVersion("fx") // .resolve()
+val fxVersion = matt.kbuild.tomlVersion("fx") // .resolve()
 val JIGSAW: Boolean by rootProject.extra
 val thelibs = libs
 val theMatt = projects
@@ -45,8 +46,8 @@ subprojects sub@{
   apply<JavaPlugin>()
   configure<JavaPluginExtension> {
 	modularity.inferModulePath.set(JIGSAW)
-	val javaLangVersion = JavaLanguageVersion.of(tomlVersion("java"))
-	val javaVersion = JavaVersion.toVersion(tomlVersion("java"))
+	val javaLangVersion = JavaLanguageVersion.of(matt.kbuild.tomlVersion("java"))
+	val javaVersion = JavaVersion.toVersion(matt.kbuild.tomlVersion("java"))
 	toolchain {
 	  languageVersion.set(javaLangVersion)
 	}
@@ -188,7 +189,7 @@ subprojects sub@{
 
 
   val createAppNameResource by tasks.creating {
-	val f = FixedFile(projectDir)["src"]["main"]["resources"]["matt"]["appname.txt"]
+	val f = projectDir["src"]["main"]["resources"]["matt"]["appname.txt"]
 	this.onlyIf { !f.exists() || f.readText() != spname }
 	doLast {
 	  f.parentFile.mkdirs()
@@ -207,7 +208,7 @@ subprojects sub@{
 
   configure<JavaApplication> {
 	if (JIGSAW) mainModule.set(mainPackage)
-	if (FixedFile(projectDir)["src"]["main"]["kotlin"].exists()) {
+	if (projectDir["src"]["main"]["kotlin"].exists()) {
 	  mainClass.set("${mainPackage}.${spname.capitalize()}MainKt")
 	} else {
 	  mainClass.set("${mainPackage}.${spname.capitalize()}Main")
