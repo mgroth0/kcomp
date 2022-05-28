@@ -1,6 +1,6 @@
 package matt.v1.pyramid
 
-import matt.kjlib.lang.NEVER
+import matt.klib.lang.NEVER
 import org.jetbrains.kotlinx.multik.api.empty
 import org.jetbrains.kotlinx.multik.api.mk
 import org.jetbrains.kotlinx.multik.ndarray.data.D2

@@ -62,7 +62,7 @@ import matt.hurricanefx.tornadofx.async.runLater
 import matt.hurricanefx.tornadofx.nodes.add
 import matt.hurricanefx.tornadofx.nodes.clear
 import matt.json.custom.SimpleJson
-import matt.kjlib.lang.err
+import matt.klib.lang.err
 import matt.stim.flicker.psykt.ECEO.Phase.EC
 import matt.stim.flicker.psykt.ECEO.Phase.EO
 import matt.stim.flicker.psykt.Presenter.tasksParamControl

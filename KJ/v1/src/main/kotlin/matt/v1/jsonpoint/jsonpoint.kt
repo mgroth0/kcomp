@@ -4,7 +4,7 @@ import matt.json.custom.SimpleJson
 import matt.kjlib.jmath.point.APoint
 import matt.kjlib.jmath.point.BasicPoint
 import matt.kjlib.jmath.point.Point
-import matt.kjlib.lang.NEVER
+import matt.klib.lang.NEVER
 import matt.reflect.NoArgConstructor
 
 

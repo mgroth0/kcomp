@@ -1,8 +1,8 @@
 package matt.v1.model.vis
 
-import matt.kjlib.lang.err
 import matt.kjlib.stream.flatten
 import matt.kjlib.stream.forEachNested
+import matt.klib.lang.err
 import matt.v1.model.FieldGenerator
 import matt.v1.model.vis.NormMethod.ADD_POINT_5
 import matt.v1.model.vis.NormMethod.RATIO

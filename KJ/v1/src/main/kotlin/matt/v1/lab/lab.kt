@@ -20,10 +20,10 @@ import matt.kjlib.jmath.point.shiftAllByTroughs
 import matt.kjlib.jmath.point.toBasicPoints
 import matt.kjlib.jmath.times
 import matt.kjlib.jmath.toApfloat
-import matt.kjlib.lang.err
 import matt.kjlib.ranges.step
 import matt.kjlib.stream.onEveryIndexed
 import matt.klib.commons.get
+import matt.klib.lang.err
 import matt.klib.lang.go
 import matt.v1.V1_DATA_FOLDER
 import matt.v1.activity.Response

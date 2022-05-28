@@ -3,7 +3,7 @@ package matt.v1.comp
 import matt.kjlib.jmath.getPoisson
 import matt.kjlib.jmath.toApfloat
 import matt.kjlib.jmath.toApint
-import matt.kjlib.lang.err
+import matt.klib.lang.err
 import matt.v1.low.GPPCUnit
 import matt.v1.low.LogPoissonPPCUnit
 import matt.v1.low.PPCUnit

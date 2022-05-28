@@ -5,8 +5,8 @@ import matt.caching.compcache.UpdaterComputeInput
 import matt.caching.parAssociateWith
 import matt.kjlib.jmath.e
 import matt.kjlib.jmath.point.BasicPoint
-import matt.kjlib.lang.err
 import matt.klib.dmap.withStoringDefault
+import matt.klib.lang.err
 import matt.klib.math.sq
 import matt.v1.activity.AttentionAmp.Companion.ATTENTION_CENTER
 import matt.v1.lab.petri.Population
