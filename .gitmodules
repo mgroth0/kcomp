@@ -28,9 +28,6 @@
 [submodule "KJ/mstruct"]
 	path = KJ/mstruct
 	url = https://github.com/mgroth0/mstruct
-[submodule "KJ/kjcl"]
-	path = KJ/kjcl
-	url = https://github.com/mgroth0/kjcl
 [submodule "RootFiles"]
 	path = RootFiles
 	url = https://github.com/mgroth0/RootFiles
