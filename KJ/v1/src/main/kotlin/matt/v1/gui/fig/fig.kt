@@ -1,7 +1,5 @@
 package matt.v1.gui.fig
 
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
 import de.gsi.chart.XYChart
 import de.gsi.chart.renderer.LineStyle
 import de.gsi.chart.renderer.spi.ErrorDataSetRenderer
@@ -9,17 +7,23 @@ import de.gsi.dataset.spi.DoubleDataSet
 import javafx.scene.control.ContentDisplay.RIGHT
 import javafx.scene.layout.Pane
 import javafx.scene.layout.VBox
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonArray
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
 import matt.gui.clip.copyToClipboard
 import matt.gui.core.context.mcontextmenu
 import matt.hurricanefx.exactHeightProperty
 import matt.hurricanefx.exactWidthProperty
 import matt.hurricanefx.tornadofx.control.label
 import matt.hurricanefx.tornadofx.control.textfield
-import matt.json.custom.toJsonWriter
+import matt.json.custom.double
 import matt.json.prim.loadJson
 import matt.kjlib.ranges.step
-import matt.stream.applyEach
 import matt.klib.dmap.withStoringDefault
+import matt.stream.applyEach
 import matt.v1.comp.Fit.Gaussian
 import matt.v1.figmodels.AxisConfig
 import matt.v1.figmodels.SeriesCfg
@@ -101,18 +105,24 @@ class Figure: Pane() {
 
 
   /*actually this shouldnt be deprecated since its useful for exports*/
-  fun dataToJson() = JsonArray().apply {
-	chart!!.datasets.forEach { s ->
-	  add(JsonArray().apply {
-		(0 until s.dataCount).forEach { index ->
-		  add(JsonObject().apply {
-			addProperty("x", s[0, index])
-			addProperty("y", s[1, index])
-		  })
-		}
-	  })
-	}
-  }.toJsonWriter().toJsonString()
+  fun dataToJson() =
+	buildJsonArray {
+	  chart!!.datasets.forEach { s ->
+		add(
+		  buildJsonArray {
+			(0 until s.dataCount).forEach { index ->
+			  add(
+				buildJsonObject {
+				  put("x", JsonPrimitive(s[0, index]))
+				  put("y", JsonPrimitive(s[1, index]))
+				}
+			  )
+			}
+		  }
+		)
+	  }
+	}.toString()
+
 
   @Deprecated(
 	"use GuiUpdate.fromJson() instead, or if I really want to do this I can reimplement it later but currently it probably wont work right"
@@ -120,9 +130,9 @@ class Figure: Pane() {
   fun loadJson(file: File) {
 	file.loadJson(JsonArray::class).forEachIndexed { i, e ->
 	  val s = series[i]
-	  e.asJsonArray.forEachIndexed { ii, p ->
-		val point = p.asJsonObject
-		s.set(ii, point["x"].asDouble, point["y"].asDouble)
+	  e.jsonArray.forEachIndexed { ii, p ->
+		val point = p.jsonObject
+		s.set(ii, point["x"]!!.double, point["y"]!!.double)
 	  }
 	}
   }

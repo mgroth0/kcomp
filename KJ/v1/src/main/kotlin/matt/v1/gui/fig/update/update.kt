@@ -1,11 +1,11 @@
 package matt.v1.gui.fig.update
 
-import com.google.gson.JsonElement
+import kotlinx.serialization.json.JsonElement
 import matt.async.date.sec
 import matt.caching.every
 import matt.caching.with
 import matt.gui.loop.runLaterReturn
-import matt.json.custom.GsonParser
+import matt.json.custom.JsonParser
 import matt.json.custom.SimpleJson
 import matt.kjlib.jmath.point.Point
 import matt.reflect.NoArgConstructor
@@ -70,7 +70,7 @@ class FigureUpdate private constructor(
   }
 
   val updates by JsonJsonListProp(
-	builder = object: GsonParser<SeriesUpdate> {
+	builder = object: JsonParser<SeriesUpdate> {
 	  override fun fromGson(jv: JsonElement): SeriesUpdate {
 		return SeriesUpdate.new(REPLACE, 0, listOf(JsonPoint())).apply { loadProperties(jv) }
 	  }
@@ -122,7 +122,7 @@ class SeriesUpdate private constructor(
   val type by JsonEnumProp(SeriesUpdateType::class, type)
   val seriesIndex by JsonIntPropN(seriesIndex)
   val points by JsonJsonListProp(
-	object: GsonParser<JsonPoint> {
+	object: JsonParser<JsonPoint> {
 	  override fun fromGson(jv: JsonElement): JsonPoint {
 		return JsonPoint().apply {
 		  loadProperties(jv)
