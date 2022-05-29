@@ -71,7 +71,7 @@ class FigureUpdate private constructor(
 
   val updates by JsonJsonListProp(
 	builder = object: JsonParser<SeriesUpdate> {
-	  override fun fromGson(jv: JsonElement): SeriesUpdate {
+	  override fun fromJson(jv: JsonElement): SeriesUpdate {
 		return SeriesUpdate.new(REPLACE, 0, listOf(JsonPoint())).apply { loadProperties(jv) }
 	  }
 	},
@@ -123,7 +123,7 @@ class SeriesUpdate private constructor(
   val seriesIndex by JsonIntPropN(seriesIndex)
   val points by JsonJsonListProp(
 	object: JsonParser<JsonPoint> {
-	  override fun fromGson(jv: JsonElement): JsonPoint {
+	  override fun fromJson(jv: JsonElement): JsonPoint {
 		return JsonPoint().apply {
 		  loadProperties(jv)
 		}
