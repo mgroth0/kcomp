@@ -1,12 +1,12 @@
 package matt.v1.exps
 
-import matt.kjlib.jmath.point.PointDim.X
-import matt.kjlib.jmath.point.PointDim.Y
-import matt.kjlib.jmath.point.normalizeToMax
-import matt.kjlib.jmath.point.showAsPercent
-import matt.kjlib.ranges.step
+import matt.kjlib.jmath.ranges.step
+import matt.klib.math.PointDim.X
+import matt.klib.math.PointDim.Y
 import matt.klib.math.UnitType.DEGREES
 import matt.klib.math.UnitType.PERCENT
+import matt.klib.math.normalizeToMax
+import matt.klib.math.showAsPercent
 import matt.v1.exps.expmodels.varyingStimExp
 import matt.v1.figmodels.AxisConfig
 import matt.v1.lab.Experiment

@@ -1,8 +1,8 @@
 package matt.v1.model.combined
 
 import matt.kjlib.jmath.div
-import matt.kjlib.jmath.point.BasicPoint
 import matt.kjlib.jmath.times
+import matt.klib.math.BasicPoint
 import matt.v1.lab.petri.PopulationConfig
 import matt.v1.lab.petri.rosenbergPop
 import matt.v1.low.PhaseType.SIN

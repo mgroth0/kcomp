@@ -21,7 +21,7 @@ import matt.hurricanefx.tornadofx.control.label
 import matt.hurricanefx.tornadofx.control.textfield
 import matt.json.custom.double
 import matt.json.prim.loadJson
-import matt.kjlib.ranges.step
+import matt.kjlib.jmath.ranges.step
 import matt.klib.dmap.withStoringDefault
 import matt.stream.applyEach
 import matt.v1.comp.Fit.Gaussian

@@ -6,8 +6,8 @@ import matt.kjlib.cache.LRUCache
 import matt.kjlib.jmath.AZERO_FLOAT
 import matt.kjlib.jmath.div
 import matt.kjlib.jmath.plus
-import matt.kjlib.jmath.point.BasicPoint
-import matt.kjlib.jmath.point.Point
+import matt.klib.math.BasicPoint
+import matt.klib.math.Point
 import matt.klib.math.dot
 import matt.klib.math.sq
 import matt.stream.flatten

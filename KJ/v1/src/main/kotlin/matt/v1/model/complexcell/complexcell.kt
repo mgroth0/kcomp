@@ -1,6 +1,6 @@
 package matt.v1.model.complexcell
 
-import matt.kjlib.jmath.point.Point
+import matt.klib.math.Point
 import matt.v1.low.PhaseType.COS
 import matt.v1.low.PhaseType.SIN
 import matt.v1.model.Cell

@@ -2,14 +2,14 @@ package matt.v1.lab.petri
 
 //import matt.kjlib.commons.USER_HOME
 import matt.kjlib.jmath.div
-import matt.kjlib.jmath.point.BasicPoint
+import matt.kjlib.jmath.ranges.step
 import matt.kjlib.jmath.times
 import matt.kjlib.jmath.toApfloat
-import matt.kjlib.ranges.step
 import matt.stream.forEachPairing
 import matt.klib.commons.USER_HOME
 import matt.klib.commons.get
 import matt.klib.lang.err
+import matt.klib.math.BasicPoint
 import matt.klib.stream.allUnique
 import matt.v1.lab.petri.PopShape.CON_CIRCLES
 import matt.v1.lab.petri.PopShape.HLINE

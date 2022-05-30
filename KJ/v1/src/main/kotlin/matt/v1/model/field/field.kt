@@ -1,8 +1,8 @@
 package matt.v1.model.field
 
-import matt.kjlib.jmath.point.BasicPoint
+import matt.kjlib.jmath.ranges.step
 import matt.kjlib.jmath.unaryMinus
-import matt.kjlib.ranges.step
+import matt.klib.math.BasicPoint
 import matt.v1.low.Circle
 import matt.v1.model.field.FieldShape.SQUARE
 import org.apfloat.Apfloat

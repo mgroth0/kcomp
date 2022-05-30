@@ -7,8 +7,8 @@ import matt.caching.with
 import matt.gui.loop.runLaterReturn
 import matt.json.toJson
 import matt.json.toJsonString
-import matt.kjlib.jmath.point.Point
 import matt.klib.lang.NEVER
+import matt.klib.math.Point
 import matt.reflect.NoArgConstructor
 import matt.v1.gui.fig.Figure
 import matt.v1.gui.fig.update.SeriesUpdateType.APPEND

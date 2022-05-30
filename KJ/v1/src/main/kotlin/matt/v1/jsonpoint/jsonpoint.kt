@@ -2,9 +2,9 @@ package matt.v1.jsonpoint
 
 import kotlinx.serialization.Serializable
 import matt.kjlib.jmath.point.APoint
-import matt.kjlib.jmath.point.BasicPoint
-import matt.kjlib.jmath.point.Point
 import matt.klib.lang.NEVER
+import matt.klib.math.BasicPoint
+import matt.klib.math.Point
 import matt.reflect.NoArgConstructor
 
 
