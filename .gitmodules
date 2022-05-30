@@ -40,9 +40,6 @@
 [submodule "KJ/kbuild"]
 	path = KJ/kbuild
 	url = https://github.com/mgroth0/kbuild
-[submodule "k/klib"]
-	path = k/klib
-	url = https://github.com/mgroth0/klib
 [submodule "KJ/async"]
 	path = KJ/async
 	url = https://github.com/mgroth0/async
