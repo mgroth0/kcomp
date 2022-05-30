@@ -1,13 +1,14 @@
 package matt.v1.gui.fig.update
 
-import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.Serializable
 import matt.async.date.sec
 import matt.caching.every
 import matt.caching.with
 import matt.gui.loop.runLaterReturn
-import matt.json.custom.JsonParser
-import matt.json.custom.SimpleJson
+import matt.json.toJson
+import matt.json.toJsonString
 import matt.kjlib.jmath.point.Point
+import matt.klib.lang.NEVER
 import matt.reflect.NoArgConstructor
 import matt.v1.gui.fig.Figure
 import matt.v1.gui.fig.update.SeriesUpdateType.APPEND
@@ -30,11 +31,12 @@ fun GuiUpdate.jsonString(): String {
 sealed interface GuiUpdate
 
 @NoArgConstructor
+@Serializable
 class StatusUpdate private constructor(
-  counterName: String? = null,
-  count: Int? = null,
-  total: Int? = null
-): GuiUpdate, SimpleJson<StatusUpdate>(typekey = null) {
+  var counterName: String? = null,
+  var count: Int,
+  var total: Int
+): GuiUpdate/*, SimpleJson<StatusUpdate>(typekey = null)*/ {
 
   companion object {
 	fun new(
@@ -48,9 +50,9 @@ class StatusUpdate private constructor(
 	)
   }
 
-  val counterName by JsonStringProp(counterName)
-  val count by JsonIntProp(count)
-  val total by JsonIntProp(total)
+//  var counterName = counterName
+//  var  count by JsonIntProp(count)
+//  val total by JsonIntProp(total)
 }
 
 interface FigUpdate: GuiUpdate {
@@ -59,24 +61,25 @@ interface FigUpdate: GuiUpdate {
 
 
 @NoArgConstructor
+@Serializable
 class FigureUpdate private constructor(
-  updates: List<SeriesUpdate>? = null
-): FigUpdate, SimpleJson<FigureUpdate>(typekey = null) {
+  val updates: MutableList<SeriesUpdate> = mutableListOf()
+): FigUpdate {
 
   companion object {
 	fun new(
 	  updates: List<SeriesUpdate>
-	) = FigureUpdate(updates)
+	) = FigureUpdate(updates.toMutableList())
   }
 
-  val updates by JsonJsonListProp(
-	builder = object: JsonParser<SeriesUpdate> {
-	  override fun fromJson(jv: JsonElement): SeriesUpdate {
-		return SeriesUpdate.new(REPLACE, 0, listOf(JsonPoint())).apply { loadProperties(jv) }
-	  }
-	},
-	default = updates
-  )
+//  val updates by FXList(updates
+//	/*builder = object: JsonParser<SeriesUpdate> {
+//	  override fun fromJson(jv: JsonElement): SeriesUpdate {
+//		return SeriesUpdate.new(REPLACE, 0, listOf(JsonPoint())).apply { loadProperties(jv) }
+//	  }
+//	},
+//	default = updates*/
+//  )
 
   override fun toFigUpdate() = this
   override fun toString(): String {
@@ -86,17 +89,19 @@ class FigureUpdate private constructor(
   }
 }
 
+@Serializable
 enum class SeriesUpdateType {
   REPLACE, APPEND
 }
 
 
 @NoArgConstructor
+@Serializable
 class SeriesUpdate private constructor(
-  type: SeriesUpdateType? = null,
-  seriesIndex: Int? = null,
-  points: List<JsonPoint>? = null
-): FigUpdate, SimpleJson<SeriesUpdate>(typekey = null) {
+  val type: SeriesUpdateType? = null,
+  val seriesIndex: Int? = null,
+  val points: List<JsonPoint>? = null
+): FigUpdate/*, SimpleJson<SeriesUpdate>(typekey = null)*/ {
 
 
   companion object {
@@ -119,18 +124,18 @@ class SeriesUpdate private constructor(
 	)
   }
 
-  val type by JsonEnumProp(SeriesUpdateType::class, type)
-  val seriesIndex by JsonIntPropN(seriesIndex)
-  val points by JsonJsonListProp(
-	object: JsonParser<JsonPoint> {
-	  override fun fromJson(jv: JsonElement): JsonPoint {
-		return JsonPoint().apply {
-		  loadProperties(jv)
-		}
-	  }
-	},
-	default = points
-  )
+//  val type by JsonEnumProp(SeriesUpdateType::class, type)
+//  val seriesIndex by JsonIntPropN(seriesIndex)
+//  val points by JsonJsonListProp(
+//	object: JsonParser<JsonPoint> {
+//	  override fun fromJson(jv: JsonElement): JsonPoint {
+//		return JsonPoint().apply {
+//		  loadProperties(jv)
+//		}
+//	  }
+//	},
+//	default = points
+//  )
 
   constructor(type: SeriesUpdateType, seriesIndex: Int, x: Double, y: Double): this(
 	type = type, seriesIndex = seriesIndex, p = JsonPoint(x = x, y = y)
@@ -144,7 +149,7 @@ class SeriesUpdate private constructor(
 
   override fun toString(): String {
 	var s = "matt.v1.gui.fig.update.SeriesUpdate type=${type}, seriesIndex=${seriesIndex}, points:"
-	points.forEach {
+	points?.forEach {
 	  s += "\n\t\t${it}"
 	}
 	return s
@@ -248,10 +253,11 @@ class FigureUpdater(
 		}
 
 		when (it.type) {
-		  REPLACE -> seriesPoints[index] = it.points.toMutableList()
+		  REPLACE -> seriesPoints[index] = it.points!!.toMutableList()
 		  APPEND  -> seriesPoints[it.seriesIndex]!!.addAll(
-			it.points
+			it.points!!
 		  ) /*might have to create list if this ever throws error*/
+		  else -> NEVER
 		}
 		figNextPointsI[index] = 0
 	  }

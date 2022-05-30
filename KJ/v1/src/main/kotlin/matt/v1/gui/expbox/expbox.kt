@@ -1,5 +1,6 @@
 package matt.v1.gui.expbox
 
+import javafx.beans.property.BooleanProperty
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.event.EventTarget
 import javafx.geometry.Pos.CENTER
@@ -102,7 +103,7 @@ fun EventTarget.figBox(statusLabel: StatusLabel, opp: HBox.()->Unit) = hbox {
 	}
   }
   mcontextmenu {
-	checkitem("load", UserConfig.loadExpsProp)
+	checkitem("load", UserConfig.loadExpsProp as BooleanProperty)
 	"toggle square fig" toggles squareFigProp
   }
   val fig = addr(Figure()) {

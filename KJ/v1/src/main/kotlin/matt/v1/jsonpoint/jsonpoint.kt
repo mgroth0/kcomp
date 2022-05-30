@@ -1,6 +1,6 @@
 package matt.v1.jsonpoint
 
-import matt.json.custom.SimpleJson
+import kotlinx.serialization.Serializable
 import matt.kjlib.jmath.point.APoint
 import matt.kjlib.jmath.point.BasicPoint
 import matt.kjlib.jmath.point.Point
@@ -9,11 +9,12 @@ import matt.reflect.NoArgConstructor
 
 
 @NoArgConstructor
+@Serializable
 class JsonPoint(
-  x: Double? = null, y: Double? = null
-): SimpleJson<JsonPoint>(typekey = null), Point {
-  override val x by JsonDoubleProp(x)
-  override val y by JsonDoubleProp(y)
+  override val x: Double, override val y: Double
+): /*SimpleJson<JsonPoint>(typekey = null),*/ Point {
+//  override val x by JsonDoubleProp(x)
+//  override val y by JsonDoubleProp(y)
   override val xDouble get() = x
   override val yDouble get() = y
   override fun clone(newX: Number?, newY: Number?): Point {

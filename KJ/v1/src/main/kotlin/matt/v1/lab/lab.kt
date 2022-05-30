@@ -4,6 +4,8 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromJsonElement
 import matt.async.date.tic
 import matt.async.waitFor
 import matt.hurricanefx.eye.lang.BProp
@@ -159,9 +161,11 @@ data class Experiment(
 		  if (jsonFile.exists()) {
 			gui.statusLabel.statusExtra = "loading experiment"
 			jsonFile.text.parseJsonObjs().forEach {
-			  val update = FigureUpdate.new(listOf()).apply {
+			  val update = Json.decodeFromJsonElement<FigureUpdate>(it)
+
+				/*FigureUpdate.new(listOf()).apply {
 				loadProperties(it)
-			  }
+			  }*/
 			  figUpdater.update(update)
 			  if (stopped) return@apply
 			}
