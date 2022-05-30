@@ -1,7 +1,7 @@
 package matt.v1.figmodels
 
-import matt.kjlib.jmath.UnitType
 import matt.kjlib.jmath.point.Point
+import matt.klib.math.UnitType
 import matt.v1.activity.Response
 import matt.v1.comp.Fit
 import matt.v1.comp.PoissonVar

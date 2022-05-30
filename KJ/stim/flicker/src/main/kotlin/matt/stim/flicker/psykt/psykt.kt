@@ -61,7 +61,6 @@ import matt.hurricanefx.eye.prop.setValue
 import matt.hurricanefx.tornadofx.async.runLater
 import matt.hurricanefx.tornadofx.nodes.add
 import matt.hurricanefx.tornadofx.nodes.clear
-import matt.json.custom.SimpleJson
 import matt.klib.lang.err
 import matt.stim.flicker.psykt.ECEO.Phase.EC
 import matt.stim.flicker.psykt.ECEO.Phase.EO
@@ -1802,7 +1801,7 @@ class SpeedReading: Task() {
   var i = 0
 }
 
-class AdaptiveReading(val blocks: Array<AdaptiveReadingTextBlock>): SimpleJson<AdaptiveReading>(typekey = null) {
+class AdaptiveReading(val blocks: Array<AdaptiveReadingTextBlock>)/*: SimpleJson<AdaptiveReading>(typekey = null) */{
   init {
 	val readName = "ERR"
 	err(

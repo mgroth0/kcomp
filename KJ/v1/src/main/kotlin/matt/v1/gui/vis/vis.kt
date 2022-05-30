@@ -16,11 +16,11 @@ import matt.hurricanefx.eye.collect.toObservable
 import matt.hurricanefx.eye.lib.onChange
 import matt.hurricanefx.lazyTab
 //import matt.kjlib.commons.DATA_FOLDER
-import matt.kjlib.jmath.floorInt
 import matt.klib.commons.DATA_FOLDER
 import matt.klib.commons.get
 import matt.klib.dmap.withStoringDefault
 import matt.klib.lang.NEVER
+import matt.klib.math.floorInt
 import matt.v1.gui.GuiMode
 import matt.v1.gui.GuiMode.ITTI_KOCH
 import matt.v1.gui.vis.vismodel.FilteredImageVisualizer

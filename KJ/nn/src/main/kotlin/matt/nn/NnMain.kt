@@ -1,17 +1,17 @@
 package matt.nn
 
+//import matt.reflect.os
 import matt.gui.app.GuiApp
-import matt.kjlib.jmath.nextUnitDouble
 import matt.kjlib.jmath.sigmoid
 import matt.kjlib.jmath.sigmoidDerivative
-import matt.stream.applyEach
 import matt.klib.commons.os
+import matt.klib.math.nextUnitDouble
 import matt.klib.math.sq
 import matt.nn.NeuralNetwork.Companion.INPUT_LENGTH
-//import matt.reflect.os
 import matt.remote.host.Hosts
 import matt.remote.runThisOnOM
 import matt.remote.slurm.SRun
+import matt.stream.applyEach
 import kotlin.concurrent.thread
 import kotlin.random.Random.Default.nextDouble
 import kotlin.system.exitProcess

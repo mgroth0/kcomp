@@ -18,7 +18,6 @@ import matt.kjlib.jmath.PI
 import matt.kjlib.jmath.cos
 import matt.kjlib.jmath.div
 import matt.kjlib.jmath.e
-import matt.kjlib.jmath.logFactorial
 import matt.kjlib.jmath.minus
 import matt.kjlib.jmath.point.APoint
 import matt.kjlib.jmath.point.BasicPoint
@@ -33,6 +32,7 @@ import matt.kjlib.ranges.step
 import matt.klib.commons.REGISTERED_FOLDER
 import matt.klib.commons.get
 import matt.klib.log.warn
+import matt.klib.math.logFactorial
 import matt.klib.math.sq
 import org.apache.commons.math3.exception.ConvergenceException
 import org.apache.commons.math3.fitting.GaussianCurveFitter

@@ -3,8 +3,8 @@ package matt.v1.salience
 import matt.async.date.withStopwatch
 import matt.hurricanefx.intColorToFXColor
 import matt.kjlib.jmath.convolve
-import matt.kjlib.jmath.intMean
 import matt.klib.lang.go
+import matt.klib.math.intMean
 import matt.v1.pyramid.pyrDown
 import matt.v1.pyramid.pyrUp
 import matt.v1.salience.FeatureType.BLUE_YELLOW

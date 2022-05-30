@@ -9,6 +9,7 @@ import matt.kjlib.jmath.dot
 import matt.kjlib.jmath.plus
 import matt.kjlib.jmath.point.BasicPoint
 import matt.kjlib.jmath.point.Point
+import matt.klib.math.dot
 import matt.stream.flatten
 import matt.stream.forEachNested
 import matt.klib.math.sq
@@ -35,7 +36,7 @@ data class Orientation(
 	tRadians = tRadians, dX = end.xDouble - start.xDouble, dY = end.yDouble - start.yDouble
   )
 
-  val orth by lazy { Orientation(matt.kjlib.jmath.orth(tDegrees)) }
+  val orth by lazy { Orientation(matt.klib.math.orth(tDegrees)) }
 }
 
 

@@ -52,3 +52,6 @@
 [submodule "k/stream"]
 	path = k/stream
 	url = https://github.com/mgroth0/stream
+[submodule "kj/fx"]
+	path = kj/fx
+	url = https://github.com/mgroth0/fx
