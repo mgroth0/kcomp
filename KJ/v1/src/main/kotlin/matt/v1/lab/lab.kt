@@ -23,12 +23,13 @@ import matt.kjlib.jmath.point.toBasicPoints
 import matt.kjlib.jmath.times
 import matt.kjlib.jmath.toApfloat
 import matt.kjlib.ranges.step
-import matt.stream.onEveryIndexed
 import matt.klib.commons.get
 import matt.klib.lang.err
 import matt.klib.lang.go
+import matt.stream.onEveryIndexed
 import matt.v1.V1_DATA_FOLDER
 import matt.v1.activity.Response
+import matt.v1.cfg.user.CFG
 import matt.v1.cfg.user.UserConfig
 import matt.v1.comp.Fit.Gaussian
 import matt.v1.comp.PoissonVar
@@ -243,7 +244,7 @@ data class Experiment(
 	  }
 	}
 	runStage = WAITING_FOR_FIG
-	if (!stopped && figUpdates != null && UserConfig.saveExps) {
+	if (!stopped && figUpdates != null && CFG.saveExps) {
 	  waitFor(10) { runStage == FIG_COMPLETE }
 	  jsonFile.write("[" + figUpdates!!.map { it.jsonString() }.joinToString(",") + "]")
 	}

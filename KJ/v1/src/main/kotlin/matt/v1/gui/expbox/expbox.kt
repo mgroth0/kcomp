@@ -24,6 +24,7 @@ import matt.hurricanefx.addr
 import matt.hurricanefx.dragsSnapshot
 import matt.hurricanefx.exactHeight
 import matt.hurricanefx.exactWidthProperty
+import matt.hurricanefx.eye.delegate.fx
 import matt.hurricanefx.eye.lib.onChange
 import matt.hurricanefx.eye.prop.doubleBinding
 import matt.hurricanefx.op
@@ -40,7 +41,7 @@ import matt.hurricanefx.tornadofx.tab.tabpane
 import matt.kjlib.map.lazyMap
 import matt.klib.lang.cap
 import matt.klib.str.addSpacesUntilLengthIs
-import matt.v1.cfg.user.UserConfig
+import matt.v1.cfg.user.CFG
 import matt.v1.exps.experiments
 import matt.v1.exps.expmodels.ExpCategory
 import matt.v1.gui.fig.Figure
@@ -87,13 +88,13 @@ fun EventTarget.figBox(statusLabel: StatusLabel, opp: HBox.()->Unit) = hbox {
   alignment = CENTER
   val exps = experiments()
   vbox {
-	checkbox("save", UserConfig.saveExpsProp) {
+	checkbox("save", CFG::saveExps.fx) {
 	  disableWhen { somethingRunningProp }
 	}
-	checkbox("load", UserConfig.loadExpsProp) {
+	checkbox("load", CFG::loadExps.fx) {
 	  disableWhen { somethingRunningProp }
 	}
-	choicebox<PerformanceMode>(UserConfig.scaleProp, PerformanceMode.values().toList()) {
+	choicebox<PerformanceMode>(CFG::scale.fx, PerformanceMode.values().toList()) {
 	  disableWhen { somethingRunningProp }
 	}
 	button("open data folder") withAction EXPS_DATA_FOLDER::subl
@@ -103,7 +104,7 @@ fun EventTarget.figBox(statusLabel: StatusLabel, opp: HBox.()->Unit) = hbox {
 	}
   }
   mcontextmenu {
-	checkitem("load", UserConfig.loadExpsProp as BooleanProperty)
+	checkitem("load", CFG::loadExps.fx as BooleanProperty)
 	"toggle square fig" toggles squareFigProp
   }
   val fig = addr(Figure()) {
@@ -147,7 +148,7 @@ fun EventTarget.figBox(statusLabel: StatusLabel, opp: HBox.()->Unit) = hbox {
 		  rightBox.children.add(0, fig.controlBox())
 		  daemon {
 			val gui = ExpGui(fig = fig, statusLabel = statusLabel, console = writer)
-			exp.run(gui, fromJson = UserConfig.loadExps)
+			exp.run(gui, fromJson = CFG.loadExps)
 			runLaterReturn {
 			  statusLabel.status.value = IDLE
 			}

@@ -31,9 +31,6 @@
 [submodule "kj/hotkey"]
 	path = kj/hotkey
 	url = https://github.com/mgroth0/hotkey
-[submodule "kj/play"]
-	path = kj/play
-	url = https://github.com/mgroth0/play
 [submodule "kj/fxlib"]
 	path = kj/fxlib
 	url = https://github.com/mgroth0/fxlib

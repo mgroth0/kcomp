@@ -6,7 +6,6 @@ import matt.dataman.autosaveOnFXChanges
 import matt.dataman.simpleObjectDatabase
 import matt.hurricanefx.eye.delegate.FXB
 import matt.hurricanefx.eye.delegate.FXE
-import matt.hurricanefx.eye.delegate.fx
 import matt.hurricanefx.eye.ser.JsonObjectSerializer
 import matt.json.custom.bool
 import matt.json.custom.jsonObj
@@ -22,12 +21,13 @@ object UserConfigSerializer: JsonObjectSerializer<UserConfig>("UserConfig") {
 	file = V1_USER_CFG_FILE,
 	type = UserConfig::class
   )
+  val instance: UserConfig = db.autoSavingObservable.get()
 
   override fun deserialize(jsonObject: JsonObject) = UserConfig().apply {
 	saveExps = jsonObject["saveExps"]!!.bool
 	loadExps = jsonObject["loadExps"]!!.bool
 	scale = PerformanceMode.valueOf(jsonObject["scale"]!!.string)
-	autosaveOnFXChanges(UserConfigSerializer.db)
+	autosaveOnFXChanges(db)
   }
 
   override fun serialize(value: UserConfig) = jsonObj(
@@ -40,29 +40,6 @@ object UserConfigSerializer: JsonObjectSerializer<UserConfig>("UserConfig") {
 
 @Serializable(with = UserConfigSerializer::class)
 class UserConfig {
-  companion object {
-	private val instance: UserConfig = db.autoSavingObservable.get()
-	var loadExps
-	  get() = instance.loadExps
-	  set(value) {
-		instance.loadExps = value
-	  }
-	val loadExpsProp = ::loadExps.fx
-	var saveExps
-	  get() = instance.saveExps
-	  set(value) {
-		instance.saveExps = value
-
-	  }
-	val saveExpsProp = ::saveExps.fx
-	var scale
-	  get() = instance.scale
-	  set(value) {
-		instance.scale = value
-	  }
-	val scaleProp = ::scale.fx
-  }
-
   var saveExps by FXB(true)
   var loadExps by FXB(true)
   var scale by FXE(ORIG_BUT_NEEDS_GPU)
@@ -72,3 +49,4 @@ class UserConfig {
   }
 }
 
+val CFG = UserConfigSerializer.instance

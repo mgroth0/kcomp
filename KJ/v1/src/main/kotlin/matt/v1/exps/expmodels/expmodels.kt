@@ -5,7 +5,7 @@ import matt.async.emitAll
 import matt.stream.mutableListsOf
 import matt.v1.activity.MaybePreDNPopR
 import matt.v1.activity.Stimulation
-import matt.v1.cfg.user.UserConfig
+import matt.v1.cfg.user.CFG
 import matt.v1.exps.expmodels.ExpCategory.ROSENBERG
 import matt.v1.figmodels.AxisConfig
 import matt.v1.figmodels.SeriesCfgV2
@@ -46,7 +46,7 @@ fun varyingStimExp(
 	val allSeries = mutableListsOf<JsonPoint>(5)
 	val (s1, s2, s3, s4, s5) = allSeries
 
-	val cfg = ARI_BASE_CFG.copyWith(UserConfig.scale)
+	val cfg = ARI_BASE_CFG.copyWith(CFG.scale)
 	val pop = Population(cfg)
 	val xRange = inputRange.toList()
 	xRange.forEachIndexed { xIndex, x ->
