@@ -1,8 +1,10 @@
+import matt.klib.commons.get
+
 dependencies {
 	implementation(projects.kj.gui)
   implementation(projects.kj.kjlib.shell)
 //  implementation(libs.brainflow)
-  implementation(files("/Users/matthewgroth/registered/kcomp/KJ/jar/brainflow-jar-with-dependencies.jar"))
+  implementation(files(matt.klib.commons.KCOMP_FOLDER["KJ/jar/brainflow-jar-with-dependencies.jar"]))
 }
 repositories{
   maven {
