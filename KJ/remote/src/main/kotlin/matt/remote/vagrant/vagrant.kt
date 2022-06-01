@@ -1,6 +1,6 @@
 package matt.remote.vagrant
 
-import java.io.File
+import matt.klib.file.MFile
 
 
 /*fun VagrantfileForSingularityBuild(buildFolder: File) = """
@@ -15,7 +15,7 @@ import java.io.File
 const val VAGRANTFILE_NAME = "Vagrantfile"
 
 /*template taken from `vagrant init sylabs/singularity-ce-3.8-ubuntu-bionic64`*/
-fun VagrantfileForSingularityBuild(buildFolder: File) = """
+fun VagrantfileForSingularityBuild(buildFolder: MFile) = """
   # -*- mode: ruby -*-
   # vi: set ft=ruby :
 

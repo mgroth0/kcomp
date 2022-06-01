@@ -30,7 +30,6 @@ import matt.v1.figmodels.AxisConfig
 import matt.v1.figmodels.SeriesCfg
 import matt.v1.figmodels.SeriesCfgs
 import matt.v1.gui.fig.axes.ControlledNumericAxis
-import java.io.File
 
 fun calcControlledTickValues(rangeMin: Number?, rangeMax: Number?) = when {
   rangeMin !is Number || rangeMax !is Number -> null

@@ -1,11 +1,11 @@
 package matt.v1.mat
 
+import matt.klib.file.MFile
 import matt.klib.lang.err
 import us.hebi.matlab.mat.format.Mat5
 import us.hebi.matlab.mat.types.Matrix
-import java.io.File
 
-fun Map<String, Any>.saveMatFile(f: File) {
+fun Map<String, Any>.saveMatFile(f: MFile) {
   require(!f.exists())
   f.mkdirs()
   val matFile = Mat5.newMatFile().apply {
