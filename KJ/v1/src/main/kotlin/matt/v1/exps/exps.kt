@@ -1,5 +1,7 @@
 package matt.v1.exps
 
+import javafx.beans.Observable
+import javafx.beans.property.Property
 import matt.kjlib.jmath.ranges.step
 import matt.klib.math.PointDim.X
 import matt.klib.math.PointDim.Y
@@ -11,6 +13,13 @@ import matt.v1.exps.expmodels.varyingStimExp
 import matt.v1.figmodels.AxisConfig
 import matt.v1.lab.Experiment
 
+
+fun <T> T.aWhereClauseCouldBeCoolHere()
+	where
+	T: Property<*>,
+	T: Observable {
+
+}
 
 fun experiments(): List<Experiment> {
 
@@ -640,8 +649,6 @@ fun experiments(): List<Experiment> {
 //	reqSize = null
 //  )
 //}
-
-
 
 
 //val pop2D = PopulationConfig(

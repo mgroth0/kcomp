@@ -26,6 +26,7 @@ import matt.hurricanefx.tornadofx.nodes.add
 import matt.hurricanefx.tornadofx.nodes.clear
 import matt.kjlib.image.resize
 import matt.kjlib.image.toSquare
+import matt.klib.file.MFile
 import matt.stream.forEachNested
 import matt.v1.cfg.GuiConfigurable
 import matt.v1.model.FieldGenerator
@@ -33,7 +34,6 @@ import org.jetbrains.kotlinx.multik.ndarray.data.D2
 import org.jetbrains.kotlinx.multik.ndarray.data.MultiArray
 import org.jetbrains.kotlinx.multik.ndarray.operations.forEachIndexed
 import java.awt.image.BufferedImage
-import java.io.File
 import java.util.concurrent.Semaphore
 import javax.imageio.ImageIO
 import kotlin.concurrent.thread
@@ -166,14 +166,14 @@ abstract class FilteredImageVisualizer(
   responsive: Boolean = false,
   imageHW: Int,
   imgScale: Double,
-  private val staticImages: List<ObjectProperty<File>> = listOf()
+  private val staticImages: List<ObjectProperty<MFile>> = listOf()
 ): ImageVisualizer(responsive, imageHW, imgScale) {
 
-  protected fun preprocessImage(file: File): BufferedImage {
+  protected fun preprocessImage(file: MFile): BufferedImage {
 	return ImageIO.read(file).toSquare().resize(imageHW, imageHW)
   }
 
-  protected fun preprocessImageFX(file: File): Image {
+  protected fun preprocessImageFX(file: MFile): Image {
 	return SwingFXUtils.toFXImage(preprocessImage(file), null)
   }
 
@@ -183,7 +183,7 @@ abstract class FilteredImageVisualizer(
 	}
   }
 
-  abstract fun draw(input: File): MultiArray<Int, D2>
+  abstract fun draw(input: MFile): MultiArray<Int, D2>
 
   override fun left(): Unit {
 	staticImages.forEach {

@@ -1,5 +1,6 @@
 package matt.v1.gui.vis
 
+//import matt.kjlib.commons.DATA_FOLDER
 import javafx.beans.property.SimpleObjectProperty
 import javafx.geometry.Pos.CENTER
 import javafx.scene.control.ComboBox
@@ -15,10 +16,10 @@ import matt.gui.resize.DragResizer
 import matt.hurricanefx.eye.collect.toObservable
 import matt.hurricanefx.eye.lib.onChange
 import matt.hurricanefx.lazyTab
-//import matt.kjlib.commons.DATA_FOLDER
 import matt.klib.commons.DATA_FOLDER
 import matt.klib.commons.get
 import matt.klib.dmap.withStoringDefault
+import matt.klib.file.MFile
 import matt.klib.lang.NEVER
 import matt.klib.math.floorInt
 import matt.v1.gui.GuiMode
@@ -37,7 +38,6 @@ import matt.v1.salience.Salience
 import matt.v1.visualizer
 import org.jetbrains.kotlinx.multik.ndarray.data.D2
 import org.jetbrains.kotlinx.multik.ndarray.data.NDArray
-import java.io.File
 
 class VisualizerPane(startup: GuiMode): TabPane() {
   init{
@@ -51,12 +51,12 @@ class VisualizerPane(startup: GuiMode): TabPane() {
 		  valueProperty().bindBidirectional(
 			IttiKochVisualizer.ittiKochInput
 		  )		/*simpleCellFactory { it.name to null }*/
-		  this.converter = object: StringConverter<File>() {
-			override fun toString(`object`: File?): String {
+		  this.converter = object: StringConverter<MFile>() {
+			override fun toString(`object`: MFile?): String {
 			  return `object`!!.name
 			}
 
-			override fun fromString(string: String?): File {
+			override fun fromString(string: String?): MFile {
 			  NEVER
 			}
 
@@ -172,7 +172,7 @@ class IttiKochVisualizer: FilteredImageVisualizer(
   }
 
   private val featureCache = mutableMapOf<String, Map<FeatureDef, NDArray<Int, D2>>>().withStoringDefault {
-	Salience().computeFeatures(preprocessImage(File(it))).apply {
+	Salience().computeFeatures(preprocessImage(MFile(it))).apply {
 	  println("computed $size features")
 	}
   }
@@ -182,7 +182,7 @@ class IttiKochVisualizer: FilteredImageVisualizer(
   private val surround by CfgIntProp(3..4, default = 3)
 
 
-  override fun draw(input: File) = run {
+  override fun draw(input: MFile) = run {
 	val features = featureCache[input.absolutePath]
 	features[FeatureDef(center = center, surround = surround, type = type)]!!
   }

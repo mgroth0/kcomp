@@ -23,6 +23,7 @@ import matt.json.custom.double
 import matt.json.prim.loadJson
 import matt.kjlib.jmath.ranges.step
 import matt.klib.dmap.withStoringDefault
+import matt.klib.file.MFile
 import matt.stream.applyEach
 import matt.v1.comp.Fit.Gaussian
 import matt.v1.figmodels.AxisConfig
@@ -127,7 +128,7 @@ class Figure: Pane() {
   @Deprecated(
 	"use GuiUpdate.fromJson() instead, or if I really want to do this I can reimplement it later but currently it probably wont work right"
   )
-  fun loadJson(file: File) {
+  fun loadJson(file: MFile) {
 	file.loadJson(JsonArray::class).forEachIndexed { i, e ->
 	  val s = series[i]
 	  e.jsonArray.forEachIndexed { ii, p ->

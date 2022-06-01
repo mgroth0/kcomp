@@ -5,7 +5,8 @@ import matt.gui.app.GuiApp
 //import matt.kjlib.commons.DATA_FOLDER
 import matt.klib.commons.DATA_FOLDER
 import matt.klib.commons.get
-import matt.klib.commons.ismac
+import matt.klib.commons.thisMachine
+import matt.klib.sys.Mac
 //import matt.reflect.ismac
 import matt.reflect.onLinux
 import matt.remote.host.Hosts
@@ -24,7 +25,7 @@ import kotlin.system.exitProcess
 
 
 private const val REMOTE = false
-private val REMOTE_AND_MAC = REMOTE && ismac
+private val REMOTE_AND_MAC = REMOTE && thisMachine is Mac
 
 val visualizer by lazy { RosenbergVisualizer(ARI_BASE_CFG) }
 
