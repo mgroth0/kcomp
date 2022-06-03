@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED_VARIABLE")
+
 package matt.v1.salience
 
 import matt.async.date.withStopwatch
@@ -57,7 +59,7 @@ data class Salience(
 
   fun computeFeatures(im: BufferedImage): Map<FeatureDef, NDArray<Int, D2>> = withStopwatch("salience filter") { t ->
 	val r = mk.empty<Int, D3>(im.height, im.width, 3)
-	val rr = mk.empty<Int, D2>(im.height, im.width)
+	mk.empty<Int, D2>(im.height, im.width)
 	(0 until im.height).forEach { y ->
 	  (0 until im.width).forEach { x ->
 		intColorToFXColor(im.getRGB(x, y)).go {
