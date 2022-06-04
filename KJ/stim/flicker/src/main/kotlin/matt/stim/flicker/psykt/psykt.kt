@@ -967,7 +967,7 @@ class NBack: Task() {
   var stimImageView: ImageView? = null
   val stimHistory = mutableListOf<MFile>()
   val stimuli = (MFile("images") + ("stimuli")).listFiles()!!
-  val numStimuli = stimuli!!.size
+  val numStimuli = stimuli.size
   var stimImage: MFile? = null
   var shouldPress: Boolean = false
   var didPress = false
