@@ -52,3 +52,6 @@
 [submodule "kj/fx"]
 	path = kj/fx
 	url = https://github.com/mgroth0/fx
+[submodule "k/key"]
+	path = k/key
+	url = https://github.com/mgroth0/key

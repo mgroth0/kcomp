@@ -7,6 +7,7 @@ import matt.klib.commons.DATA_FOLDER
 import matt.klib.commons.get
 import matt.klib.commons.thisMachine
 import matt.klib.sys.Mac
+import matt.klib.todo
 //import matt.reflect.ismac
 import matt.reflect.onLinux
 import matt.remote.host.Hosts
@@ -35,6 +36,8 @@ val V1_USER_CFG_FILE = V1_DATA_FOLDER["usercfg.json"]
 
 
 fun main(): Unit = GuiApp(screenIndex = 2) {
+
+  todo("start with https://stackoverflow.com/questions/72325605/how-to-properly-register-primitives-and-nulls-in-polymorphic-serialization?noredirect=1#comment128047613_72325605 (json/problem/problem.kt)")
 
   simplePrinting = true
 
