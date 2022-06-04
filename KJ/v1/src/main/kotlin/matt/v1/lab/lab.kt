@@ -11,12 +11,12 @@ import matt.async.waitFor
 import matt.hurricanefx.eye.lang.BProp
 import matt.hurricanefx.tornadofx.async.runLater
 import matt.json.prim.parseJsonObjs
-import matt.kjlib.file.text
-import matt.kjlib.file.write
 import matt.kjlib.jmath.ranges.step
 import matt.kjlib.jmath.times
 import matt.kjlib.jmath.toApfloat
 import matt.klib.commons.get
+import matt.klib.file.ext.text
+import matt.klib.file.ext.write
 import matt.klib.lang.err
 import matt.klib.lang.go
 import matt.klib.math.Point

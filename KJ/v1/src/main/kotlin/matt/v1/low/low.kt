@@ -9,9 +9,7 @@ import kotlinx.serialization.modules.plus
 import matt.caching.compcache.ComputeCache
 import matt.caching.compcache.ComputeInput
 //import matt.kjlib.commons.REGISTERED_FOLDER
-import matt.kjlib.file.filterHasExtension
 import matt.kjlib.file.recursiveChildren
-import matt.kjlib.file.text
 import matt.kjlib.jmath.API
 import matt.kjlib.jmath.Ae
 import matt.kjlib.jmath.PI
@@ -29,6 +27,8 @@ import matt.kjlib.jmath.toApfloat
 import matt.kjlib.jmath.unaryMinus
 import matt.klib.commons.REGISTERED_FOLDER
 import matt.klib.commons.get
+import matt.klib.file.ext.filterHasExtension
+import matt.klib.file.ext.text
 import matt.klib.log.warn
 import matt.klib.math.BasicPoint
 import matt.klib.math.Point
