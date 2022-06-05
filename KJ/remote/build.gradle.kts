@@ -1,3 +1,5 @@
+modtype = CLAPP
+
 dependencies {
   implementation(projects.kj.exec)
   api(libs.expect)

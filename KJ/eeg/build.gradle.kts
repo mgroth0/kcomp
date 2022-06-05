@@ -1,6 +1,8 @@
+
+
 import matt.klib.commons.RootProject.kcomp
 import matt.klib.commons.plus
-
+modtype = APP
 dependencies {
   implementation(projects.kj.gui)
   implementation(projects.kj.kjlib.shell)
