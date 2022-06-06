@@ -13,8 +13,8 @@ import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
-import matt.gui.clip.copyToClipboard
-import matt.gui.core.context.mcontextmenu
+import matt.fx.graphics.clip.copyToClipboard
+import matt.fx.graphics.menu.context.mcontextmenu
 import matt.hurricanefx.exactHeightProperty
 import matt.hurricanefx.exactWidthProperty
 import matt.hurricanefx.tornadofx.control.label

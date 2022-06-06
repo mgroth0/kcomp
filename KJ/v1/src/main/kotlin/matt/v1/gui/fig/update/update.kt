@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 import matt.async.date.sec
 import matt.caching.every
 import matt.caching.with
-import matt.gui.loop.runLaterReturn
+import matt.hurricanefx.tornadofx.async.runLaterReturn
 import matt.json.toJson
 import matt.json.toJsonString
 import matt.klib.lang.NEVER

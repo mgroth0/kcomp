@@ -15,11 +15,9 @@ import matt.auto.openInFinder
 import matt.auto.subl
 import matt.caching.compcache.COMP_CACHE_FOLDER
 import matt.caching.compcache.ComputeCache
+import matt.fx.graphics.menu.context.mcontextmenu
 import matt.fxlib.console.customConsole
 import matt.fxlib.console.interceptConsole
-import matt.gui.core.context.mcontextmenu
-import matt.gui.lang.withAction
-import matt.gui.loop.runLaterReturn
 import matt.hurricanefx.addr
 import matt.hurricanefx.dragsSnapshot
 import matt.hurricanefx.exactHeight
@@ -28,6 +26,7 @@ import matt.hurricanefx.eye.delegate.fx
 import matt.hurricanefx.eye.lib.onChange
 import matt.hurricanefx.eye.prop.doubleBinding
 import matt.hurricanefx.op
+import matt.hurricanefx.tornadofx.async.runLaterReturn
 import matt.hurricanefx.tornadofx.control.button
 import matt.hurricanefx.tornadofx.control.checkbox
 import matt.hurricanefx.tornadofx.item.choicebox

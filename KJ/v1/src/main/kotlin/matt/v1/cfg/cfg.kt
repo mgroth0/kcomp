@@ -6,7 +6,7 @@ import javafx.scene.control.Slider
 import javafx.scene.control.TextField
 import javafx.scene.layout.FlowPane
 import javafx.util.StringConverter
-import matt.gui.lang.actionbutton
+import matt.fx.graphics.lang.actionbutton
 import matt.hurricanefx.exactWidth
 import matt.hurricanefx.exactWidthProperty
 import matt.hurricanefx.eye.lib.onChange
@@ -18,8 +18,8 @@ import matt.hurricanefx.tornadofx.item.combobox
 import matt.hurricanefx.tornadofx.layout.hbox
 import matt.hurricanefx.tornadofx.nodes.add
 import matt.kjlib.jmath.sigFigs
-import matt.klib.str.truncateWithElipses
 import matt.klib.lang.NEVER
+import matt.klib.str.truncateWithElipses
 import matt.klib.tfx.isDouble
 import matt.klib.tfx.isFloat
 import matt.klib.tfx.isInt

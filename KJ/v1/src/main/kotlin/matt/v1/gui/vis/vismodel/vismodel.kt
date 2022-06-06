@@ -10,7 +10,6 @@ import javafx.scene.image.Image
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import matt.caching.with
-import matt.gui.loop.runLaterReturn
 import matt.gui.proto.ScaledCanvas
 import matt.hurricanefx.dragsSnapshot
 import matt.hurricanefx.exactHeight
@@ -19,6 +18,7 @@ import matt.hurricanefx.eye.lib.onChange
 import matt.hurricanefx.eye.lib.onNonNullChange
 import matt.hurricanefx.eye.prop.plus
 import matt.hurricanefx.stage
+import matt.hurricanefx.tornadofx.async.runLaterReturn
 import matt.hurricanefx.tornadofx.control.imageview
 import matt.hurricanefx.tornadofx.control.label
 import matt.hurricanefx.tornadofx.layout.hbox
