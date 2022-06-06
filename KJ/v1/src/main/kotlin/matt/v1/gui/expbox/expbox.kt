@@ -15,6 +15,7 @@ import matt.auto.openInFinder
 import matt.auto.subl
 import matt.caching.compcache.COMP_CACHE_FOLDER
 import matt.caching.compcache.ComputeCache
+import matt.fx.graphics.lang.withAction
 import matt.fx.graphics.menu.context.mcontextmenu
 import matt.fxlib.console.customConsole
 import matt.fxlib.console.interceptConsole
