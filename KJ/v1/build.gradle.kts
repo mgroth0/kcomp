@@ -4,6 +4,7 @@ dependencies {
   implementation(projects.kj.gui)
   implementation(libs.bundles.multik.full)
   implementation(libs.mat)
+  implementation(projects.kj.fx.graphics)
   api(projects.kj.caching)
   api(projects.kj.async)
   implementation(libs.commons.math)
