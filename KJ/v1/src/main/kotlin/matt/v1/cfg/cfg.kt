@@ -15,7 +15,6 @@ import matt.hurricanefx.tornadofx.control.checkbox
 import matt.hurricanefx.tornadofx.control.label
 import matt.hurricanefx.tornadofx.control.slider
 import matt.hurricanefx.tornadofx.item.combobox
-import matt.hurricanefx.tornadofx.layout.hbox
 import matt.hurricanefx.tornadofx.nodes.add
 import matt.kjlib.jmath.sigFigs
 import matt.klib.lang.NEVER

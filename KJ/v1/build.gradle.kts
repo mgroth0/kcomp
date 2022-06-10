@@ -15,6 +15,8 @@ dependencies {
   implementation(projects.kj.fxlib.console)
   implementation(projects.kj.dataman)
   implementation(projects.kj.kjlib.jmath)
+  implementation(projects.kj.reflect)
+  implementation(projects.kj.fx.graphics)
 }
 
 plugins {

@@ -6,6 +6,7 @@ import javafx.animation.KeyFrame
 import javafx.animation.Timeline
 import javafx.application.Application
 import javafx.application.Platform
+import javafx.application.Platform.runLater
 import javafx.beans.property.BooleanProperty
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.IntegerProperty
@@ -58,7 +59,6 @@ import javafx.util.Duration
 import matt.hurricanefx.eye.prop.div
 import matt.hurricanefx.eye.prop.getValue
 import matt.hurricanefx.eye.prop.setValue
-import matt.hurricanefx.tornadofx.async.runLater
 import matt.hurricanefx.tornadofx.nodes.add
 import matt.hurricanefx.tornadofx.nodes.clear
 import matt.klib.commons.plus
