@@ -121,6 +121,8 @@ fun Expect.catchUp() {
   prompt()
 }
 
+class ARemoteClassToMarkUsage()
+
 object Hosts {
   val OM = Host("openmind.mit.edu")
 

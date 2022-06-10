@@ -1,8 +1,8 @@
-@file:Suppress("PropertyName")
+@file:Suppress("PropertyName", "UNUSED_PARAMETER")
 
 package matt.v1.model
 
-import matt.kjlib.cache.LRUCache
+import matt.caching.cache.LRUCache
 import matt.kjlib.jmath.AZERO_FLOAT
 import matt.kjlib.jmath.div
 import matt.kjlib.jmath.plus

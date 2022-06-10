@@ -8,6 +8,7 @@ import matt.klib.commons.os
 import matt.klib.math.nextUnitDouble
 import matt.klib.math.sq
 import matt.nn.NeuralNetwork.Companion.INPUT_LENGTH
+import matt.remote.host.ARemoteClassToMarkUsage
 import matt.remote.host.Hosts
 import matt.remote.runThisOnOM
 import matt.remote.slurm.SRun
@@ -15,6 +16,9 @@ import matt.stream.applyEach
 import kotlin.concurrent.thread
 import kotlin.random.Random.Default.nextDouble
 import kotlin.system.exitProcess
+
+
+fun yeah() = ARemoteClassToMarkUsage()
 
 const val REMOTE = false
 
@@ -115,20 +119,20 @@ class NeuralNetwork(
 
 	hidden.forEach {
 	  it.axons[0].weight += it.activation*
-							2*
-							negError*
-							sigmoidDerivative(it.axons[0].output.activation /*same as predicted[0]*/)
+		  2*
+		  negError*
+		  sigmoidDerivative(it.axons[0].output.activation /*same as predicted[0]*/)
 	}
 	input.forEach { n ->
 	  n.axons.forEach { axon ->
 		axon.weight += n.activation*
-					   (2*
-						negError*
-						sigmoidDerivative(predicted[0])).let { d ->
-						 output.axons.map { it.weight }.sumOf {
-						   it*d
-						 }
-					   }*sigmoidDerivative(axon.output.activation)
+			(2*
+				negError*
+				sigmoidDerivative(predicted[0])).let { d ->
+			  output.axons.map { it.weight }.sumOf {
+				it*d
+			  }
+			}*sigmoidDerivative(axon.output.activation)
 	  }
 	}
 

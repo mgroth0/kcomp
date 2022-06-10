@@ -2,7 +2,8 @@ modtype = APP
 
 dependencies {
   implementation(projects.kj.gui)
-  implementation(libs.bundles.multik.full)
+//  implementation(libs.bundles.multik.full)
+  implementation(libs.kotlinx.multik.api)
   implementation(libs.mat)
   implementation(projects.kj.fx.graphics)
   api(projects.kj.caching)

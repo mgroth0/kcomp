@@ -1,3 +1,5 @@
+@file:Suppress("UNREACHABLE_CODE")
+
 package matt.v1.lab
 
 import javafx.application.Platform.runLater

@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED_VARIABLE")
+
 package matt.v1.gui.expbox
 
 import javafx.beans.property.BooleanProperty

@@ -1,8 +1,10 @@
+@file:Suppress("UNREACHABLE_CODE")
+
 package matt.v1.model.vis
 
+import matt.klib.lang.err
 import matt.stream.flatten
 import matt.stream.forEachNested
-import matt.klib.lang.err
 import matt.v1.model.FieldGenerator
 import matt.v1.model.vis.NormMethod.ADD_POINT_5
 import matt.v1.model.vis.NormMethod.RATIO
