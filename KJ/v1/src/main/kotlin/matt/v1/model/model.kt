@@ -1,4 +1,3 @@
-@file:Suppress("PropertyName", "UNUSED_PARAMETER")
 
 package matt.v1.model
 

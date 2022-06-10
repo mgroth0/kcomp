@@ -1,4 +1,3 @@
-@file:Suppress("USELESS_ELVIS")
 
 package matt.v1.gui.vis.vismodel
 

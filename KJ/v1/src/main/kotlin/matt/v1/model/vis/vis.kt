@@ -1,4 +1,3 @@
-@file:Suppress("UNREACHABLE_CODE")
 
 package matt.v1.model.vis
 

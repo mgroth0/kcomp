@@ -1,4 +1,3 @@
-@file:Suppress("UNUSED_VARIABLE")
 
 package matt.v1.salience
 
