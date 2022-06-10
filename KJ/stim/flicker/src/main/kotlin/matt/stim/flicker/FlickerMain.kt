@@ -2,14 +2,15 @@ package matt.stim.flicker
 
 import javafx.animation.Animation.INDEFINITE
 import javafx.animation.Interpolator
+import javafx.application.Platform.runLater
 import javafx.scene.CacheHint
 import javafx.scene.paint.Color
 import javafx.util.Duration
 import matt.gui.app.GuiApp
 import matt.hurricanefx.tornadofx.animation.keyframe
 import matt.hurricanefx.tornadofx.animation.timeline
-import matt.hurricanefx.tornadofx.async.runLater
 import matt.hurricanefx.tornadofx.shapes.circle
+import matt.stim.flicker.psykt.ExperimentStage.centerOnScreen
 
 const val HZ = 10.0
 const val PER_SEC = 1/HZ
