@@ -1,5 +1,6 @@
 package matt.v1.lab
 
+import javafx.application.Platform.runLater
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
@@ -9,7 +10,6 @@ import kotlinx.serialization.json.decodeFromJsonElement
 import matt.async.date.tic
 import matt.async.waitFor
 import matt.hurricanefx.eye.lang.BProp
-import matt.hurricanefx.tornadofx.async.runLater
 import matt.json.prim.parseJsonObjs
 import matt.kjlib.jmath.ranges.step
 import matt.kjlib.jmath.times

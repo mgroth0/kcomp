@@ -4,8 +4,8 @@ import javafx.scene.layout.HBox
 import javafx.scene.text.Font
 import matt.async.date.sec
 import matt.caching.every
+import matt.fx.graphics.async.runLaterReturn
 import matt.hurricanefx.eye.lang.Prop
-import matt.hurricanefx.tornadofx.async.runLaterReturn
 import matt.hurricanefx.tornadofx.control.label
 import matt.klib.str.prependZeros
 import matt.stream.itr.loopIterator
