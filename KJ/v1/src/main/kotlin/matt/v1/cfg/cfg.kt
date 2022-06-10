@@ -7,6 +7,7 @@ import javafx.scene.control.TextField
 import javafx.scene.layout.FlowPane
 import javafx.util.StringConverter
 import matt.fx.graphics.lang.actionbutton
+import matt.fx.graphics.layout.hbox
 import matt.hurricanefx.exactWidth
 import matt.hurricanefx.exactWidthProperty
 import matt.hurricanefx.eye.lib.onChange
