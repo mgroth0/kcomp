@@ -1,0 +1,4086 @@
+[
+  {
+    "segment": "2",
+    "label": "nose",
+    "trialStart": 1645319333209,
+    "trialEnd": 1645319337047
+  },
+  {
+    "segment": "2",
+    "label": "ear",
+    "trialStart": 1645564149120,
+    "submitSegmentTime": 1645564156322
+  },
+  {
+    "segment": "2",
+    "label": "nose",
+    "trialStart": 1645566306505,
+    "submitSegmentTime": 1645566311404
+  },
+  {
+    "responses": {
+      "1": "nose",
+      "2": "mouth",
+      "3": "nose",
+      "4": "mouth",
+      "5": "nose",
+      "6": "ear"
+    },
+    "trialLog": [
+      [
+        1645574257141.0,
+        "trial start"
+      ],
+      [
+        1645574271335.0,
+        "submit"
+      ]
+    ]
+  },
+  {
+    "responses": {
+      "1": "ear",
+      "2": "ear",
+      "3": "mouth",
+      "4": "nose",
+      "5": "nose",
+      "6": "mouth"
+    },
+    "trialLog": [
+      [
+        1645574713259.0,
+        "trial start"
+      ],
+      [
+        1645575828439.0,
+        "submit"
+      ]
+    ]
+  },
+  {
+    "responses": {
+      "1": "nose",
+      "2": "ear",
+      "3": "ear",
+      "4": "mouth",
+      "5": "mouth",
+      "6": "mouth"
+    },
+    "trialLog": [
+      [
+        1645576626808.0,
+        "trial start"
+      ],
+      [
+        1645576637198.0,
+        "submit"
+      ]
+    ]
+  },
+  {
+    "responses": {
+      "1": "nose",
+      "2": "eye",
+      "3": "mouth",
+      "4": "ear",
+      "5": "mouth",
+      "6": "ear",
+      "7": "ear",
+      "8": "eye"
+    },
+    "trialLog": [
+      [
+        1645576645200.0,
+        "trial start"
+      ],
+      [
+        1645576664748.0,
+        "submit"
+      ]
+    ]
+  },
+  {
+    "responses": {
+      "1": "mouth",
+      "2": "nose",
+      "3": "mouth",
+      "4": "ear",
+      "5": "ear",
+      "6": "nose"
+    },
+    "trialLog": [
+      [
+        1645576670022.0,
+        "trial start"
+      ],
+      [
+        1645576704055.0,
+        "submit"
+      ]
+    ]
+  },
+  {
+    "responses": {
+      "1": "mouth",
+      "2": "nose",
+      "3": "ear",
+      "4": "eye",
+      "5": "ear",
+      "6": "mouth"
+    },
+    "trialLog": [
+      [
+        1645579971655.0,
+        "trial start"
+      ],
+      [
+        1645579986031.0,
+        "selected segment: 2"
+      ],
+      [
+        1645579986281.0,
+        "selected segment: 2"
+      ],
+      [
+        1645579986305.0,
+        "selected segment: 2"
+      ],
+      [
+        1645579986330.0,
+        "selected segment: 2"
+      ],
+      [
+        1645579988090.0,
+        "selected label: nose"
+      ],
+      [
+        1645579989009.0,
+        "selected segment: 3"
+      ],
+      [
+        1645579989030.0,
+        "selected segment: 3"
+      ],
+      [
+        1645579989256.0,
+        "selected segment: 3"
+      ],
+      [
+        1645579989281.0,
+        "selected segment: 3"
+      ],
+      [
+        1645579989306.0,
+        "selected segment: 3"
+      ],
+      [
+        1645579989331.0,
+        "selected segment: 3"
+      ],
+      [
+        1645579989356.0,
+        "selected segment: 3"
+      ],
+      [
+        1645579989381.0,
+        "selected segment: 3"
+      ],
+      [
+        1645579989407.0,
+        "selected segment: 3"
+      ],
+      [
+        1645579989434.0,
+        "selected segment: 3"
+      ],
+      [
+        1645579989456.0,
+        "selected segment: 3"
+      ],
+      [
+        1645579989481.0,
+        "selected segment: 3"
+      ],
+      [
+        1645579989507.0,
+        "selected segment: 3"
+      ],
+      [
+        1645579989532.0,
+        "selected segment: 3"
+      ],
+      [
+        1645579989556.0,
+        "selected segment: 3"
+      ],
+      [
+        1645579989581.0,
+        "selected segment: 3"
+      ],
+      [
+        1645579989607.0,
+        "selected segment: 3"
+      ],
+      [
+        1645579989956.0,
+        "selected segment: 3"
+      ],
+      [
+        1645579989981.0,
+        "selected segment: 3"
+      ],
+      [
+        1645579990006.0,
+        "selected segment: 3"
+      ],
+      [
+        1645579990031.0,
+        "selected segment: 3"
+      ],
+      [
+        1645579990056.0,
+        "selected segment: 3"
+      ],
+      [
+        1645579990081.0,
+        "selected segment: 3"
+      ],
+      [
+        1645579990106.0,
+        "selected segment: 3"
+      ],
+      [
+        1645579990181.0,
+        "selected segment: 3"
+      ],
+      [
+        1645579990207.0,
+        "selected segment: 3"
+      ],
+      [
+        1645579990231.0,
+        "selected segment: 3"
+      ],
+      [
+        1645579990257.0,
+        "selected segment: 3"
+      ],
+      [
+        1645579990281.0,
+        "selected segment: 3"
+      ],
+      [
+        1645579990306.0,
+        "selected segment: 3"
+      ],
+      [
+        1645579990331.0,
+        "selected segment: 3"
+      ],
+      [
+        1645579990737.0,
+        "selected label: ear"
+      ],
+      [
+        1645579991548.0,
+        "selected segment: 4"
+      ],
+      [
+        1645579991557.0,
+        "selected segment: 4"
+      ],
+      [
+        1645579992052.0,
+        "selected label: eye"
+      ],
+      [
+        1645579992838.0,
+        "selected segment: 5"
+      ],
+      [
+        1645579992857.0,
+        "selected segment: 5"
+      ],
+      [
+        1645579993325.0,
+        "selected label: ear"
+      ],
+      [
+        1645579994292.0,
+        "selected segment: 6"
+      ],
+      [
+        1645579994307.0,
+        "selected segment: 6"
+      ],
+      [
+        1645579994789.0,
+        "selected label: mouth"
+      ],
+      [
+        1645579995704.0,
+        "selected segment: 1"
+      ],
+      [
+        1645579995710.0,
+        "selected segment: 1"
+      ],
+      [
+        1645579996224.0,
+        "selected label: mouth"
+      ],
+      [
+        1645580000208.0,
+        "submit"
+      ]
+    ]
+  },
+  {
+    "responses": {
+      "1": "mouth",
+      "2": "nose",
+      "3": "ear",
+      "4": "ear",
+      "5": "mouth",
+      "6": "mouth"
+    },
+    "trialLog": [
+      [
+        1645582651481.0,
+        "trial start"
+      ],
+      [
+        1645582652734.0,
+        "selected segment: 2"
+      ],
+      [
+        1645582652931.0,
+        "selected segment: 2"
+      ],
+      [
+        1645582652957.0,
+        "selected segment: 2"
+      ],
+      [
+        1645582652982.0,
+        "selected segment: 2"
+      ],
+      [
+        1645582653862.0,
+        "selected label: nose"
+      ],
+      [
+        1645582654445.0,
+        "selected segment: 3"
+      ],
+      [
+        1645582654456.0,
+        "selected segment: 3"
+      ],
+      [
+        1645582654656.0,
+        "selected segment: 3"
+      ],
+      [
+        1645582654682.0,
+        "selected segment: 3"
+      ],
+      [
+        1645582654706.0,
+        "selected segment: 3"
+      ],
+      [
+        1645582654732.0,
+        "selected segment: 3"
+      ],
+      [
+        1645582654758.0,
+        "selected segment: 3"
+      ],
+      [
+        1645582654782.0,
+        "selected segment: 3"
+      ],
+      [
+        1645582654807.0,
+        "selected segment: 3"
+      ],
+      [
+        1645582654831.0,
+        "selected segment: 3"
+      ],
+      [
+        1645582654857.0,
+        "selected segment: 3"
+      ],
+      [
+        1645582654882.0,
+        "selected segment: 3"
+      ],
+      [
+        1645582654907.0,
+        "selected segment: 3"
+      ],
+      [
+        1645582654932.0,
+        "selected segment: 3"
+      ],
+      [
+        1645582654957.0,
+        "selected segment: 3"
+      ],
+      [
+        1645582654982.0,
+        "selected segment: 3"
+      ],
+      [
+        1645582655007.0,
+        "selected segment: 3"
+      ],
+      [
+        1645582655032.0,
+        "selected segment: 3"
+      ],
+      [
+        1645582655056.0,
+        "selected segment: 3"
+      ],
+      [
+        1645582655082.0,
+        "selected segment: 3"
+      ],
+      [
+        1645582655106.0,
+        "selected segment: 3"
+      ],
+      [
+        1645582655132.0,
+        "selected segment: 3"
+      ],
+      [
+        1645582655156.0,
+        "selected segment: 3"
+      ],
+      [
+        1645582655181.0,
+        "selected segment: 3"
+      ],
+      [
+        1645582655211.0,
+        "selected segment: 3"
+      ],
+      [
+        1645582656152.0,
+        "selected label: ear"
+      ],
+      [
+        1645582656832.0,
+        "selected segment: 4"
+      ],
+      [
+        1645582656836.0,
+        "selected segment: 4"
+      ],
+      [
+        1645582657441.0,
+        "selected label: ear"
+      ],
+      [
+        1645582658260.0,
+        "selected segment: 5"
+      ],
+      [
+        1645582658268.0,
+        "selected segment: 5"
+      ],
+      [
+        1645582658934.0,
+        "selected label: mouth"
+      ],
+      [
+        1645582659661.0,
+        "selected segment: 6"
+      ],
+      [
+        1645582659683.0,
+        "selected segment: 6"
+      ],
+      [
+        1645582659907.0,
+        "selected segment: 6"
+      ],
+      [
+        1645582659933.0,
+        "selected segment: 6"
+      ],
+      [
+        1645582659957.0,
+        "selected segment: 6"
+      ],
+      [
+        1645582659982.0,
+        "selected segment: 6"
+      ],
+      [
+        1645582660007.0,
+        "selected segment: 6"
+      ],
+      [
+        1645582660032.0,
+        "selected segment: 6"
+      ],
+      [
+        1645582660519.0,
+        "selected label: mouth"
+      ],
+      [
+        1645582661422.0,
+        "selected segment: 1"
+      ],
+      [
+        1645582661438.0,
+        "selected segment: 1"
+      ],
+      [
+        1645582661991.0,
+        "selected label: mouth"
+      ],
+      [
+        1645582668207.0,
+        "selected segment: 1"
+      ],
+      [
+        1645582671109.0,
+        "submit"
+      ]
+    ]
+  },
+  {
+    "responses": {
+      "1": "ear",
+      "2": "nose",
+      "3": "nose",
+      "4": "mouth",
+      "5": "mouth",
+      "6": "mouth"
+    },
+    "trialLog": [
+      [
+        1645586347863.0,
+        "trial start"
+      ],
+      [
+        1645586351664.0,
+        "selected segment: 2"
+      ],
+      [
+        1645586351838.0,
+        "selected segment: 2"
+      ],
+      [
+        1645586351863.0,
+        "selected segment: 2"
+      ],
+      [
+        1645586351888.0,
+        "selected segment: 2"
+      ],
+      [
+        1645586351913.0,
+        "selected segment: 2"
+      ],
+      [
+        1645586352597.0,
+        "selected label: nose"
+      ],
+      [
+        1645586353354.0,
+        "selected segment: 3"
+      ],
+      [
+        1645586353363.0,
+        "selected segment: 3"
+      ],
+      [
+        1645586353688.0,
+        "selected segment: 3"
+      ],
+      [
+        1645586353714.0,
+        "selected segment: 3"
+      ],
+      [
+        1645586353738.0,
+        "selected segment: 3"
+      ],
+      [
+        1645586353763.0,
+        "selected segment: 3"
+      ],
+      [
+        1645586353788.0,
+        "selected segment: 3"
+      ],
+      [
+        1645586353813.0,
+        "selected segment: 3"
+      ],
+      [
+        1645586353838.0,
+        "selected segment: 3"
+      ],
+      [
+        1645586353863.0,
+        "selected segment: 3"
+      ],
+      [
+        1645586353888.0,
+        "selected segment: 3"
+      ],
+      [
+        1645586353915.0,
+        "selected segment: 3"
+      ],
+      [
+        1645586353937.0,
+        "selected segment: 3"
+      ],
+      [
+        1645586353963.0,
+        "selected segment: 3"
+      ],
+      [
+        1645586353988.0,
+        "selected segment: 3"
+      ],
+      [
+        1645586355385.0,
+        "selected label: nose"
+      ],
+      [
+        1645586356416.0,
+        "selected segment: 4"
+      ],
+      [
+        1645586356420.0,
+        "selected segment: 4"
+      ],
+      [
+        1645586356892.0,
+        "selected label: mouth"
+      ],
+      [
+        1645586357590.0,
+        "selected segment: 5"
+      ],
+      [
+        1645586357595.0,
+        "selected segment: 5"
+      ],
+      [
+        1645586358086.0,
+        "selected label: mouth"
+      ],
+      [
+        1645586358866.0,
+        "selected segment: 6"
+      ],
+      [
+        1645586358889.0,
+        "selected segment: 6"
+      ],
+      [
+        1645586359331.0,
+        "selected label: mouth"
+      ],
+      [
+        1645586359986.0,
+        "selected segment: 1"
+      ],
+      [
+        1645586359990.0,
+        "selected segment: 1"
+      ],
+      [
+        1645586360556.0,
+        "selected label: ear"
+      ],
+      [
+        1645586361393.0,
+        "selected segment: 2"
+      ],
+      [
+        1645586361413.0,
+        "selected segment: 2"
+      ],
+      [
+        1645586364625.0,
+        "submit"
+      ]
+    ]
+  },
+  {
+    "segment": "2",
+    "label": "nose",
+    "trialStart": 1645321457768,
+    "submitSegmentTime": 1645321462712
+  },
+  {
+    "responses": {
+      "1": "ear",
+      "2": "mouth",
+      "3": "nose",
+      "4": "mouth",
+      "5": "ear",
+      "6": "eye",
+      "7": "nose",
+      "8": "nose"
+    },
+    "trialLog": [
+      [
+        1645586372180.0,
+        "trial start"
+      ],
+      [
+        1645586373781.0,
+        "selected segment: 1"
+      ],
+      [
+        1645586373956.0,
+        "selected segment: 1"
+      ],
+      [
+        1645586373981.0,
+        "selected segment: 1"
+      ],
+      [
+        1645586374006.0,
+        "selected segment: 1"
+      ],
+      [
+        1645586374032.0,
+        "selected segment: 1"
+      ],
+      [
+        1645586374387.0,
+        "selected segment: 8"
+      ],
+      [
+        1645586374407.0,
+        "selected segment: 8"
+      ],
+      [
+        1645586375237.0,
+        "selected label: nose"
+      ],
+      [
+        1645586376247.0,
+        "selected segment: 7"
+      ],
+      [
+        1645586376258.0,
+        "selected segment: 7"
+      ],
+      [
+        1645586376742.0,
+        "selected label: ear"
+      ],
+      [
+        1645586377436.0,
+        "selected segment: 6"
+      ],
+      [
+        1645586377456.0,
+        "selected segment: 6"
+      ],
+      [
+        1645586377851.0,
+        "selected label: eye"
+      ],
+      [
+        1645586378438.0,
+        "selected segment: 7"
+      ],
+      [
+        1645586378455.0,
+        "selected segment: 7"
+      ],
+      [
+        1645586380088.0,
+        "selected label: nose"
+      ],
+      [
+        1645586380962.0,
+        "selected segment: 8"
+      ],
+      [
+        1645586380982.0,
+        "selected segment: 8"
+      ],
+      [
+        1645586381992.0,
+        "selected segment: 1"
+      ],
+      [
+        1645586382010.0,
+        "selected segment: 1"
+      ],
+      [
+        1645586382546.0,
+        "selected label: ear"
+      ],
+      [
+        1645586383492.0,
+        "selected segment: 2"
+      ],
+      [
+        1645586383507.0,
+        "selected segment: 2"
+      ],
+      [
+        1645586383980.0,
+        "selected label: mouth"
+      ],
+      [
+        1645586384872.0,
+        "selected segment: 3"
+      ],
+      [
+        1645586384880.0,
+        "selected segment: 3"
+      ],
+      [
+        1645586385506.0,
+        "selected label: nose"
+      ],
+      [
+        1645586386301.0,
+        "selected segment: 4"
+      ],
+      [
+        1645586386305.0,
+        "selected segment: 4"
+      ],
+      [
+        1645586386808.0,
+        "selected label: mouth"
+      ],
+      [
+        1645586387780.0,
+        "selected segment: 5"
+      ],
+      [
+        1645586387785.0,
+        "selected segment: 5"
+      ],
+      [
+        1645586388498.0,
+        "selected label: ear"
+      ],
+      [
+        1645586390748.0,
+        "submit"
+      ]
+    ]
+  },
+  {
+    "responses": {
+      "1": "ear",
+      "2": "mouth",
+      "3": "ear",
+      "4": "mouth",
+      "5": "eye",
+      "6": "nose",
+      "7": "ear",
+      "8": "ear"
+    },
+    "trialLog": [
+      [
+        1645588188303.0,
+        "trial start"
+      ],
+      [
+        1645588190480.0,
+        "selected segment: 1"
+      ],
+      [
+        1645588190505.0,
+        "selected segment: 1"
+      ],
+      [
+        1645588190681.0,
+        "selected segment: 2"
+      ],
+      [
+        1645588190705.0,
+        "selected segment: 2"
+      ],
+      [
+        1645588190866.0,
+        "selected segment: 3"
+      ],
+      [
+        1645588190879.0,
+        "selected segment: 3"
+      ],
+      [
+        1645588191020.0,
+        "selected segment: 4"
+      ],
+      [
+        1645588191028.0,
+        "selected segment: 4"
+      ],
+      [
+        1645588191323.0,
+        "selected segment: 5"
+      ],
+      [
+        1645588191330.0,
+        "selected segment: 5"
+      ],
+      [
+        1645588191466.0,
+        "selected segment: 6"
+      ],
+      [
+        1645588191478.0,
+        "selected segment: 6"
+      ],
+      [
+        1645588191629.0,
+        "selected segment: 7"
+      ],
+      [
+        1645588191632.0,
+        "selected segment: 7"
+      ],
+      [
+        1645588191775.0,
+        "selected segment: 8"
+      ],
+      [
+        1645588191779.0,
+        "selected segment: 8"
+      ],
+      [
+        1645588191963.0,
+        "selected segment: 1"
+      ],
+      [
+        1645588191978.0,
+        "selected segment: 1"
+      ],
+      [
+        1645588193244.0,
+        "selected label: ear"
+      ],
+      [
+        1645588194172.0,
+        "selected segment: 2"
+      ],
+      [
+        1645588194178.0,
+        "selected segment: 2"
+      ],
+      [
+        1645588194599.0,
+        "selected segment: 3"
+      ],
+      [
+        1645588194603.0,
+        "selected segment: 3"
+      ],
+      [
+        1645588194896.0,
+        "selected segment: 4"
+      ],
+      [
+        1645588194903.0,
+        "selected segment: 4"
+      ],
+      [
+        1645588195080.0,
+        "selected segment: 5"
+      ],
+      [
+        1645588195104.0,
+        "selected segment: 5"
+      ],
+      [
+        1645588195247.0,
+        "selected segment: 6"
+      ],
+      [
+        1645588195253.0,
+        "selected segment: 6"
+      ],
+      [
+        1645588195465.0,
+        "selected segment: 7"
+      ],
+      [
+        1645588195478.0,
+        "selected segment: 7"
+      ],
+      [
+        1645588195648.0,
+        "selected segment: 8"
+      ],
+      [
+        1645588195653.0,
+        "selected segment: 8"
+      ],
+      [
+        1645588195866.0,
+        "selected segment: 1"
+      ],
+      [
+        1645588195879.0,
+        "selected segment: 1"
+      ],
+      [
+        1645588197601.0,
+        "selected segment: 8"
+      ],
+      [
+        1645588197604.0,
+        "selected segment: 8"
+      ],
+      [
+        1645588198330.0,
+        "selected segment: 8"
+      ],
+      [
+        1645588198353.0,
+        "selected segment: 8"
+      ],
+      [
+        1645588198379.0,
+        "selected segment: 8"
+      ],
+      [
+        1645588198403.0,
+        "selected segment: 8"
+      ],
+      [
+        1645588198428.0,
+        "selected segment: 8"
+      ],
+      [
+        1645588198453.0,
+        "selected segment: 8"
+      ],
+      [
+        1645588198479.0,
+        "selected segment: 8"
+      ],
+      [
+        1645588198503.0,
+        "selected segment: 8"
+      ],
+      [
+        1645588198530.0,
+        "selected segment: 8"
+      ],
+      [
+        1645588198553.0,
+        "selected segment: 8"
+      ],
+      [
+        1645588198580.0,
+        "selected segment: 8"
+      ],
+      [
+        1645588198603.0,
+        "selected segment: 8"
+      ],
+      [
+        1645588198630.0,
+        "selected segment: 8"
+      ],
+      [
+        1645588198653.0,
+        "selected segment: 8"
+      ],
+      [
+        1645588198679.0,
+        "selected segment: 8"
+      ],
+      [
+        1645588198704.0,
+        "selected segment: 8"
+      ],
+      [
+        1645588198728.0,
+        "selected segment: 8"
+      ],
+      [
+        1645588198753.0,
+        "selected segment: 8"
+      ],
+      [
+        1645588198779.0,
+        "selected segment: 8"
+      ],
+      [
+        1645588199950.0,
+        "selected segment: 1"
+      ],
+      [
+        1645588199956.0,
+        "selected segment: 1"
+      ],
+      [
+        1645588201492.0,
+        "selected segment: 8"
+      ],
+      [
+        1645588201503.0,
+        "selected segment: 8"
+      ],
+      [
+        1645588202721.0,
+        "selected segment: 1"
+      ],
+      [
+        1645588202729.0,
+        "selected segment: 1"
+      ],
+      [
+        1645588203617.0,
+        "selected segment: 2"
+      ],
+      [
+        1645588203628.0,
+        "selected segment: 2"
+      ],
+      [
+        1645588204642.0,
+        "selected label: mouth"
+      ],
+      [
+        1645588205625.0,
+        "selected segment: 3"
+      ],
+      [
+        1645588205629.0,
+        "selected segment: 3"
+      ],
+      [
+        1645588206130.0,
+        "selected label: ear"
+      ],
+      [
+        1645588206861.0,
+        "selected segment: 4"
+      ],
+      [
+        1645588206881.0,
+        "selected segment: 4"
+      ],
+      [
+        1645588207358.0,
+        "selected label: mouth"
+      ],
+      [
+        1645588209127.0,
+        "selected segment: 5"
+      ],
+      [
+        1645588209142.0,
+        "selected segment: 5"
+      ],
+      [
+        1645588209416.0,
+        "selected segment: 6"
+      ],
+      [
+        1645588209428.0,
+        "selected segment: 6"
+      ],
+      [
+        1645588210714.0,
+        "selected label: nose"
+      ],
+      [
+        1645588211786.0,
+        "selected segment: 7"
+      ],
+      [
+        1645588211805.0,
+        "selected segment: 7"
+      ],
+      [
+        1645588212402.0,
+        "selected label: ear"
+      ],
+      [
+        1645588213094.0,
+        "selected segment: 8"
+      ],
+      [
+        1645588213105.0,
+        "selected segment: 8"
+      ],
+      [
+        1645588213631.0,
+        "selected label: ear"
+      ],
+      [
+        1645588214500.0,
+        "selected segment: 1"
+      ],
+      [
+        1645588214505.0,
+        "selected segment: 1"
+      ],
+      [
+        1645588215004.0,
+        "selected segment: 2"
+      ],
+      [
+        1645588215030.0,
+        "selected segment: 2"
+      ],
+      [
+        1645588215238.0,
+        "selected segment: 3"
+      ],
+      [
+        1645588215253.0,
+        "selected segment: 3"
+      ],
+      [
+        1645588215728.0,
+        "selected segment: 4"
+      ],
+      [
+        1645588215733.0,
+        "selected segment: 4"
+      ],
+      [
+        1645588216163.0,
+        "selected segment: 5"
+      ],
+      [
+        1645588216178.0,
+        "selected segment: 5"
+      ],
+      [
+        1645588216970.0,
+        "selected label: eye"
+      ],
+      [
+        1645588219301.0,
+        "submit"
+      ]
+    ]
+  },
+  {
+    "responses": {
+      "1": "mouth",
+      "2": "nose",
+      "3": "nose",
+      "4": "ear",
+      "5": "ear",
+      "6": "eye"
+    },
+    "trialLog": [
+      [
+        1645588477453.0,
+        "trial start"
+      ],
+      [
+        1645588479253.0,
+        "selected segment: 2"
+      ],
+      [
+        1645588479652.0,
+        "selected segment: 2"
+      ],
+      [
+        1645588479678.0,
+        "selected segment: 2"
+      ],
+      [
+        1645588479702.0,
+        "selected segment: 2"
+      ],
+      [
+        1645588479729.0,
+        "selected segment: 2"
+      ],
+      [
+        1645588479752.0,
+        "selected segment: 2"
+      ],
+      [
+        1645588479778.0,
+        "selected segment: 2"
+      ],
+      [
+        1645588480313.0,
+        "selected label: nose"
+      ],
+      [
+        1645588480960.0,
+        "selected segment: 3"
+      ],
+      [
+        1645588480978.0,
+        "selected segment: 3"
+      ],
+      [
+        1645588481202.0,
+        "selected segment: 3"
+      ],
+      [
+        1645588481229.0,
+        "selected segment: 3"
+      ],
+      [
+        1645588481253.0,
+        "selected segment: 3"
+      ],
+      [
+        1645588481278.0,
+        "selected segment: 3"
+      ],
+      [
+        1645588481303.0,
+        "selected segment: 3"
+      ],
+      [
+        1645588481330.0,
+        "selected segment: 3"
+      ],
+      [
+        1645588481353.0,
+        "selected segment: 3"
+      ],
+      [
+        1645588481402.0,
+        "selected segment: 3"
+      ],
+      [
+        1645588481428.0,
+        "selected segment: 3"
+      ],
+      [
+        1645588481453.0,
+        "selected segment: 3"
+      ],
+      [
+        1645588481478.0,
+        "selected segment: 3"
+      ],
+      [
+        1645588482189.0,
+        "selected label: nose"
+      ],
+      [
+        1645588482843.0,
+        "selected segment: 4"
+      ],
+      [
+        1645588482856.0,
+        "selected segment: 4"
+      ],
+      [
+        1645588483570.0,
+        "selected label: ear"
+      ],
+      [
+        1645588484356.0,
+        "selected segment: 5"
+      ],
+      [
+        1645588484360.0,
+        "selected segment: 5"
+      ],
+      [
+        1645588485545.0,
+        "selected label: ear"
+      ],
+      [
+        1645588486232.0,
+        "selected segment: 6"
+      ],
+      [
+        1645588486253.0,
+        "selected segment: 6"
+      ],
+      [
+        1645588486716.0,
+        "selected label: eye"
+      ],
+      [
+        1645588487735.0,
+        "selected segment: 1"
+      ],
+      [
+        1645588487754.0,
+        "selected segment: 1"
+      ],
+      [
+        1645588488384.0,
+        "selected label: mouth"
+      ],
+      [
+        1645588489619.0,
+        "selected segment: 2"
+      ],
+      [
+        1645588489628.0,
+        "selected segment: 2"
+      ],
+      [
+        1645588491341.0,
+        "submit"
+      ]
+    ]
+  },
+  {
+    "responses": {
+      "1": "mouth",
+      "2": "nose",
+      "3": "nose",
+      "4": "eye",
+      "5": "eye",
+      "6": "mouth"
+    },
+    "trialLog": [
+      [
+        1645589494310.0,
+        "trial start"
+      ],
+      [
+        1645589496711.0,
+        "selected segment: 2"
+      ],
+      [
+        1645589496936.0,
+        "selected segment: 2"
+      ],
+      [
+        1645589496961.0,
+        "selected segment: 2"
+      ],
+      [
+        1645589496986.0,
+        "selected segment: 2"
+      ],
+      [
+        1645589497011.0,
+        "selected segment: 2"
+      ],
+      [
+        1645589497036.0,
+        "selected segment: 2"
+      ],
+      [
+        1645589497871.0,
+        "selected label: nose"
+      ],
+      [
+        1645589498502.0,
+        "selected segment: 3"
+      ],
+      [
+        1645589498510.0,
+        "selected segment: 3"
+      ],
+      [
+        1645589498735.0,
+        "selected segment: 3"
+      ],
+      [
+        1645589498760.0,
+        "selected segment: 3"
+      ],
+      [
+        1645589498785.0,
+        "selected segment: 3"
+      ],
+      [
+        1645589498811.0,
+        "selected segment: 3"
+      ],
+      [
+        1645589498836.0,
+        "selected segment: 3"
+      ],
+      [
+        1645589498861.0,
+        "selected segment: 3"
+      ],
+      [
+        1645589498885.0,
+        "selected segment: 3"
+      ],
+      [
+        1645589498910.0,
+        "selected segment: 3"
+      ],
+      [
+        1645589498935.0,
+        "selected segment: 3"
+      ],
+      [
+        1645589498962.0,
+        "selected segment: 3"
+      ],
+      [
+        1645589498985.0,
+        "selected segment: 3"
+      ],
+      [
+        1645589499010.0,
+        "selected segment: 3"
+      ],
+      [
+        1645589499036.0,
+        "selected segment: 3"
+      ],
+      [
+        1645589499727.0,
+        "selected label: nose"
+      ],
+      [
+        1645589500449.0,
+        "selected segment: 4"
+      ],
+      [
+        1645589500462.0,
+        "selected segment: 4"
+      ],
+      [
+        1645589500925.0,
+        "selected label: eye"
+      ],
+      [
+        1645589501881.0,
+        "selected segment: 5"
+      ],
+      [
+        1645589501885.0,
+        "selected segment: 5"
+      ],
+      [
+        1645589502460.0,
+        "selected segment: 5"
+      ],
+      [
+        1645589502486.0,
+        "selected segment: 5"
+      ],
+      [
+        1645589502511.0,
+        "selected segment: 5"
+      ],
+      [
+        1645589502536.0,
+        "selected segment: 5"
+      ],
+      [
+        1645589502561.0,
+        "selected segment: 5"
+      ],
+      [
+        1645589502585.0,
+        "selected segment: 5"
+      ],
+      [
+        1645589502611.0,
+        "selected segment: 5"
+      ],
+      [
+        1645589502635.0,
+        "selected segment: 5"
+      ],
+      [
+        1645589502661.0,
+        "selected segment: 5"
+      ],
+      [
+        1645589502686.0,
+        "selected segment: 5"
+      ],
+      [
+        1645589502711.0,
+        "selected segment: 5"
+      ],
+      [
+        1645589502735.0,
+        "selected segment: 5"
+      ],
+      [
+        1645589502760.0,
+        "selected segment: 5"
+      ],
+      [
+        1645589502785.0,
+        "selected segment: 5"
+      ],
+      [
+        1645589502811.0,
+        "selected segment: 5"
+      ],
+      [
+        1645589502835.0,
+        "selected segment: 5"
+      ],
+      [
+        1645589503261.0,
+        "selected label: eye"
+      ],
+      [
+        1645589504128.0,
+        "selected segment: 6"
+      ],
+      [
+        1645589504135.0,
+        "selected segment: 6"
+      ],
+      [
+        1645589504413.0,
+        "selected segment: 6"
+      ],
+      [
+        1645589504436.0,
+        "selected segment: 6"
+      ],
+      [
+        1645589504461.0,
+        "selected segment: 6"
+      ],
+      [
+        1645589504485.0,
+        "selected segment: 6"
+      ],
+      [
+        1645589504511.0,
+        "selected segment: 6"
+      ],
+      [
+        1645589504536.0,
+        "selected segment: 6"
+      ],
+      [
+        1645589504585.0,
+        "selected segment: 6"
+      ],
+      [
+        1645589504611.0,
+        "selected segment: 6"
+      ],
+      [
+        1645589504635.0,
+        "selected segment: 6"
+      ],
+      [
+        1645589504660.0,
+        "selected segment: 6"
+      ],
+      [
+        1645589504685.0,
+        "selected segment: 6"
+      ],
+      [
+        1645589505103.0,
+        "selected label: mouth"
+      ],
+      [
+        1645589506038.0,
+        "selected segment: 1"
+      ],
+      [
+        1645589506061.0,
+        "selected segment: 1"
+      ],
+      [
+        1645589506831.0,
+        "selected label: mouth"
+      ],
+      [
+        1645589509463.0,
+        "submit"
+      ]
+    ]
+  },
+  {
+    "responses": {
+      "1": "ear",
+      "2": "eye",
+      "3": "eye",
+      "4": "eye",
+      "5": "eye",
+      "6": "eye",
+      "7": "eye",
+      "8": "eye"
+    },
+    "trialLog": [
+      [
+        1645589517262.0,
+        "trial start"
+      ],
+      [
+        1645589524388.0,
+        "selected segment: 1"
+      ],
+      [
+        1645589524712.0,
+        "selected segment: 1"
+      ],
+      [
+        1645589524737.0,
+        "selected segment: 1"
+      ],
+      [
+        1645589524762.0,
+        "selected segment: 1"
+      ],
+      [
+        1645589524787.0,
+        "selected segment: 1"
+      ],
+      [
+        1645589525196.0,
+        "selected label: ear"
+      ],
+      [
+        1645589525978.0,
+        "selected segment: 2"
+      ],
+      [
+        1645589525991.0,
+        "selected segment: 2"
+      ],
+      [
+        1645589526873.0,
+        "selected label: eye"
+      ],
+      [
+        1645589527774.0,
+        "selected segment: 3"
+      ],
+      [
+        1645589527787.0,
+        "selected segment: 3"
+      ],
+      [
+        1645589528037.0,
+        "selected segment: 3"
+      ],
+      [
+        1645589528062.0,
+        "selected segment: 3"
+      ],
+      [
+        1645589528087.0,
+        "selected segment: 3"
+      ],
+      [
+        1645589528113.0,
+        "selected segment: 3"
+      ],
+      [
+        1645589528137.0,
+        "selected segment: 3"
+      ],
+      [
+        1645589528188.0,
+        "selected segment: 3"
+      ],
+      [
+        1645589528212.0,
+        "selected segment: 3"
+      ],
+      [
+        1645589528412.0,
+        "selected segment: 3"
+      ],
+      [
+        1645589528437.0,
+        "selected segment: 3"
+      ],
+      [
+        1645589528462.0,
+        "selected segment: 3"
+      ],
+      [
+        1645589528488.0,
+        "selected segment: 3"
+      ],
+      [
+        1645589528513.0,
+        "selected segment: 3"
+      ],
+      [
+        1645589528537.0,
+        "selected segment: 3"
+      ],
+      [
+        1645589528562.0,
+        "selected segment: 3"
+      ],
+      [
+        1645589528588.0,
+        "selected segment: 3"
+      ],
+      [
+        1645589528612.0,
+        "selected segment: 3"
+      ],
+      [
+        1645589528637.0,
+        "selected segment: 3"
+      ],
+      [
+        1645589528662.0,
+        "selected segment: 3"
+      ],
+      [
+        1645589528687.0,
+        "selected segment: 3"
+      ],
+      [
+        1645589528712.0,
+        "selected segment: 3"
+      ],
+      [
+        1645589528737.0,
+        "selected segment: 3"
+      ],
+      [
+        1645589529024.0,
+        "selected label: eye"
+      ],
+      [
+        1645589530002.0,
+        "selected segment: 4"
+      ],
+      [
+        1645589530012.0,
+        "selected segment: 4"
+      ],
+      [
+        1645589530287.0,
+        "selected segment: 4"
+      ],
+      [
+        1645589530312.0,
+        "selected segment: 4"
+      ],
+      [
+        1645589530337.0,
+        "selected segment: 4"
+      ],
+      [
+        1645589530363.0,
+        "selected segment: 4"
+      ],
+      [
+        1645589530387.0,
+        "selected segment: 4"
+      ],
+      [
+        1645589530437.0,
+        "selected segment: 4"
+      ],
+      [
+        1645589530462.0,
+        "selected segment: 4"
+      ],
+      [
+        1645589530487.0,
+        "selected segment: 4"
+      ],
+      [
+        1645589530512.0,
+        "selected segment: 4"
+      ],
+      [
+        1645589530537.0,
+        "selected segment: 4"
+      ],
+      [
+        1645589530562.0,
+        "selected segment: 4"
+      ],
+      [
+        1645589530587.0,
+        "selected segment: 4"
+      ],
+      [
+        1645589530613.0,
+        "selected segment: 4"
+      ],
+      [
+        1645589530637.0,
+        "selected segment: 4"
+      ],
+      [
+        1645589530662.0,
+        "selected segment: 4"
+      ],
+      [
+        1645589530911.0,
+        "selected label: eye"
+      ],
+      [
+        1645589531677.0,
+        "selected segment: 5"
+      ],
+      [
+        1645589531689.0,
+        "selected segment: 5"
+      ],
+      [
+        1645589532853.0,
+        "selected label: eye"
+      ],
+      [
+        1645589533572.0,
+        "selected segment: 6"
+      ],
+      [
+        1645589533587.0,
+        "selected segment: 6"
+      ],
+      [
+        1645589534286.0,
+        "selected label: eye"
+      ],
+      [
+        1645589535495.0,
+        "selected segment: 7"
+      ],
+      [
+        1645589535677.0,
+        "selected segment: 7"
+      ],
+      [
+        1645589536654.0,
+        "selected label: eye"
+      ],
+      [
+        1645589537846.0,
+        "selected segment: 8"
+      ],
+      [
+        1645589537889.0,
+        "selected segment: 8"
+      ],
+      [
+        1645589538546.0,
+        "selected label: eye"
+      ],
+      [
+        1645589542163.0,
+        "submit"
+      ]
+    ]
+  },
+  {
+    "responses": {
+      "1": "eye",
+      "2": "ear",
+      "3": "nose",
+      "4": "ear",
+      "5": "nose",
+      "6": "nose"
+    },
+    "trialLog": [
+      [
+        1645590918321.0,
+        "trial start"
+      ],
+      [
+        1645590921297.0,
+        "selected segment: 2"
+      ],
+      [
+        1645590921497.0,
+        "selected segment: 2"
+      ],
+      [
+        1645590921521.0,
+        "selected segment: 2"
+      ],
+      [
+        1645590921547.0,
+        "selected segment: 2"
+      ],
+      [
+        1645590922209.0,
+        "selected label: nose"
+      ],
+      [
+        1645590922210.0,
+        "selected segment: 3"
+      ],
+      [
+        1645590922223.0,
+        "selected segment: 3"
+      ],
+      [
+        1645590923138.0,
+        "selected segment: 4"
+      ],
+      [
+        1645590923150.0,
+        "selected segment: 4"
+      ],
+      [
+        1645590923572.0,
+        "selected segment: 4"
+      ],
+      [
+        1645590923596.0,
+        "selected segment: 4"
+      ],
+      [
+        1645590923622.0,
+        "selected segment: 4"
+      ],
+      [
+        1645590923646.0,
+        "selected segment: 4"
+      ],
+      [
+        1645590923672.0,
+        "selected segment: 4"
+      ],
+      [
+        1645590923697.0,
+        "selected segment: 4"
+      ],
+      [
+        1645590923722.0,
+        "selected segment: 4"
+      ],
+      [
+        1645590923746.0,
+        "selected segment: 4"
+      ],
+      [
+        1645590923798.0,
+        "selected segment: 4"
+      ],
+      [
+        1645590923822.0,
+        "selected segment: 4"
+      ],
+      [
+        1645590923846.0,
+        "selected segment: 4"
+      ],
+      [
+        1645590923872.0,
+        "selected segment: 4"
+      ],
+      [
+        1645590923896.0,
+        "selected segment: 4"
+      ],
+      [
+        1645590924443.0,
+        "selected label: ear"
+      ],
+      [
+        1645590924444.0,
+        "selected segment: 5"
+      ],
+      [
+        1645590924451.0,
+        "selected segment: 5"
+      ],
+      [
+        1645590925110.0,
+        "selected segment: 6"
+      ],
+      [
+        1645590925124.0,
+        "selected segment: 6"
+      ],
+      [
+        1645590927176.0,
+        "selected label: mouth"
+      ],
+      [
+        1645590927177.0,
+        "selected segment: 1"
+      ],
+      [
+        1645590927197.0,
+        "selected segment: 1"
+      ],
+      [
+        1645590929507.0,
+        "selected label: ear"
+      ],
+      [
+        1645590929507.0,
+        "selected segment: 2"
+      ],
+      [
+        1645590929522.0,
+        "selected segment: 2"
+      ],
+      [
+        1645590931542.0,
+        "selected label: mouth"
+      ],
+      [
+        1645590932286.0,
+        "selected label: ear"
+      ],
+      [
+        1645590933258.0,
+        "selected label: nose"
+      ],
+      [
+        1645590934081.0,
+        "selected label: mouth"
+      ],
+      [
+        1645590934876.0,
+        "selected label: eye"
+      ],
+      [
+        1645590936295.0,
+        "selected segment: 3"
+      ],
+      [
+        1645590936301.0,
+        "selected segment: 3"
+      ],
+      [
+        1645590936900.0,
+        "selected label: nose"
+      ],
+      [
+        1645590936901.0,
+        "selected segment: 4"
+      ],
+      [
+        1645590936931.0,
+        "selected segment: 4"
+      ],
+      [
+        1645590938089.0,
+        "selected segment: 5"
+      ],
+      [
+        1645590938109.0,
+        "selected segment: 5"
+      ],
+      [
+        1645590938742.0,
+        "selected label: nose"
+      ],
+      [
+        1645590938742.0,
+        "selected segment: 6"
+      ],
+      [
+        1645590938757.0,
+        "selected segment: 6"
+      ],
+      [
+        1645590939410.0,
+        "selected label: nose"
+      ],
+      [
+        1645590940892.0,
+        "selected segment: 1"
+      ],
+      [
+        1645590940898.0,
+        "selected segment: 1"
+      ],
+      [
+        1645590941681.0,
+        "selected label: eye"
+      ],
+      [
+        1645590943407.0,
+        "selected segment: 2"
+      ],
+      [
+        1645590943422.0,
+        "selected segment: 2"
+      ],
+      [
+        1645590944183.0,
+        "selected label: ear"
+      ],
+      [
+        1645590946027.0,
+        "selected segment: 3"
+      ],
+      [
+        1645590946047.0,
+        "selected segment: 3"
+      ],
+      [
+        1645590949818.0,
+        "submit"
+      ]
+    ]
+  },
+  {
+    "responses": {
+      "1": "ear",
+      "2": "mouth",
+      "3": "ear",
+      "4": "mouth",
+      "5": "nose",
+      "6": "ear",
+      "7": "eye",
+      "8": "ear"
+    },
+    "trialLog": [
+      [
+        1645590959283.0,
+        "trial start"
+      ],
+      [
+        1645590961558.0,
+        "selected segment: 1"
+      ],
+      [
+        1645590961883.0,
+        "selected segment: 1"
+      ],
+      [
+        1645590961909.0,
+        "selected segment: 1"
+      ],
+      [
+        1645590961933.0,
+        "selected segment: 1"
+      ],
+      [
+        1645590964829.0,
+        "selected label: ear"
+      ],
+      [
+        1645590964829.0,
+        "selected segment: 2"
+      ],
+      [
+        1645590964834.0,
+        "selected segment: 2"
+      ],
+      [
+        1645590965907.0,
+        "selected label: mouth"
+      ],
+      [
+        1645590965907.0,
+        "selected segment: 3"
+      ],
+      [
+        1645590965912.0,
+        "selected segment: 3"
+      ],
+      [
+        1645590966701.0,
+        "selected label: ear"
+      ],
+      [
+        1645590966702.0,
+        "selected segment: 4"
+      ],
+      [
+        1645590966709.0,
+        "selected segment: 4"
+      ],
+      [
+        1645590967417.0,
+        "selected label: mouth"
+      ],
+      [
+        1645590967418.0,
+        "selected segment: 5"
+      ],
+      [
+        1645590967426.0,
+        "selected segment: 5"
+      ],
+      [
+        1645590968188.0,
+        "selected label: nose"
+      ],
+      [
+        1645590968189.0,
+        "selected segment: 6"
+      ],
+      [
+        1645590968194.0,
+        "selected segment: 6"
+      ],
+      [
+        1645590968740.0,
+        "selected label: ear"
+      ],
+      [
+        1645590968740.0,
+        "selected segment: 7"
+      ],
+      [
+        1645590968758.0,
+        "selected segment: 7"
+      ],
+      [
+        1645590969371.0,
+        "selected label: eye"
+      ],
+      [
+        1645590969373.0,
+        "selected segment: 8"
+      ],
+      [
+        1645590969380.0,
+        "selected segment: 8"
+      ],
+      [
+        1645590970065.0,
+        "selected label: ear"
+      ],
+      [
+        1645590970065.0,
+        "selected segment: 1"
+      ],
+      [
+        1645590970084.0,
+        "selected segment: 1"
+      ],
+      [
+        1645590975457.0,
+        "submit"
+      ]
+    ]
+  },
+  {
+    "responses": {
+      "1": "ear",
+      "2": "mouth",
+      "3": "ear",
+      "4": "nose",
+      "5": "mouth",
+      "6": "eye",
+      "7": "mouth",
+      "8": "nose"
+    },
+    "trialLog": [
+      [
+        1645592584973.0,
+        "trial start"
+      ],
+      [
+        1645592588266.0,
+        "selected segment: 1"
+      ],
+      [
+        1645592588273.0,
+        "selected segment: 1"
+      ],
+      [
+        1645592589037.0,
+        "selected label: ear"
+      ],
+      [
+        1645592589037.0,
+        "selected segment: 2"
+      ],
+      [
+        1645592589046.0,
+        "selected segment: 2"
+      ],
+      [
+        1645592590462.0,
+        "selected label: mouth"
+      ],
+      [
+        1645592590462.0,
+        "selected segment: 3"
+      ],
+      [
+        1645592590471.0,
+        "selected segment: 3"
+      ],
+      [
+        1645592590924.0,
+        "selected label: ear"
+      ],
+      [
+        1645592590924.0,
+        "selected segment: 4"
+      ],
+      [
+        1645592590946.0,
+        "selected segment: 4"
+      ],
+      [
+        1645592591358.0,
+        "selected label: nose"
+      ],
+      [
+        1645592591358.0,
+        "selected segment: 5"
+      ],
+      [
+        1645592591371.0,
+        "selected segment: 5"
+      ],
+      [
+        1645592591788.0,
+        "selected label: mouth"
+      ],
+      [
+        1645592591788.0,
+        "selected segment: 6"
+      ],
+      [
+        1645592591796.0,
+        "selected segment: 6"
+      ],
+      [
+        1645592592231.0,
+        "selected label: eye"
+      ],
+      [
+        1645592592231.0,
+        "selected segment: 7"
+      ],
+      [
+        1645592592247.0,
+        "selected segment: 7"
+      ],
+      [
+        1645592592782.0,
+        "selected label: mouth"
+      ],
+      [
+        1645592592782.0,
+        "selected segment: 8"
+      ],
+      [
+        1645592592796.0,
+        "selected segment: 8"
+      ],
+      [
+        1645592593313.0,
+        "selected label: nose"
+      ],
+      [
+        1645592593313.0,
+        "selected segment: 1"
+      ],
+      [
+        1645592593323.0,
+        "selected segment: 1"
+      ],
+      [
+        1645592595553.0,
+        "submit"
+      ]
+    ]
+  },
+  {
+    "responses": {
+      "1": "mouth",
+      "2": "mouth",
+      "3": "ear",
+      "4": "eye",
+      "5": "ear",
+      "6": "nose"
+    },
+    "trialLog": [
+      [
+        1645592603868.0,
+        "trial start"
+      ],
+      [
+        1645592606451.0,
+        "selected segment: 1"
+      ],
+      [
+        1645592606474.0,
+        "selected segment: 1"
+      ],
+      [
+        1645592607144.0,
+        "selected label: mouth"
+      ],
+      [
+        1645592607145.0,
+        "selected segment: 2"
+      ],
+      [
+        1645592607169.0,
+        "selected segment: 2"
+      ],
+      [
+        1645592607658.0,
+        "selected label: mouth"
+      ],
+      [
+        1645592607659.0,
+        "selected segment: 3"
+      ],
+      [
+        1645592607668.0,
+        "selected segment: 3"
+      ],
+      [
+        1645592608171.0,
+        "selected label: ear"
+      ],
+      [
+        1645592608172.0,
+        "selected segment: 4"
+      ],
+      [
+        1645592608193.0,
+        "selected segment: 4"
+      ],
+      [
+        1645592608620.0,
+        "selected label: eye"
+      ],
+      [
+        1645592608621.0,
+        "selected segment: 5"
+      ],
+      [
+        1645592608644.0,
+        "selected segment: 5"
+      ],
+      [
+        1645592609064.0,
+        "selected label: ear"
+      ],
+      [
+        1645592609065.0,
+        "selected segment: 6"
+      ],
+      [
+        1645592609068.0,
+        "selected segment: 6"
+      ],
+      [
+        1645592609490.0,
+        "selected label: nose"
+      ],
+      [
+        1645592609490.0,
+        "selected segment: 1"
+      ],
+      [
+        1645592609494.0,
+        "selected segment: 1"
+      ],
+      [
+        1645592612633.0,
+        "submit"
+      ]
+    ]
+  },
+  {
+    "responses": {
+      "1": "ear",
+      "2": "ear",
+      "3": "mouth",
+      "4": "I don't know",
+      "5": "eye",
+      "6": "nose"
+    },
+    "trialLog": [
+      [
+        1647880290423.0,
+        "trial start"
+      ],
+      [
+        1647880306448.0,
+        "selected segment: 4"
+      ],
+      [
+        1647880307723.0,
+        "selected segment: 4"
+      ],
+      [
+        1647880307749.0,
+        "selected segment: 4"
+      ],
+      [
+        1647880307774.0,
+        "selected segment: 4"
+      ],
+      [
+        1647880307798.0,
+        "selected segment: 4"
+      ],
+      [
+        1647880307824.0,
+        "selected segment: 4"
+      ],
+      [
+        1647880307849.0,
+        "selected segment: 4"
+      ],
+      [
+        1647880307874.0,
+        "selected segment: 4"
+      ],
+      [
+        1647880307899.0,
+        "selected segment: 4"
+      ],
+      [
+        1647880311278.0,
+        "selected label: I don't know"
+      ],
+      [
+        1647880311278.0,
+        "selected segment: 5"
+      ],
+      [
+        1647880311285.0,
+        "selected segment: 5"
+      ],
+      [
+        1647880314148.0,
+        "selected label: eye"
+      ],
+      [
+        1647880314148.0,
+        "selected segment: 6"
+      ],
+      [
+        1647880314155.0,
+        "selected segment: 6"
+      ],
+      [
+        1647880315689.0,
+        "selected label: nose"
+      ],
+      [
+        1647880315690.0,
+        "selected segment: 1"
+      ],
+      [
+        1647880315699.0,
+        "selected segment: 1"
+      ],
+      [
+        1647880317118.0,
+        "selected label: ear"
+      ],
+      [
+        1647880317119.0,
+        "selected segment: 2"
+      ],
+      [
+        1647880317126.0,
+        "selected segment: 2"
+      ],
+      [
+        1647880318086.0,
+        "selected label: ear"
+      ],
+      [
+        1647880318086.0,
+        "selected segment: 3"
+      ],
+      [
+        1647880318099.0,
+        "selected segment: 3"
+      ],
+      [
+        1647880319463.0,
+        "selected label: mouth"
+      ],
+      [
+        1647880319463.0,
+        "selected segment: 4"
+      ],
+      [
+        1647880319474.0,
+        "selected segment: 4"
+      ],
+      [
+        1647880326750.0,
+        "selected segment: 4"
+      ],
+      [
+        1647880326774.0,
+        "selected segment: 4"
+      ],
+      [
+        1647880326799.0,
+        "selected segment: 4"
+      ],
+      [
+        1647880326824.0,
+        "selected segment: 4"
+      ],
+      [
+        1647880326849.0,
+        "selected segment: 4"
+      ],
+      [
+        1647880326873.0,
+        "selected segment: 4"
+      ],
+      [
+        1647880326949.0,
+        "selected segment: 4"
+      ],
+      [
+        1647880326973.0,
+        "selected segment: 4"
+      ],
+      [
+        1647880326998.0,
+        "selected segment: 4"
+      ],
+      [
+        1647880327024.0,
+        "selected segment: 4"
+      ],
+      [
+        1647880327049.0,
+        "selected segment: 4"
+      ],
+      [
+        1647880327075.0,
+        "selected segment: 4"
+      ],
+      [
+        1647880327099.0,
+        "selected segment: 4"
+      ],
+      [
+        1647880327124.0,
+        "selected segment: 4"
+      ],
+      [
+        1647880327974.0,
+        "selected segment: 4"
+      ],
+      [
+        1647880328274.0,
+        "selected segment: 2"
+      ],
+      [
+        1647880328823.0,
+        "selected segment: 2"
+      ],
+      [
+        1647880328848.0,
+        "selected segment: 2"
+      ],
+      [
+        1647880328876.0,
+        "selected segment: 2"
+      ],
+      [
+        1647880328898.0,
+        "selected segment: 2"
+      ],
+      [
+        1647880328924.0,
+        "selected segment: 2"
+      ],
+      [
+        1647880328949.0,
+        "selected segment: 2"
+      ],
+      [
+        1647880328975.0,
+        "selected segment: 2"
+      ],
+      [
+        1647880328998.0,
+        "selected segment: 2"
+      ],
+      [
+        1647880329023.0,
+        "selected segment: 2"
+      ],
+      [
+        1647880329048.0,
+        "selected segment: 2"
+      ],
+      [
+        1647880329073.0,
+        "selected segment: 2"
+      ],
+      [
+        1647880329149.0,
+        "selected segment: 2"
+      ],
+      [
+        1647880329174.0,
+        "selected segment: 2"
+      ],
+      [
+        1647880329198.0,
+        "selected segment: 2"
+      ],
+      [
+        1647880329225.0,
+        "selected segment: 2"
+      ],
+      [
+        1647880329248.0,
+        "selected segment: 2"
+      ],
+      [
+        1647880329273.0,
+        "selected segment: 2"
+      ],
+      [
+        1647880329299.0,
+        "selected segment: 2"
+      ],
+      [
+        1647880329325.0,
+        "selected segment: 2"
+      ],
+      [
+        1647880329348.0,
+        "selected segment: 2"
+      ],
+      [
+        1647880329374.0,
+        "selected segment: 2"
+      ],
+      [
+        1647880329399.0,
+        "selected segment: 2"
+      ],
+      [
+        1647880329449.0,
+        "selected segment: 2"
+      ],
+      [
+        1647880329499.0,
+        "selected segment: 2"
+      ],
+      [
+        1647880329524.0,
+        "selected segment: 2"
+      ],
+      [
+        1647880329549.0,
+        "selected segment: 2"
+      ],
+      [
+        1647880329575.0,
+        "selected segment: 2"
+      ],
+      [
+        1647880329824.0,
+        "selected segment: 1"
+      ],
+      [
+        1647880341074.0,
+        "selected segment: 1"
+      ],
+      [
+        1647880341099.0,
+        "selected segment: 1"
+      ],
+      [
+        1647880341124.0,
+        "selected segment: 1"
+      ],
+      [
+        1647880350149.0,
+        "selected segment: 1"
+      ],
+      [
+        1647880350175.0,
+        "selected segment: 1"
+      ],
+      [
+        1647880350198.0,
+        "selected segment: 1"
+      ],
+      [
+        1647880350224.0,
+        "selected segment: 1"
+      ],
+      [
+        1647880350248.0,
+        "selected segment: 1"
+      ],
+      [
+        1647880350275.0,
+        "selected segment: 1"
+      ],
+      [
+        1647880350299.0,
+        "selected segment: 1"
+      ],
+      [
+        1647880350324.0,
+        "selected segment: 1"
+      ],
+      [
+        1647880350358.0,
+        "selected segment: 1"
+      ],
+      [
+        1647880350376.0,
+        "selected segment: 1"
+      ],
+      [
+        1647880350398.0,
+        "selected segment: 1"
+      ],
+      [
+        1647880350423.0,
+        "selected segment: 1"
+      ],
+      [
+        1647880350451.0,
+        "selected segment: 1"
+      ],
+      [
+        1647880350475.0,
+        "selected segment: 1"
+      ],
+      [
+        1647880350498.0,
+        "selected segment: 1"
+      ],
+      [
+        1647880350524.0,
+        "selected segment: 1"
+      ],
+      [
+        1647880350551.0,
+        "selected segment: 1"
+      ],
+      [
+        1647880350574.0,
+        "selected segment: 1"
+      ],
+      [
+        1647880350598.0,
+        "selected segment: 1"
+      ],
+      [
+        1647880350624.0,
+        "selected segment: 1"
+      ],
+      [
+        1647880350649.0,
+        "selected segment: 1"
+      ],
+      [
+        1647880350676.0,
+        "selected segment: 1"
+      ],
+      [
+        1647880350698.0,
+        "selected segment: 1"
+      ],
+      [
+        1647880353798.0,
+        "selected segment: 1"
+      ],
+      [
+        1647880353825.0,
+        "selected segment: 1"
+      ],
+      [
+        1647880358768.0,
+        "submit"
+      ]
+    ]
+  },
+  {
+    "segment": "5",
+    "label": "eye",
+    "trialStart": 1645551690719,
+    "submitSegmentTime": 1645551766091
+  },
+  {
+    "responses": {
+      "1": "ear",
+      "2": "ear",
+      "3": "ear",
+      "4": "mouth",
+      "5": "eye",
+      "6": "nose"
+    },
+    "trialLog": [
+      [
+        1648037105038.0,
+        "trial start"
+      ],
+      [
+        1648037106415.0,
+        "selected segment: 4"
+      ],
+      [
+        1648037106590.0,
+        "selected segment: 4"
+      ],
+      [
+        1648037106614.0,
+        "selected segment: 4"
+      ],
+      [
+        1648037106639.0,
+        "selected segment: 4"
+      ],
+      [
+        1648037106664.0,
+        "selected segment: 4"
+      ],
+      [
+        1648037106690.0,
+        "selected segment: 4"
+      ],
+      [
+        1648037107793.0,
+        "selected label: mouth"
+      ],
+      [
+        1648037107794.0,
+        "selected segment: 5"
+      ],
+      [
+        1648037107796.0,
+        "selected segment: 5"
+      ],
+      [
+        1648037108480.0,
+        "selected label: eye"
+      ],
+      [
+        1648037108481.0,
+        "selected segment: 6"
+      ],
+      [
+        1648037108489.0,
+        "selected segment: 6"
+      ],
+      [
+        1648037108985.0,
+        "selected label: nose"
+      ],
+      [
+        1648037108987.0,
+        "selected segment: 1"
+      ],
+      [
+        1648037108991.0,
+        "selected segment: 1"
+      ],
+      [
+        1648037109700.0,
+        "selected label: ear"
+      ],
+      [
+        1648037109702.0,
+        "selected segment: 2"
+      ],
+      [
+        1648037109714.0,
+        "selected segment: 2"
+      ],
+      [
+        1648037110110.0,
+        "selected label: ear"
+      ],
+      [
+        1648037110111.0,
+        "selected segment: 3"
+      ],
+      [
+        1648037110115.0,
+        "selected segment: 3"
+      ],
+      [
+        1648037110740.0,
+        "selected label: ear"
+      ],
+      [
+        1648037110741.0,
+        "selected segment: 4"
+      ],
+      [
+        1648037110766.0,
+        "selected segment: 4"
+      ],
+      [
+        1648037113153.0,
+        "submit"
+      ]
+    ]
+  },
+  {
+    "responses": {
+      "1": "mouth",
+      "2": "nose",
+      "3": "ear",
+      "4": "eye",
+      "5": "ear",
+      "6": "mouth"
+    },
+    "trialLog": [
+      [
+        1648037506094.0,
+        "trial start"
+      ],
+      [
+        1648037507297.0,
+        "selected segment: 1"
+      ],
+      [
+        1648037507496.0,
+        "selected segment: 1"
+      ],
+      [
+        1648037507519.0,
+        "selected segment: 1"
+      ],
+      [
+        1648037507544.0,
+        "selected segment: 1"
+      ],
+      [
+        1648037507569.0,
+        "selected segment: 1"
+      ],
+      [
+        1648037508066.0,
+        "selected label: mouth"
+      ],
+      [
+        1648037508067.0,
+        "selected segment: 2"
+      ],
+      [
+        1648037508070.0,
+        "selected segment: 2"
+      ],
+      [
+        1648037508615.0,
+        "selected label: nose"
+      ],
+      [
+        1648037508616.0,
+        "selected segment: 3"
+      ],
+      [
+        1648037508619.0,
+        "selected segment: 3"
+      ],
+      [
+        1648037509228.0,
+        "selected label: ear"
+      ],
+      [
+        1648037509229.0,
+        "selected segment: 4"
+      ],
+      [
+        1648037509244.0,
+        "selected segment: 4"
+      ],
+      [
+        1648037509925.0,
+        "selected label: eye"
+      ],
+      [
+        1648037509926.0,
+        "selected segment: 5"
+      ],
+      [
+        1648037509944.0,
+        "selected segment: 5"
+      ],
+      [
+        1648037510609.0,
+        "selected label: ear"
+      ],
+      [
+        1648037510611.0,
+        "selected segment: 6"
+      ],
+      [
+        1648037510619.0,
+        "selected segment: 6"
+      ],
+      [
+        1648037512314.0,
+        "selected label: mouth"
+      ],
+      [
+        1648037512316.0,
+        "selected segment: 1"
+      ],
+      [
+        1648037512320.0,
+        "selected segment: 1"
+      ],
+      [
+        1648037514810.0,
+        "submit"
+      ]
+    ]
+  },
+  {
+    "responses": {
+      "1": "mouth",
+      "2": "mouth",
+      "3": "mouth",
+      "4": "mouth",
+      "5": "mouth",
+      "6": "mouth"
+    },
+    "trialLog": [
+      [
+        1648037515269.0,
+        "trial start"
+      ],
+      [
+        1648037517450.0,
+        "selected segment: 4"
+      ],
+      [
+        1648037517670.0,
+        "selected segment: 4"
+      ],
+      [
+        1648037517695.0,
+        "selected segment: 4"
+      ],
+      [
+        1648037517720.0,
+        "selected segment: 4"
+      ],
+      [
+        1648037517745.0,
+        "selected segment: 4"
+      ],
+      [
+        1648037517770.0,
+        "selected segment: 4"
+      ],
+      [
+        1648037517794.0,
+        "selected segment: 4"
+      ],
+      [
+        1648037517869.0,
+        "selected segment: 4"
+      ],
+      [
+        1648037517895.0,
+        "selected segment: 4"
+      ],
+      [
+        1648037517920.0,
+        "selected segment: 4"
+      ],
+      [
+        1648037517945.0,
+        "selected segment: 4"
+      ],
+      [
+        1648037517970.0,
+        "selected segment: 4"
+      ],
+      [
+        1648037517995.0,
+        "selected segment: 4"
+      ],
+      [
+        1648037518020.0,
+        "selected segment: 4"
+      ],
+      [
+        1648037518045.0,
+        "selected segment: 4"
+      ],
+      [
+        1648037518070.0,
+        "selected segment: 4"
+      ],
+      [
+        1648037518094.0,
+        "selected segment: 4"
+      ],
+      [
+        1648037518121.0,
+        "selected segment: 4"
+      ],
+      [
+        1648037518145.0,
+        "selected segment: 4"
+      ],
+      [
+        1648037518244.0,
+        "selected segment: 5"
+      ],
+      [
+        1648037518421.0,
+        "selected segment: 5"
+      ],
+      [
+        1648037518444.0,
+        "selected segment: 5"
+      ],
+      [
+        1648037518469.0,
+        "selected segment: 5"
+      ],
+      [
+        1648037518494.0,
+        "selected segment: 5"
+      ],
+      [
+        1648037518519.0,
+        "selected segment: 5"
+      ],
+      [
+        1648037518545.0,
+        "selected segment: 5"
+      ],
+      [
+        1648037518570.0,
+        "selected segment: 5"
+      ],
+      [
+        1648037518595.0,
+        "selected segment: 5"
+      ],
+      [
+        1648037518647.0,
+        "selected segment: 5"
+      ],
+      [
+        1648037518670.0,
+        "selected segment: 5"
+      ],
+      [
+        1648037518695.0,
+        "selected segment: 5"
+      ],
+      [
+        1648037518719.0,
+        "selected segment: 5"
+      ],
+      [
+        1648037518744.0,
+        "selected segment: 5"
+      ],
+      [
+        1648037518771.0,
+        "selected segment: 5"
+      ],
+      [
+        1648037518794.0,
+        "selected segment: 5"
+      ],
+      [
+        1648037518819.0,
+        "selected segment: 5"
+      ],
+      [
+        1648037518870.0,
+        "selected segment: 5"
+      ],
+      [
+        1648037518894.0,
+        "selected segment: 5"
+      ],
+      [
+        1648037518920.0,
+        "selected segment: 5"
+      ],
+      [
+        1648037518945.0,
+        "selected segment: 5"
+      ],
+      [
+        1648037518970.0,
+        "selected segment: 5"
+      ],
+      [
+        1648037518995.0,
+        "selected segment: 5"
+      ],
+      [
+        1648037521027.0,
+        "selected label: mouth"
+      ],
+      [
+        1648037521028.0,
+        "selected segment: 6"
+      ],
+      [
+        1648037521044.0,
+        "selected segment: 6"
+      ],
+      [
+        1648037521311.0,
+        "selected label: mouth"
+      ],
+      [
+        1648037521313.0,
+        "selected segment: 1"
+      ],
+      [
+        1648037521319.0,
+        "selected segment: 1"
+      ],
+      [
+        1648037521515.0,
+        "selected label: mouth"
+      ],
+      [
+        1648037521516.0,
+        "selected segment: 2"
+      ],
+      [
+        1648037521519.0,
+        "selected segment: 2"
+      ],
+      [
+        1648037521688.0,
+        "selected label: mouth"
+      ],
+      [
+        1648037521690.0,
+        "selected segment: 3"
+      ],
+      [
+        1648037521694.0,
+        "selected segment: 3"
+      ],
+      [
+        1648037521864.0,
+        "selected label: mouth"
+      ],
+      [
+        1648037521865.0,
+        "selected segment: 4"
+      ],
+      [
+        1648037521869.0,
+        "selected segment: 4"
+      ],
+      [
+        1648037522056.0,
+        "selected label: mouth"
+      ],
+      [
+        1648037522057.0,
+        "selected segment: 5"
+      ],
+      [
+        1648037522069.0,
+        "selected segment: 5"
+      ],
+      [
+        1648037524476.0,
+        "submit"
+      ]
+    ]
+  },
+  {
+    "responses": {
+      "1": "mouth",
+      "2": "mouth",
+      "3": "mouth",
+      "4": "mouth",
+      "5": "mouth",
+      "6": "mouth",
+      "7": "mouth",
+      "8": "mouth"
+    },
+    "trialLog": [
+      [
+        1648037526226.0,
+        "trial start"
+      ],
+      [
+        1648037528201.0,
+        "selected segment: 1"
+      ],
+      [
+        1648037528401.0,
+        "selected segment: 1"
+      ],
+      [
+        1648037528427.0,
+        "selected segment: 1"
+      ],
+      [
+        1648037528452.0,
+        "selected segment: 1"
+      ],
+      [
+        1648037528477.0,
+        "selected segment: 1"
+      ],
+      [
+        1648037528501.0,
+        "selected segment: 1"
+      ],
+      [
+        1648037529039.0,
+        "selected label: mouth"
+      ],
+      [
+        1648037529040.0,
+        "selected segment: 2"
+      ],
+      [
+        1648037529051.0,
+        "selected segment: 2"
+      ],
+      [
+        1648037529206.0,
+        "selected label: mouth"
+      ],
+      [
+        1648037529207.0,
+        "selected segment: 3"
+      ],
+      [
+        1648037529230.0,
+        "selected segment: 3"
+      ],
+      [
+        1648037529363.0,
+        "selected label: mouth"
+      ],
+      [
+        1648037529364.0,
+        "selected segment: 4"
+      ],
+      [
+        1648037529376.0,
+        "selected segment: 4"
+      ],
+      [
+        1648037529522.0,
+        "selected label: mouth"
+      ],
+      [
+        1648037529523.0,
+        "selected segment: 5"
+      ],
+      [
+        1648037529526.0,
+        "selected segment: 5"
+      ],
+      [
+        1648037529672.0,
+        "selected label: mouth"
+      ],
+      [
+        1648037529673.0,
+        "selected segment: 6"
+      ],
+      [
+        1648037529676.0,
+        "selected segment: 6"
+      ],
+      [
+        1648037529863.0,
+        "selected label: mouth"
+      ],
+      [
+        1648037529864.0,
+        "selected segment: 7"
+      ],
+      [
+        1648037529876.0,
+        "selected segment: 7"
+      ],
+      [
+        1648037530038.0,
+        "selected label: mouth"
+      ],
+      [
+        1648037530039.0,
+        "selected segment: 8"
+      ],
+      [
+        1648037530051.0,
+        "selected segment: 8"
+      ],
+      [
+        1648037530582.0,
+        "selected label: mouth"
+      ],
+      [
+        1648037530583.0,
+        "selected segment: 1"
+      ],
+      [
+        1648037530602.0,
+        "selected segment: 1"
+      ],
+      [
+        1648037533033.0,
+        "submit"
+      ]
+    ]
+  },
+  {
+    "responses": {
+      "1": "nose",
+      "2": "nose",
+      "3": "nose",
+      "4": "nose",
+      "5": "nose",
+      "6": "nose"
+    },
+    "trialLog": [
+      [
+        1648756790310.0,
+        "trial start"
+      ],
+      [
+        1648756791964.0,
+        "selected segment: 5"
+      ],
+      [
+        1648756792186.0,
+        "selected segment: 5"
+      ],
+      [
+        1648756792210.0,
+        "selected segment: 5"
+      ],
+      [
+        1648756792237.0,
+        "selected segment: 5"
+      ],
+      [
+        1648756792261.0,
+        "selected segment: 5"
+      ],
+      [
+        1648756792286.0,
+        "selected segment: 5"
+      ],
+      [
+        1648756792310.0,
+        "selected segment: 5"
+      ],
+      [
+        1648756792335.0,
+        "selected segment: 5"
+      ],
+      [
+        1648756792360.0,
+        "selected segment: 5"
+      ],
+      [
+        1648756792776.0,
+        "selected label: nose"
+      ],
+      [
+        1648756792777.0,
+        "selected segment: 6"
+      ],
+      [
+        1648756792785.0,
+        "selected segment: 6"
+      ],
+      [
+        1648756795058.0,
+        "selected label: nose"
+      ],
+      [
+        1648756795060.0,
+        "selected segment: 1"
+      ],
+      [
+        1648756795063.0,
+        "selected segment: 1"
+      ],
+      [
+        1648756796743.0,
+        "selected label: nose"
+      ],
+      [
+        1648756796745.0,
+        "selected segment: 2"
+      ],
+      [
+        1648756796760.0,
+        "selected segment: 2"
+      ],
+      [
+        1648756797517.0,
+        "selected label: nose"
+      ],
+      [
+        1648756797519.0,
+        "selected segment: 3"
+      ],
+      [
+        1648756797535.0,
+        "selected segment: 3"
+      ],
+      [
+        1648756797986.0,
+        "selected label: nose"
+      ],
+      [
+        1648756797988.0,
+        "selected segment: 4"
+      ],
+      [
+        1648756797992.0,
+        "selected segment: 4"
+      ],
+      [
+        1648756798190.0,
+        "selected label: nose"
+      ],
+      [
+        1648756798192.0,
+        "selected segment: 5"
+      ],
+      [
+        1648756798210.0,
+        "selected segment: 5"
+      ],
+      [
+        1648756799411.0,
+        "selected segment: 5"
+      ],
+      [
+        1648756799436.0,
+        "selected segment: 5"
+      ],
+      [
+        1648756799461.0,
+        "selected segment: 5"
+      ],
+      [
+        1648756799486.0,
+        "selected segment: 5"
+      ],
+      [
+        1648756799510.0,
+        "selected segment: 5"
+      ],
+      [
+        1648756799535.0,
+        "selected segment: 5"
+      ],
+      [
+        1648756799560.0,
+        "selected segment: 5"
+      ],
+      [
+        1648756799585.0,
+        "selected segment: 5"
+      ],
+      [
+        1648756799612.0,
+        "selected segment: 5"
+      ],
+      [
+        1648756799636.0,
+        "selected segment: 5"
+      ],
+      [
+        1648756799661.0,
+        "selected segment: 5"
+      ],
+      [
+        1648756799712.0,
+        "selected segment: 5"
+      ],
+      [
+        1648756845488.0,
+        "submit"
+      ]
+    ]
+  },
+  {
+    "responses": {
+      "1": "nose",
+      "2": "nose",
+      "3": "nose",
+      "4": "nose",
+      "5": "nose",
+      "6": "nose"
+    },
+    "trialLog": [
+      [
+        1648756848000.0,
+        "trial start"
+      ],
+      [
+        1648756850703.0,
+        "selected segment: 4"
+      ],
+      [
+        1648756851151.0,
+        "selected segment: 4"
+      ],
+      [
+        1648756851176.0,
+        "selected segment: 4"
+      ],
+      [
+        1648756851201.0,
+        "selected segment: 4"
+      ],
+      [
+        1648756851226.0,
+        "selected segment: 4"
+      ],
+      [
+        1648756851251.0,
+        "selected segment: 4"
+      ],
+      [
+        1648756851276.0,
+        "selected segment: 4"
+      ],
+      [
+        1648756851301.0,
+        "selected segment: 4"
+      ],
+      [
+        1648756851326.0,
+        "selected segment: 4"
+      ],
+      [
+        1648756852744.0,
+        "selected label: nose"
+      ],
+      [
+        1648756852746.0,
+        "selected segment: 5"
+      ],
+      [
+        1648756852750.0,
+        "selected segment: 5"
+      ],
+      [
+        1648756853099.0,
+        "selected label: nose"
+      ],
+      [
+        1648756853101.0,
+        "selected segment: 6"
+      ],
+      [
+        1648756853104.0,
+        "selected segment: 6"
+      ],
+      [
+        1648756853257.0,
+        "selected label: nose"
+      ],
+      [
+        1648756853258.0,
+        "selected segment: 1"
+      ],
+      [
+        1648756853276.0,
+        "selected segment: 1"
+      ],
+      [
+        1648756853390.0,
+        "selected label: nose"
+      ],
+      [
+        1648756853390.0,
+        "selected segment: 2"
+      ],
+      [
+        1648756853401.0,
+        "selected segment: 2"
+      ],
+      [
+        1648756853547.0,
+        "selected label: nose"
+      ],
+      [
+        1648756853548.0,
+        "selected segment: 3"
+      ],
+      [
+        1648756853550.0,
+        "selected segment: 3"
+      ],
+      [
+        1648756853715.0,
+        "selected label: nose"
+      ],
+      [
+        1648756853716.0,
+        "selected segment: 4"
+      ],
+      [
+        1648756853726.0,
+        "selected segment: 4"
+      ],
+      [
+        1648756856261.0,
+        "submit"
+      ]
+    ]
+  },
+  {
+    "responses": {
+      "1": "eye",
+      "2": "eye",
+      "3": "eye",
+      "4": "eye",
+      "5": "eye",
+      "6": "eye"
+    },
+    "trialLog": [
+      [
+        1650676033762.0,
+        "trial start"
+      ],
+      [
+        1650676065240.0,
+        "selected segment: 1"
+      ],
+      [
+        1650676065246.0,
+        "selected segment: 1"
+      ],
+      [
+        1650676067098.0,
+        "selected label: eye"
+      ],
+      [
+        1650676067099.0,
+        "selected segment: 2"
+      ],
+      [
+        1650676067112.0,
+        "selected segment: 2"
+      ],
+      [
+        1650676067346.0,
+        "selected label: eye"
+      ],
+      [
+        1650676067347.0,
+        "selected segment: 3"
+      ],
+      [
+        1650676067362.0,
+        "selected segment: 3"
+      ],
+      [
+        1650676067536.0,
+        "selected label: eye"
+      ],
+      [
+        1650676067537.0,
+        "selected segment: 4"
+      ],
+      [
+        1650676067540.0,
+        "selected segment: 4"
+      ],
+      [
+        1650676067786.0,
+        "selected label: eye"
+      ],
+      [
+        1650676067788.0,
+        "selected segment: 5"
+      ],
+      [
+        1650676067790.0,
+        "selected segment: 5"
+      ],
+      [
+        1650676067986.0,
+        "selected label: eye"
+      ],
+      [
+        1650676067988.0,
+        "selected segment: 6"
+      ],
+      [
+        1650676067991.0,
+        "selected segment: 6"
+      ],
+      [
+        1650676068204.0,
+        "selected label: eye"
+      ],
+      [
+        1650676068206.0,
+        "selected segment: 1"
+      ],
+      [
+        1650676068213.0,
+        "selected segment: 1"
+      ],
+      [
+        1650676073666.0,
+        "submit"
+      ]
+    ]
+  },
+  {
+    "segment": "1",
+    "label": "nose",
+    "trialStart": 1645551778596,
+    "submitSegmentTime": 1645551791363
+  },
+  {
+    "segment": "3",
+    "label": "nose",
+    "trialStart": 1645551801896,
+    "submitSegmentTime": 1645551854444
+  },
+  {
+    "segment": "6",
+    "label": "mouth",
+    "trialStart": 1645560339273,
+    "submitSegmentTime": 1645561797586
+  },
+  {
+    "segment": "4",
+    "label": "ear",
+    "trialStart": 1645561806016,
+    "submitSegmentTime": 1645562596464
+  },
+  {
+    "segment": "6",
+    "label": "nose",
+    "trialStart": 1645563492526,
+    "submitSegmentTime": 1645564108770
+  },
+  {
+    "segment": "1",
+    "label": "nose",
+    "trialStart": 1645564117410,
+    "submitSegmentTime": 1645564143206
+  }
+]
