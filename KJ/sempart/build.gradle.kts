@@ -1,8 +1,0 @@
-modtype = LIB
-
-apis (
-
-)
-implementations (
-
-)
