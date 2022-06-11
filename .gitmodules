@@ -52,3 +52,6 @@
 [submodule "k/key"]
 	path = k/key
 	url = https://github.com/mgroth0/key
+[submodule "k/kjs"]
+	path = k/kjs
+	url = https://github.com/mgroth0/kjs
