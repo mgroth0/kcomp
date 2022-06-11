@@ -55,6 +55,3 @@
 [submodule "k/kjs"]
 	path = k/kjs
 	url = https://github.com/mgroth0/kjs
-[submodule "ktor-gradle-sample2"]
-	path = ktor-gradle-sample2
-	url = https://github.com/mgroth0/ktor-gradle-sample2
