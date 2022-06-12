@@ -25,12 +25,12 @@ import matt.kjs.css.px
 import matt.kjs.css.sty
 import matt.kjs.defaultMain
 import matt.kjs.div
-import matt.kjs.idk.Drawing.Segment
 import matt.kjs.img.getPixels
 import matt.kjs.setOnClick
 import matt.kjs.setOnLoad
 import matt.kjs.setOnMouseMove
 import matt.sempart.ExperimentData
+import matt.sempart.client.Drawing.Segment
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
