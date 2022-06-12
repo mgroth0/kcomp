@@ -5,7 +5,7 @@ dependencies {
 //  implementation(libs.bundles.multik.full)
   implementation(libs.kotlinx.multik.api)
   implementation(libs.mat)
-  implementation(projects.kj.fx.graphics)
+  implementation(projects.kj.fx.fxGraphics)
   api(projects.kj.caching)
   api(projects.kj.async)
   implementation(libs.commons.math)
@@ -13,11 +13,11 @@ dependencies {
   implementation(libs.apfloat)
   implementation(libs.fx.swing)
   implementation(projects.kj.remote)
-  implementation(projects.kj.fxlib.console)
+  implementation(projects.kj.fxlib.fxlibConsole)
   implementation(projects.kj.dataman)
-  implementation(projects.kj.kjlib.jmath)
+  implementation(projects.kj.kjlib.kjlibJmath)
   implementation(projects.kj.reflect)
-  implementation(projects.kj.fx.graphics)
+  implementation(projects.kj.fx.fxGraphics)
 }
 
 plugins {

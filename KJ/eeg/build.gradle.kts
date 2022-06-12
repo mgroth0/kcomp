@@ -5,7 +5,7 @@ import matt.klib.commons.plus
 modtype = APP
 dependencies {
   implementation(projects.kj.gui)
-  implementation(projects.kj.kjlib.shell)
+  implementation(projects.kj.kjlib.kjlibShell)
   //  implementation(libs.brainflow)
   implementation(files(kcomp.folder + "KJ/jar/brainflow-jar-with-dependencies.jar"))
 }
