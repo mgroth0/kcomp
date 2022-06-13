@@ -145,36 +145,13 @@ fun main() = defaultMain {
 	working = true
   }
 
-  fun finishedWorking() {
-	working = false
-	console.log("finished working")
-  }
-
-  console.log("here6")
-
   var imI = 0
 
   fun presentImage(im: String) {
-
 	val drawingTrial = preloadedDrawingData ?: DrawingTrial(im, theImg)
-
-	drawingTrial.nextImageButton.disabled = true
-	drawingTrial.nextUnlabeledSegmentButton.disabled = false
-	drawingTrial.previousUnlabeledSegmentButton.disabled = false
-	drawingTrial.allButtons.forEach { bb ->
-	  bb.disabled = false
-	}
-	drawingTrial.labelsDiv.hidden = true
-
 	workingOn("downloading image data")
-
-
-
 	drawingTrial.completionP.innerHTML = "${drawingTrial.completionFraction} segments labelled"
-
-
 	var theInterval: Int? = null
-
 	theInterval = window.setInterval({
 	  if (drawingTrial.ready()) {
 
@@ -263,7 +240,7 @@ fun main() = defaultMain {
 			}
 		  }
 		}, 25)
-		finishedWorking()
+		working = false
 		window.clearInterval(theInterval!!)
 		drawingTrial.log.add(Date.now().toLong() to "trial start")
 

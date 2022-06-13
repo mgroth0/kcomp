@@ -283,10 +283,12 @@ private fun DrawingTrial.trialDiv(): HTMLDivElement = div {
 	  style.left = ((it as MyResizeEvent).left + WIDTH).toString() + "px"
 	})
 	labelsDiv = div {
+	  hidden = true
 	  sty.box()
 	  (LABELS.shuffled() + "Something else" + "I don't know").forEach { l ->
 
 		allButtons.add(button {
+		  disabled = false
 		  innerHTML = l
 		  sty {
 			boxButton()
@@ -362,6 +364,7 @@ private fun DrawingTrial.trialDiv(): HTMLDivElement = div {
 	  }
 	  val unlabelledString = if (PARAMS.removeNpButtonsKeepUnlabelledNpButtons) " Unlabeled" else ""
 	  previousUnlabeledSegmentButton = button {
+		disabled = false
 		type = ButtonType.button.realValue
 		sty.boxButton()
 		innerHTML = "Previous$unlabelledString Segment"
@@ -375,6 +378,7 @@ private fun DrawingTrial.trialDiv(): HTMLDivElement = div {
 	  }
 	  br
 	  nextUnlabeledSegmentButton = button {
+		disabled = false
 		type = ButtonType.button.realValue
 		sty.boxButton()
 		innerHTML = "Next$unlabelledString Segment"
@@ -391,6 +395,7 @@ private fun DrawingTrial.trialDiv(): HTMLDivElement = div {
 	br
 	completionP = p {}
 	nextImageButton = button {
+	  disabled = true
 	  type = ButtonType.button.realValue
 	  sty {
 		fontWeight = bold
