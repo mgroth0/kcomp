@@ -7,6 +7,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import matt.kjs.Loop
 import matt.kjs.Path
+import matt.kjs.allHTMLElementsRecursive
 import matt.kjs.css.Display.InlineBlock
 import matt.kjs.css.FontStyle.italic
 import matt.kjs.css.FontWeight.bold
@@ -28,6 +29,7 @@ import matt.kjs.setOnLoad
 import matt.kjs.srcAsPath
 import matt.klib.todo
 import matt.sempart.client.const.DATA_FOLDER
+import matt.sempart.client.const.HALF_WIDTH
 import matt.sempart.client.const.HEIGHT
 import matt.sempart.client.const.LABELS
 import matt.sempart.client.const.WIDTH
@@ -36,6 +38,7 @@ import matt.sempart.client.state.ExperimentPhase.Trial
 import matt.sempart.client.sty.box
 import matt.sempart.client.sty.boxButton
 import org.w3c.dom.CustomEvent
+import org.w3c.dom.CustomEventInit
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLDivElement
@@ -43,6 +46,7 @@ import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLImageElement
 import org.w3c.dom.HTMLParagraphElement
 import org.w3c.dom.ImageData
+import org.w3c.dom.events.EventTarget
 import org.w3c.dom.url.URLSearchParams
 import kotlin.js.Date
 
@@ -67,21 +71,39 @@ enum class ExperimentPhase {
   Loading
 }
 
-////class PhaseChangeEvent(val p: ExperimentPhase): CustomEvent(PhaseChangeEvent::class.simpleName!!)
-//class MyResizeEvent(w: Int, @Suppress("UNUSED_PARAMETER") h: Int): CustomEvent(MyResizeEvent::class.simpleName!!) {
-//  val left = (w/2) - HALF_WIDTH
-//}
+abstract class EventDispatcher<T>(type: String? = null) {
+  val type: String = type ?: this::class.simpleName!!
+  fun dispatchToAllHTML(t: T) {
+	val e = CustomEvent(type, object: CustomEventInit {
+	  override var detail: Any? = t
+	})
+	document.allHTMLElementsRecursive().forEach { it.dispatchEvent(e) }
+  }
+}
+
+fun <T> EventTarget.listen(d: EventDispatcher<T>, op: (T)->Unit) {
+  addEventListener(d.type, {
+	@Suppress("UNCHECKED_CAST")
+	op((it as CustomEvent).detail as T)
+  })
+}
+
+object PhaseChange: EventDispatcher<ExperimentPhase>()
+object MyResizeLeft: EventDispatcher<Int>()
 
 fun HTMLElement.onlyShowIn(phase: ExperimentPhase) {
   hidden = true
-  addEventListener("PhaseChangeEvent", {
-	hidden = (it as CustomEvent).detail != phase
-  })
+  listen(PhaseChange) {
+	hidden = it != phase
+  }
 }
-fun HTMLElement.onMyResizeLeft(onLeft: (Int) -> Unit) {
-  addEventListener("MyResizeEvent", {
-	onLeft((it as CustomEvent).detail as Int)
-  })
+
+fun currentLeft() = (window.innerWidth/2) - HALF_WIDTH
+fun HTMLElement.onMyResizeLeft(onLeft: (Int)->Unit) {
+  onLeft(currentLeft())
+  listen(MyResizeLeft) {
+	onLeft(it)
+  }
 }
 
 

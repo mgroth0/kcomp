@@ -4,7 +4,6 @@ import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.html.ButtonType
 import matt.kjs.Path
-import matt.kjs.allHTMLElementsRecursive
 import matt.kjs.css.Margin.auto
 import matt.kjs.css.TextAlign.center
 import matt.kjs.css.px
@@ -19,7 +18,6 @@ import matt.kjs.req.post
 import matt.kjs.setOnClick
 import matt.kjs.setOnMouseMove
 import matt.sempart.ExperimentData
-import matt.sempart.client.const.HALF_WIDTH
 import matt.sempart.client.const.HEIGHT
 import matt.sempart.client.const.ORIG_DRAWING_IMS
 import matt.sempart.client.const.WIDTH
@@ -37,11 +35,12 @@ import matt.sempart.client.state.ExperimentState.begun
 import matt.sempart.client.state.ExperimentState.complete
 import matt.sempart.client.state.ExperimentState.lastInteract
 import matt.sempart.client.state.ExperimentState.onBreak
+import matt.sempart.client.state.MyResizeLeft
 import matt.sempart.client.state.Participant.pid
+import matt.sempart.client.state.PhaseChange
+import matt.sempart.client.state.currentLeft
 import matt.sempart.client.state.onMyResizeLeft
 import matt.sempart.client.state.onlyShowIn
-import org.w3c.dom.CustomEvent
-import org.w3c.dom.CustomEventInit
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLDivElement
@@ -62,7 +61,7 @@ fun main() = defaultMain {
   val instructionsDiv = div {
 	onlyShowIn(Instructions)
 	sty.textAlign = center
-	img {	//			src = "https://www.wolframcloud.com/obj/mjgroth/folder-1/Bd_Jul2018_M_Face_PO1_All.png"
+	img {    //			src = "https://www.wolframcloud.com/obj/mjgroth/folder-1/Bd_Jul2018_M_Face_PO1_All.png"
 	  src = "data/Bd_Jul2018_M_Face_PO1_All.png"
 	}
 	p {
@@ -262,7 +261,7 @@ fun main() = defaultMain {
 		  drawingTrial.cleanup()
 		  post(
 			Path("send?PROLIFIC_PID=$pid"), ExperimentData(
-			  responses = drawingTrial.segments.associate { it.id to it.response!! },			/*"image" to im,*/
+			  responses = drawingTrial.segments.associate { it.id to it.response!! },            /*"image" to im,*/
 			  trialLog = drawingTrial.log
 			), f
 		  )
@@ -321,18 +320,13 @@ fun main() = defaultMain {
   presentImage(images[imI])
 
   val fireResizeEvent = {
-	val w = window.innerWidth
-	val h = window.innerHeight
-	val e = CustomEvent("MyResizeEvent", object: CustomEventInit {
-	  override var detail: Any? = (w/2) - HALF_WIDTH
-	})
-	document.allHTMLElementsRecursive().forEach { it.dispatchEvent(e) }
+	MyResizeLeft.dispatchToAllHTML(currentLeft())
+	if (window.innerWidth < 1200 || window.innerHeight < 750) {
+
+	}
   }
   window.addEventListener("resize", { fireResizeEvent() })
   fireResizeEvent()
-
-
-
 
   window.setInterval({
 	val w = window.innerWidth
@@ -346,11 +340,7 @@ fun main() = defaultMain {
 	  working                                           -> Loading
 	  else                                              -> Trial
 	}
-	CustomEvent
-	val e = CustomEvent("PhaseChangeEvent", object: CustomEventInit {
-	  override var detail: Any? = phase
-	})
-	document.allHTMLElementsRecursive().forEach { it.dispatchEvent(e) }
+	PhaseChange.dispatchToAllHTML(phase)
   }, 100)
 }
 
