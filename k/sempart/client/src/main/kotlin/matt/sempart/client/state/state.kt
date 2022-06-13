@@ -133,7 +133,7 @@ class DrawingTrial(
   var loadedIms = 0
 
   private val _segments = mutableListOf<Segment>()
-  val segments: List<Segment> = _segments.sortedBy { it.cycleIndex }
+  val segments: List<Segment> get() = _segments.sortedBy { it.cycleIndex }
   val segCycle = Loop(segments).iterator()
 
   init {
@@ -252,6 +252,7 @@ class DrawingTrial(
 		next -> segments.first()
 		else -> segments.last()
 	  }
+
 	  next                     -> segCycle.first { !unlabelled || it.hasNoResponse }
 	  else                     -> segCycle.firstBackwards { !unlabelled || it.hasNoResponse }
 	})
