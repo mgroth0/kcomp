@@ -189,13 +189,14 @@ class DrawingTrial(
 	}
 	imElement.setAttribute("src", "data/all/${imString}_All.png")
   }
+
   fun ready(): Boolean {
 	return this.loadedImage && this.loadedIms == this.segments.size*5 && finishedProcessesingResp
   }
+
   fun cleanup() {
 	this.loadDiv.remove()
   }
-
 
 
   inner class Segment(
@@ -359,7 +360,7 @@ private fun DrawingTrial.trialDiv(): HTMLDivElement = div {
 		  println("setting labelledCanvas of ${theSeg}")
 		  theSeg.labelledCanvas = this
 		},
-		stackDiv.children[zIdx]
+		children[zIdx]
 	  )
 	}
   }
