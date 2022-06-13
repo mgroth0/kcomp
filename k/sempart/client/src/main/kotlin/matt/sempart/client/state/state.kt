@@ -34,6 +34,7 @@ import matt.sempart.client.const.HEIGHT
 import matt.sempart.client.const.LABELS
 import matt.sempart.client.const.WIDTH
 import matt.sempart.client.params.PARAMS
+import matt.sempart.client.state.DrawingTrial.Segment
 import matt.sempart.client.state.ExperimentPhase.Trial
 import matt.sempart.client.sty.box
 import matt.sempart.client.sty.boxButton
@@ -47,6 +48,7 @@ import org.w3c.dom.HTMLImageElement
 import org.w3c.dom.HTMLParagraphElement
 import org.w3c.dom.ImageData
 import org.w3c.dom.events.EventTarget
+import org.w3c.dom.get
 import org.w3c.dom.url.URLSearchParams
 import kotlin.js.Date
 
@@ -108,8 +110,8 @@ fun HTMLElement.onMyResizeLeft(onLeft: (Int)->Unit) {
 
 
 class DrawingTrial(
-  val im: String,
-  mainIm: HTMLImageElement
+  val imString: String,
+  val imElement: HTMLImageElement
 ) {
 
   val segmentsWithResponse get() = segments.filter { it.response != null }
@@ -121,7 +123,7 @@ class DrawingTrial(
   var selectedSeg: Segment? = null
   var hoveredSeg: Segment? = null
 
-  override fun toString() = "matt.kjs.idk.Drawing $im"
+  override fun toString() = "matt.kjs.idk.Drawing $imString"
 
   val loadDiv = div {
 	todo("loadDiv is not ideal")
@@ -138,7 +140,7 @@ class DrawingTrial(
 
   init {
 	get(
-	  DATA_FOLDER + "segment_data2" + "${im}.json"
+	  DATA_FOLDER + "segment_data2" + "${imString}.json"
 	) { resp ->
 	  Json
 		.decodeFromString<Map<String, List<List<Boolean>>>>(resp)
@@ -158,7 +160,7 @@ class DrawingTrial(
 		  val segID = entry.key
 
 
-		  val imFileName = Path("${im}_L${segID}.png")
+		  val imFileName = Path("${imString}_L${segID}.png")
 
 		  highlightIm.srcAsPath = DATA_FOLDER + "segment_highlighted" + imFileName
 		  selectIm.srcAsPath = DATA_FOLDER + "segment_selected" + imFileName
@@ -178,10 +180,10 @@ class DrawingTrial(
 		  )
 		}
 	}
-	mainIm.setOnLoad {
+	imElement.setOnLoad {
 	  loadedImage = true
 	}
-	mainIm.setAttribute("src", "data/all/${im}_All.png")
+	imElement.setAttribute("src", "data/all/${imString}_All.png")
   }
 
   fun cleanup() {
@@ -221,11 +223,11 @@ class DrawingTrial(
 	val hiLabeledPixels by lazy {
 	  hiLabeledIm.getPixels(w = WIDTH, h = HEIGHT)
 	}
+	lateinit var labelledCanvas: HTMLCanvasElement
   }
 
   lateinit var controlsDiv: HTMLDivElement
   lateinit var stackDiv: HTMLDivElement
-  val labelledCanvases = mutableListOf<HTMLCanvasElement>()
   val allButtons = mutableListOf<HTMLButtonElement>()
   lateinit var completionP: HTMLParagraphElement
   val div by lazy { trialDiv() }
@@ -314,19 +316,46 @@ private fun DrawingTrial.trialDiv(): HTMLDivElement = div {
   }
   stackDiv = div {
 	sty.display = InlineBlock
-	canvases += (1..4).map {
+	canvases += (0..2).map {
 	  canvas {
 		width = WIDTH
 		height = HEIGHT
 		sty {
 		  position = absolute
-		  zIndex = it - 1
+		  zIndex = it
 		  top = 0.px
 		}
 		onMyResizeLeft {
 		  style.left = it.toString() + "px"
 		}
+		if (it > 1) {
+		  sty.zIndex = it + segments.size
+		}
 	  }
+	}
+	canvases[0].context2D.drawImage(imElement, 0.0, 0.0)
+
+
+	segments.forEach { theSeg: Segment ->
+	  val zIdx = theSeg.cycleIndex + 1
+	  insertBefore(
+		canvas {
+		  width = WIDTH
+		  height = HEIGHT
+		  hidden = true
+		  sty {
+			position = absolute
+			top = 0.px
+			zIndex = zIdx
+		  }
+		  context2D.drawImage(theSeg.labelledIm, 0.0, 0.0)
+		  onMyResizeLeft {
+			sty.left = it.px
+		  }
+		  theSeg.labelledCanvas = this
+		},
+		stackDiv.children[zIdx]
+	  )
 	}
   }
   controlsDiv = div {
@@ -353,8 +382,7 @@ private fun DrawingTrial.trialDiv(): HTMLDivElement = div {
 			ExperimentState.lastInteract = Date.now()
 			log.add(Date.now().toLong() to "selected label: $l")
 
-			labelledCanvases[selectedSeg!!.id.toInt() - 1].hidden = false
-
+			selectedSeg!!.labelledCanvas.hidden = false
 
 			val hadResponse = selectedSeg!!.response != null
 			selectedSeg!!.response = l

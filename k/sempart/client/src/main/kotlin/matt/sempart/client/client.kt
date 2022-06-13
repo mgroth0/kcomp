@@ -13,12 +13,10 @@ import matt.kjs.elements.button
 import matt.kjs.elements.div
 import matt.kjs.elements.img
 import matt.kjs.elements.p
-import matt.kjs.img.context2D
 import matt.kjs.req.post
 import matt.kjs.setOnClick
 import matt.kjs.setOnMouseMove
 import matt.sempart.ExperimentData
-import matt.sempart.client.const.HEIGHT
 import matt.sempart.client.const.ORIG_DRAWING_IMS
 import matt.sempart.client.const.WIDTH
 import matt.sempart.client.params.PARAMS
@@ -39,14 +37,11 @@ import matt.sempart.client.state.MyResizeLeft
 import matt.sempart.client.state.Participant.pid
 import matt.sempart.client.state.PhaseChange
 import matt.sempart.client.state.currentLeft
-import matt.sempart.client.state.onMyResizeLeft
 import matt.sempart.client.state.onlyShowIn
 import org.w3c.dom.HTMLButtonElement
-import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.MouseEvent
-import org.w3c.dom.get
 import kotlin.js.Date
 
 private val images = ORIG_DRAWING_IMS.shuffled()
@@ -164,47 +159,12 @@ fun main() = defaultMain {
 
 		trialDiv?.remove()
 		trialDiv = drawingTrial.div
-
 		workingOn("processing image data")
-
-		drawingTrial.ctxs[0].drawImage(theImg, 0.0, 0.0)
-
-		@Suppress("UNUSED_VARIABLE") val origImageData =
-		  drawingTrial.ctxs[0].getImageData(0.0, 0.0, WIDTH.toDouble(), HEIGHT.toDouble())
-
-
-		drawingTrial.labelledCanvases.clear()
-		drawingTrial.segments.forEach { theSeg ->
-		  val lc = document.createElement("canvas") as HTMLCanvasElement
-		  lc.width = WIDTH
-		  lc.height = HEIGHT
-		  lc.style.position = "absolute"
-		  lc.style.top = "0px"
-		  val zIndex = theSeg.cycleIndex + 1
-		  lc.style.zIndex = zIndex.toString()
-		  lc.hidden = true
-		  lc.context2D.drawImage(theSeg.labelledIm, 0.0, 0.0)
-		  lc.onMyResizeLeft {
-			lc.style.left = it.toString() + "px"
-		  }
-		  drawingTrial.stackDiv.insertBefore(lc, drawingTrial.stackDiv.children[zIndex])
-		  drawingTrial.labelledCanvases.add(lc)
-		}
-
-
-		drawingTrial.canvases[1].style.zIndex = (1 + drawingTrial.segments.size).toString()
-		drawingTrial.canvases[2].style.zIndex = (2 + drawingTrial.segments.size).toString()
-		drawingTrial.canvases[3].style.zIndex = (3 + drawingTrial.segments.size).toString()
-
-
-
 		console.log("setting up handlers")
 
 		var lastEvent: Event? = null
 		var lastEventWorked: Event? = null
 		var lastSelectedSegWorked: Segment? = null
-
-
 
 		drawingTrial.canvases[3].setOnMouseMove { lastEvent = it }
 
