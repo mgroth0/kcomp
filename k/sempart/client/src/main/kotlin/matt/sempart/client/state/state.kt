@@ -138,6 +138,8 @@ class DrawingTrial(
   val segments: List<Segment> get() = _segments.sortedBy { it.cycleIndex }
   private lateinit var segCycle: ListIterator<Segment>
 
+  var finishedProcessesingResp = false
+
   init {
 	get(
 	  DATA_FOLDER + "segment_data2" + "${imString}.json"
@@ -180,20 +182,21 @@ class DrawingTrial(
 		  )
 		}
 	  segCycle = Loop(segments).iterator()
+	  finishedProcessesingResp = true
 	}
 	imElement.setOnLoad {
 	  loadedImage = true
 	}
 	imElement.setAttribute("src", "data/all/${imString}_All.png")
   }
-
+  fun ready(): Boolean {
+	return this.loadedImage && this.loadedIms == this.segments.size*5 && finishedProcessesingResp
+  }
   fun cleanup() {
 	this.loadDiv.remove()
   }
 
-  fun ready(): Boolean {
-	return this.loadedImage && this.loadedIms == this.segments.size*5
-  }
+
 
   inner class Segment(
 	val id: String,
