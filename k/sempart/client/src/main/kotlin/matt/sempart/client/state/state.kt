@@ -28,7 +28,6 @@ import matt.kjs.setOnLoad
 import matt.kjs.srcAsPath
 import matt.klib.todo
 import matt.sempart.client.const.DATA_FOLDER
-import matt.sempart.client.const.HALF_WIDTH
 import matt.sempart.client.const.HEIGHT
 import matt.sempart.client.const.LABELS
 import matt.sempart.client.const.WIDTH
@@ -68,15 +67,20 @@ enum class ExperimentPhase {
   Loading
 }
 
-class PhaseChangeEvent(val p: ExperimentPhase): CustomEvent(PhaseChangeEvent::class.simpleName!!)
-class MyResizeEvent(w: Int, @Suppress("UNUSED_PARAMETER") h: Int): CustomEvent(MyResizeEvent::class.simpleName!!) {
-  val left = (w/2) - HALF_WIDTH
-}
+////class PhaseChangeEvent(val p: ExperimentPhase): CustomEvent(PhaseChangeEvent::class.simpleName!!)
+//class MyResizeEvent(w: Int, @Suppress("UNUSED_PARAMETER") h: Int): CustomEvent(MyResizeEvent::class.simpleName!!) {
+//  val left = (w/2) - HALF_WIDTH
+//}
 
 fun HTMLElement.onlyShowIn(phase: ExperimentPhase) {
   hidden = true
-  addEventListener(PhaseChangeEvent::class.simpleName!!, {
-	hidden = (it as PhaseChangeEvent).p != phase
+  addEventListener("PhaseChangeEvent", {
+	hidden = (it as CustomEvent).detail != phase
+  })
+}
+fun HTMLElement.onMyResizeLeft(onLeft: (Int) -> Unit) {
+  addEventListener("MyResizeEvent", {
+	onLeft((it as CustomEvent).detail as Int)
   })
 }
 
@@ -282,9 +286,9 @@ class DrawingTrial(
 private fun DrawingTrial.trialDiv(): HTMLDivElement = div {
   require(ready())
   onlyShowIn(Trial)
-  addEventListener(MyResizeEvent::class.simpleName!!, {
-	style.marginLeft = (it as MyResizeEvent).left.toString() + "px"
-  })
+  onMyResizeLeft {
+	style.marginLeft = it.toString() + "px"
+  }
   stackDiv = div {
 	sty.display = InlineBlock
 	canvases += (1..4).map {
@@ -296,9 +300,9 @@ private fun DrawingTrial.trialDiv(): HTMLDivElement = div {
 		  zIndex = it - 1
 		  top = 0.px
 		}
-		addEventListener(MyResizeEvent::class.simpleName!!, {
-		  style.left = (it as MyResizeEvent).left.toString() + "px"
-		})
+		onMyResizeLeft {
+		  style.left = it.toString() + "px"
+		}
 	  }
 	}
   }
@@ -307,9 +311,9 @@ private fun DrawingTrial.trialDiv(): HTMLDivElement = div {
 	  display = InlineBlock
 	  position = absolute
 	}
-	addEventListener(MyResizeEvent::class.simpleName!!, {
-	  style.left = ((it as MyResizeEvent).left + WIDTH).toString() + "px"
-	})
+	onMyResizeLeft {
+	  style.left = (it + WIDTH).toString() + "px"
+	}
 	labelsDiv = div {
 	  hidden = true
 	  sty.box()

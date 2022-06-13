@@ -19,6 +19,7 @@ import matt.kjs.req.post
 import matt.kjs.setOnClick
 import matt.kjs.setOnMouseMove
 import matt.sempart.ExperimentData
+import matt.sempart.client.const.HALF_WIDTH
 import matt.sempart.client.const.HEIGHT
 import matt.sempart.client.const.ORIG_DRAWING_IMS
 import matt.sempart.client.const.WIDTH
@@ -36,10 +37,11 @@ import matt.sempart.client.state.ExperimentState.begun
 import matt.sempart.client.state.ExperimentState.complete
 import matt.sempart.client.state.ExperimentState.lastInteract
 import matt.sempart.client.state.ExperimentState.onBreak
-import matt.sempart.client.state.MyResizeEvent
 import matt.sempart.client.state.Participant.pid
-import matt.sempart.client.state.PhaseChangeEvent
+import matt.sempart.client.state.onMyResizeLeft
 import matt.sempart.client.state.onlyShowIn
+import org.w3c.dom.CustomEvent
+import org.w3c.dom.CustomEventInit
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLDivElement
@@ -184,9 +186,9 @@ fun main() = defaultMain {
 		  lc.style.zIndex = zIndex.toString()
 		  lc.hidden = true
 		  lc.context2D.drawImage(theSeg.labelledIm, 0.0, 0.0)
-		  lc.addEventListener(MyResizeEvent::class.simpleName!!, {
-			lc.style.left = ((it as MyResizeEvent).left).toString() + "px"
-		  })
+		  lc.onMyResizeLeft {
+			lc.style.left = it.toString() + "px"
+		  }
 		  drawingTrial.stackDiv.insertBefore(lc, drawingTrial.stackDiv.children[zIndex])
 		  drawingTrial.labelledCanvases.add(lc)
 		}
@@ -325,7 +327,9 @@ fun main() = defaultMain {
   window.addEventListener("resize", {
 	val w = window.innerWidth
 	val h = window.innerHeight
-	val e = MyResizeEvent(w = w, h = h)
+	val e = CustomEvent("MyResizeEvent", object: CustomEventInit {
+	  override var detail: Any? = (w/2) - HALF_WIDTH
+	})
 	document.allHTMLElementsRecursive().forEach { it.dispatchEvent(e) }
   })
 
@@ -344,7 +348,10 @@ fun main() = defaultMain {
 	  working                                           -> Loading
 	  else                                              -> Trial
 	}
-	val e = PhaseChangeEvent(p = phase)
+	CustomEvent
+	val e = CustomEvent("PhaseChangeEvent", object: CustomEventInit {
+	  override var detail: Any? = phase
+	})
 	document.allHTMLElementsRecursive().forEach { it.dispatchEvent(e) }
   }, 100)
 }
