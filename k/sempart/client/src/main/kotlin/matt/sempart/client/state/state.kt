@@ -252,7 +252,6 @@ class DrawingTrial(
 		next -> segments.first()
 		else -> segments.last()
 	  }
-
 	  next                     -> segCycle.first { !unlabelled || it.hasNoResponse }
 	  else                     -> segCycle.firstBackwards { !unlabelled || it.hasNoResponse }
 	})
@@ -263,6 +262,7 @@ class DrawingTrial(
   }
 
   fun select(seg: Segment?) {
+	println("selecting ${seg}")
 	selectedSeg = seg
 	if (seg == null) {
 	  log.add(Date.now().toLong() to "unselected segment")
