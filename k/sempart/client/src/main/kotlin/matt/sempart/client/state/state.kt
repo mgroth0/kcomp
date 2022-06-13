@@ -393,7 +393,9 @@ private fun DrawingTrial.trialDiv(): HTMLDivElement = div {
 	}
 	br
 	br
-	completionP = p {}
+	completionP = p {
+	  innerHTML = "$completionFraction segments labelled"
+	}
 	nextImageButton = button {
 	  disabled = true
 	  type = ButtonType.button.realValue
@@ -406,6 +408,6 @@ private fun DrawingTrial.trialDiv(): HTMLDivElement = div {
   }
 }
 
-class MyResizeEvent(w: Int, h: Int): Event(MyResizeEvent::class.simpleName!!) {
+class MyResizeEvent(w: Int, @Suppress("UNUSED_PARAMETER") h: Int): Event(MyResizeEvent::class.simpleName!!) {
   val left = (w/2) - HALF_WIDTH
 }

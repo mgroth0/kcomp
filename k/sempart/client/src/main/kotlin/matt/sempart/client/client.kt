@@ -150,7 +150,6 @@ fun main() = defaultMain {
   fun presentImage(im: String) {
 	val drawingTrial = preloadedDrawingData ?: DrawingTrial(im, theImg)
 	workingOn("downloading image data")
-	drawingTrial.completionP.innerHTML = "${drawingTrial.completionFraction} segments labelled"
 	var theInterval: Int? = null
 	theInterval = window.setInterval({
 	  if (drawingTrial.ready()) {
