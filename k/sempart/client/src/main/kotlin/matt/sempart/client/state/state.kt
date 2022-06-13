@@ -316,7 +316,7 @@ private fun DrawingTrial.trialDiv(): HTMLDivElement = div {
   }
   stackDiv = div {
 	sty.display = InlineBlock
-	canvases += (0..2).map {
+	canvases += (0..3).map {
 	  canvas {
 		width = WIDTH
 		height = HEIGHT
