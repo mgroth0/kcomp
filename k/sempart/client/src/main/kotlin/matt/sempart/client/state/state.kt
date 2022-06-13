@@ -136,7 +136,7 @@ class DrawingTrial(
 
   private val _segments = mutableListOf<Segment>()
   val segments: List<Segment> get() = _segments.sortedBy { it.cycleIndex }
-  val segCycle = Loop(segments).iterator()
+  private lateinit var segCycle: Iterator<Segment>
 
   init {
 	get(
@@ -179,6 +179,7 @@ class DrawingTrial(
 			cycleIndex = index
 		  )
 		}
+	  segCycle = Loop(segments).iterator()
 	}
 	imElement.setOnLoad {
 	  loadedImage = true
