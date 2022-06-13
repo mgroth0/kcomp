@@ -136,7 +136,7 @@ class DrawingTrial(
 
   private val _segments = mutableListOf<Segment>()
   val segments: List<Segment> get() = _segments.sortedBy { it.cycleIndex }
-  private lateinit var segCycle: Iterator<Segment>
+  private lateinit var segCycle: ListIterator<Segment>
 
   init {
 	get(
