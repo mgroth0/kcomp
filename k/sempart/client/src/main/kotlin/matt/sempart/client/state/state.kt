@@ -393,8 +393,7 @@ private fun DrawingTrial.trialDiv(): HTMLDivElement = div {
 
 			val hadResponse = selectedSeg!!.response != null
 			selectedSeg!!.response = l
-			completionP.innerHTML =
-			  "${segmentsWithResponse}/${segments.size} segments labelled"
+			completionP.innerHTML = "$completionFraction segments labelled"
 
 			allButtons.forEach { bb ->
 			  bb.disabled = bb.innerHTML == l
