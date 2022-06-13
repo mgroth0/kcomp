@@ -10,28 +10,40 @@ import kotlinx.html.div
 import kotlinx.html.hidden
 import kotlinx.html.id
 import kotlinx.html.img
+import kotlinx.html.js.onClickFunction
 import kotlinx.html.p
 import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import matt.kjs.css.BorderStyle.solid
-import matt.kjs.css.BorderWidth.thin
+import matt.kjs.Path
 import matt.kjs.css.Display.InlineBlock
 import matt.kjs.css.FontWeight.bold
 import matt.kjs.css.Margin.auto
+import matt.kjs.css.MyStyleDsl
 import matt.kjs.css.Position.absolute
 import matt.kjs.css.TextAlign.center
 import matt.kjs.css.px
 import matt.kjs.css.sty
 import matt.kjs.defaultMain
 import matt.kjs.div
+import matt.kjs.img.context2D
 import matt.kjs.img.getPixels
+import matt.kjs.req.get
+import matt.kjs.req.post
 import matt.kjs.setOnClick
 import matt.kjs.setOnLoad
 import matt.kjs.setOnMouseMove
+import matt.kjs.srcAsPath
 import matt.sempart.ExperimentData
 import matt.sempart.client.Drawing.Segment
-import org.w3c.dom.CanvasRenderingContext2D
+import matt.sempart.client.const.DATA_FOLDER
+import matt.sempart.client.const.HALF_WIDTH
+import matt.sempart.client.const.HEIGHT
+import matt.sempart.client.const.LABELS
+import matt.sempart.client.const.ORIG_DRAWING_IMS
+import matt.sempart.client.const.WIDTH
+import matt.sempart.client.params.PARAMS
+import matt.sempart.client.state.ExperimentState.begun
+import matt.sempart.client.sty.box
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLDivElement
@@ -42,22 +54,7 @@ import org.w3c.dom.events.Event
 import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.get
 import org.w3c.dom.url.URLSearchParams
-import org.w3c.xhr.XMLHttpRequest
 import kotlin.js.Date
-
-const val WIDTH = 600
-const val HEIGHT = 700
-const val HALF_WIDTH = WIDTH/2
-
-const val BREAK_INTERVAL = 2
-const val REMOVE_NP_BUTTONS_KEEP_UNLABELLED_NP_BUTTONS = true
-const val RANDOMIZE_SEGMENT_ORDER = true
-
-
-@Suppress("unused")
-const val MINUTE_MS = 60*1000
-const val HOUR_MS = 3600*1000
-const val IDLE_THRESHOLD = HOUR_MS /*JUST FOR DEV. USE MINUTE FOR FINAL?*/
 
 fun main() = defaultMain {
   document.head!!.title = "Semantic Segmentation"
@@ -86,9 +83,9 @@ fun main() = defaultMain {
 		  """.trimIndent()
 	}
 	button {
-	  id = "beginButton"
 	  sty.margin = auto
 	  +"Begin Experiment"
+	  onClickFunction = { begun = true }
 	}
   }
 
@@ -119,67 +116,52 @@ fun main() = defaultMain {
 	  }
 	  div {
 		id = "labels"
-		sty {
-		  borderStyle = solid
-		  borderWidth = thin
-		}
+		sty.box()
 	  }
 	  br /*is this enough or do I have to call the function?*/
 	  br
+	  fun MyStyleDsl.boxButton() {
+		marginBottom = 5.px
+		marginTop = 5.px
+		marginLeft = 5.px
+	  }
 	  div {
-		sty {
-		  borderStyle = solid
-		  borderWidth = thin
-		}
-		div {
-		  id = "nextPrevButtons"
-		  button {
-			type = ButtonType.button
-			id = "previousSegmentButton"
-			sty {
-			  marginBottom = 5.px
-			  marginTop = 5.px
-			  marginLeft = 5.px
+		sty.box()
+		if (!PARAMS.removeNpButtonsKeepUnlabelledNpButtons) {
+		  div {
+			button {
+			  type = ButtonType.button
+			  id = "previousSegmentButton"
+			  sty.boxButton()
+			  +"Previous Segment"
 			}
-			+"Previous Segment"
-		  }
-		  br {
-			id = "previousSegmentButtonBR"
-		  }
-		  button {
-			type = ButtonType.button
-			id = "nextSegmentButton"
-			sty {
-			  marginBottom = 5.px
-			  marginTop = 5.px
-			  marginLeft = 5.px
+			br {
+			  id = "previousSegmentButtonBR"
 			}
-			+"Next Segment"
-		  }
-		  br {
-			id = "nextSegmentButtonBR"
+			button {
+			  type = ButtonType.button
+			  id = "nextSegmentButton"
+			  sty.boxButton()
+			  +"Next Segment"
+			}
+			br {
+			  id = "nextSegmentButtonBR"
+			}
 		  }
 		}
+		val unlabelledString = if (PARAMS.removeNpButtonsKeepUnlabelledNpButtons) " Unlabeled" else ""
 		button {
 		  type = ButtonType.button
 		  id = "previousUnlabeledSegmentButton"
-		  sty {
-			marginBottom = 5.px
-			marginTop = 5.px
-			marginLeft = 5.px
-		  }
-		  +"Previous Unlabeled Segment"
+		  sty.boxButton()
+		  +"Previous$unlabelledString Segment"
 		}
 		br
 		button {
 		  type = ButtonType.button
 		  id = "nextUnlabeledSegmentButton"
-		  sty {
-			marginBottom = 5.px
-			marginTop = 5.px
-			marginLeft = 5.px
-		  }
-		  +"Next Unlabeled Segment"
+		  sty.boxButton()
+		  +"Next$unlabelledString Segment"
 		}
 	  }
 	  br
@@ -192,9 +174,7 @@ fun main() = defaultMain {
 		id = "nextImageButton"
 		sty {
 		  fontWeight = bold
-		  marginBottom = 5.px
-		  marginTop = 5.px
-		  marginLeft = 5.px
+		  boxButton()
 		  +"Submit Responses and Show Next Image"
 		}
 	  }
@@ -216,7 +196,7 @@ fun main() = defaultMain {
 	hidden = true
 	p {
 	  sty.margin = auto
-	  +"Your window is too small. Please enlarge the browser window so it is at least width=900 by height=750."
+	  +"Your window is too small. Please enlarge the browser window so it is at least matt.sempart.client.const.getWidth=900 by matt.sempart.client.const.getHeight=750."
 	}
   }
 
@@ -249,19 +229,7 @@ fun main() = defaultMain {
 	+"Sorry, you have been inactive for too long and the experiment has been cancelled."
   }
 
-  val realImages =
-	mutableListOf("Face/Bd_Jul2018_M_Face_PO1", "Face/Ba_Jan2018_F_Face_FU3", "Face/Lo_Jan2018_M_Face_FU1")
-
-  val images = realImages.shuffled()
-
-  val labels = listOf(
-	"eye",
-	"mouth",
-	"ear",
-	"nose"
-  )
-
-
+  val images = ORIG_DRAWING_IMS.shuffled()
   var responses = mutableMapOf<String, String>()
   var selectedSeg: Segment? = null
   val completionP = document.getElementById("completionP")
@@ -270,47 +238,27 @@ fun main() = defaultMain {
   val pid = URLSearchParams(window.location.href.substringAfter("?")).get("PROLIFIC_PID")
 
 
-  if (REMOVE_NP_BUTTONS_KEEP_UNLABELLED_NP_BUTTONS) {
-	val nextPrevButtonsDiv = document.getElementById("nextPrevButtons") as HTMLDivElement
-	nextPrevButtonsDiv.hidden = true
-	nextPrevButtonsDiv.style.display = "none"
-	nextUnlabeledSegmentButton.innerHTML = nextSegmentButton.innerHTML
-	previousUnlabeledSegmentButton.innerHTML = previousSegmentButton.innerHTML
-  }
-
-
   val canvas1 = document.querySelector(".canvas1") as HTMLCanvasElement
-  val ctx1 = canvas1.getContext("2d") as CanvasRenderingContext2D
+  val ctx1 = canvas1.context2D
   val canvas2 = document.querySelector(".canvas2") as HTMLCanvasElement
-  val ctx2 = canvas2.getContext("2d") as CanvasRenderingContext2D
+  val ctx2 = canvas2.context2D
   val canvas3 = document.querySelector(".canvas3") as HTMLCanvasElement
-  val ctx3 = canvas3.getContext("2d") as CanvasRenderingContext2D
+  val ctx3 = canvas3.context2D
   val canvas4 = document.querySelector(".canvas4") as HTMLCanvasElement
 
 
   var lastInteract = Date.now()
-
   var debugTic: Double?
-
   val allButtons = mutableListOf<HTMLButtonElement>()
-
-
   var preloadedDrawingData: Drawing? = null
-
   var showThisAsLabeledFunc: (()->Unit)? = null
   var nextSegFunc: (()->Unit)? = null
-
   var currentNSegments = 0
-
-  var begun = false
-  (document.getElementById("beginButton") as HTMLButtonElement).setOnClick {
-	begun = true
-  }
 
 
   val labelledCanvases = mutableListOf<HTMLCanvasElement>()
 
-  val shuffledLabels = labels.shuffled().toMutableList()
+  val shuffledLabels = LABELS.shuffled().toMutableList()
   shuffledLabels.add("Something else")
   shuffledLabels.add("I don't know")
   console.log("here5")
@@ -414,7 +362,7 @@ fun main() = defaultMain {
 		  ctx1.getImageData(0.0, 0.0, WIDTH.toDouble(), HEIGHT.toDouble())
 
 		val segmentsToCycleIndex: Map<Segment, Int> = drawingData.segments.let {
-		  if (RANDOMIZE_SEGMENT_ORDER) it.shuffled() else it
+		  if (PARAMS.randomSegmentOrder) it.shuffled() else it
 		}.withIndex().associate { it.value to it.index }
 
 		val cycleIndexToSegments = segmentsToCycleIndex.map { it.value to it.key }.toMap()
@@ -431,8 +379,8 @@ fun main() = defaultMain {
 		  lc.style.top = "0px"
 		  lc.style.zIndex = (i + 1).toString()
 		  lc.hidden = true
-		  val lctx = lc.getContext("2d") as CanvasRenderingContext2D
-		  lctx.drawImage(drawingData.labelledIms[i], 0.0, 0.0)
+		  val lctx = lc.context2D
+		  lctx.drawImage(drawingData.segments[i].labelledIm, 0.0, 0.0)
 		  stackDiv.insertBefore(lc, stackDiv.children[i + 1])
 		  labelledCanvases.add(lc)
 		}
@@ -470,6 +418,7 @@ fun main() = defaultMain {
 		}
 
 		canvas3.hidden = true
+
 
 		fun select(seg: Segment?) {
 		  console.log("selected $seg")
@@ -510,48 +459,36 @@ fun main() = defaultMain {
 		  }
 		}
 
+		fun Segment?.selectThis() = select(this)
+		fun hover(seg: Segment?) {
+		  if (seg == hoveredSeg) return
+		  console.log("hovered $seg")
+		  hoveredSeg = seg
+		  canvas2.hidden = hoveredSeg == null
+		  if (hoveredSeg != null) ctx2.putImageData(
+			if (seg.toString() in responses.keys) seg!!.hiLabeledPixels else seg!!.highlightPixels,
+			0.0, 0.0
+		  )
+		}
+
+		fun Segment?.hoverThis() = hover(this)
 		canvas2.hidden = true
+
 		val imageInterval = window.setInterval({
 		  if (lastEvent != lastEventWorked || lastSelectedSegWorked != selectedSeg) {
 			lastInteract = Date.now()
-
 			lastSelectedSegWorked = selectedSeg
-
-			if (selectedSeg != null) {
-			  select(selectedSeg)
-			} else {
-			  labelsDiv.hidden = true
-			}
-			if (lastEvent !== lastEventWorked) {
+			labelsDiv.hidden = selectedSeg == null
+			selectedSeg.selectThis()
+			if (lastEvent != lastEventWorked) {
 			  lastEventWorked = lastEvent
-			  val seg = eventToSeg(lastEvent as MouseEvent)
-			  if (seg != hoveredSeg) {
-				console.log("hovered $seg")
-				hoveredSeg = seg
-				if (hoveredSeg == null) {
-				  canvas2.hidden = true
-				} else {
-				  if (seg.toString() in responses.keys) {
-					val shouldBeImageData: ImageData = seg!!.hiLabeledPixels
-					ctx2.putImageData(shouldBeImageData, 0.0, 0.0)
-				  } else {
-					val shouldBeImageData: ImageData = seg!!.highlightPixels
-					ctx2.putImageData(shouldBeImageData, 0.0, 0.0)
-				  }
-
-				  canvas2.hidden = false
-				}
-			  }
+			  eventToSeg(lastEvent as MouseEvent).hoverThis()
 			}
 		  }
 		}, 25)
 		finishedWorking()
 		window.clearInterval(theInterval!!)
 		trialLog!!.add(Date.now().toLong() to "trial start")
-
-		console.log("started trial")
-
-
 
 		fun switchSegment(next: Boolean, unlabelled: Boolean) {
 		  console.log("next unlabeled segment")
@@ -603,42 +540,17 @@ fun main() = defaultMain {
 		}
 
 		fun submit(f: ()->Unit) {
-
-		  console.log("submit button clicked")
-
-		  // submitSegmentButton.disabled = true
 		  trialLog!!.add(Date.now().toLong() to "submit")
-
 		  drawingData.cleanup()
-
-		  val req = XMLHttpRequest()
-		  req.addEventListener("load", {
-
-		  })
-		  println("opening post")
-		  req.open("POST", "send?PROLIFIC_PID=" + pid, async = false)
-		  println("opened post")
-		  req.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
-		  println("set request header")
-		  req.onreadystatechange = {
-			println("ready status: ${req.status}")
-			/*if (req.status == 200.toShort()) {*/
-			if (req.status == 201.toShort()) {
-			  f()
-			}
-		  }
-		  println("sending json")
-		  req.send(
-			Json.encodeToString(
-			  ExperimentData(
-				responses = responses,
-				/*"image" to im,*/
-				trialLog = trialLog!!
-			  )
-			)
+		  post(
+			Path("send?PROLIFIC_PID=$pid"),
+			ExperimentData(
+			  responses = responses,
+			  /*"image" to im,*/
+			  trialLog = trialLog!!
+			),
+			f
 		  )
-		  println("sent json")
-
 		}
 
 		if (imI < images.size - 1) {
@@ -660,7 +572,7 @@ fun main() = defaultMain {
 			  imI++
 			  println("imI is now $imI (images.size=${images.size})")
 			  if (imI < images.size) {
-				if (imI%BREAK_INTERVAL == 0) {
+				if (imI%PARAMS.breakInterval == 0) {
 				  onBreak = true
 				  println("break started")
 				  val tempInterval = window.setInterval({
@@ -689,7 +601,6 @@ fun main() = defaultMain {
 		}
 
 	  }
-	  //	  Unit
 	}, 10)
 
   }
@@ -710,11 +621,11 @@ fun main() = defaultMain {
 	instructionsDiv.hidden = begun
 	if (begun) {
 	  val showDiv = when {
-		Date.now() - lastInteract >= IDLE_THRESHOLD -> inactiveDiv
-		onBreak                                     -> breakDiv
-		w < 1200 || h < 750                         -> resizeDiv
-		working                                     -> loadingDiv
-		else                                        -> mainDiv
+		Date.now() - lastInteract >= PARAMS.idleThreshold -> inactiveDiv
+		onBreak                                           -> breakDiv
+		w < 1200 || h < 750                               -> resizeDiv
+		working                                           -> loadingDiv
+		else                                              -> mainDiv
 	  }
 	  document.body!!.childNodes.asList()
 		.filterIsInstance<HTMLDivElement>()
@@ -736,13 +647,6 @@ class Drawing(
   val loadDiv = div {
 	hidden = true
   }
-  var highlightIms = mutableListOf<HTMLImageElement>()
-
-
-  var selectIms = mutableListOf<HTMLImageElement>()
-  var labelledIms = mutableListOf<HTMLImageElement>()
-  var selectLabeledIms = mutableListOf<HTMLImageElement>()
-  var hiLabeledIms = mutableListOf<HTMLImageElement>()
 
   var loadedImage = false
   var loadedIms = 0
@@ -751,12 +655,9 @@ class Drawing(
   val segments: List<Segment> = _segments
 
   init {
-
-	val req = XMLHttpRequest()
-
-	req.addEventListener("load", {
-	  val resp = req.responseText
-	  console.log("resp::class=${resp::class}")
+	get(
+	  DATA_FOLDER + "segment_data2" + "${im}.json"
+	) { resp ->
 	  Json
 		.decodeFromString<Map<String, List<List<Boolean>>>>(resp)
 		.entries
@@ -770,19 +671,16 @@ class Drawing(
 		  }
 		  val (highlightIm, selectIm, labelledIm, selectLabeledIm, hiLabeledIm) = ims
 
-		  highlightIms.add(highlightIm)
-		  selectIms.add(selectIm)
-		  labelledIms.add(labelledIm)
-		  selectLabeledIms.add(selectLabeledIm)
-		  hiLabeledIms.add(hiLabeledIm)
-
 		  val segID = entry.key
 
-		  highlightIm.src = "data/segment_highlighted/${im}_L${segID}.png"
-		  selectIm.src = "data/segment_selected/${im}_L${segID}.png"
-		  labelledIm.src = "data/segment_labelled/${im}_L${segID}.png"
-		  selectLabeledIm.src = "data/segment_selected_labeled/${im}_L${segID}.png"
-		  hiLabeledIm.src = "data/segment_hi_labeled/${im}_L${segID}.png"
+
+		  val imFileName = Path("${im}_L${segID}.png")
+
+		  highlightIm.srcAsPath = DATA_FOLDER + "segment_highlighted" + imFileName
+		  selectIm.srcAsPath = DATA_FOLDER + "segment_selected" + imFileName
+		  labelledIm.srcAsPath = DATA_FOLDER + "segment_labelled" + imFileName
+		  selectLabeledIm.srcAsPath = DATA_FOLDER + "segment_selected_labeled" + imFileName
+		  hiLabeledIm.srcAsPath = DATA_FOLDER + "segment_hi_labeled" + imFileName
 
 		  _segments += Segment(
 			id = segID,
@@ -794,9 +692,7 @@ class Drawing(
 			hiLabeledIm = hiLabeledIm
 		  )
 		}
-	})
-	req.open("GET", "data/segment_data2/${im}.json", async = true)
-	req.send()
+	}
 	mainIm.setOnLoad {
 	  loadedImage = true
 	}
@@ -814,11 +710,11 @@ class Drawing(
   inner class Segment(
 	val id: String,
 	val pixels: List<List<Boolean>>,
-	highlightIm: HTMLImageElement,
-	selectIm: HTMLImageElement,
-	labelledIm: HTMLImageElement,
-	selectLabeledIm: HTMLImageElement,
-	hiLabeledIm: HTMLImageElement
+	val highlightIm: HTMLImageElement,
+	val selectIm: HTMLImageElement,
+	val labelledIm: HTMLImageElement,
+	val selectLabeledIm: HTMLImageElement,
+	val hiLabeledIm: HTMLImageElement
   ) {
 	override fun toString() = "Segment $id of ${this@Drawing}"
 	val highlightPixels by lazy {
