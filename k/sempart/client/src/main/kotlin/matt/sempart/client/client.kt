@@ -3,9 +3,6 @@ package matt.sempart.client
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.html.ButtonType
-import kotlinx.html.dom.append
-import kotlinx.html.hidden
-import kotlinx.html.img
 import matt.kjs.Path
 import matt.kjs.css.Margin.auto
 import matt.kjs.css.TextAlign.center
@@ -36,7 +33,6 @@ import matt.sempart.client.state.Participant.pid
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLDivElement
-import org.w3c.dom.HTMLImageElement
 import org.w3c.dom.asList
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.MouseEvent
@@ -78,7 +74,7 @@ fun main() = defaultMain {
 	}
   }
 
-  val theImg = document.body!!.append { img { hidden = true } } as HTMLImageElement
+  val theImg = img { hidden = true }
   var trialDiv: HTMLDivElement? = null
 
   val resizeDiv = div {
