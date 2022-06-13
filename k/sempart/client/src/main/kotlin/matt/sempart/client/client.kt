@@ -19,7 +19,6 @@ import matt.kjs.req.post
 import matt.kjs.setOnClick
 import matt.kjs.setOnMouseMove
 import matt.sempart.ExperimentData
-import matt.sempart.client.const.HALF_WIDTH
 import matt.sempart.client.const.HEIGHT
 import matt.sempart.client.const.ORIG_DRAWING_IMS
 import matt.sempart.client.const.WIDTH
@@ -35,7 +34,6 @@ import matt.sempart.client.state.Participant.pid
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLDivElement
-import org.w3c.dom.asList
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.get
@@ -315,15 +313,15 @@ fun main() = defaultMain {
   presentImage(images[imI])
 
   window.addEventListener("resize", {
-	val e = MyResizeEvent(w = window.innerWidth, h = window.innerHeight)
+	val w = window.innerWidth
+	val h = window.innerHeight
+	val e = MyResizeEvent(w = w, h = h)
 	document.allHTMLElementsRecursive().forEach { it.dispatchEvent(e) }
   })
 
   window.setInterval({
 	val w = window.innerWidth
 	val h = window.innerHeight
-	val left = (w/2) - HALF_WIDTH
-	trialDiv?.style?.marginLeft = left.toString() + "px"
 	instructionsDiv.hidden = begun
 	if (begun) {
 	  val showDiv = when {
@@ -335,7 +333,7 @@ fun main() = defaultMain {
 		working                                           -> loadingDiv
 		else                                              -> trialDiv
 	  }
-	  document.body!!.childNodes.asList()
+	  document.allHTMLElementsRecursive()
 		.filterIsInstance<HTMLDivElement>()
 		.forEach {
 		  it.hidden = it != showDiv

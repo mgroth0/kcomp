@@ -256,7 +256,9 @@ class DrawingTrial(
 
 private fun DrawingTrial.trialDiv(): HTMLDivElement = div {
   require(ready())
-
+  addEventListener(MyResizeEvent::class.simpleName!!, {
+	style.marginLeft = (it as MyResizeEvent).left.toString() + "px"
+  })
   stackDiv = div {
 	sty.display = InlineBlock
 	canvases += (1..4).map {
