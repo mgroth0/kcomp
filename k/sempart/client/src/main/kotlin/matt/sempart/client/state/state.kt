@@ -28,6 +28,7 @@ import matt.kjs.setOnLoad
 import matt.kjs.srcAsPath
 import matt.klib.todo
 import matt.sempart.client.const.DATA_FOLDER
+import matt.sempart.client.const.HALF_WIDTH
 import matt.sempart.client.const.HEIGHT
 import matt.sempart.client.const.LABELS
 import matt.sempart.client.const.WIDTH
@@ -40,6 +41,7 @@ import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLImageElement
 import org.w3c.dom.HTMLParagraphElement
 import org.w3c.dom.ImageData
+import org.w3c.dom.events.Event
 import org.w3c.dom.url.URLSearchParams
 import kotlin.js.Date
 
@@ -191,6 +193,7 @@ class DrawingTrial(
 	val shouldBeImageData: ImageData = selectLabeledPixels
 	ctxs[2].putImageData(shouldBeImageData, 0.0, 0.0)
   }
+
   fun switchSegment(next: Boolean, unlabelled: Boolean) {
 	select(when {
 	  isFinished && unlabelled -> null
@@ -198,10 +201,12 @@ class DrawingTrial(
 		next -> segments.first()
 		else -> segments.last()
 	  }
-	  next                                    -> segCycle.first { !unlabelled || it.hasNoResponse }
-	  else                                    -> segCycle.firstBackwards { !unlabelled || it.hasNoResponse }
+
+	  next                     -> segCycle.first { !unlabelled || it.hasNoResponse }
+	  else                     -> segCycle.firstBackwards { !unlabelled || it.hasNoResponse }
 	})
   }
+
   fun nextSeg() {
 	switchSegment(next = true, unlabelled = true)
   }
@@ -247,9 +252,6 @@ class DrawingTrial(
   fun Segment?.hoverThis() = hover(this)
 
 
-
-
-
 }
 
 private fun DrawingTrial.trialDiv(): HTMLDivElement = div {
@@ -259,7 +261,6 @@ private fun DrawingTrial.trialDiv(): HTMLDivElement = div {
 	sty.display = InlineBlock
 	canvases += (1..4).map {
 	  canvas {
-		id = "canvas$it"
 		width = WIDTH
 		height = HEIGHT
 		sty {
@@ -267,6 +268,9 @@ private fun DrawingTrial.trialDiv(): HTMLDivElement = div {
 		  zIndex = it - 1
 		  top = 0.px
 		}
+		addEventListener(MyResizeEvent::class.simpleName!!, {
+		  style.left = (it as MyResizeEvent).left.toString() + "px"
+		})
 	  }
 	}
   }
@@ -275,6 +279,9 @@ private fun DrawingTrial.trialDiv(): HTMLDivElement = div {
 	  display = InlineBlock
 	  position = absolute
 	}
+	addEventListener(MyResizeEvent::class.simpleName!!, {
+	  style.left = ((it as MyResizeEvent).left + WIDTH).toString() + "px"
+	})
 	labelsDiv = div {
 	  sty.box()
 	  (LABELS.shuffled() + "Something else" + "I don't know").forEach { l ->
@@ -392,4 +399,8 @@ private fun DrawingTrial.trialDiv(): HTMLDivElement = div {
 	  }
 	}
   }
+}
+
+class MyResizeEvent(w: Int, h: Int): Event(MyResizeEvent::class.simpleName!!) {
+  val left = (w/2) - HALF_WIDTH
 }

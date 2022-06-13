@@ -4,6 +4,7 @@ import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.html.ButtonType
 import matt.kjs.Path
+import matt.kjs.allHTMLElementsRecursive
 import matt.kjs.css.Margin.auto
 import matt.kjs.css.TextAlign.center
 import matt.kjs.css.px
@@ -29,6 +30,7 @@ import matt.sempart.client.state.ExperimentState.begun
 import matt.sempart.client.state.ExperimentState.complete
 import matt.sempart.client.state.ExperimentState.lastInteract
 import matt.sempart.client.state.ExperimentState.onBreak
+import matt.sempart.client.state.MyResizeEvent
 import matt.sempart.client.state.Participant.pid
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
@@ -40,7 +42,6 @@ import org.w3c.dom.get
 import kotlin.js.Date
 
 private val images = ORIG_DRAWING_IMS.shuffled()
-private var drawingTrial: DrawingTrial? = null
 
 fun main() = defaultMain {
   document.head!!.title = "Semantic Segmentation"
@@ -154,39 +155,42 @@ fun main() = defaultMain {
   var imI = 0
 
   fun presentImage(im: String) {
-	drawingTrial!!.nextImageButton.disabled = true
-	drawingTrial!!.nextUnlabeledSegmentButton.disabled = false
-	drawingTrial!!.previousUnlabeledSegmentButton.disabled = false
-	drawingTrial!!.allButtons.forEach { bb ->
+
+	val drawingTrial = preloadedDrawingData ?: DrawingTrial(im, theImg)
+
+	drawingTrial.nextImageButton.disabled = true
+	drawingTrial.nextUnlabeledSegmentButton.disabled = false
+	drawingTrial.previousUnlabeledSegmentButton.disabled = false
+	drawingTrial.allButtons.forEach { bb ->
 	  bb.disabled = false
 	}
-	drawingTrial!!.labelsDiv.hidden = true
+	drawingTrial.labelsDiv.hidden = true
 
 	workingOn("downloading image data")
 
-	drawingTrial = preloadedDrawingData ?: DrawingTrial(im, theImg)
 
-	drawingTrial!!.completionP.innerHTML = "${drawingTrial!!.completionFraction} segments labelled"
+
+	drawingTrial.completionP.innerHTML = "${drawingTrial.completionFraction} segments labelled"
 
 
 	var theInterval: Int? = null
 
 	theInterval = window.setInterval({
-	  if (drawingTrial!!.ready()) {
+	  if (drawingTrial.ready()) {
 
 		trialDiv?.remove()
-		trialDiv = drawingTrial!!.div
+		trialDiv = drawingTrial.div
 
 		workingOn("processing image data")
 
-		drawingTrial!!.ctxs[0].drawImage(theImg, 0.0, 0.0)
+		drawingTrial.ctxs[0].drawImage(theImg, 0.0, 0.0)
 
 		@Suppress("UNUSED_VARIABLE") val origImageData =
-		  drawingTrial!!.ctxs[0].getImageData(0.0, 0.0, WIDTH.toDouble(), HEIGHT.toDouble())
+		  drawingTrial.ctxs[0].getImageData(0.0, 0.0, WIDTH.toDouble(), HEIGHT.toDouble())
 
 
-		drawingTrial!!.labelledCanvases.clear()
-		drawingTrial!!.segments.forEach { theSeg ->
+		drawingTrial.labelledCanvases.clear()
+		drawingTrial.segments.forEach { theSeg ->
 		  val lc = document.createElement("canvas") as HTMLCanvasElement
 		  lc.width = WIDTH
 		  lc.height = HEIGHT
@@ -196,14 +200,17 @@ fun main() = defaultMain {
 		  lc.style.zIndex = zIndex.toString()
 		  lc.hidden = true
 		  lc.context2D.drawImage(theSeg.labelledIm, 0.0, 0.0)
-		  drawingTrial!!.stackDiv.insertBefore(lc, drawingTrial!!.stackDiv.children[zIndex])
-		  drawingTrial!!.labelledCanvases.add(lc)
+		  lc.addEventListener(MyResizeEvent::class.simpleName!!, {
+			lc.style.left = ((it as MyResizeEvent).left).toString() + "px"
+		  })
+		  drawingTrial.stackDiv.insertBefore(lc, drawingTrial.stackDiv.children[zIndex])
+		  drawingTrial.labelledCanvases.add(lc)
 		}
 
 
-		drawingTrial!!.canvases[1].style.zIndex = (1 + drawingTrial!!.segments.size).toString()
-		drawingTrial!!.canvases[2].style.zIndex = (2 + drawingTrial!!.segments.size).toString()
-		drawingTrial!!.canvases[3].style.zIndex = (3 + drawingTrial!!.segments.size).toString()
+		drawingTrial.canvases[1].style.zIndex = (1 + drawingTrial.segments.size).toString()
+		drawingTrial.canvases[2].style.zIndex = (2 + drawingTrial.segments.size).toString()
+		drawingTrial.canvases[3].style.zIndex = (3 + drawingTrial.segments.size).toString()
 
 
 
@@ -215,50 +222,50 @@ fun main() = defaultMain {
 
 
 
-		drawingTrial!!.canvases[3].setOnMouseMove { lastEvent = it }
+		drawingTrial.canvases[3].setOnMouseMove { lastEvent = it }
 
 		fun eventToSeg(e: MouseEvent): Segment? {
-		  val x = e.clientX - drawingTrial!!.canvases[0].offsetLeft
-		  val y = e.clientY - drawingTrial!!.canvases[0].offsetTop
+		  val x = e.clientX - drawingTrial.canvases[0].offsetLeft
+		  val y = e.clientY - drawingTrial.canvases[0].offsetTop
 		  if (x < 0 || y < 0) return null
-		  return drawingTrial!!.segments.firstOrNull {
+		  return drawingTrial.segments.firstOrNull {
 			it.pixels[y][x]
 		  }
 		}
 
-		drawingTrial!!.selectedSeg = null
-		drawingTrial!!.hoveredSeg = null
+		drawingTrial.selectedSeg = null
+		drawingTrial.hoveredSeg = null
 
-		drawingTrial!!.canvases[3].setOnClick { e: Event ->
+		drawingTrial.canvases[3].setOnClick { e: Event ->
 		  println("canvas4.onclick")
 		  lastInteract = Date.now()
-		  drawingTrial!!.selectedSeg = eventToSeg(e as MouseEvent)
+		  drawingTrial.selectedSeg = eventToSeg(e as MouseEvent)
 		}
 
-		drawingTrial!!.canvases[2].hidden = true
+		drawingTrial.canvases[2].hidden = true
 
 
 
 
 
 
-		drawingTrial!!.canvases[1].hidden = true
+		drawingTrial.canvases[1].hidden = true
 
 		val imageInterval = window.setInterval({
-		  if (lastEvent != lastEventWorked || lastSelectedSegWorked != drawingTrial!!.selectedSeg) {
+		  if (lastEvent != lastEventWorked || lastSelectedSegWorked != drawingTrial.selectedSeg) {
 			lastInteract = Date.now()
-			lastSelectedSegWorked = drawingTrial!!.selectedSeg
-			drawingTrial!!.labelsDiv.hidden = drawingTrial!!.selectedSeg == null
-			drawingTrial!!.select(drawingTrial!!.selectedSeg)
+			lastSelectedSegWorked = drawingTrial.selectedSeg
+			drawingTrial.labelsDiv.hidden = drawingTrial.selectedSeg == null
+			drawingTrial.select(drawingTrial.selectedSeg)
 			if (lastEvent != lastEventWorked) {
 			  lastEventWorked = lastEvent
-			  drawingTrial!!.hover(eventToSeg(lastEvent as MouseEvent))
+			  drawingTrial.hover(eventToSeg(lastEvent as MouseEvent))
 			}
 		  }
 		}, 25)
 		finishedWorking()
 		window.clearInterval(theInterval!!)
-		drawingTrial!!.log.add(Date.now().toLong() to "trial start")
+		drawingTrial.log.add(Date.now().toLong() to "trial start")
 
 
 
@@ -266,14 +273,14 @@ fun main() = defaultMain {
 
 
 		fun submit(f: ()->Unit) {
-		  drawingTrial!!.log.add(Date.now().toLong() to "submit")
-		  drawingTrial!!.cleanup()
+		  drawingTrial.log.add(Date.now().toLong() to "submit")
+		  drawingTrial.cleanup()
 		  post(
 			Path("send?PROLIFIC_PID=$pid"),
 			ExperimentData(
-			  responses = drawingTrial!!.segments.associate { it.id to it.response!! },
+			  responses = drawingTrial.segments.associate { it.id to it.response!! },
 			  /*"image" to im,*/
-			  trialLog = drawingTrial!!.log
+			  trialLog = drawingTrial.log
 			),
 			f
 		  )
@@ -283,18 +290,18 @@ fun main() = defaultMain {
 		  preloadedDrawingData = DrawingTrial(images[imI + 1], theImg)
 		}
 
-		drawingTrial!!.nextImageButton.onclick = {
+		drawingTrial.nextImageButton.onclick = {
 
 		  console.log("next image button clicked")
 
 		  lastInteract = Date.now()
 		  if (window.confirm("Are you sure you are ready to proceed? You cannot go back to this image.")) {
-			drawingTrial!!.nextImageButton.disabled = true
+			drawingTrial.nextImageButton.disabled = true
 			submit {
 			  println("in submit op")
 			  debugTic = Date.now()
 			  window.clearInterval(imageInterval)
-			  drawingTrial!!.nextImageButton.disabled = true
+			  drawingTrial.nextImageButton.disabled = true
 			  imI++
 			  println("imI is now $imI (images.size=${images.size})")
 			  if (imI < images.size) {
@@ -330,28 +337,27 @@ fun main() = defaultMain {
 
   }
   presentImage(images[imI])
+
+  window.addEventListener("resize", {
+	val e = MyResizeEvent(w = window.innerWidth, h = window.innerHeight)
+	document.allHTMLElementsRecursive().forEach { it.dispatchEvent(e) }
+  })
+
   window.setInterval({
 	val w = window.innerWidth
 	val h = window.innerHeight
 	val left = (w/2) - HALF_WIDTH
 	trialDiv?.style?.marginLeft = left.toString() + "px"
-	drawingTrial!!.canvases.forEach {
-	  it.style.left = left.toString() + "px"
-	}
-	drawingTrial!!.controlsDiv.style.left = (left + WIDTH).toString() + "px"
-	(0 until drawingTrial!!.labelledCanvases.size).forEach {
-	  drawingTrial!!.labelledCanvases[it].style.left = left.toString() + "px"
-	}
 	instructionsDiv.hidden = begun
 	if (begun) {
 	  val showDiv = when {
-		complete -> expCompleteDiv
-		onBreak -> breakDiv
+		complete                                          -> expCompleteDiv
+		onBreak                                           -> breakDiv
 		Date.now() - lastInteract >= PARAMS.idleThreshold -> inactiveDiv
 
-		w < 1200 || h < 750 -> resizeDiv
-		working -> loadingDiv
-		else -> trialDiv
+		w < 1200 || h < 750                               -> resizeDiv
+		working                                           -> loadingDiv
+		else                                              -> trialDiv
 	  }
 	  document.body!!.childNodes.asList()
 		.filterIsInstance<HTMLDivElement>()
@@ -361,5 +367,6 @@ fun main() = defaultMain {
 	}
   }, 100)
 }
+
 
 
