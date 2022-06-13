@@ -62,8 +62,7 @@ fun main() = defaultMain {
   val instructionsDiv = div {
 	onlyShowIn(Instructions)
 	sty.textAlign = center
-	img {
-	  //			src = "https://www.wolframcloud.com/obj/mjgroth/folder-1/Bd_Jul2018_M_Face_PO1_All.png"
+	img {	//			src = "https://www.wolframcloud.com/obj/mjgroth/folder-1/Bd_Jul2018_M_Face_PO1_All.png"
 	  src = "data/Bd_Jul2018_M_Face_PO1_All.png"
 	}
 	p {
@@ -262,13 +261,10 @@ fun main() = defaultMain {
 		  drawingTrial.log.add(Date.now().toLong() to "submit")
 		  drawingTrial.cleanup()
 		  post(
-			Path("send?PROLIFIC_PID=$pid"),
-			ExperimentData(
-			  responses = drawingTrial.segments.associate { it.id to it.response!! },
-			  /*"image" to im,*/
+			Path("send?PROLIFIC_PID=$pid"), ExperimentData(
+			  responses = drawingTrial.segments.associate { it.id to it.response!! },			/*"image" to im,*/
 			  trialLog = drawingTrial.log
-			),
-			f
+			), f
 		  )
 		}
 
@@ -324,14 +320,16 @@ fun main() = defaultMain {
   }
   presentImage(images[imI])
 
-  window.addEventListener("resize", {
+  val fireResizeEvent = {
 	val w = window.innerWidth
 	val h = window.innerHeight
 	val e = CustomEvent("MyResizeEvent", object: CustomEventInit {
 	  override var detail: Any? = (w/2) - HALF_WIDTH
 	})
 	document.allHTMLElementsRecursive().forEach { it.dispatchEvent(e) }
-  })
+  }
+  window.addEventListener("resize", { fireResizeEvent() })
+  fireResizeEvent()
 
 
 
