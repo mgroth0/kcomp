@@ -36,6 +36,7 @@ import matt.sempart.client.params.PARAMS
 import matt.sempart.client.state.ExperimentPhase.Trial
 import matt.sempart.client.sty.box
 import matt.sempart.client.sty.boxButton
+import org.w3c.dom.CustomEvent
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLDivElement
@@ -43,7 +44,6 @@ import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLImageElement
 import org.w3c.dom.HTMLParagraphElement
 import org.w3c.dom.ImageData
-import org.w3c.dom.events.Event
 import org.w3c.dom.url.URLSearchParams
 import kotlin.js.Date
 
@@ -68,8 +68,8 @@ enum class ExperimentPhase {
   Loading
 }
 
-class PhaseChangeEvent(val p: ExperimentPhase): Event(PhaseChangeEvent::class.simpleName!!)
-class MyResizeEvent(w: Int, @Suppress("UNUSED_PARAMETER") h: Int): Event(MyResizeEvent::class.simpleName!!) {
+class PhaseChangeEvent(val p: ExperimentPhase): CustomEvent(PhaseChangeEvent::class.simpleName!!)
+class MyResizeEvent(w: Int, @Suppress("UNUSED_PARAMETER") h: Int): CustomEvent(MyResizeEvent::class.simpleName!!) {
   val left = (w/2) - HALF_WIDTH
 }
 
