@@ -353,6 +353,7 @@ private fun DrawingTrial.trialDiv(): HTMLDivElement = div {
 		  onMyResizeLeft {
 			sty.left = it.px
 		  }
+		  println("setting labelledCanvas of ${theSeg}")
 		  theSeg.labelledCanvas = this
 		},
 		stackDiv.children[zIdx]
@@ -383,6 +384,7 @@ private fun DrawingTrial.trialDiv(): HTMLDivElement = div {
 			ExperimentState.lastInteract = Date.now()
 			log.add(Date.now().toLong() to "selected label: $l")
 
+			println("getting labelledCanvas of ${selectedSeg}")
 			selectedSeg!!.labelledCanvas.hidden = false
 
 			val hadResponse = selectedSeg!!.response != null
