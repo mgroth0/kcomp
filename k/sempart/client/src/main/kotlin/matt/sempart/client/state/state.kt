@@ -33,11 +33,13 @@ import matt.sempart.client.const.HEIGHT
 import matt.sempart.client.const.LABELS
 import matt.sempart.client.const.WIDTH
 import matt.sempart.client.params.PARAMS
+import matt.sempart.client.state.ExperimentPhase.Trial
 import matt.sempart.client.sty.box
 import matt.sempart.client.sty.boxButton
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLDivElement
+import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLImageElement
 import org.w3c.dom.HTMLParagraphElement
 import org.w3c.dom.ImageData
@@ -55,6 +57,29 @@ object ExperimentState {
   var onBreak = false
   var complete = false
 }
+
+enum class ExperimentPhase {
+  Instructions,
+  Trial,
+  Break,
+  Complete,
+  Inactive,
+  Resize,
+  Loading
+}
+
+class PhaseChangeEvent(val p: ExperimentPhase): Event(PhaseChangeEvent::class.simpleName!!)
+class MyResizeEvent(w: Int, @Suppress("UNUSED_PARAMETER") h: Int): Event(MyResizeEvent::class.simpleName!!) {
+  val left = (w/2) - HALF_WIDTH
+}
+
+fun HTMLElement.onlyShowIn(phase: ExperimentPhase) {
+  hidden = true
+  addEventListener(PhaseChangeEvent::class.simpleName!!, {
+	hidden = (it as PhaseChangeEvent).p != phase
+  })
+}
+
 
 class DrawingTrial(
   val im: String,
@@ -256,6 +281,7 @@ class DrawingTrial(
 
 private fun DrawingTrial.trialDiv(): HTMLDivElement = div {
   require(ready())
+  onlyShowIn(Trial)
   addEventListener(MyResizeEvent::class.simpleName!!, {
 	style.marginLeft = (it as MyResizeEvent).left.toString() + "px"
   })
@@ -408,8 +434,4 @@ private fun DrawingTrial.trialDiv(): HTMLDivElement = div {
 	  }
 	}
   }
-}
-
-class MyResizeEvent(w: Int, @Suppress("UNUSED_PARAMETER") h: Int): Event(MyResizeEvent::class.simpleName!!) {
-  val left = (w/2) - HALF_WIDTH
 }

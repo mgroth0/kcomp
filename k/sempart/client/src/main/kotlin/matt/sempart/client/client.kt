@@ -25,12 +25,21 @@ import matt.sempart.client.const.WIDTH
 import matt.sempart.client.params.PARAMS
 import matt.sempart.client.state.DrawingTrial
 import matt.sempart.client.state.DrawingTrial.Segment
+import matt.sempart.client.state.ExperimentPhase.Break
+import matt.sempart.client.state.ExperimentPhase.Complete
+import matt.sempart.client.state.ExperimentPhase.Inactive
+import matt.sempart.client.state.ExperimentPhase.Instructions
+import matt.sempart.client.state.ExperimentPhase.Loading
+import matt.sempart.client.state.ExperimentPhase.Resize
+import matt.sempart.client.state.ExperimentPhase.Trial
 import matt.sempart.client.state.ExperimentState.begun
 import matt.sempart.client.state.ExperimentState.complete
 import matt.sempart.client.state.ExperimentState.lastInteract
 import matt.sempart.client.state.ExperimentState.onBreak
 import matt.sempart.client.state.MyResizeEvent
 import matt.sempart.client.state.Participant.pid
+import matt.sempart.client.state.PhaseChangeEvent
+import matt.sempart.client.state.onlyShowIn
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLDivElement
@@ -49,6 +58,7 @@ fun main() = defaultMain {
   }
 
   val instructionsDiv = div {
+	onlyShowIn(Instructions)
 	sty.textAlign = center
 	img {
 	  //			src = "https://www.wolframcloud.com/obj/mjgroth/folder-1/Bd_Jul2018_M_Face_PO1_All.png"
@@ -77,7 +87,7 @@ fun main() = defaultMain {
   var trialDiv: HTMLDivElement? = null
 
   val resizeDiv = div {
-	hidden = true
+	onlyShowIn(Resize)
 	p {
 	  sty.margin = auto
 	  innerHTML =
@@ -86,18 +96,18 @@ fun main() = defaultMain {
   }
 
   val loadingDiv = div {
-	hidden = true
+	onlyShowIn(Loading)
 	innerHTML = "Loading"
   }
 
   val expCompleteDiv = div {
-	hidden = true
+	onlyShowIn(Complete)
 	innerHTML =
 	  "Experiment complete. Thank you! Please click this link. It will confirm you have completed the study with Prolific so that you can be paid: <a href=\"https://app.prolific.co/submissions/complete?cc=92B81EA2\">Click here to confirm your completion of this study with Prolific</a>"
   }
 
   val breakDiv = div {
-	hidden = true
+	onlyShowIn(Break)
 	sty.textAlign = center
 	p {
 	  sty {
@@ -116,7 +126,7 @@ fun main() = defaultMain {
   val continueButton = document.getElementById("continueButton") as HTMLButtonElement
 
   val inactiveDiv = div {
-	hidden = true
+	onlyShowIn(Inactive)
 	innerHTML = "Sorry, you have been inactive for too long and the experiment has been cancelled."
   }
 
@@ -319,28 +329,25 @@ fun main() = defaultMain {
 	document.allHTMLElementsRecursive().forEach { it.dispatchEvent(e) }
   })
 
+
   window.setInterval({
 	val w = window.innerWidth
 	val h = window.innerHeight
-	instructionsDiv.hidden = begun
-	if (begun) {
-	  val showDiv = when {
-		complete                                          -> expCompleteDiv
-		onBreak                                           -> breakDiv
-		Date.now() - lastInteract >= PARAMS.idleThreshold -> inactiveDiv
-
-		w < 1200 || h < 750                               -> resizeDiv
-		working                                           -> loadingDiv
-		else                                              -> trialDiv
-	  }
-	  document.allHTMLElementsRecursive()
-		.filterIsInstance<HTMLDivElement>()
-		.forEach {
-		  it.hidden = it != showDiv
-		}
+	val phase = when {
+	  !begun                                            -> Instructions
+	  complete                                          -> Complete
+	  onBreak                                           -> Break
+	  Date.now() - lastInteract >= PARAMS.idleThreshold -> Inactive
+	  w < 1200 || h < 750                               -> Resize
+	  working                                           -> Loading
+	  else                                              -> Trial
 	}
+	val e = PhaseChangeEvent(p = phase)
+	document.allHTMLElementsRecursive().forEach { it.dispatchEvent(e) }
   }, 100)
 }
+
+
 
 
 
