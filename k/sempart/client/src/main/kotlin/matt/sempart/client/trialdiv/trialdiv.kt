@@ -101,6 +101,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv =
 	}
 
 	val controlsDiv = element.div {
+	  println("in config yay")
 	  sty {
 		display = InlineBlock
 		position = absolute
