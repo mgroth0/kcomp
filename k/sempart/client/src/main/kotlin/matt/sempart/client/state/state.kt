@@ -245,7 +245,7 @@ class DrawingTrial(
   }
 
   fun select(seg: Segment?) {
-	println("selecting $seg")
+//	println("selecting $seg")
 	selectedSeg.value = seg
 	if (seg == null) {
 	  log.add(Date.now().toLong() to "unselected segment")
@@ -272,7 +272,7 @@ class DrawingTrial(
 
   fun hover(seg: Segment?) {
 	if (seg == hoveredSeg.value) return
-	console.log("hovered $seg")
+//	console.log("hovered $seg")
 	hoveredSeg.value = seg
 	div.hoverCanvas.hidden = hoveredSeg.value == null
 	if (hoveredSeg.value != null) div.hoverCanvas.context2D.putImageData(
