@@ -114,6 +114,9 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
   }
 
   override val labelsDiv = controlsDiv.div {
+	selectedSeg.isNull().onChange {
+	  println("selectedSeg is null: ${it} for ${this@trialDiv}")
+	}
 	hiddenProperty().bind(selectedSeg.isNull())
 	sty.box()
 	(LABELS.shuffled() + "Something else" + "I don't know").forEach { l ->
