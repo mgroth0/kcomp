@@ -102,7 +102,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	}
   }
 
-  val controlsDiv = element.div {
+  val controlsDiv: HTMLDivElement = element.div {
 	println("in config yay")
 	sty {
 	  display = InlineBlock
@@ -152,7 +152,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	}
   }
 
-//  val labelsDiv = controlsDiv.
+  //  val labelsDiv = controlsDiv.
 
   init {
 	controlsDiv.br
