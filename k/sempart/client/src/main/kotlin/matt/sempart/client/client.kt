@@ -23,17 +23,18 @@ import matt.sempart.client.const.WIDTH
 import matt.sempart.client.params.PARAMS
 import matt.sempart.client.state.DrawingData
 import matt.sempart.client.state.DrawingData.Segment
+import matt.sempart.client.state.ExperimentPhase
 import matt.sempart.client.state.ExperimentPhase.Break
 import matt.sempart.client.state.ExperimentPhase.Complete
 import matt.sempart.client.state.ExperimentPhase.Inactive
 import matt.sempart.client.state.ExperimentPhase.Instructions
 import matt.sempart.client.state.ExperimentPhase.Loading
 import matt.sempart.client.state.ExperimentPhase.Resize
-import matt.sempart.client.state.ExperimentPhase.Trial
 import matt.sempart.client.state.ExperimentState.begun
 import matt.sempart.client.state.ExperimentState.complete
 import matt.sempart.client.state.ExperimentState.lastInteract
 import matt.sempart.client.state.ExperimentState.onBreak
+import matt.sempart.client.state.ExperimentState.working
 import matt.sempart.client.state.MyResizeLeft
 import matt.sempart.client.state.Participant.pid
 import matt.sempart.client.state.PhaseChange
@@ -132,7 +133,7 @@ fun main() = defaultMain {
   var preloadedDrawingData: DrawingData? = null
   var loadingMessage = ""
   val loadDotN = 1
-  var working = false
+
 
   window.setInterval({
 	if (!loadingDiv.hidden) {
@@ -286,27 +287,12 @@ fun main() = defaultMain {
 
   val fireResizeEvent = {
 	MyResizeLeft.dispatchToAllHTML(currentLeft())
-	if (window.innerWidth < 1200 || window.innerHeight < 750) {
-
-	}
   }
-  window.addEventListener("resize", { fireResizeEvent() })
+  window.addEventListener("resize", {
+	fireResizeEvent()
+	PhaseChange.dispatchToAllHTML(ExperimentPhase.determine())
+  })
   fireResizeEvent()
-
-  window.setInterval({
-	val w = window.innerWidth
-	val h = window.innerHeight
-	val phase = when {
-	  !begun                                            -> Instructions
-	  complete                                          -> Complete
-	  onBreak                                           -> Break
-	  Date.now() - lastInteract >= PARAMS.idleThreshold -> Inactive
-	  w < 1200 || h < 750                               -> Resize
-	  working                                           -> Loading
-	  else                                              -> Trial
-	}
-	PhaseChange.dispatchToAllHTML(phase)
-  }, 100)
 }
 
 

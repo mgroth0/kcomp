@@ -9,6 +9,7 @@ import matt.kjs.Path
 import matt.kjs.allHTMLElementsRecursive
 import matt.kjs.elements.canvas
 import matt.kjs.elements.div
+import matt.kjs.every
 import matt.kjs.first
 import matt.kjs.firstBackwards
 import matt.kjs.img.context2D
@@ -24,6 +25,7 @@ import matt.sempart.client.const.HEIGHT
 import matt.sempart.client.const.WIDTH
 import matt.sempart.client.params.PARAMS
 import matt.sempart.client.state.DrawingData.Segment
+import matt.sempart.client.state.ExperimentState.working
 import matt.sempart.client.trialdiv.div
 import org.w3c.dom.CustomEvent
 import org.w3c.dom.CustomEventInit
@@ -34,16 +36,32 @@ import org.w3c.dom.ImageData
 import org.w3c.dom.events.EventTarget
 import org.w3c.dom.url.URLSearchParams
 import kotlin.js.Date
+import kotlin.properties.Delegates
+import kotlin.time.Duration.Companion.milliseconds
 
 object Participant {
   val pid = URLSearchParams(window.location.href.substringAfter("?")).get("PROLIFIC_PID")
 }
 
 object ExperimentState {
-  var begun = false
-  var lastInteract = Date.now()
-  var onBreak = false
-  var complete = false
+  var lastInteract = Date.now().apply {
+	/*only way to check for lastInteract I think*/
+	every(PARAMS.idleCheckPeriodMS.milliseconds) {
+	  PhaseChange.dispatchToAllHTML(ExperimentPhase.determine())
+	}
+  }
+  var begun by Delegates.observable(false) { _, _, n ->
+	PhaseChange.dispatchToAllHTML(ExperimentPhase.determine())
+  }
+  var onBreak by Delegates.observable(false) { _, _, n ->
+	PhaseChange.dispatchToAllHTML(ExperimentPhase.determine())
+  }
+  var complete by Delegates.observable(false) { _, _, n ->
+	PhaseChange.dispatchToAllHTML(ExperimentPhase.determine())
+  }
+  var working by Delegates.observable(false) { _, _, n ->
+	PhaseChange.dispatchToAllHTML(ExperimentPhase.determine())
+  }
 }
 
 enum class ExperimentPhase {
@@ -53,7 +71,25 @@ enum class ExperimentPhase {
   Complete,
   Inactive,
   Resize,
-  Loading
+  Loading;
+
+  companion object {
+	fun determine(): ExperimentPhase {
+	  val w = window.innerWidth
+	  val h = window.innerHeight
+	  val phase = when {
+		!ExperimentState.begun                                              -> Instructions
+		ExperimentState.complete                                            -> Complete
+		ExperimentState.onBreak                                             -> Break
+		Date.now() - ExperimentState.lastInteract >= PARAMS.idleThresholdMS -> Inactive
+		w < 1200 || h < 750                                                 -> Resize
+		working                                                             -> Loading
+		else                                                                -> Trial
+	  }
+	  return phase
+	}
+  }
+
 }
 
 abstract class EventDispatcher<T>(type: String? = null) {
@@ -77,7 +113,7 @@ object PhaseChange: EventDispatcher<ExperimentPhase>()
 object MyResizeLeft: EventDispatcher<Int>()
 
 fun HTMLElement.onlyShowIn(phase: ExperimentPhase) {
-  hidden = true
+  hidden = ExperimentPhase.determine() != phase
   listen(PhaseChange) {
 	hidden = it != phase
   }
@@ -229,14 +265,14 @@ class DrawingTrial(
 
   fun switchSegment(next: Boolean, unlabelled: Boolean) {
 	select(when {
-	  isFinished && unlabelled -> null
-	  selectedSeg.value == null      -> when {
+	  isFinished && unlabelled  -> null
+	  selectedSeg.value == null -> when {
 		next -> segments.first()
 		else -> segments.last()
 	  }
 
-	  next                     -> segCycle.first { !unlabelled || it.hasNoResponse }
-	  else                     -> segCycle.firstBackwards { !unlabelled || it.hasNoResponse }
+	  next                      -> segCycle.first { !unlabelled || it.hasNoResponse }
+	  else                      -> segCycle.firstBackwards { !unlabelled || it.hasNoResponse }
 	})
   }
 
@@ -245,7 +281,7 @@ class DrawingTrial(
   }
 
   fun select(seg: Segment?) {
-//	println("selecting $seg")
+	//	println("selecting $seg")
 	selectedSeg.value = seg
 	if (seg == null) {
 	  log.add(Date.now().toLong() to "unselected segment")
@@ -272,7 +308,7 @@ class DrawingTrial(
 
   fun hover(seg: Segment?) {
 	if (seg == hoveredSeg.value) return
-//	console.log("hovered $seg")
+	//	console.log("hovered $seg")
 	hoveredSeg.value = seg
 	div.hoverCanvas.hidden = hoveredSeg.value == null
 	if (hoveredSeg.value != null) div.hoverCanvas.context2D.putImageData(
