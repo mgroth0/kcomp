@@ -2,53 +2,36 @@ package matt.sempart.client.state
 
 import kotlinx.browser.document
 import kotlinx.browser.window
-import kotlinx.html.ButtonType
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import matt.kjs.Loop
 import matt.kjs.Path
 import matt.kjs.allHTMLElementsRecursive
-import matt.kjs.css.Display.InlineBlock
-import matt.kjs.css.FontStyle.italic
-import matt.kjs.css.FontWeight.bold
-import matt.kjs.css.Position.absolute
-import matt.kjs.css.px
-import matt.kjs.css.sty
-import matt.kjs.elements.br
-import matt.kjs.elements.button
 import matt.kjs.elements.canvas
 import matt.kjs.elements.div
-import matt.kjs.elements.p
 import matt.kjs.first
 import matt.kjs.firstBackwards
 import matt.kjs.img.context2D
 import matt.kjs.img.getPixels
 import matt.kjs.req.get
-import matt.kjs.setOnClick
 import matt.kjs.setOnLoad
 import matt.kjs.srcAsPath
 import matt.klib.todo
 import matt.sempart.client.const.DATA_FOLDER
 import matt.sempart.client.const.HALF_WIDTH
 import matt.sempart.client.const.HEIGHT
-import matt.sempart.client.const.LABELS
 import matt.sempart.client.const.WIDTH
 import matt.sempart.client.params.PARAMS
-import matt.sempart.client.state.DrawingTrial.Segment
-import matt.sempart.client.state.ExperimentPhase.Trial
-import matt.sempart.client.sty.box
-import matt.sempart.client.sty.boxButton
+import matt.sempart.client.state.DrawingData.Segment
+import matt.sempart.client.trialdiv.div
 import org.w3c.dom.CustomEvent
 import org.w3c.dom.CustomEventInit
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
-import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLImageElement
-import org.w3c.dom.HTMLParagraphElement
 import org.w3c.dom.ImageData
 import org.w3c.dom.events.EventTarget
-import org.w3c.dom.get
 import org.w3c.dom.url.URLSearchParams
 import kotlin.js.Date
 
@@ -108,48 +91,35 @@ fun HTMLElement.onMyResizeLeft(onLeft: (Int)->Unit) {
   }
 }
 
-
-class DrawingTrial(
-  val imString: String,
+interface Drawing {
+  val imString: String
   val imElement: HTMLImageElement
-) {
+  val log: MutableList<Pair<Long, String>>
+  fun ready(): Boolean
+  fun cleanup()
+}
 
-  val segmentsWithResponse get() = segments.filter { it.response != null }
-  val completionFraction get() = "${segmentsWithResponse.size}/${segments.size}"
-  val isFinished get() = segments.all { it.response != null }
-  val isNotFinished get() = !isFinished
+class DrawingData(
+  override val imString: String,
+  override val imElement: HTMLImageElement
+): Drawing {
 
-  val log = mutableListOf<Pair<Long, String>>()
-  var selectedSeg: Segment? = null
-  var hoveredSeg: Segment? = null
-
-  override fun toString() = "matt.kjs.idk.Drawing $imString"
-
-  val loadDiv = div {
-	todo("loadDiv is not ideal")
-	id = "loadDiv"
-	hidden = true
-  }
-
+  override val log = mutableListOf<Pair<Long, String>>()
   var loadedImage = false
   var loadedIms = 0
-
-  private val _segments = mutableListOf<Segment>()
-  val segments: List<Segment> get() = _segments.sortedBy { it.cycleIndex }
-  private lateinit var segCycle: ListIterator<Segment>
-
   var finishedProcessesingResp = false
+  var trial: DrawingTrial? = null
 
   init {
 	get(
 	  DATA_FOLDER + "segment_data2" + "${imString}.json"
 	) { resp ->
-	  Json
+	  val segs = Json
 		.decodeFromString<Map<String, List<List<Boolean>>>>(resp)
 		.entries
 		.let {
 		  if (PARAMS.randomSegmentOrder) it.shuffled() else it
-		}.forEachIndexed { index, entry ->
+		}.mapIndexed { index, entry ->
 		  val ims = (1..5).map {
 			(document.createElement("img") as HTMLImageElement).also {
 			  loadDiv.appendChild(it)
@@ -170,7 +140,7 @@ class DrawingTrial(
 		  selectLabeledIm.srcAsPath = DATA_FOLDER + "segment_selected_labeled" + imFileName
 		  hiLabeledIm.srcAsPath = DATA_FOLDER + "segment_hi_labeled" + imFileName
 
-		  _segments += Segment(
+		  Segment(
 			id = segID,
 			pixels = entry.value,
 			highlightIm = highlightIm,
@@ -180,24 +150,15 @@ class DrawingTrial(
 			hiLabeledIm = hiLabeledIm,
 			cycleIndex = index
 		  )
-		}
-	  segCycle = Loop(segments).iterator()
-	  finishedProcessesingResp = true
+		}.sortedBy { it.cycleIndex }
+
+	  trial = DrawingTrial(segs, Loop(segs).iterator(), this)
 	}
 	imElement.setOnLoad {
 	  loadedImage = true
 	}
 	imElement.setAttribute("src", "data/all/${imString}_All.png")
   }
-
-  fun ready(): Boolean {
-	return this.loadedImage && this.loadedIms == this.segments.size*5 && finishedProcessesingResp
-  }
-
-  fun cleanup() {
-	this.loadDiv.remove()
-  }
-
 
   inner class Segment(
 	val id: String,
@@ -212,7 +173,7 @@ class DrawingTrial(
 	var response: String? = null
 	val hasResponse get() = response != null
 	val hasNoResponse get() = response == null
-	override fun toString() = "Segment $id of ${this@DrawingTrial}"
+	override fun toString() = "Segment $id of ${this@DrawingData}"
 	val highlightPixels by lazy {
 	  highlightIm.getPixels(w = WIDTH, h = HEIGHT)
 	}
@@ -228,24 +189,40 @@ class DrawingTrial(
 	val hiLabeledPixels by lazy {
 	  hiLabeledIm.getPixels(w = WIDTH, h = HEIGHT)
 	}
-	lateinit var labelledCanvas: HTMLCanvasElement
+	val labelledCanvas = canvas()
   }
 
-  lateinit var controlsDiv: HTMLDivElement
-  lateinit var stackDiv: HTMLDivElement
+  val loadDiv = document.body!!.div {
+	todo("loadDiv is not ideal")
+	id = "loadDiv"
+	hidden = true
+  }
+
+  override fun ready() = loadedImage && trial != null && this.loadedIms == trial!!.segments.size*5
+  override fun cleanup() = loadDiv.remove()
+
+
+}
+
+class DrawingTrial(
+  val segments: List<Segment>,
+  val segCycle: ListIterator<Segment>,
+  dData: DrawingData
+): Drawing by dData {
+
+  val segmentsWithResponse get() = segments.filter { it.response != null }
+  val completionFraction get() = "${segmentsWithResponse.size}/${segments.size}"
+  val isFinished get() = segments.all { it.response != null }
+  val isNotFinished get() = !isFinished
+  var selectedSeg: Segment? = null
+  var hoveredSeg: Segment? = null
+
+  override fun toString() = "${this::class.simpleName} for $imString"
+
+
   val allButtons = mutableListOf<HTMLButtonElement>()
-  lateinit var completionP: HTMLParagraphElement
-  val div by lazy { trialDiv() }
   val canvases = mutableListOf<HTMLCanvasElement>()
   val ctxs get() = (canvases - canvases.last()).map { it.context2D }
-  lateinit var nextImageButton: HTMLButtonElement
-
-  lateinit var nextUnlabeledSegmentButton: HTMLButtonElement
-  lateinit var previousUnlabeledSegmentButton: HTMLButtonElement
-  lateinit var previousSegmentButton: HTMLButtonElement
-  lateinit var nextSegmentButton: HTMLButtonElement
-
-  lateinit var labelsDiv: HTMLDivElement
 
   fun Segment.showAsLabeled() {
 	val shouldBeImageData: ImageData = selectLabeledPixels
@@ -270,11 +247,10 @@ class DrawingTrial(
   }
 
   fun select(seg: Segment?) {
-	println("selecting ${seg}")
+	println("selecting $seg")
 	selectedSeg = seg
 	if (seg == null) {
 	  log.add(Date.now().toLong() to "unselected segment")
-	  labelsDiv.hidden = true
 	  canvases[2].hidden = true
 	} else {
 	  log.add(Date.now().toLong() to "selected $seg")
@@ -290,9 +266,10 @@ class DrawingTrial(
 		  bb.disabled = false
 		}
 	  }
-	  labelsDiv.hidden = false
 	  canvases[2].hidden = false
 	}
+
+	div.select(seg)
   }
 
   fun Segment?.selectThis() = select(this)
@@ -310,189 +287,5 @@ class DrawingTrial(
 
   fun Segment?.hoverThis() = hover(this)
 
-
 }
 
-private fun DrawingTrial.trialDiv(): HTMLDivElement = div {
-  require(ready())
-  onlyShowIn(Trial)
-  onMyResizeLeft {
-	style.marginLeft = it.toString() + "px"
-  }
-  stackDiv = div {
-	sty.display = InlineBlock
-	canvases += (0..3).map {
-	  canvas {
-		width = WIDTH
-		height = HEIGHT
-		sty {
-		  position = absolute
-		  zIndex = it
-		  top = 0.px
-		}
-		onMyResizeLeft {
-		  style.left = it.toString() + "px"
-		}
-		if (it > 1) {
-		  sty.zIndex = it + segments.size
-		}
-	  }
-	}
-	canvases[0].context2D.drawImage(imElement, 0.0, 0.0)
-
-
-	segments.forEach { theSeg: Segment ->
-	  val zIdx = theSeg.cycleIndex + 1
-	  insertBefore(
-		canvas {
-		  width = WIDTH
-		  height = HEIGHT
-		  hidden = true
-		  sty {
-			position = absolute
-			top = 0.px
-			zIndex = zIdx
-		  }
-		  context2D.drawImage(theSeg.labelledIm, 0.0, 0.0)
-		  onMyResizeLeft {
-			sty.left = it.px
-		  }
-		  println("setting labelledCanvas of ${theSeg}")
-		  theSeg.labelledCanvas = this
-		},
-		children[zIdx]
-	  )
-	}
-  }
-  controlsDiv = div {
-	sty {
-	  display = InlineBlock
-	  position = absolute
-	}
-	onMyResizeLeft {
-	  style.left = (it + WIDTH).toString() + "px"
-	}
-	labelsDiv = div {
-	  hidden = true
-	  sty.box()
-	  (LABELS.shuffled() + "Something else" + "I don't know").forEach { l ->
-
-		allButtons.add(button {
-		  disabled = false
-		  innerHTML = l
-		  sty {
-			boxButton()
-			fontStyle = italic
-		  }
-		  setOnClick {
-			ExperimentState.lastInteract = Date.now()
-			log.add(Date.now().toLong() to "selected label: $l")
-
-			println("getting labelledCanvas of ${selectedSeg}")
-			selectedSeg!!.labelledCanvas.hidden = false
-
-			val hadResponse = selectedSeg!!.response != null
-			selectedSeg!!.response = l
-			completionP.innerHTML = "$completionFraction segments labelled"
-
-			allButtons.forEach { bb ->
-			  bb.disabled = bb.innerHTML == l
-			}
-
-			nextImageButton.disabled = isNotFinished
-			nextUnlabeledSegmentButton.disabled = isFinished
-			previousUnlabeledSegmentButton.disabled = isFinished
-			if (!hadResponse) {
-			  selectedSeg!!.showAsLabeled()
-			  nextSeg()
-			}
-		  }
-		})
-		br
-	  }
-	}
-	br /*is this enough or do I have to call the function?*/
-	br
-
-	div {
-	  sty.box()
-	  if (!PARAMS.removeNpButtonsKeepUnlabelledNpButtons) {
-		div {
-		  previousSegmentButton = button {
-			type = ButtonType.button.realValue
-			sty.boxButton()
-			innerHTML = "Previous Segment"
-			setOnClick {
-			  console.log("previous segment button clicked")
-			  ExperimentState.lastInteract = Date.now()
-			  disabled = true
-			  switchSegment(next = false, unlabelled = false)
-			  disabled = false
-			}
-		  }
-		  br {
-			id = "previousSegmentButtonBR"
-		  }
-		  nextSegmentButton = button {
-			type = ButtonType.button.realValue
-			sty.boxButton()
-			innerHTML = "Next Segment"
-			setOnClick {
-			  println("nextSegmentButton.onclick")
-			  console.log("next segment button clicked")
-			  ExperimentState.lastInteract = Date.now()
-			  disabled = true
-			  switchSegment(next = true, unlabelled = false)
-			  disabled = false
-			}
-		  }
-		  br {
-			id = "nextSegmentButtonBR"
-		  }
-		}
-	  }
-	  val unlabelledString = if (PARAMS.removeNpButtonsKeepUnlabelledNpButtons) " Unlabeled" else ""
-	  previousUnlabeledSegmentButton = button {
-		disabled = false
-		type = ButtonType.button.realValue
-		sty.boxButton()
-		innerHTML = "Previous$unlabelledString Segment"
-		setOnClick {
-		  console.log("previous unlabeled segment button clicked")
-		  ExperimentState.lastInteract = Date.now()
-		  previousUnlabeledSegmentButton.disabled = true
-		  switchSegment(next = false, unlabelled = true)
-		  previousUnlabeledSegmentButton.disabled = false
-		}
-	  }
-	  br
-	  nextUnlabeledSegmentButton = button {
-		disabled = false
-		type = ButtonType.button.realValue
-		sty.boxButton()
-		innerHTML = "Next$unlabelledString Segment"
-		setOnClick {
-		  console.log("next unlabeled segment button clicked")
-		  ExperimentState.lastInteract = Date.now()
-		  nextUnlabeledSegmentButton.disabled = true
-		  switchSegment(next = true, unlabelled = true)
-		  nextUnlabeledSegmentButton.disabled = false
-		}
-	  }
-	}
-	br
-	br
-	completionP = p {
-	  innerHTML = "$completionFraction segments labelled"
-	}
-	nextImageButton = button {
-	  disabled = true
-	  type = ButtonType.button.realValue
-	  sty {
-		fontWeight = bold
-		boxButton()
-		innerHTML = "Submit Responses and Show Next Image"
-	  }
-	}
-  }
-}

@@ -20,8 +20,8 @@ import matt.sempart.ExperimentData
 import matt.sempart.client.const.ORIG_DRAWING_IMS
 import matt.sempart.client.const.WIDTH
 import matt.sempart.client.params.PARAMS
-import matt.sempart.client.state.DrawingTrial
-import matt.sempart.client.state.DrawingTrial.Segment
+import matt.sempart.client.state.DrawingData
+import matt.sempart.client.state.DrawingData.Segment
 import matt.sempart.client.state.ExperimentPhase.Break
 import matt.sempart.client.state.ExperimentPhase.Complete
 import matt.sempart.client.state.ExperimentPhase.Inactive
@@ -38,8 +38,9 @@ import matt.sempart.client.state.Participant.pid
 import matt.sempart.client.state.PhaseChange
 import matt.sempart.client.state.currentLeft
 import matt.sempart.client.state.onlyShowIn
+import matt.sempart.client.trialdiv.TrialDiv
+import matt.sempart.client.trialdiv.div
 import org.w3c.dom.HTMLButtonElement
-import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.MouseEvent
 import kotlin.js.Date
@@ -53,7 +54,7 @@ fun main() = defaultMain {
 	color = "white"
   }
 
-  val instructionsDiv = div {
+  document.body!!.div {
 	onlyShowIn(Instructions)
 	sty.textAlign = center
 	img {    //			src = "https://www.wolframcloud.com/obj/mjgroth/folder-1/Bd_Jul2018_M_Face_PO1_All.png"
@@ -78,10 +79,10 @@ fun main() = defaultMain {
 	}
   }
 
-  val theImg = img { hidden = true }
-  var trialDiv: HTMLDivElement? = null
+  val theImg = document.body!!.img { hidden = true }
+  var trialDiv: TrialDiv? = null
 
-  val resizeDiv = div {
+  document.body!!.div {
 	onlyShowIn(Resize)
 	p {
 	  sty.margin = auto
@@ -90,18 +91,18 @@ fun main() = defaultMain {
 	}
   }
 
-  val loadingDiv = div {
+  val loadingDiv = document.body!!.div {
 	onlyShowIn(Loading)
 	innerHTML = "Loading"
   }
 
-  val expCompleteDiv = div {
+  document.body!!.div {
 	onlyShowIn(Complete)
 	innerHTML =
 	  "Experiment complete. Thank you! Please click this link. It will confirm you have completed the study with Prolific so that you can be paid: <a href=\"https://app.prolific.co/submissions/complete?cc=92B81EA2\">Click here to confirm your completion of this study with Prolific</a>"
   }
 
-  val breakDiv = div {
+  document.body!!.div {
 	onlyShowIn(Break)
 	sty.textAlign = center
 	p {
@@ -120,14 +121,14 @@ fun main() = defaultMain {
   }
   val continueButton = document.getElementById("continueButton") as HTMLButtonElement
 
-  val inactiveDiv = div {
+  document.body!!.div {
 	onlyShowIn(Inactive)
 	innerHTML = "Sorry, you have been inactive for too long and the experiment has been cancelled."
   }
 
   var debugTic: Double?
 
-  var preloadedDrawingData: DrawingTrial? = null
+  var preloadedDrawingData: DrawingData? = null
   var loadingMessage = ""
   val loadDotN = 1
   var working = false
@@ -151,14 +152,17 @@ fun main() = defaultMain {
   var imI = 0
 
   fun presentImage(im: String) {
-	val drawingTrial = preloadedDrawingData ?: DrawingTrial(im, theImg)
+	val drawingData = preloadedDrawingData ?: DrawingData(im, theImg)
 	workingOn("downloading image data")
 	var theInterval: Int? = null
 	theInterval = window.setInterval({
-	  if (drawingTrial.ready()) {
+	  if (drawingData.ready()) {
+		val drawingTrial = drawingData.trial!!
 
 		trialDiv?.remove()
 		trialDiv = drawingTrial.div
+		document.body!!.append(trialDiv)
+
 		workingOn("processing image data")
 		console.log("setting up handlers")
 
@@ -199,7 +203,7 @@ fun main() = defaultMain {
 		  if (lastEvent != lastEventWorked || lastSelectedSegWorked != drawingTrial.selectedSeg) {
 			lastInteract = Date.now()
 			lastSelectedSegWorked = drawingTrial.selectedSeg
-			drawingTrial.labelsDiv.hidden = drawingTrial.selectedSeg == null
+			trialDiv!!.labelsDiv.hidden = drawingTrial.selectedSeg == null
 			drawingTrial.select(drawingTrial.selectedSeg)
 			if (lastEvent != lastEventWorked) {
 			  lastEventWorked = lastEvent
@@ -228,21 +232,21 @@ fun main() = defaultMain {
 		}
 
 		if (imI < images.size - 1) {
-		  preloadedDrawingData = DrawingTrial(images[imI + 1], theImg)
+		  preloadedDrawingData = DrawingData(images[imI + 1], theImg)
 		}
 
-		drawingTrial.nextImageButton.onclick = {
+		trialDiv!!.nextImageButton.onclick = {
 
 		  console.log("next image button clicked")
 
 		  lastInteract = Date.now()
 		  if (window.confirm("Are you sure you are ready to proceed? You cannot go back to this image.")) {
-			drawingTrial.nextImageButton.disabled = true
+			trialDiv!!.nextImageButton.disabled = true
 			submit {
 			  println("in submit op")
 			  debugTic = Date.now()
 			  window.clearInterval(imageInterval)
-			  drawingTrial.nextImageButton.disabled = true
+			  trialDiv!!.nextImageButton.disabled = true
 			  imI++
 			  println("imI is now $imI (images.size=${images.size})")
 			  if (imI < images.size) {
