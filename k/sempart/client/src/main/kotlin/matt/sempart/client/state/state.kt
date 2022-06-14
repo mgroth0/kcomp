@@ -230,7 +230,7 @@ class DrawingTrial(
   fun switchSegment(next: Boolean, unlabelled: Boolean) {
 	select(when {
 	  isFinished && unlabelled -> null
-	  selectedSeg == null      -> when {
+	  selectedSeg.value == null      -> when {
 		next -> segments.first()
 		else -> segments.last()
 	  }
