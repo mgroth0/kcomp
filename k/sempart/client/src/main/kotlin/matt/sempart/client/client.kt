@@ -183,13 +183,13 @@ fun main() = defaultMain {
 		  }
 		}
 
-		drawingTrial.selectedSeg = null
-		drawingTrial.hoveredSeg = null
+		drawingTrial.selectedSeg.value = null
+		drawingTrial.hoveredSeg.value = null
 
 		trialDiv!!.eventCanvasIDK.setOnClick { e: Event ->
 		  println("canvas4.onclick")
 		  lastInteract = Date.now()
-		  drawingTrial.selectedSeg = eventToSeg(e as MouseEvent)
+		  drawingTrial.selectedSeg.value = eventToSeg(e as MouseEvent)
 		}
 
 		trialDiv!!.selectCanvas.hidden = true
@@ -202,11 +202,10 @@ fun main() = defaultMain {
 		trialDiv!!.hoverCanvas.hidden = true
 
 		val imageInterval = window.setInterval({
-		  if (lastEvent != lastEventWorked || lastSelectedSegWorked != drawingTrial.selectedSeg) {
+		  if (lastEvent != lastEventWorked || lastSelectedSegWorked != drawingTrial.selectedSeg.value) {
 			lastInteract = Date.now()
-			lastSelectedSegWorked = drawingTrial.selectedSeg
-			trialDiv!!.labelsDiv.hidden = drawingTrial.selectedSeg == null
-			drawingTrial.select(drawingTrial.selectedSeg)
+			lastSelectedSegWorked = drawingTrial.selectedSeg.value
+			drawingTrial.select(drawingTrial.selectedSeg.value)
 			if (lastEvent != lastEventWorked) {
 			  lastEventWorked = lastEvent
 			  drawingTrial.hover(eventToSeg(lastEvent as MouseEvent))

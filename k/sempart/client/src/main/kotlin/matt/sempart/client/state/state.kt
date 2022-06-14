@@ -13,6 +13,7 @@ import matt.kjs.first
 import matt.kjs.firstBackwards
 import matt.kjs.img.context2D
 import matt.kjs.img.getPixels
+import matt.kjs.prop.BindableProperty
 import matt.kjs.req.get
 import matt.kjs.setOnLoad
 import matt.kjs.srcAsPath
@@ -213,8 +214,8 @@ class DrawingTrial(
   val completionFraction get() = "${segmentsWithResponse.size}/${segments.size}"
   val isFinished get() = segments.all { it.response != null }
   val isNotFinished get() = !isFinished
-  var selectedSeg: Segment? = null
-  var hoveredSeg: Segment? = null
+  var selectedSeg = BindableProperty<Segment?>(null)
+  var hoveredSeg = BindableProperty<Segment?>(null)
 
   override fun toString() = "${this::class.simpleName} for $imString"
 
@@ -245,7 +246,7 @@ class DrawingTrial(
 
   fun select(seg: Segment?) {
 	println("selecting $seg")
-	selectedSeg = seg
+	selectedSeg.value = seg
 	if (seg == null) {
 	  log.add(Date.now().toLong() to "unselected segment")
 	  div.selectCanvas.hidden = true
@@ -265,18 +266,16 @@ class DrawingTrial(
 	  }
 	  div.selectCanvas.hidden = false
 	}
-
-	div.select(seg)
   }
 
   fun Segment?.selectThis() = select(this)
 
   fun hover(seg: Segment?) {
-	if (seg == hoveredSeg) return
+	if (seg == hoveredSeg.value) return
 	console.log("hovered $seg")
-	hoveredSeg = seg
-	div.hoverCanvas.hidden = hoveredSeg == null
-	if (hoveredSeg != null) div.hoverCanvas.context2D.putImageData(
+	hoveredSeg.value = seg
+	div.hoverCanvas.hidden = hoveredSeg.value == null
+	if (hoveredSeg.value != null) div.hoverCanvas.context2D.putImageData(
 	  if (seg!!.hasResponse) seg.hiLabeledPixels else seg.highlightPixels,
 	  0.0, 0.0
 	)
