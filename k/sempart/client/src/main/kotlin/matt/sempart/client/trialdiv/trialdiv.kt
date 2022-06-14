@@ -47,6 +47,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv =
 	}
 	val stackDiv = element.div {
 	  sty.display = InlineBlock
+	  println("adding canvases")
 	  canvases += (0..3).map {
 		canvas {
 		  width = WIDTH
