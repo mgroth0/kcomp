@@ -161,6 +161,7 @@ fun main() = defaultMain {
 
 		trialDiv?.remove()
 		trialDiv = drawingTrial.div
+		println("about to append ${trialDiv}")
 		document.body!!.append(trialDiv)
 
 		workingOn("processing image data")
