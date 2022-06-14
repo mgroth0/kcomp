@@ -9,6 +9,7 @@ import matt.kjs.css.TextAlign.center
 import matt.kjs.css.px
 import matt.kjs.css.sty
 import matt.kjs.defaultMain
+import matt.kjs.elements.appendWrapper
 import matt.kjs.elements.button
 import matt.kjs.elements.div
 import matt.kjs.elements.img
@@ -162,7 +163,7 @@ fun main() = defaultMain {
 		trialDiv?.remove()
 		trialDiv = drawingTrial.div
 		println("about to append ${trialDiv}")
-		document.body!!.append(trialDiv)
+		document.body!!.appendWrapper(trialDiv!!)
 
 		workingOn("processing image data")
 		console.log("setting up handlers")
