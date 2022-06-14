@@ -152,7 +152,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	}
   }
 
-  //  val labelsDiv = controlsDiv.
+//  val labelsDiv = controlsDiv.
 
   init {
 	controlsDiv.br
