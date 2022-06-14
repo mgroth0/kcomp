@@ -27,7 +27,6 @@ import matt.sempart.client.trialdiv.div
 import org.w3c.dom.CustomEvent
 import org.w3c.dom.CustomEventInit
 import org.w3c.dom.HTMLButtonElement
-import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLImageElement
 import org.w3c.dom.ImageData
@@ -221,12 +220,10 @@ class DrawingTrial(
 
 
   val allButtons = mutableListOf<HTMLButtonElement>()
-  val canvases = mutableListOf<HTMLCanvasElement>()
-  val ctxs get() = (canvases - canvases.last()).map { it.context2D }
 
   fun Segment.showAsLabeled() {
 	val shouldBeImageData: ImageData = selectLabeledPixels
-	ctxs[2].putImageData(shouldBeImageData, 0.0, 0.0)
+	div.selectCanvas.context2D.putImageData(shouldBeImageData, 0.0, 0.0)
   }
 
   fun switchSegment(next: Boolean, unlabelled: Boolean) {
@@ -251,7 +248,7 @@ class DrawingTrial(
 	selectedSeg = seg
 	if (seg == null) {
 	  log.add(Date.now().toLong() to "unselected segment")
-	  canvases[2].hidden = true
+	  div.selectCanvas.hidden = true
 	} else {
 	  log.add(Date.now().toLong() to "selected $seg")
 	  if (seg.hasResponse) {
@@ -261,12 +258,12 @@ class DrawingTrial(
 		}
 	  } else {
 		val shouldBeImageData = seg.selectPixels
-		ctxs[2].putImageData(shouldBeImageData, 0.0, 0.0)
+		div.selectCanvas.context2D.putImageData(shouldBeImageData, 0.0, 0.0)
 		allButtons.forEach { bb ->
 		  bb.disabled = false
 		}
 	  }
-	  canvases[2].hidden = false
+	  div.selectCanvas.hidden = false
 	}
 
 	div.select(seg)
@@ -278,8 +275,8 @@ class DrawingTrial(
 	if (seg == hoveredSeg) return
 	console.log("hovered $seg")
 	hoveredSeg = seg
-	canvases[1].hidden = hoveredSeg == null
-	if (hoveredSeg != null) ctxs[1].putImageData(
+	div.hoverCanvas.hidden = hoveredSeg == null
+	if (hoveredSeg != null) div.hoverCanvas.context2D.putImageData(
 	  if (seg!!.hasResponse) seg.hiLabeledPixels else seg.highlightPixels,
 	  0.0, 0.0
 	)

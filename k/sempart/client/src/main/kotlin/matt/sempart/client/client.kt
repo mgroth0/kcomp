@@ -170,11 +170,11 @@ fun main() = defaultMain {
 		var lastEventWorked: Event? = null
 		var lastSelectedSegWorked: Segment? = null
 
-		drawingTrial.canvases[3].setOnMouseMove { lastEvent = it }
+		trialDiv!!.eventCanvasIDK.setOnMouseMove { lastEvent = it }
 
 		fun eventToSeg(e: MouseEvent): Segment? {
-		  val x = e.clientX - drawingTrial.canvases[0].offsetLeft
-		  val y = e.clientY - drawingTrial.canvases[0].offsetTop
+		  val x = e.clientX - trialDiv!!.mainCanvas.offsetLeft
+		  val y = e.clientY - trialDiv!!.mainCanvas.offsetTop
 		  if (x < 0 || y < 0) return null
 		  return drawingTrial.segments.firstOrNull {
 			it.pixels[y][x]
@@ -184,20 +184,20 @@ fun main() = defaultMain {
 		drawingTrial.selectedSeg = null
 		drawingTrial.hoveredSeg = null
 
-		drawingTrial.canvases[3].setOnClick { e: Event ->
+		trialDiv!!.eventCanvasIDK.setOnClick { e: Event ->
 		  println("canvas4.onclick")
 		  lastInteract = Date.now()
 		  drawingTrial.selectedSeg = eventToSeg(e as MouseEvent)
 		}
 
-		drawingTrial.canvases[2].hidden = true
+		trialDiv!!.selectCanvas.hidden = true
 
 
 
 
 
 
-		drawingTrial.canvases[1].hidden = true
+		trialDiv!!.hoverCanvas.hidden = true
 
 		val imageInterval = window.setInterval({
 		  if (lastEvent != lastEventWorked || lastSelectedSegWorked != drawingTrial.selectedSeg) {

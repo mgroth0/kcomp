@@ -24,6 +24,7 @@ import matt.sempart.client.state.onlyShowIn
 import matt.sempart.client.sty.box
 import matt.sempart.client.sty.boxButton
 import org.w3c.dom.HTMLButtonElement
+import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.get
 import kotlin.js.Date
@@ -33,6 +34,10 @@ interface TrialDiv: HTMLElementWrapper<HTMLDivElement> {
   fun remove() = element.remove()
   val labelsDiv: HTMLDivElement
   val nextImageButton: HTMLButtonElement
+  val mainCanvas: HTMLCanvasElement
+  val hoverCanvas: HTMLCanvasElement
+  val selectCanvas: HTMLCanvasElement
+  val eventCanvasIDK: HTMLCanvasElement
 }
 
 private val trialsDivs = js("new WeakMap();")
@@ -47,30 +52,36 @@ private fun DrawingTrial.trialDiv(): TrialDiv =
 	}
 	val stackDiv = element.div {
 	  sty.display = InlineBlock
-	  println("adding canvases")
-	  canvases += (0..3).map {
-		canvas {
-		  width = WIDTH
-		  height = HEIGHT
-		  sty {
-			position = absolute
-			zIndex = it
-			top = 0.px
-		  }
-		  onMyResizeLeft {
-			style.left = it.toString() + "px"
-		  }
-		  if (it > 1) {
-			sty.zIndex = it + segments.size
-		  }
-		}
+	}
+
+	private fun HTMLCanvasElement.canvasConfig(idx: Int) {
+	  width = WIDTH
+	  height = HEIGHT
+	  sty {
+		position = absolute
+		zIndex = idx
+		top = 0.px
 	  }
-	  canvases[0].context2D.drawImage(imElement, 0.0, 0.0)
+	  onMyResizeLeft {
+		style.left = it.toString() + "px"
+	  }
+	  if (idx > 1) {
+		sty.zIndex = idx + segments.size
+	  }
+	}
 
+	override val mainCanvas = stackDiv.canvas {
+	  canvasConfig(0)
+	  context2D.drawImage(imElement, 0.0, 0.0)
+	}
+	override val hoverCanvas = stackDiv.canvas { canvasConfig(1) }
+	override val selectCanvas = stackDiv.canvas { canvasConfig(2) }
+	override val eventCanvasIDK = stackDiv.canvas { canvasConfig(3) }
 
+	init {
 	  segments.forEach { theSeg: Segment ->
 		val zIdx = theSeg.cycleIndex + 1
-		insertBefore(
+		stackDiv.insertBefore(
 		  theSeg.labelledCanvas.apply {
 			width = WIDTH
 			height = HEIGHT
@@ -84,7 +95,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv =
 			onMyResizeLeft {
 			  sty.left = it.px
 			}
-		  }, children[zIdx]
+		  }, stackDiv.children[zIdx]
 		)
 	  }
 	}
