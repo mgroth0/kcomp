@@ -11,7 +11,6 @@ import matt.kjs.css.sty
 import matt.kjs.elements.AwesomeElement
 import matt.kjs.elements.HTMLElementWrapper
 import matt.kjs.img.context2D
-import matt.kjs.prop.BindableProperty
 import matt.kjs.prop.hiddenProperty
 import matt.kjs.prop.isNull
 import matt.kjs.setOnClick
@@ -35,7 +34,6 @@ import kotlin.js.Date
 
 interface TrialDiv: HTMLElementWrapper<HTMLDivElement> {
   fun remove() = element.remove()
-  val labelsDiv: HTMLDivElement
   val nextImageButton: HTMLButtonElement
   val mainCanvas: HTMLCanvasElement
   val hoverCanvas: HTMLCanvasElement
@@ -43,7 +41,6 @@ interface TrialDiv: HTMLElementWrapper<HTMLDivElement> {
   val eventCanvasIDK: HTMLCanvasElement
 }
 
-var lastSelectedSeg: BindableProperty<Segment?>? = null
 
 private val trialsDivs = WeakMap<DrawingTrial, TrialDiv>()
 val DrawingTrial.div: TrialDiv get() = trialsDivs[this] ?: trialDiv().also { trialsDivs[this] = it }
@@ -114,55 +111,48 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	onMyResizeLeft {
 	  style.left = (it + WIDTH).toString() + "px"
 	}
+	div {
+	  hiddenProperty().bind(selectedSeg.isNull())
+	  sty.box()
+	  (LABELS.shuffled() + "Something else" + "I don't know").forEach { l ->
+
+		allButtons.add(button {
+		  disabled = false
+		  innerHTML = l
+		  sty {
+			boxButton()
+			fontStyle = italic
+		  }
+		  setOnClick {
+			ExperimentState.lastInteract = Date.now()
+			log.add(Date.now().toLong() to "selected label: $l")
+
+			println("getting labelledCanvas of $selectedSeg")
+			selectedSeg.value!!.labelledCanvas.hidden = false
+
+			val hadResponse = selectedSeg.value!!.response != null
+			selectedSeg.value!!.response = l
+			completionP.innerHTML = "$completionFraction segments labelled"
+
+			allButtons.forEach { bb ->
+			  bb.disabled = bb.innerHTML == l
+			}
+
+			nextImageButton.disabled = isNotFinished
+			nextUnlabeledSegmentButton.disabled = isFinished
+			previousUnlabeledSegmentButton.disabled = isFinished
+			if (!hadResponse) {
+			  selectedSeg.value!!.showAsLabeled()
+			  nextSeg()
+			}
+		  }
+		})
+		br
+	  }
+	}
   }
 
-  override val labelsDiv = controlsDiv.div {
-	selectedSeg.isNull().onChange {
-	  println("selectedSeg is null: ${it} for ${this@trialDiv}")
-	}
-	if (lastSelectedSeg != null) {
-	  println("selectedSeg==lastSelectedSeg:${selectedSeg==lastSelectedSeg}")
-	  println("selectedSeg===lastSelectedSeg:${selectedSeg===lastSelectedSeg}")
-	}
-	lastSelectedSeg = selectedSeg
-	hiddenProperty().bind(selectedSeg.isNull())
-	sty.box()
-	(LABELS.shuffled() + "Something else" + "I don't know").forEach { l ->
-
-	  allButtons.add(button {
-		disabled = false
-		innerHTML = l
-		sty {
-		  boxButton()
-		  fontStyle = italic
-		}
-		setOnClick {
-		  ExperimentState.lastInteract = Date.now()
-		  log.add(Date.now().toLong() to "selected label: $l")
-
-		  println("getting labelledCanvas of $selectedSeg")
-		  selectedSeg.value!!.labelledCanvas.hidden = false
-
-		  val hadResponse = selectedSeg.value!!.response != null
-		  selectedSeg.value!!.response = l
-		  completionP.innerHTML = "$completionFraction segments labelled"
-
-		  allButtons.forEach { bb ->
-			bb.disabled = bb.innerHTML == l
-		  }
-
-		  nextImageButton.disabled = isNotFinished
-		  nextUnlabeledSegmentButton.disabled = isFinished
-		  previousUnlabeledSegmentButton.disabled = isFinished
-		  if (!hadResponse) {
-			selectedSeg.value!!.showAsLabeled()
-			nextSeg()
-		  }
-		}
-	  })
-	  br
-	}
-  }
+  //  val labelsDiv = controlsDiv.
 
   init {
 	controlsDiv.br
