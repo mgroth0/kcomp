@@ -111,48 +111,48 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	onMyResizeLeft {
 	  style.left = (it + WIDTH).toString() + "px"
 	}
-	div {
-	  hiddenProperty().bind(selectedSeg.isNull())
-	  sty.box()
-	  (LABELS.shuffled() + "Something else" + "I don't know").forEach { l ->
 
-		allButtons.add(button {
-		  disabled = false
-		  innerHTML = l
-		  sty {
-			boxButton()
-			fontStyle = italic
-		  }
-		  setOnClick {
-			ExperimentState.lastInteract = Date.now()
-			log.add(Date.now().toLong() to "selected label: $l")
-
-			println("getting labelledCanvas of $selectedSeg")
-			selectedSeg.value!!.labelledCanvas.hidden = false
-
-			val hadResponse = selectedSeg.value!!.response != null
-			selectedSeg.value!!.response = l
-			completionP.innerHTML = "$completionFraction segments labelled"
-
-			allButtons.forEach { bb ->
-			  bb.disabled = bb.innerHTML == l
-			}
-
-			nextImageButton.disabled = isNotFinished
-			nextUnlabeledSegmentButton.disabled = isFinished
-			previousUnlabeledSegmentButton.disabled = isFinished
-			if (!hadResponse) {
-			  selectedSeg.value!!.showAsLabeled()
-			  nextSeg()
-			}
-		  }
-		})
-		br
-	  }
-	}
   }
 
-  //  val labelsDiv = controlsDiv.
+  val labelsDiv = controlsDiv.div {
+	hiddenProperty().bind(selectedSeg.isNull())
+	sty.box()
+	(LABELS.shuffled() + "Something else" + "I don't know").forEach { l ->
+
+	  allButtons.add(button {
+		disabled = false
+		innerHTML = l
+		sty {
+		  boxButton()
+		  fontStyle = italic
+		}
+		setOnClick {
+		  ExperimentState.lastInteract = Date.now()
+		  log.add(Date.now().toLong() to "selected label: $l")
+
+		  println("getting labelledCanvas of $selectedSeg")
+		  selectedSeg.value!!.labelledCanvas.hidden = false
+
+		  val hadResponse = selectedSeg.value!!.response != null
+		  selectedSeg.value!!.response = l
+		  completionP.innerHTML = "$completionFraction segments labelled"
+
+		  allButtons.forEach { bb ->
+			bb.disabled = bb.innerHTML == l
+		  }
+
+		  nextImageButton.disabled = isNotFinished
+		  nextUnlabeledSegmentButton.disabled = isFinished
+		  previousUnlabeledSegmentButton.disabled = isFinished
+		  if (!hadResponse) {
+			selectedSeg.value!!.showAsLabeled()
+			nextSeg()
+		  }
+		}
+	  })
+	  br
+	}
+  }
 
   init {
 	controlsDiv.br
