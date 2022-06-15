@@ -8,6 +8,7 @@ import matt.kjs.bindings.eq
 import matt.kjs.bindings.isNull
 import matt.kjs.bindings.not
 import matt.kjs.bindings.or
+import matt.kjs.bindings.orDebug
 import matt.kjs.css.FontStyle.italic
 import matt.kjs.css.FontWeight.bold
 import matt.kjs.css.Position.absolute
@@ -146,7 +147,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	(LABELS.shuffled() + "Something else" + "I don't know").forEach { l ->
 
 	  allButtons.add(button {
-		disabledProperty().bind(UI.disabledProp or selectedSegResponse.eq(l))
+		disabledProperty().bind(UI.disabledProp orDebug selectedSegResponse.eq(l))
 		innerHTML = l
 		sty {
 		  boxButton()
