@@ -40,6 +40,10 @@ import matt.sempart.client.trialdiv.div
 fun main() = defaultMain {
   document.head!!.title = "Semantic Segmentation"
   val bodyStyleElement = document.body!!.append.style {}
+  bodyStyleElement.apply {
+	type = "text/css"
+	this.setAttribute("rel", "stylesheet")
+  }
   document.body!!.sty {
 	background = black
 	color = white
