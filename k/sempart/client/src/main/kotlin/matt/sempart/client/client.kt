@@ -44,6 +44,7 @@ fun main() = defaultMain {
 	input {
 	  type = "range"
 	  min = "0.5"
+	  defaultValue = "1.0"
 	  value = "1.0"
 	  max = "1.5"
 	  step = "0.01"
