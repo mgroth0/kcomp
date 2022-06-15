@@ -23,3 +23,6 @@ val LABELS = listOf(
   "ear",
   "nose"
 )
+
+val INSTRUCTIONS_IM_WOLFRAM = "https://www.wolframcloud.com/obj/mjgroth/folder-1/Bd_Jul2018_M_Face_PO1_All.png"
+val INSTRUCTIONS_IM_RELATIVE = "data/Bd_Jul2018_M_Face_PO1_All.png"

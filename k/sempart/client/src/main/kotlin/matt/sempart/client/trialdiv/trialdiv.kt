@@ -14,21 +14,25 @@ import matt.kjs.img.context2D
 import matt.kjs.prop.hiddenProperty
 import matt.kjs.prop.isNull
 import matt.kjs.setOnClick
+import matt.kjs.setOnMouseMove
 import matt.sempart.client.const.HEIGHT
 import matt.sempart.client.const.LABELS
 import matt.sempart.client.const.WIDTH
 import matt.sempart.client.params.PARAMS
+import matt.sempart.client.state.DrawingData.Companion.loadingIm
 import matt.sempart.client.state.DrawingData.Segment
 import matt.sempart.client.state.DrawingTrial
 import matt.sempart.client.state.ExperimentPhase.Trial
 import matt.sempart.client.state.ExperimentState
-import matt.sempart.client.state.onMyResizeLeft
+import matt.sempart.client.state.currentLeftProp
 import matt.sempart.client.state.onlyShowIn
+import matt.sempart.client.state.pixelIndexIn
 import matt.sempart.client.sty.box
 import matt.sempart.client.sty.boxButton
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLDivElement
+import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.get
 import kotlin.js.Date
 
@@ -46,9 +50,12 @@ private val trialsDivs = WeakMap<DrawingTrial, TrialDiv>()
 val DrawingTrial.div: TrialDiv get() = trialsDivs[this] ?: trialDiv().also { trialsDivs[this] = it }
 
 private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivElement>(), TrialDiv {
+
+  fun eventToSeg(e: MouseEvent) = e.pixelIndexIn(mainCanvas)?.let { segmentOf(it) }
+
   override val element = div {
 	onlyShowIn(Trial)
-	onMyResizeLeft {
+	currentLeftProp.onChange {
 	  style.marginLeft = it.toString() + "px"
 	}
   }
@@ -64,7 +71,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	  zIndex = idx
 	  top = 0.px
 	}
-	onMyResizeLeft {
+	currentLeftProp.onChange {
 	  style.left = it.toString() + "px"
 	}
 	if (idx > 1) {
@@ -74,7 +81,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 
   override val mainCanvas = stackDiv.canvas {
 	canvasConfig(0)
-	context2D.drawImage(imElement, 0.0, 0.0)
+	context2D.drawImage(loadingIm, 0.0, 0.0)
   }
   override val hoverCanvas = stackDiv.canvas {
 	hidden = true
@@ -84,7 +91,19 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	hidden = true
 	canvasConfig(2)
   }
-  override val eventCanvasIDK = stackDiv.canvas { canvasConfig(3) }
+  override val eventCanvasIDK = stackDiv.canvas {
+	canvasConfig(3)
+	onclick = interaction("click") {
+	  select(eventToSeg(it))
+	}
+	setOnMouseMove {
+	  ExperimentState.lastInteract = Date.now()
+	  hover(eventToSeg(it))
+	}
+	onclick = interaction("click") {
+	  select(eventToSeg(it))
+	}
+  }
 
   init {
 	segments.forEach { theSeg: Segment ->
@@ -100,7 +119,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 			zIndex = zIdx
 		  }
 		  context2D.drawImage(theSeg.labelledIm, 0.0, 0.0)
-		  onMyResizeLeft {
+		  currentLeftProp.onChange {
 			sty.left = it.px
 		  }
 		}, stackDiv.children[zIdx]
@@ -114,7 +133,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	  display = InlineBlock
 	  position = absolute
 	}
-	onMyResizeLeft {
+	currentLeftProp.onChange {
 	  style.left = (it + WIDTH).toString() + "px"
 	}
 

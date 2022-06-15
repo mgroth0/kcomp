@@ -10,13 +10,14 @@ import matt.kjs.allHTMLElementsRecursive
 import matt.kjs.elements.AwesomeElement
 import matt.kjs.elements.canvas
 import matt.kjs.elements.div
+import matt.kjs.elements.img
 import matt.kjs.every
 import matt.kjs.first
 import matt.kjs.firstBackwards
 import matt.kjs.img.context2D
 import matt.kjs.img.getPixels
-import matt.kjs.node.LoadingProcess
 import matt.kjs.prop.BindableProperty
+import matt.kjs.prop.ReadOnlyBindableProperty
 import matt.kjs.req.get
 import matt.kjs.setOnLoad
 import matt.kjs.srcAsPath
@@ -27,6 +28,7 @@ import matt.sempart.client.const.HEIGHT
 import matt.sempart.client.const.WIDTH
 import matt.sempart.client.params.PARAMS
 import matt.sempart.client.state.DrawingData.Segment
+import matt.sempart.client.state.ExperimentPhase.Companion.currentPhase
 import matt.sempart.client.state.ExperimentState.working
 import matt.sempart.client.trialdiv.div
 import org.w3c.dom.CustomEvent
@@ -52,39 +54,45 @@ object ExperimentState {
   var lastInteract = Date.now()
 	.apply {    /*only way to check for lastInteract I think*/    /*I could also check every time lastInteract changes, but that could be even more expensive because of mouse moves?*/
 	  every(PARAMS.idleCheckPeriodMS.milliseconds) {
-		PhaseChange.dispatchToAllHTML(ExperimentPhase.determine())
+		PhaseChange.dispatchToAllHTML(currentPhase.value to ExperimentPhase.determine())
 	  }
 	}
   var begun by Delegates.observable(false) { _, _, _ ->
-	PhaseChange.dispatchToAllHTML(ExperimentPhase.determine())
+	PhaseChange.dispatchToAllHTML(currentPhase.value to ExperimentPhase.determine())
   }
   var onBreak by Delegates.observable(false) { _, _, _ ->
-	PhaseChange.dispatchToAllHTML(ExperimentPhase.determine())
+	PhaseChange.dispatchToAllHTML(currentPhase.value to ExperimentPhase.determine())
   }
   var complete by Delegates.observable(false) { _, _, _ ->
-	PhaseChange.dispatchToAllHTML(ExperimentPhase.determine())
+	PhaseChange.dispatchToAllHTML(currentPhase.value to ExperimentPhase.determine())
   }
   var working by Delegates.observable(false) { _, _, _ ->
-	PhaseChange.dispatchToAllHTML(ExperimentPhase.determine())
+	PhaseChange.dispatchToAllHTML(currentPhase.value to ExperimentPhase.determine())
   }
 }
 
 
-fun <R> LoadingProcess.finishedLoadingScreen(desc: String? = null, op: ()->R): R {
-  val r = finish(desc) { op() }
-  working = false
-  return r
-}
-
-fun <R> LoadingProcess.finishedLoadingScreen() {
-  finish()
-  working = false
-}
+//fun <R> LoadingProcess.finishedLoadingScreen(desc: String? = null, op: ()->R): R {
+//  val r = finish(desc) { op() }
+//  working = false
+//  return r
+//}
+//
+//fun <R> LoadingProcess.finishedLoadingScreen() {
+//  finish()
+//  working = false
+//}
 
 enum class ExperimentPhase {
   Instructions, Trial, Break, Complete, Inactive, Resize, Loading;
 
   companion object {
+	val currentPhase: ReadOnlyBindableProperty<ExperimentPhase> = BindableProperty(determine()).apply {
+	  PhaseChange.beforeDispatch {
+		if (it.second != value) value = it.second
+	  }
+	}
+
 	fun determine(): ExperimentPhase {
 	  val w = window.innerWidth
 	  val h = window.innerHeight
@@ -105,7 +113,7 @@ enum class ExperimentPhase {
 
 abstract class EventDispatcher<T>(type: String? = null) {
   val type: String = type ?: this::class.simpleName!!
-  private val beforeDispatchOps = mutableListOf<(T)->Unit>()
+  protected val beforeDispatchOps = mutableListOf<(T)->Unit>()
   private fun runBeforeDispatchOps(t: T) {
 	beforeDispatchOps.forEach { it(t) }
   }
@@ -140,41 +148,67 @@ fun <T> EventTarget.listen(d: EventDispatcher<T>, op: (T)->Unit) {
   })
 }
 
-object PhaseChange: ChangeEventDispatcher<ExperimentPhase>() {
+object PhaseChange: ChangeEventDispatcher<Pair<ExperimentPhase, ExperimentPhase>>() {
   init {
 	beforeDispatch { println("Phase Change: $it") }
   }
+
+  fun afterEndOfNext(phase: ExperimentPhase, listener: (ExperimentPhase)->Unit) {
+	var op: ((Pair<ExperimentPhase, ExperimentPhase>)->Unit)? = null
+	op = { (old: ExperimentPhase, new: ExperimentPhase) ->
+	  if (old == phase && new != phase) {
+		listener(new)
+		beforeDispatchOps.remove(op!!)
+	  }
+	}
+	beforeDispatchOps.add(op)
+  }
 }
 
-object MyResizeLeft: ChangeEventDispatcher<Int>()
+val currentLeftProp: ReadOnlyBindableProperty<Int> = BindableProperty(currentLeft()).apply {
+  window.addEventListener("resize", {
+	value = currentLeft()
+  })
+}
+
+//object MyResizeLeft: ChangeEventDispatcher<Int>() {
+//
+//}
 
 fun AwesomeElement<*>.onlyShowIn(phase: ExperimentPhase) = element.onlyShowIn(phase)
 fun HTMLElement.onlyShowIn(phase: ExperimentPhase) {
   hidden = ExperimentPhase.determine() != phase
   listen(PhaseChange) {
-	hidden = it != phase
+	hidden = it.second != phase
   }
 }
 
 fun currentLeft() = (window.innerWidth/2) - HALF_WIDTH
-fun HTMLElement.onMyResizeLeft(onLeft: (Int)->Unit) {
-  onLeft(currentLeft())
-  listen(MyResizeLeft) {
-	onLeft(it)
-  }
-}
+//fun HTMLElement.onMyResizeLeft(onLeft: (Int)->Unit) {
+//  onLeft(currentLeft())
+//  listen(MyResizeLeft) {
+//	onLeft(it)
+//  }
+//}
 
 interface Drawing {
   val imString: String
-  val imElement: HTMLImageElement
   val log: MutableList<Pair<Long, String>>
   fun cleanup()
 }
 
 class DrawingData(
-  override val imString: String, override val imElement: HTMLImageElement
+  indexedIm: IndexedValue<String>
 ): Drawing {
+  companion object {
+	val loadingIm = document.body!!.img {
+	  todo("loadingIm is not ideal either")
+	  hidden = true
+	}
+  }
 
+  override val imString = indexedIm.value
+  val idx = indexedIm.index
   override val log = mutableListOf<Pair<Long, String>>()
   var loadedImage = false
   var loadedIms = 0
@@ -220,11 +254,11 @@ class DrawingData(
 	  trial = DrawingTrial(segs, Loop(segs).iterator(), this)
 	  runOpIfReady()
 	}
-	imElement.setOnLoad {
+	loadingIm.setOnLoad {
 	  loadedImage = true
 	  runOpIfReady()
 	}
-	imElement.setAttribute("src", "data/all/${imString}_All.png")
+	loadingIm.setAttribute("src", "data/all/${imString}_All.png")
 
   }
 
@@ -267,7 +301,6 @@ class DrawingData(
 
   val loadDiv = document.body!!.div {
 	todo("loadDiv is not ideal")
-	id = "loadDiv"
 	hidden = true
   }
 
@@ -303,10 +336,14 @@ class DrawingTrial(
   val segments: List<Segment>, val segCycle: ListIterator<Segment>, dData: DrawingData
 ): Drawing by dData {
 
-  fun <E: Event> interaction(logMessage: String, op: (E)->Unit): (E)->Unit = {
+  fun registerInteraction(logMessage: String) {
 	ExperimentState.lastInteract = Date.now()
 	println(logMessage)
 	log.add(Date.now().toLong() to logMessage)
+  }
+
+  fun <E: Event> interaction(logMessage: String, op: (E)->Unit): (E)->Unit = {
+	registerInteraction(logMessage)
 	op(it)
   }
 
