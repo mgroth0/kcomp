@@ -7,6 +7,8 @@ import kotlinx.serialization.json.Json
 import matt.kjs.Loop
 import matt.kjs.Path
 import matt.kjs.allHTMLElementsRecursive
+import matt.kjs.bindings.isNull
+import matt.kjs.bindings.not
 import matt.kjs.css.Px
 import matt.kjs.css.px
 import matt.kjs.elements.AwesomeElement
@@ -292,9 +294,11 @@ class DrawingData(
 	val hiLabeledIm: HTMLImageElement,
 	val cycleIndex: Int
   ) {
-	var response: String? = null
-	val hasResponse get() = response != null
-	val hasNoResponse get() = response == null
+	val responseProp = BindableProperty<String?>(null)
+	val response get() = responseProp.value
+	val hasResponseProp = responseProp.isNull().not()
+	val hasResponse get() = hasResponseProp.value
+	val hasNoResponse get() = !hasResponse
 	override fun toString() = "Segment $id of ${this@DrawingData}"
 	val highlightPixels by lazy {
 	  highlightIm.getPixels(w = WIDTH, h = HEIGHT)
@@ -370,7 +374,7 @@ class DrawingTrial(
 	return segments.firstOrNull { pixelIndex in it }
   }
 
-  val segmentsWithResponse get() = segments.filter { it.response != null }
+  val segmentsWithResponse get() = segments.filter { it.hasResponse }
   val completionFraction get() = "${segmentsWithResponse.size}/${segments.size}"
   val isFinished get() = segments.all { it.response != null }
   val isNotFinished get() = !isFinished

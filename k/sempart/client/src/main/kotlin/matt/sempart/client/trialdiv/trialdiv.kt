@@ -42,6 +42,8 @@ import kotlin.js.Date
 interface TrialDiv: HTMLElementWrapper<HTMLDivElement> {
   val nextImageButton: HTMLButtonElement
   val mainCanvas: HTMLCanvasElement
+  val hoverCanvas: HTMLCanvasElement
+  val selectCanvas: HTMLCanvasElement
 }
 
 
@@ -78,11 +80,11 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	canvasConfig(0)
 	context2D.drawImage(loadingIm, 0.0, 0.0)
   }
-  val hoverCanvas = stackDiv.canvas {
+  override val hoverCanvas = stackDiv.canvas {
 	hidden = true
 	canvasConfig(1)
   }
-  val selectCanvas = stackDiv.canvas {
+  override val selectCanvas = stackDiv.canvas {
 	hidden = true
 	canvasConfig(2)
   }
