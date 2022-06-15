@@ -8,6 +8,7 @@ import matt.sempart.client.state.onlyShowIn
 
 val loadingDiv by lazy {
   loadingText("Loading") {
+	element.classList.add("mainDiv")
 	onlyShowIn(Loading)
   }
 }

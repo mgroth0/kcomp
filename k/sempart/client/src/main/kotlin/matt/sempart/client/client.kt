@@ -1,6 +1,8 @@
 package matt.sempart.client
 
 import kotlinx.browser.document
+import kotlinx.html.dom.append
+import kotlinx.html.js.style
 import matt.kjs.Path
 import matt.kjs.appendChilds
 import matt.kjs.css.Color.black
@@ -37,10 +39,13 @@ import matt.sempart.client.trialdiv.div
 
 fun main() = defaultMain {
   document.head!!.title = "Semantic Segmentation"
+  val headStyle = document.head!!.append.style {}
   document.body!!.sty {
 	background = black
 	color = white
   }
+
+
   document.body!!.appendChilds(
 	input {
 	  type = "range"
@@ -56,12 +61,15 @@ fun main() = defaultMain {
 		transform = "scale(1.0)"
 	  }
 	  oninput = {
-		document.body!!.sty.transform = "scale(${value})"
+		headStyle.innerHTML = ".mainDiv {scale(${value})}"
+		//		divs.forEach {
+		//
+		////		  it.sty.transform = "scale(${value})"
+		//		}
 		Unit
 	  }
 	},
-	instructionsVidDiv,
-	instructionsDiv, resizeDiv, loadingDiv, completeDiv, breakDiv, inactiveDiv,
+	instructionsVidDiv, instructionsDiv, resizeDiv, loadingDiv, completeDiv, breakDiv, inactiveDiv
   )
 
   val images = listOf(TRAIN_IM) + ORIG_DRAWING_IMS.shuffled()

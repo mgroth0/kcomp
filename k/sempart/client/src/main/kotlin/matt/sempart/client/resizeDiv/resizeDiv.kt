@@ -9,6 +9,7 @@ import matt.sempart.client.state.onlyShowIn
 
 val resizeDiv by lazy {
   div {
+	classList.add("mainDiv")
 	onlyShowIn(Resize)
 	p {
 	  sty.margin = auto

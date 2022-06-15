@@ -6,6 +6,7 @@ import matt.sempart.client.state.onlyShowIn
 
 val inactiveDiv by lazy {
   div {
+	classList.add("mainDiv")
 	onlyShowIn(Inactive)
 	innerHTML = "Sorry, you have been inactive for too long and the experiment has been cancelled."
   }

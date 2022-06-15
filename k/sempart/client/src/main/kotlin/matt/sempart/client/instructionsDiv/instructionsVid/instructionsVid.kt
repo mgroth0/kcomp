@@ -18,6 +18,7 @@ import matt.sempart.client.state.onlyShowIn
 
 val instructionsVidDiv by lazy {
   div {
+	classList.add("mainDiv")
 	onlyShowIn(InstructionsVid)
 	sty.textAlign = center
 
@@ -28,16 +29,13 @@ val instructionsVidDiv by lazy {
 	  left = 50.percent
 	  transform = "translate(-50%,-50%)"
 	}
-
 	val vid = video {
 	  source {
 		src = INSTRUCTIONS_VID_WOLFRAM
 		type = "video/mp4"
 	  }
 	}
-
 	br
-
 	button {
 	  sty.margin = auto
 	  innerHTML = "play/pause"
@@ -46,22 +44,10 @@ val instructionsVidDiv by lazy {
 		else vid.pause()
 	  }
 	}
-
 	button {
 	  sty.margin = auto
-
-
-
-
-
-
-
-
 	  innerHTML = "Click here when ready to move on"
 	  setOnClick { ExperimentState.finishedVid = true }
 	}
-
-
-
   }
 }
