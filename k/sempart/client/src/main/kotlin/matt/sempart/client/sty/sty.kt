@@ -10,7 +10,6 @@ fun MyStyleDsl.box() {
   borderStyle = solid
   borderWidth = thin
   margin = MED_SPACE
-  display = block
 }
 
 val SMALL_SPACE = 5.px
