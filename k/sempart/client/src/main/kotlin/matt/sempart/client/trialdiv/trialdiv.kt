@@ -31,6 +31,7 @@ import matt.sempart.client.state.ExperimentState
 import matt.sempart.client.state.currentLeftProp
 import matt.sempart.client.state.onlyShowIn
 import matt.sempart.client.state.pixelIndexIn
+import matt.sempart.client.sty.MED_SPACE
 import matt.sempart.client.sty.box
 import matt.sempart.client.sty.boxButton
 import org.w3c.dom.HTMLButtonElement
@@ -100,12 +101,10 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	onclick = interaction("click") {
 	  select(eventToSeg(it))
 	}
-  }
 
-  init {
 	segments.forEach { theSeg: Segment ->
 	  val zIdx = theSeg.cycleIndex + 1
-	  stackDiv.insertBefore(
+	  insertBefore(
 		theSeg.labelledCanvas.apply {
 		  width = WIDTH
 		  height = HEIGHT
@@ -117,18 +116,21 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 			leftProperty().bind(currentLeftProp)
 		  }
 		  context2D.drawImage(theSeg.labelledIm, 0.0, 0.0)
-		}, stackDiv.children[zIdx]
+		}, children[zIdx]
 	  )
 	}
   }
+
 
   val controlsDiv: HTMLDivElement = element.div {
 	sty {
 	  display = inlineBlock
 	  position = absolute
 	}
-	sty.leftProperty().bind(currentLeftProp.binding { it + WIDTH })
-
+	sty {
+	  leftProperty().bind(currentLeftProp.binding { it + WIDTH })
+	  marginBottom = MED_SPACE
+	}
   }
 
   val labelsDiv = controlsDiv.div {
@@ -224,10 +226,6 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
   }
 
 
-  init {
-	buttonsDiv.br
-  }
-
   val nextUnlabeledSegmentButton = buttonsDiv.button {
 	disabled = false
 	type = ButtonType.button.realValue
@@ -240,11 +238,6 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	  switchSegment(next = true, unlabelled = true)
 	  disabled = false
 	}
-  }
-
-  init {
-	controlsDiv.br
-	controlsDiv.br
   }
 
   val completionP = controlsDiv.p {
