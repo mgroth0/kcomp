@@ -2,7 +2,7 @@ package matt.sempart.client.trialdiv
 
 import kotlinx.html.ButtonType
 import matt.kjs.WeakMap
-import matt.kjs.bindings.binding
+import matt.kjs.bind.binding
 import matt.kjs.bindings.isNull
 import matt.kjs.css.Display.InlineBlock
 import matt.kjs.css.FontStyle.italic
