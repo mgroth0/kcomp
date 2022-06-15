@@ -192,7 +192,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	}
   }
 
-  private val unlabelledString = if (PARAMS.removeNpButtonsKeepUnlabelledNpButtons) " Unlabeled" else ""
+  private val unlabelledString = if (PARAMS.removeNpButtonsKeepUnlabelledNpButtons) "" else " Unlabeled"
 
   val previousUnlabeledSegmentButton = buttonsDiv.button {
 	disabledProperty().bind(UI.disabledProp.or(finishedProp))
