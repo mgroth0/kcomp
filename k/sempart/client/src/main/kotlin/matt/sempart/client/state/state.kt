@@ -52,16 +52,16 @@ object ExperimentState {
 	  PhaseChange.dispatchToAllHTML(ExperimentPhase.determine())
 	}
   }
-  var begun by Delegates.observable(false) { _, _, n ->
+  var begun by Delegates.observable(false) { _, _, _ ->
 	PhaseChange.dispatchToAllHTML(ExperimentPhase.determine())
   }
-  var onBreak by Delegates.observable(false) { _, _, n ->
+  var onBreak by Delegates.observable(false) { _, _, _ ->
 	PhaseChange.dispatchToAllHTML(ExperimentPhase.determine())
   }
-  var complete by Delegates.observable(false) { _, _, n ->
+  var complete by Delegates.observable(false) { _, _, _ ->
 	PhaseChange.dispatchToAllHTML(ExperimentPhase.determine())
   }
-  var working by Delegates.observable(false) { _, _, n ->
+  var working by Delegates.observable(false) { _, _, _ ->
 	PhaseChange.dispatchToAllHTML(ExperimentPhase.determine())
   }
 }
