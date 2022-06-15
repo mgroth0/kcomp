@@ -41,8 +41,8 @@ val mainDivClass = "maindiv"
 
 fun main() = defaultMain {
   document.head!!.title = "Semantic Segmentation"
-  val bodyStyleElement = document.body!!.append.style {}
-  bodyStyleElement.apply {
+  val headStyleElement = document.head!!.append.style {}
+  headStyleElement.apply {
 	type = "text/css"
 	this.setAttribute("rel", "stylesheet")
   }
@@ -66,7 +66,7 @@ fun main() = defaultMain {
 		left = 10.percent
 	  }
 	  oninput = {
-		bodyStyleElement.innerHTML = ".$mainDivClass {transform: scale(${value});}"
+		headStyleElement.innerHTML = ".$mainDivClass {transform: scale(${value});}"
 		//		divs.forEach {
 		//
 		////		  it.sty.transform = "scale(${value})"
