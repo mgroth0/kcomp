@@ -18,10 +18,20 @@ val instructionsVidDiv by lazy {
 	onlyShowIn(InstructionsVid)
 	sty.textAlign = center
 
-	video {
+
+	val vid = video {
 	  source {
 		src = INSTRUCTIONS_VID_RELATIVE
 		type = "video/mp4"
+	  }
+	}
+
+	button {
+	  sty.margin = auto
+	  innerHTML = "play/pause"
+	  setOnClick {
+		if (vid.paused) vid.play()
+		else vid.pause()
 	  }
 	}
 
