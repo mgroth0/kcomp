@@ -10,8 +10,11 @@ fun MyStyleDsl.box() {
   borderWidth = thin
 }
 
+val SMALL_SPACE = 5.px
+val MED_SPACE = SMALL_SPACE*2
+
 fun MyStyleDsl.boxButton() {
-  marginBottom = 5.px
-  marginTop = 5.px
-  marginLeft = 5.px
+  marginBottom = SMALL_SPACE
+  marginTop = SMALL_SPACE
+  marginLeft = SMALL_SPACE
 }

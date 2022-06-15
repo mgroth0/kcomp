@@ -18,6 +18,7 @@ import matt.kjs.props.leftProperty
 import matt.kjs.props.marginLeftProperty
 import matt.kjs.setOnClick
 import matt.kjs.setOnMouseMove
+import matt.klib.dmap.withStoringDefault
 import matt.sempart.client.const.HEIGHT
 import matt.sempart.client.const.LABELS
 import matt.sempart.client.const.WIDTH
@@ -30,6 +31,7 @@ import matt.sempart.client.state.ExperimentState
 import matt.sempart.client.state.currentLeftProp
 import matt.sempart.client.state.onlyShowIn
 import matt.sempart.client.state.pixelIndexIn
+import matt.sempart.client.sty.MED_SPACE
 import matt.sempart.client.sty.box
 import matt.sempart.client.sty.boxButton
 import org.w3c.dom.HTMLButtonElement
@@ -46,9 +48,8 @@ interface TrialDiv: HTMLElementWrapper<HTMLDivElement> {
   val selectCanvas: HTMLCanvasElement
 }
 
-
-private val trialsDivs = WeakMap<DrawingTrial, TrialDiv>()
-val DrawingTrial.div: TrialDiv get() = trialsDivs[this] ?: trialDiv().also { trialsDivs[this] = it }
+private val trialsDivs = WeakMap<DrawingTrial, TrialDiv>().withStoringDefault { it.trialDiv() }
+val DrawingTrial.div: TrialDiv get() = trialsDivs[this]
 
 private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivElement>(), TrialDiv {
 
@@ -123,7 +124,6 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
   }
 
   val controlsDiv: HTMLDivElement = element.div {
-	println("in config yay")
 	sty {
 	  display = InlineBlock
 	  position = absolute
@@ -134,7 +134,10 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 
   val labelsDiv = controlsDiv.div {
 	hiddenProperty().bind(selectedSeg.isNull())
-	sty.box()
+	sty {
+	  box()
+	  marginBottom = MED_SPACE
+	}
 	(LABELS.shuffled() + "Something else" + "I don't know").forEach { l ->
 
 	  allButtons.add(button {
@@ -171,11 +174,11 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	  br
 	}
   }
-
-  init {
-	controlsDiv.br
-	controlsDiv.br
-  }
+//
+  //  init {
+  //	controlsDiv.br
+  //	controlsDiv.br
+  //  }
 
   val buttonsDiv = controlsDiv.div {
 	sty.box()
