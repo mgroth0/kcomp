@@ -26,6 +26,7 @@ val LABELS = listOf(
 
 val INSTRUCTIONS_IM_WOLFRAM = "https://www.wolframcloud.com/obj/mjgroth/folder-1/Bd_Jul2018_M_Face_PO1_All.png"
 val INSTRUCTIONS_IM_RELATIVE = "data/Bd_Jul2018_M_Face_PO1_All.png"
+val INSTRUCTIONS_VID_RELATIVE = "data/instructions.mp4"
 val SEND_DATA_PREFIX = "send?PROLIFIC_PID="
 
 val TRIAL_CONFIRM_MESSAGE = "Are you sure you are ready to proceed? You cannot go back to this image."
