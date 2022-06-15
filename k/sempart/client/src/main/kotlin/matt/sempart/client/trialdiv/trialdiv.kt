@@ -1,10 +1,10 @@
 package matt.sempart.client.trialdiv
 
+import kotlinx.css.Display.inlineBlock
 import kotlinx.html.ButtonType
 import matt.kjs.WeakMap
 import matt.kjs.bind.binding
 import matt.kjs.bindings.isNull
-import matt.kjs.css.Display.InlineBlock
 import matt.kjs.css.FontStyle.italic
 import matt.kjs.css.FontWeight.bold
 import matt.kjs.css.Position.absolute
@@ -60,7 +60,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	sty.marginLeftProperty().bind(currentLeftProp)
   }
   val stackDiv = element.div {
-	sty.display = InlineBlock
+	sty.display = inlineBlock
   }
 
   private fun HTMLCanvasElement.canvasConfig(idx: Int) {
@@ -125,7 +125,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 
   val controlsDiv: HTMLDivElement = element.div {
 	sty {
-	  display = InlineBlock
+	  display = inlineBlock
 	  position = absolute
 	}
 	sty.leftProperty().bind(currentLeftProp.binding { it + WIDTH })
@@ -171,7 +171,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 		  }
 		}
 	  })
-//	  br
+	  //	  br
 	}
   }
 
