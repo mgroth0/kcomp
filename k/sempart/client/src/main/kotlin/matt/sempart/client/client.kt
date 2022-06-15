@@ -8,6 +8,7 @@ import matt.kjs.css.Color.white
 import matt.kjs.css.sty
 import matt.kjs.defaultMain
 import matt.kjs.elements.appendWrapper
+import matt.kjs.elements.input
 import matt.kjs.ifConfirm
 import matt.kjs.nextOrNull
 import matt.kjs.req.post
@@ -40,7 +41,17 @@ fun main() = defaultMain {
   }
   document.body!!.appendChilds(
 	instructionsVidDiv,
-	instructionsDiv, resizeDiv, loadingDiv, completeDiv, breakDiv, inactiveDiv
+	instructionsDiv, resizeDiv, loadingDiv, completeDiv, breakDiv, inactiveDiv,
+	input {
+	  type = "range"
+	  min = "0.1"
+	  max = "10.0"
+	  value = "1.0"
+	  oninput = {
+		document.body!!.sty["transform"] = "scale(${value})"
+		Unit
+	  }
+	}
   )
 
   val images = listOf(TRAIN_IM) + ORIG_DRAWING_IMS.shuffled()
@@ -57,7 +68,8 @@ fun main() = defaultMain {
 		ifConfirm(TRIAL_CONFIRM_MESSAGE) {
 		  trial.registerInteraction("submit confirmed")
 		  trial.cleanup()
-		  post(
+		  if (training) presentImage(nextDrawingData!!)
+		  else post(
 			Path(SEND_DATA_PREFIX + Participant.pid),
 			ExperimentData(
 			  responses = trial.segments.associate { it.id to it.response!! },
@@ -65,7 +77,7 @@ fun main() = defaultMain {
 			)
 		  ) {
 			if (nextDrawingData != null) {
-			  if (!training && (nextDrawingData.idx - 1)%PARAMS.breakInterval == 0) {
+			  if ((nextDrawingData.idx - 1)%PARAMS.breakInterval == 0) {
 				PhaseChange.afterEndOfNext(Break) {
 				  presentImage(nextDrawingData)
 				}
