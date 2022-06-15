@@ -4,7 +4,10 @@ import kotlinx.css.Display.inlineBlock
 import kotlinx.html.ButtonType
 import matt.kjs.WeakMap
 import matt.kjs.bind.binding
+import matt.kjs.bindings.eq
 import matt.kjs.bindings.isNull
+import matt.kjs.bindings.not
+import matt.kjs.bindings.or
 import matt.kjs.css.FontStyle.italic
 import matt.kjs.css.FontWeight.bold
 import matt.kjs.css.Position.absolute
@@ -13,10 +16,11 @@ import matt.kjs.css.sty
 import matt.kjs.elements.AwesomeElement
 import matt.kjs.elements.HTMLElementWrapper
 import matt.kjs.img.context2D
+import matt.kjs.pixelIndexIn
+import matt.kjs.props.disabledProperty
 import matt.kjs.props.hiddenProperty
 import matt.kjs.props.leftProperty
 import matt.kjs.props.marginLeftProperty
-import matt.kjs.setOnClick
 import matt.kjs.setOnMouseMove
 import matt.klib.dmap.withStoringDefault
 import matt.sempart.client.const.HEIGHT
@@ -28,9 +32,9 @@ import matt.sempart.client.state.DrawingData.Segment
 import matt.sempart.client.state.DrawingTrial
 import matt.sempart.client.state.ExperimentPhase.Trial
 import matt.sempart.client.state.ExperimentState
+import matt.sempart.client.state.UI
 import matt.sempart.client.state.currentLeftProp
 import matt.sempart.client.state.onlyShowIn
-import matt.sempart.client.state.pixelIndexIn
 import matt.sempart.client.sty.MED_SPACE
 import matt.sempart.client.sty.box
 import matt.sempart.client.sty.boxButton
@@ -142,31 +146,18 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	(LABELS.shuffled() + "Something else" + "I don't know").forEach { l ->
 
 	  allButtons.add(button {
-		disabled = false
+		disabledProperty().bind(UI.disabledProp or selectedSegResponse.eq(l))
 		innerHTML = l
 		sty {
 		  boxButton()
 		  fontStyle = italic
 		}
-		setOnClick {
-		  ExperimentState.lastInteract = Date.now()
-		  log += "selected label: $l"
-
-		  println("getting labelledCanvas of $selectedSeg")
+		onclick = interaction("selected label: $l") {
 		  selectedSeg.value!!.labelledCanvas.hidden = false
-
-		  val hadResponse = selectedSeg.value!!.response != null
+		  val hadNoResponse = selectedSeg.value!!.hasNoResponse
 		  selectedSeg.value!!.response = l
 		  completionP.innerHTML = "$completionFraction segments labelled"
-
-		  allButtons.forEach { bb ->
-			bb.disabled = bb.innerHTML == l
-		  }
-
-		  nextImageButton.disabled = isNotFinished
-		  nextUnlabeledSegmentButton.disabled = isFinished
-		  previousUnlabeledSegmentButton.disabled = isFinished
-		  if (!hadResponse) {
+		  if (hadNoResponse) {
 			selectedSeg.value!!.showAsLabeled()
 			nextSeg()
 		  }
@@ -184,60 +175,45 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
   }
 
   val previousSegmentButton = regularNextSegButtonBox.button {
+	disabledProperty().bind(UI.disabledProp)
 	type = ButtonType.button.realValue
 	sty.boxButton()
 	innerHTML = "Previous Segment"
-	setOnClick {
-	  console.log("previous segment button clicked")
-	  ExperimentState.lastInteract = Date.now()
-	  disabled = true
+	onclick = interaction("previousSegmentButton clicked", disableUI = true) {
 	  switchSegment(next = false, unlabelled = false)
-	  disabled = false
 	}
   }
 
   val nextSegmentButton = regularNextSegButtonBox.button {
+	disabledProperty().bind(UI.disabledProp)
 	type = ButtonType.button.realValue
 	sty.boxButton()
 	innerHTML = "Next Segment"
-	setOnClick {
-	  println("nextSegmentButton.onclick")
-	  console.log("next segment button clicked")
-	  ExperimentState.lastInteract = Date.now()
-	  disabled = true
+	onclick = interaction("nextSegmentButton.onclick", disableUI = true) {
 	  switchSegment(next = true, unlabelled = false)
-	  disabled = false
 	}
   }
 
   private val unlabelledString = if (PARAMS.removeNpButtonsKeepUnlabelledNpButtons) " Unlabeled" else ""
 
   val previousUnlabeledSegmentButton = buttonsDiv.button {
-	disabled = false
+	disabledProperty().bind(UI.disabledProp.or(finishedProp))
 	type = ButtonType.button.realValue
 	sty.boxButton()
 	innerHTML = "Previous$unlabelledString Segment"
-	setOnClick {
-	  console.log("previous unlabeled segment button clicked")
-	  ExperimentState.lastInteract = Date.now()
-	  disabled = true
+	onclick = interaction("previous unlabeled segment button clicked", disableUI = true) {
 	  switchSegment(next = false, unlabelled = true)
-	  disabled = false
 	}
   }
 
 
   val nextUnlabeledSegmentButton = buttonsDiv.button {
-	disabled = false
+	disabledProperty().bind(UI.disabledProp.or(finishedProp))
 	type = ButtonType.button.realValue
 	sty.boxButton()
 	innerHTML = "Next$unlabelledString Segment"
-	setOnClick {
-	  console.log("next unlabeled segment button clicked")
-	  ExperimentState.lastInteract = Date.now()
-	  disabled = true
+	onclick = interaction("next unlabeled segment button clicked", disableUI = true) {
 	  switchSegment(next = true, unlabelled = true)
-	  disabled = false
 	}
   }
 
@@ -246,7 +222,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
   }
 
   override val nextImageButton = controlsDiv.button {
-	disabled = true
+	disabledProperty().bind(finishedProp.not())
 	type = ButtonType.button.realValue
 	sty {
 	  fontWeight = bold

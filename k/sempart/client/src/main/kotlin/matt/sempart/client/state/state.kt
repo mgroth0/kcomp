@@ -6,7 +6,10 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import matt.kjs.Loop
 import matt.kjs.Path
+import matt.kjs.PixelIndex
 import matt.kjs.allHTMLElementsRecursive
+import matt.kjs.bind.chainBinding
+import matt.kjs.bindings.and
 import matt.kjs.bindings.isNull
 import matt.kjs.bindings.not
 import matt.kjs.css.Px
@@ -18,8 +21,8 @@ import matt.kjs.elements.img
 import matt.kjs.every
 import matt.kjs.first
 import matt.kjs.firstBackwards
-import matt.kjs.img.context2D
 import matt.kjs.img.getPixels
+import matt.kjs.img.put
 import matt.kjs.prop.BindableProperty
 import matt.kjs.prop.ReadOnlyBindableProperty
 import matt.kjs.req.get
@@ -40,14 +43,19 @@ import org.w3c.dom.CustomEventInit
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLImageElement
-import org.w3c.dom.ImageData
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.EventTarget
-import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.url.URLSearchParams
 import kotlin.js.Date
 import kotlin.properties.Delegates
 import kotlin.time.Duration.Companion.milliseconds
+
+object UI {
+  val enabledProp = BindableProperty(true)
+  var enabled by enabledProp
+  val disabledProp = enabledProp.not()
+  val disabled by disabledProp
+}
 
 object Participant {
   val pid = URLSearchParams(window.location.href.substringAfter("?")).get("PROLIFIC_PID")
@@ -370,9 +378,15 @@ class DrawingTrial(
 	log += logMessage
   }
 
-  fun <E: Event> interaction(logMessage: String, op: (E)->Unit): (E)->Unit = {
+  fun <E: Event> interaction(
+	logMessage: String,
+	disableUI: Boolean = false,
+	op: (E)->Unit
+  ): (E)->Unit = {
 	registerInteraction(logMessage)
+	if (disableUI) UI.enabled = false
 	op(it)
+	if (disableUI) UI.enabled = true
   }
 
   fun segmentOf(pixelIndex: PixelIndex): Segment? {
@@ -382,21 +396,20 @@ class DrawingTrial(
   val segmentsWithResponse get() = segments.filter { it.hasResponse }
   val completionFraction get() = "${segmentsWithResponse.size}/${segments.size}"
 
-  val finishedProp = BindableProperty<Boolean>(false)
-  val isFinished get() = segments.all { it.response != null }
+  val finishedProp = segments.map { it.hasResponseProp }.reduce { r1, r2 -> r1.and(r2) }
+  val isFinished get() = finishedProp.value
   val isNotFinished get() = !isFinished
   var selectedSeg = BindableProperty<Segment?>(null)
+  val selectedSegResponse = selectedSeg.chainBinding {
+	it?.responseProp
+  }
   var hoveredSeg = BindableProperty<Segment?>(null)
 
   override fun toString() = "${this::class.simpleName} for $imString"
 
-
   val allButtons = mutableListOf<HTMLButtonElement>()
 
-  fun Segment.showAsLabeled() {
-	val shouldBeImageData: ImageData = selectLabeledPixels
-	div.selectCanvas.context2D.putImageData(shouldBeImageData, 0.0, 0.0)
-  }
+  fun Segment.showAsLabeled() = div.selectCanvas.put(selectLabeledPixels)
 
   fun switchSegment(next: Boolean, unlabelled: Boolean) {
 	select(when {
@@ -415,51 +428,26 @@ class DrawingTrial(
 	switchSegment(next = true, unlabelled = true)
   }
 
-  fun select(seg: Segment?) {    //	println("selecting $seg")
+  fun select(seg: Segment?) {
 	if (selectedSeg.value == seg) return
+	registerInteraction("selected $seg")
 	selectedSeg.value = seg
-	if (seg == null) {
-	  log += "unselected $seg"
-	  div.selectCanvas.hidden = true
-	} else {
-	  log += "selected $seg"
-	  if (seg.hasResponse) {
-		seg.showAsLabeled()
-		allButtons.forEach { bb ->
-		  bb.disabled = seg.response == bb.innerHTML
-		}
-	  } else {
-		val shouldBeImageData = seg.selectPixels
-		div.selectCanvas.context2D.putImageData(shouldBeImageData, 0.0, 0.0)
-		allButtons.forEach { bb ->
-		  bb.disabled = false
-		}
-	  }
+	if (seg == null) div.selectCanvas.hidden = true
+	else {
+	  if (seg.hasResponse) seg.showAsLabeled()
+	  else div.selectCanvas.put(seg.selectPixels)
 	  div.selectCanvas.hidden = false
 	}
   }
-
-  fun Segment?.selectThis() = select(this)
 
   fun hover(seg: Segment?) {
 	if (seg == hoveredSeg.value) return
 	hoveredSeg.value = seg
 	div.hoverCanvas.hidden = hoveredSeg.value == null
-	if (hoveredSeg.value != null) div.hoverCanvas.context2D.putImageData(
-	  if (seg!!.hasResponse) seg.hiLabeledPixels else seg.highlightPixels, 0.0, 0.0
+	if (hoveredSeg.value != null) div.hoverCanvas.put(
+	  if (seg!!.hasResponse) seg.hiLabeledPixels else seg.highlightPixels
 	)
   }
 
-  fun Segment?.hoverThis() = hover(this)
-
 }
 
-fun MouseEvent.pixelIndexIn(el: HTMLElement): PixelIndex? {
-  val e = this
-  val x = e.clientX - el.offsetLeft
-  val y = e.clientY - el.offsetTop
-  if (x < 0 || y < 0) return null
-  return PixelIndex(x = x, y = y)
-}
-
-data class PixelIndex(val x: Int, val y: Int)
