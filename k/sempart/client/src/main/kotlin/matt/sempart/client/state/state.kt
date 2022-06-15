@@ -15,6 +15,7 @@ import matt.kjs.first
 import matt.kjs.firstBackwards
 import matt.kjs.img.context2D
 import matt.kjs.img.getPixels
+import matt.kjs.node.LoadingProcess
 import matt.kjs.prop.BindableProperty
 import matt.kjs.req.get
 import matt.kjs.setOnLoad
@@ -34,6 +35,7 @@ import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLImageElement
 import org.w3c.dom.ImageData
+import org.w3c.dom.events.Event
 import org.w3c.dom.events.EventTarget
 import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.url.URLSearchParams
@@ -44,6 +46,7 @@ import kotlin.time.Duration.Companion.milliseconds
 object Participant {
   val pid = URLSearchParams(window.location.href.substringAfter("?")).get("PROLIFIC_PID")
 }
+
 
 object ExperimentState {
   var lastInteract = Date.now()
@@ -64,6 +67,18 @@ object ExperimentState {
   var working by Delegates.observable(false) { _, _, _ ->
 	PhaseChange.dispatchToAllHTML(ExperimentPhase.determine())
   }
+}
+
+
+fun <R> LoadingProcess.finishedLoadingScreen(desc: String? = null, op: ()->R): R {
+  val r = finish(desc) { op() }
+  working = false
+  return r
+}
+
+fun <R> LoadingProcess.finishedLoadingScreen() {
+  finish()
+  working = false
 }
 
 enum class ExperimentPhase {
@@ -90,7 +105,17 @@ enum class ExperimentPhase {
 
 abstract class EventDispatcher<T>(type: String? = null) {
   val type: String = type ?: this::class.simpleName!!
+  private val beforeDispatchOps = mutableListOf<(T)->Unit>()
+  private fun runBeforeDispatchOps(t: T) {
+	beforeDispatchOps.forEach { it(t) }
+  }
+
+  fun beforeDispatch(op: (T)->Unit) {
+	beforeDispatchOps += op
+  }
+
   open fun dispatchToAllHTML(t: T) {
+	runBeforeDispatchOps(t)
 	val e = CustomEvent(type, object: CustomEventInit {
 	  override var detail: Any? = t
 	})
@@ -115,7 +140,12 @@ fun <T> EventTarget.listen(d: EventDispatcher<T>, op: (T)->Unit) {
   })
 }
 
-object PhaseChange: ChangeEventDispatcher<ExperimentPhase>()
+object PhaseChange: ChangeEventDispatcher<ExperimentPhase>() {
+  init {
+	beforeDispatch { println("Phase Change: $it") }
+  }
+}
+
 object MyResizeLeft: ChangeEventDispatcher<Int>()
 
 fun AwesomeElement<*>.onlyShowIn(phase: ExperimentPhase) = element.onlyShowIn(phase)
@@ -261,7 +291,10 @@ class DrawingData(
 	}
   }
 
-  override fun cleanup() = loadDiv.remove()
+  override fun cleanup() {
+	trial!!.div.remove()
+	loadDiv.remove()
+  }
 
 
 }
@@ -269,6 +302,13 @@ class DrawingData(
 class DrawingTrial(
   val segments: List<Segment>, val segCycle: ListIterator<Segment>, dData: DrawingData
 ): Drawing by dData {
+
+  fun <E: Event> interaction(logMessage: String, op: (E)->Unit): (E)->Unit = {
+	ExperimentState.lastInteract = Date.now()
+	println(logMessage)
+	log.add(Date.now().toLong() to logMessage)
+	op(it)
+  }
 
   fun segmentOf(pixelIndex: PixelIndex): Segment? {
 	return segments.firstOrNull { pixelIndex in it }

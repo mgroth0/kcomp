@@ -76,8 +76,14 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	canvasConfig(0)
 	context2D.drawImage(imElement, 0.0, 0.0)
   }
-  override val hoverCanvas = stackDiv.canvas { canvasConfig(1) }
-  override val selectCanvas = stackDiv.canvas { canvasConfig(2) }
+  override val hoverCanvas = stackDiv.canvas {
+	hidden = true
+	canvasConfig(1)
+  }
+  override val selectCanvas = stackDiv.canvas {
+	hidden = true
+	canvasConfig(2)
+  }
   override val eventCanvasIDK = stackDiv.canvas { canvasConfig(3) }
 
   init {
