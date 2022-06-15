@@ -19,6 +19,7 @@ import matt.sempart.client.const.SEND_DATA_PREFIX
 import matt.sempart.client.const.TRIAL_CONFIRM_MESSAGE
 import matt.sempart.client.inactiveDiv.inactiveDiv
 import matt.sempart.client.instructionsDiv.instructionsDiv
+import matt.sempart.client.instructionsDiv.instructionsVid.instructionsVidDiv
 import matt.sempart.client.loadingDiv.DrawingLoadingProcess
 import matt.sempart.client.loadingDiv.loadingDiv
 import matt.sempart.client.params.PARAMS
@@ -37,6 +38,7 @@ fun main() = defaultMain {
 	color = white
   }
   document.body!!.appendChilds(
+	instructionsVidDiv,
 	instructionsDiv, resizeDiv, loadingDiv, completeDiv, breakDiv, inactiveDiv
   )
 
