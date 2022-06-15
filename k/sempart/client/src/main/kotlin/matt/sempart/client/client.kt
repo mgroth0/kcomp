@@ -50,6 +50,7 @@ fun main() = defaultMain {
 	  max = "1.5"
 	  sty {
 		width = 80.percent
+		left = 10.percent
 	  }
 	  oninput = {
 		document.body!!.sty.transform = "scale(${value})"
