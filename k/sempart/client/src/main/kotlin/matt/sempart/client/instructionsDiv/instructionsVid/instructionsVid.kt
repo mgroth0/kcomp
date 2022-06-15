@@ -8,7 +8,7 @@ import matt.kjs.elements.div
 import matt.kjs.elements.source
 import matt.kjs.elements.video
 import matt.kjs.setOnClick
-import matt.sempart.client.const.INSTRUCTIONS_VID_RELATIVE
+import matt.sempart.client.const.INSTRUCTIONS_VID_WOLFRAM
 import matt.sempart.client.state.ExperimentPhase.InstructionsVid
 import matt.sempart.client.state.ExperimentState
 import matt.sempart.client.state.onlyShowIn
@@ -21,7 +21,7 @@ val instructionsVidDiv by lazy {
 
 	val vid = video {
 	  source {
-		src = INSTRUCTIONS_VID_RELATIVE
+		src = INSTRUCTIONS_VID_WOLFRAM
 		type = "video/mp4"
 	  }
 	}
