@@ -106,7 +106,7 @@ fun main() = defaultMain {
   }
 
   fun LoadingProcess.finishLoadingScreen() {
-	working = true
+	working = false
 	finish()
   }
 
