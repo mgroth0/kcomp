@@ -295,11 +295,7 @@ class DrawingData(
 	val cycleIndex: Int
   ) {
 	val responseProp = BindableProperty<String?>(null)
-	var response
-	  get() = responseProp.value
-	  set(value) {
-		responseProp.value = value
-	  }
+	var response by responseProp
 	val hasResponseProp = responseProp.isNull().not()
 	val hasResponse get() = hasResponseProp.value
 	val hasNoResponse get() = !hasResponse
