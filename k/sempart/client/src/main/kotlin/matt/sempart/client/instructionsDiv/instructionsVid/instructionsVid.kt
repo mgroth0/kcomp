@@ -1,7 +1,9 @@
 package matt.sempart.client.instructionsDiv.instructionsVid
 
+import matt.kjs.css.Position.absolute
 import matt.kjs.css.TextAlign.center
 import matt.kjs.css.auto
+import matt.kjs.css.percent
 import matt.kjs.css.sty
 import matt.kjs.elements.br
 import matt.kjs.elements.button
@@ -40,6 +42,20 @@ val instructionsVidDiv by lazy {
 
 	button {
 	  sty.margin = auto
+
+
+	  /*https://stackoverflow.com/a/31029494/6596010*/
+	  sty {
+		position = absolute
+		top = 50.percent
+		left = 50.percent
+		transform = "translate(-50%,-50%)"
+	  }
+
+
+
+
+
 	  innerHTML = "Click here when ready to move on"
 	  setOnClick { ExperimentState.finishedVid = true }
 	}

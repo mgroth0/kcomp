@@ -51,7 +51,7 @@ fun main() = defaultMain {
 		width = 80.percent
 	  }
 	  oninput = {
-		document.body!!.sty["transform"] = "scale(${value})"
+		document.body!!.sty.transform = "scale(${value})"
 		Unit
 	  }
 	},
