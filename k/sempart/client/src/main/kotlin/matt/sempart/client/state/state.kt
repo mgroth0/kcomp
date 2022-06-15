@@ -35,6 +35,7 @@ import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLImageElement
 import org.w3c.dom.ImageData
 import org.w3c.dom.events.EventTarget
+import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.url.URLSearchParams
 import kotlin.js.Date
 import kotlin.properties.Delegates
@@ -45,13 +46,12 @@ object Participant {
 }
 
 object ExperimentState {
-  var lastInteract = Date.now().apply {
-	/*only way to check for lastInteract I think*/
-	/*I could also check every time lastInteract changes, but that could be even more expensive because of mouse moves?*/
-	every(PARAMS.idleCheckPeriodMS.milliseconds) {
-	  PhaseChange.dispatchToAllHTML(ExperimentPhase.determine())
+  var lastInteract = Date.now()
+	.apply {    /*only way to check for lastInteract I think*/    /*I could also check every time lastInteract changes, but that could be even more expensive because of mouse moves?*/
+	  every(PARAMS.idleCheckPeriodMS.milliseconds) {
+		PhaseChange.dispatchToAllHTML(ExperimentPhase.determine())
+	  }
 	}
-  }
   var begun by Delegates.observable(false) { _, _, _ ->
 	PhaseChange.dispatchToAllHTML(ExperimentPhase.determine())
   }
@@ -67,13 +67,7 @@ object ExperimentState {
 }
 
 enum class ExperimentPhase {
-  Instructions,
-  Trial,
-  Break,
-  Complete,
-  Inactive,
-  Resize,
-  Loading;
+  Instructions, Trial, Break, Complete, Inactive, Resize, Loading;
 
   companion object {
 	fun determine(): ExperimentPhase {
@@ -117,8 +111,7 @@ abstract class ChangeEventDispatcher<T>(type: String? = null): EventDispatcher<T
 
 fun <T> EventTarget.listen(d: EventDispatcher<T>, op: (T)->Unit) {
   addEventListener(d.type, {
-	@Suppress("UNCHECKED_CAST")
-	op((it as CustomEvent).detail as T)
+	@Suppress("UNCHECKED_CAST") op((it as CustomEvent).detail as T)
   })
 }
 
@@ -149,8 +142,7 @@ interface Drawing {
 }
 
 class DrawingData(
-  override val imString: String,
-  override val imElement: HTMLImageElement
+  override val imString: String, override val imElement: HTMLImageElement
 ): Drawing {
 
   override val log = mutableListOf<Pair<Long, String>>()
@@ -163,46 +155,37 @@ class DrawingData(
 	get(
 	  DATA_FOLDER + "segment_data2" + "${imString}.json"
 	) { resp ->
-	  val segs = Json
-		.decodeFromString<Map<String, List<List<Boolean>>>>(resp)
-		.entries
-		.let {
-		  if (PARAMS.randomSegmentOrder) it.shuffled() else it
-		}.mapIndexed { index, entry ->
-		  val ims = (1..5).map {
-			(document.createElement("img") as HTMLImageElement).also {
-			  loadDiv.appendChild(it)
-			  it.hidden = true
-			  it.setOnLoad {
-				loadedIms++
-				runOpIfReady()
-			  }
+	  val segs = Json.decodeFromString<Map<String, List<List<Boolean>>>>(resp).entries.let {
+		if (PARAMS.randomSegmentOrder) it.shuffled() else it
+	  }.mapIndexed { index, entry ->
+		val ims = (1..5).map {
+		  (document.createElement("img") as HTMLImageElement).also {
+			loadDiv.appendChild(it)
+			it.hidden = true
+			it.setOnLoad {
+			  loadedIms++
+			  runOpIfReady()
 			}
 		  }
-		  val (highlightIm, selectIm, labelledIm, selectLabeledIm, hiLabeledIm) = ims
+		}
+		val (highlightIm, selectIm, labelledIm, selectLabeledIm, hiLabeledIm) = ims
 
-		  val segID = entry.key
+		val segID = entry.key
 
 
-		  val imFileName = Path("${imString}_L${segID}.png")
+		val imFileName = Path("${imString}_L${segID}.png")
 
-		  highlightIm.srcAsPath = DATA_FOLDER + "segment_highlighted" + imFileName
-		  selectIm.srcAsPath = DATA_FOLDER + "segment_selected" + imFileName
-		  labelledIm.srcAsPath = DATA_FOLDER + "segment_labelled" + imFileName
-		  selectLabeledIm.srcAsPath = DATA_FOLDER + "segment_selected_labeled" + imFileName
-		  hiLabeledIm.srcAsPath = DATA_FOLDER + "segment_hi_labeled" + imFileName
+		highlightIm.srcAsPath = DATA_FOLDER + "segment_highlighted" + imFileName
+		selectIm.srcAsPath = DATA_FOLDER + "segment_selected" + imFileName
+		labelledIm.srcAsPath = DATA_FOLDER + "segment_labelled" + imFileName
+		selectLabeledIm.srcAsPath = DATA_FOLDER + "segment_selected_labeled" + imFileName
+		hiLabeledIm.srcAsPath = DATA_FOLDER + "segment_hi_labeled" + imFileName
 
-		  Segment(
-			id = segID,
-			pixels = entry.value,
-			highlightIm = highlightIm,
-			selectIm = selectIm,
-			labelledIm = labelledIm,
-			selectLabeledIm = selectLabeledIm,
-			hiLabeledIm = hiLabeledIm,
-			cycleIndex = index
-		  )
-		}.sortedBy { it.cycleIndex }
+		Segment(
+		  id = segID, pixels = entry.value, highlightIm = highlightIm, selectIm = selectIm, labelledIm = labelledIm,
+		  selectLabeledIm = selectLabeledIm, hiLabeledIm = hiLabeledIm, cycleIndex = index
+		)
+	  }.sortedBy { it.cycleIndex }
 
 	  trial = DrawingTrial(segs, Loop(segs).iterator(), this)
 	  runOpIfReady()
@@ -214,6 +197,7 @@ class DrawingData(
 	imElement.setAttribute("src", "data/all/${imString}_All.png")
 
   }
+
 
   inner class Segment(
 	val id: String,
@@ -245,6 +229,10 @@ class DrawingData(
 	  hiLabeledIm.getPixels(w = WIDTH, h = HEIGHT)
 	}
 	val labelledCanvas = canvas()
+
+	operator fun contains(pi: PixelIndex): Boolean {
+	  return pixels[pi.y][pi.x]
+	}
   }
 
   val loadDiv = document.body!!.div {
@@ -279,10 +267,12 @@ class DrawingData(
 }
 
 class DrawingTrial(
-  val segments: List<Segment>,
-  val segCycle: ListIterator<Segment>,
-  dData: DrawingData
+  val segments: List<Segment>, val segCycle: ListIterator<Segment>, dData: DrawingData
 ): Drawing by dData {
+
+  fun segmentOf(pixelIndex: PixelIndex): Segment? {
+	return segments.firstOrNull { pixelIndex in it }
+  }
 
   val segmentsWithResponse get() = segments.filter { it.response != null }
   val completionFraction get() = "${segmentsWithResponse.size}/${segments.size}"
@@ -318,8 +308,8 @@ class DrawingTrial(
 	switchSegment(next = true, unlabelled = true)
   }
 
-  fun select(seg: Segment?) {
-	//	println("selecting $seg")
+  fun select(seg: Segment?) {    //	println("selecting $seg")
+	if (selectedSeg.value == seg) return
 	selectedSeg.value = seg
 	if (seg == null) {
 	  log.add(Date.now().toLong() to "unselected segment")
@@ -346,12 +336,10 @@ class DrawingTrial(
 
   fun hover(seg: Segment?) {
 	if (seg == hoveredSeg.value) return
-	//	console.log("hovered $seg")
 	hoveredSeg.value = seg
 	div.hoverCanvas.hidden = hoveredSeg.value == null
 	if (hoveredSeg.value != null) div.hoverCanvas.context2D.putImageData(
-	  if (seg!!.hasResponse) seg.hiLabeledPixels else seg.highlightPixels,
-	  0.0, 0.0
+	  if (seg!!.hasResponse) seg.hiLabeledPixels else seg.highlightPixels, 0.0, 0.0
 	)
   }
 
@@ -359,3 +347,12 @@ class DrawingTrial(
 
 }
 
+fun MouseEvent.pixelIndexIn(el: HTMLElement): PixelIndex? {
+  val e = this
+  val x = e.clientX - el.offsetLeft
+  val y = e.clientY - el.offsetTop
+  if (x < 0 || y < 0) return null
+  return PixelIndex(x = x, y = y)
+}
+
+data class PixelIndex(val x: Int, val y: Int)

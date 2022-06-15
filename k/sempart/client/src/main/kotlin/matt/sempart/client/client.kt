@@ -42,6 +42,7 @@ import matt.sempart.client.state.Participant.pid
 import matt.sempart.client.state.PhaseChange
 import matt.sempart.client.state.currentLeft
 import matt.sempart.client.state.onlyShowIn
+import matt.sempart.client.state.pixelIndexIn
 import matt.sempart.client.trialdiv.TrialDiv
 import matt.sempart.client.trialdiv.div
 import org.w3c.dom.HTMLButtonElement
@@ -152,42 +153,34 @@ fun main() = defaultMain {
 	  trialDiv = drawingTrial.div
 	  println("about to append $trialDiv")
 	  document.body!!.appendWrapper(trialDiv!!)
+	  //	  var lastEvent: Event? = null
+	  //	  var lastEventWorked: Event? = null
+	  //	  var lastSelectedSegWorked: Segment? = null
+	  fun eventToSeg(e: MouseEvent) = e.pixelIndexIn(trialDiv!!.mainCanvas)?.let { drawingTrial.segmentOf(it) }
+	  trialDiv!!.eventCanvasIDK.setOnMouseMove {
+		lastInteract = Date.now()
+		drawingTrial.hover(eventToSeg(it))
+	  }
+	  drawingTrial.selectedSeg.value = null
+	  drawingTrial.hoveredSeg.value = null
+	  trialDiv!!.selectCanvas.hidden = true
+	  trialDiv!!.hoverCanvas.hidden = true
 	  val imageInterval = loadingProcess.finishedLoadingScreen(
 		"processing image data"
 	  ) {
-		console.log("setting up handlers")
-		var lastEvent: Event? = null
-		var lastEventWorked: Event? = null
-		var lastSelectedSegWorked: Segment? = null
-		trialDiv!!.eventCanvasIDK.setOnMouseMove { lastEvent = it }
-		fun eventToSeg(e: MouseEvent): Segment? {
-		  val x = e.clientX - trialDiv!!.mainCanvas.offsetLeft
-		  val y = e.clientY - trialDiv!!.mainCanvas.offsetTop
-		  if (x < 0 || y < 0) return null
-		  return drawingTrial.segments.firstOrNull {
-			it.pixels[y][x]
-		  }
-		}
-		drawingTrial.selectedSeg.value = null
-		drawingTrial.hoveredSeg.value = null
-		trialDiv!!.eventCanvasIDK.setOnClick { e: Event ->
-		  println("canvas4.onclick")
+
+		trialDiv!!.eventCanvasIDK.setOnClick { e: MouseEvent ->
 		  lastInteract = Date.now()
-		  drawingTrial.selectedSeg.value = eventToSeg(e as MouseEvent)
+		  drawingTrial.select(eventToSeg(e))
 		}
-		trialDiv!!.selectCanvas.hidden = true
-		trialDiv!!.hoverCanvas.hidden = true
-		window.setInterval({
-		  if (lastEvent != lastEventWorked || lastSelectedSegWorked != drawingTrial.selectedSeg.value) {
-			lastInteract = Date.now()
-			lastSelectedSegWorked = drawingTrial.selectedSeg.value
-			drawingTrial.select(drawingTrial.selectedSeg.value)
-			if (lastEvent != lastEventWorked) {
-			  lastEventWorked = lastEvent
-			  drawingTrial.hover(eventToSeg(lastEvent as MouseEvent))
-			}
-		  }
-		}, 25)
+		//		window.setInterval({
+		//		  if (lastEvent != lastEventWorked || lastSelectedSegWorked != drawingTrial.selectedSeg.value) {
+		//			if (lastEvent != lastEventWorked) {
+		//			  lastEventWorked = lastEvent
+		//			  drawingTrial.hover(eventToSeg(lastEvent as MouseEvent))
+		//			}
+		//		  }
+		//		}, 25)
 	  }
 	  drawingTrial.log.add(Date.now().toLong() to "trial start")
 	  fun submit(f: ()->Unit) {
