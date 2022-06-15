@@ -1,7 +1,7 @@
 package matt.sempart.client.instructionsDiv
 
-import matt.kjs.css.Margin.auto
 import matt.kjs.css.TextAlign.center
+import matt.kjs.css.auto
 import matt.kjs.css.px
 import matt.kjs.css.sty
 import matt.kjs.elements.button

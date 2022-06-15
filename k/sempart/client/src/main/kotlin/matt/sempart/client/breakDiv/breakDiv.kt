@@ -1,8 +1,8 @@
 package matt.sempart.client.breakDiv
 
 import kotlinx.html.ButtonType
-import matt.kjs.css.Margin.auto
 import matt.kjs.css.TextAlign.center
+import matt.kjs.css.auto
 import matt.kjs.css.px
 import matt.kjs.css.sty
 import matt.kjs.elements.button
@@ -28,7 +28,7 @@ val breakDiv by lazy {
 		  type = ButtonType.button.realValue
 		  sty.margin = auto
 		  innerHTML = "Continue"
-		  setOnClick  {
+		  setOnClick {
 			ExperimentState.lastInteract = Date.now()
 			ExperimentState.onBreak = false
 		  }

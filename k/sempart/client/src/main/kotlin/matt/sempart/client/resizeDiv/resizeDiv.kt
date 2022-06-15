@@ -1,6 +1,6 @@
 package matt.sempart.client.resizeDiv
 
-import matt.kjs.css.Margin.auto
+import matt.kjs.css.auto
 import matt.kjs.css.sty
 import matt.kjs.elements.div
 import matt.kjs.elements.p
