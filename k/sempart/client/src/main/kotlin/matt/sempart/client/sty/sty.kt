@@ -1,6 +1,7 @@
 package matt.sempart.client.sty
 
 import kotlinx.css.Display
+import kotlinx.css.Display.block
 import matt.kjs.css.BorderStyle.solid
 import matt.kjs.css.BorderWidth.thin
 import matt.kjs.css.MyStyleDsl
@@ -10,6 +11,7 @@ fun MyStyleDsl.box() {
   borderStyle = solid
   borderWidth = thin
   margin = MED_SPACE
+  display = block
 }
 
 val SMALL_SPACE = 5.px
