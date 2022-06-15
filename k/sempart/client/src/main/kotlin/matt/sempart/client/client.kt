@@ -24,7 +24,6 @@ import matt.sempart.client.const.ORIG_DRAWING_IMS
 import matt.sempart.client.const.WIDTH
 import matt.sempart.client.params.PARAMS
 import matt.sempart.client.state.DrawingData
-import matt.sempart.client.state.DrawingData.Segment
 import matt.sempart.client.state.ExperimentPhase
 import matt.sempart.client.state.ExperimentPhase.Break
 import matt.sempart.client.state.ExperimentPhase.Complete
@@ -46,7 +45,6 @@ import matt.sempart.client.state.pixelIndexIn
 import matt.sempart.client.trialdiv.TrialDiv
 import matt.sempart.client.trialdiv.div
 import org.w3c.dom.HTMLButtonElement
-import org.w3c.dom.events.Event
 import org.w3c.dom.events.MouseEvent
 import kotlin.js.Date
 
@@ -204,7 +202,7 @@ fun main() = defaultMain {
 		  submit {
 			println("in submit op")
 			debugTic = Date.now()
-			window.clearInterval(imageInterval)
+//			window.clearInterval(imageInterval)
 			trialDiv!!.nextImageButton.disabled = true
 			imI++
 			println("imI is now $imI (images.size=${images.size})")
