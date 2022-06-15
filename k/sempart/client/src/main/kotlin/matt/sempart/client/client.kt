@@ -9,6 +9,7 @@ import matt.kjs.css.Color.white
 import matt.kjs.css.sty
 import matt.kjs.defaultMain
 import matt.kjs.elements.appendWrapper
+import matt.kjs.nextOrNull
 import matt.kjs.req.post
 import matt.sempart.ExperimentData
 import matt.sempart.client.breakDiv.breakDiv
@@ -21,13 +22,11 @@ import matt.sempart.client.loadingDiv.loadingDiv
 import matt.sempart.client.params.PARAMS
 import matt.sempart.client.resizeDiv.resizeDiv
 import matt.sempart.client.state.DrawingData
-import matt.sempart.client.state.ExperimentPhase
 import matt.sempart.client.state.ExperimentPhase.Break
 import matt.sempart.client.state.ExperimentState
 import matt.sempart.client.state.Participant
 import matt.sempart.client.state.PhaseChange
 import matt.sempart.client.trialdiv.div
-import kotlin.js.Date
 
 fun main() = defaultMain {
   document.head!!.title = "Semantic Segmentation"
@@ -46,20 +45,19 @@ fun main() = defaultMain {
 	val loadingProcess = DrawingLoadingProcess("downloading image data")
 	drawingData.whenReady {
 	  val trial = drawingData.trial!!
-	  val trialDiv = trial.div
-	  document.body!!.appendWrapper(trialDiv)
-	  trial.log.add(Date.now().toLong() to "trial start")
-	  val nextDrawingData = imIterator.takeIf { it.hasNext() }?.let { DrawingData(it.next()) }
-	  trialDiv.nextImageButton.onclick = trial.interaction("next image button clicked") {
+	  document.body!!.appendWrapper(trial.div)
+	  trial.log += "trial start"
+	  val nextDrawingData = imIterator.nextOrNull()?.let { DrawingData(it) }
+	  trial.div.nextImageButton.onclick = trial.interaction("next image button clicked") {
 		if (window.confirm("Are you sure you are ready to proceed? You cannot go back to this image.")) {
 		  trial.registerInteraction("submit confirmed")
-		  trialDiv.nextImageButton.disabled = true
+		  trial.div.nextImageButton.disabled = true
 		  trial.cleanup()
 		  post(
 			Path("send?PROLIFIC_PID=${Participant.pid}"),
 			ExperimentData(
-			  responses = trial.segments.associate { it.id to it.response!! },            /*"image" to im,*/
-			  trialLog = trial.log
+			  responses = trial.segments.associate { it.id to it.response!! },
+			  trialLog = trial.log.get()
 			)
 		  ) {
 			if (nextDrawingData != null) {
@@ -77,10 +75,6 @@ fun main() = defaultMain {
 	}
   }
   presentImage(DrawingData(imIterator.next()))
-
-  window.addEventListener("resize", {
-	PhaseChange.dispatchToAllHTML(ExperimentPhase.determine().let { it to it })
-  })
 }
 
 

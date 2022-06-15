@@ -109,6 +109,13 @@ enum class ExperimentPhase {
 	  }
 	  return phase
 	}
+
+	init {
+	  window.addEventListener("resize", {
+		PhaseChange.dispatchToAllHTML(determine().let { it to it })
+	  })
+	}
+
   }
 
 }
@@ -193,9 +200,19 @@ fun currentLeft() = (window.innerWidth/2) - HALF_WIDTH
 //  }
 //}
 
+class TrialLog(
+  private val log: MutableList<Pair<Long, String>> = mutableListOf()
+) {
+  fun get() = log.toList()
+  operator fun plusAssign(s: String) {
+	log.add(Date.now().toLong() to s)
+  }
+}
+
+
 interface Drawing {
   val imString: String
-  val log: MutableList<Pair<Long, String>>
+  val log: TrialLog
   fun cleanup()
 }
 
@@ -211,7 +228,7 @@ class DrawingData(
 
   override val imString = indexedIm.value
   val idx = indexedIm.index
-  override val log = mutableListOf<Pair<Long, String>>()
+  override val log = TrialLog()
   var loadedImage = false
   var loadedIms = 0
   var finishedProcessesingResp = false
@@ -341,7 +358,7 @@ class DrawingTrial(
   fun registerInteraction(logMessage: String) {
 	ExperimentState.lastInteract = Date.now()
 	println(logMessage)
-	log.add(Date.now().toLong() to logMessage)
+	log += logMessage
   }
 
   fun <E: Event> interaction(logMessage: String, op: (E)->Unit): (E)->Unit = {
@@ -391,10 +408,10 @@ class DrawingTrial(
 	if (selectedSeg.value == seg) return
 	selectedSeg.value = seg
 	if (seg == null) {
-	  log.add(Date.now().toLong() to "unselected segment")
+	  log += "unselected $seg"
 	  div.selectCanvas.hidden = true
 	} else {
-	  log.add(Date.now().toLong() to "selected $seg")
+	  log += "selected $seg"
 	  if (seg.hasResponse) {
 		seg.showAsLabeled()
 		allButtons.forEach { bb ->
