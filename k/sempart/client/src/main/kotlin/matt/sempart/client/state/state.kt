@@ -381,6 +381,8 @@ class DrawingTrial(
 
   val segmentsWithResponse get() = segments.filter { it.hasResponse }
   val completionFraction get() = "${segmentsWithResponse.size}/${segments.size}"
+
+  val finishedProp = BindableProperty<Boolean>(false)
   val isFinished get() = segments.all { it.response != null }
   val isNotFinished get() = !isFinished
   var selectedSeg = BindableProperty<Segment?>(null)

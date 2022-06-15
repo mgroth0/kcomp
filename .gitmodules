@@ -55,3 +55,6 @@
 [submodule "k/kjs"]
 	path = k/kjs
 	url = https://github.com/mgroth0/kjs
+[submodule "k/klib"]
+	path = k/klib
+	url = https://github.com/mgroth0/klib
