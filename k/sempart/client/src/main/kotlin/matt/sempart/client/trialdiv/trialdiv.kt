@@ -31,7 +31,6 @@ import matt.sempart.client.state.ExperimentState
 import matt.sempart.client.state.currentLeftProp
 import matt.sempart.client.state.onlyShowIn
 import matt.sempart.client.state.pixelIndexIn
-import matt.sempart.client.sty.MED_SPACE
 import matt.sempart.client.sty.box
 import matt.sempart.client.sty.boxButton
 import org.w3c.dom.HTMLButtonElement
@@ -136,7 +135,6 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	hiddenProperty().bind(selectedSeg.isNull())
 	sty {
 	  box()
-	  marginBottom = MED_SPACE
 	}
 	(LABELS.shuffled() + "Something else" + "I don't know").forEach { l ->
 
@@ -171,7 +169,6 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 		  }
 		}
 	  })
-	  //	  br
 	}
   }
 
@@ -196,12 +193,6 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	}
   }
 
-  init {
-	regularNextSegButtonBox.br {
-	  id = "previousSegmentButtonBR"
-	}
-  }
-
   val nextSegmentButton = regularNextSegButtonBox.button {
 	type = ButtonType.button.realValue
 	sty.boxButton()
@@ -213,12 +204,6 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	  disabled = true
 	  switchSegment(next = true, unlabelled = false)
 	  disabled = false
-	}
-  }
-
-  init {
-	regularNextSegButtonBox.br {
-	  id = "nextSegmentButtonBR"
 	}
   }
 

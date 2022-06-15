@@ -9,6 +9,7 @@ import matt.kjs.css.px
 fun MyStyleDsl.box() {
   borderStyle = solid
   borderWidth = thin
+  margin = MED_SPACE
 }
 
 val SMALL_SPACE = 5.px
