@@ -3,6 +3,7 @@ package matt.sempart.client.instructionsDiv.instructionsVid
 import matt.kjs.css.Margin.auto
 import matt.kjs.css.TextAlign.center
 import matt.kjs.css.sty
+import matt.kjs.elements.br
 import matt.kjs.elements.button
 import matt.kjs.elements.div
 import matt.kjs.elements.source
@@ -25,6 +26,8 @@ val instructionsVidDiv by lazy {
 		type = "video/mp4"
 	  }
 	}
+
+	br
 
 	button {
 	  sty.margin = auto
