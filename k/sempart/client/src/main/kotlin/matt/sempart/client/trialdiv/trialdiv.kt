@@ -141,6 +141,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	hiddenProperty().bind(selectedSeg.isNull())
 	sty {
 	  box()
+	  this.leftProperty()
 	}
 	(LABELS.shuffled() + "Something else" + "I don't know").forEach { l ->
 	  button {
