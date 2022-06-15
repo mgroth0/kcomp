@@ -39,7 +39,7 @@ import matt.sempart.client.trialdiv.div
 
 fun main() = defaultMain {
   document.head!!.title = "Semantic Segmentation"
-  val headStyle = document.head!!.append.style {}
+  val bodyStyleElement = document.body!!.append.style {}
   document.body!!.sty {
 	background = black
 	color = white
@@ -60,7 +60,7 @@ fun main() = defaultMain {
 		left = 10.percent
 	  }
 	  oninput = {
-		headStyle.innerHTML = ".mainDiv {transform: scale(${value});}"
+		bodyStyleElement.innerHTML = ".mainDiv {transform: scale(${value});}"
 		//		divs.forEach {
 		//
 		////		  it.sty.transform = "scale(${value})"
