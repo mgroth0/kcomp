@@ -25,6 +25,7 @@ import matt.kjs.img.getPixels
 import matt.kjs.img.put
 import matt.kjs.prop.BindableProperty
 import matt.kjs.prop.ReadOnlyBindableProperty
+import matt.kjs.prop.VarProp
 import matt.kjs.req.get
 import matt.kjs.setOnLoad
 import matt.kjs.srcAsPath
@@ -37,6 +38,10 @@ import matt.sempart.client.params.PARAMS
 import matt.sempart.client.state.DrawingData.Segment
 import matt.sempart.client.state.ExperimentPhase.Companion.currentPhase
 import matt.sempart.client.state.ExperimentState.working
+import matt.sempart.client.state.TrialPhase.FINISHED
+import matt.sempart.client.state.TrialPhase.SELECTED_LABELLED
+import matt.sempart.client.state.TrialPhase.SELECTED_UNLABELLED
+import matt.sempart.client.state.TrialPhase.UNSELECTED
 import matt.sempart.client.trialdiv.div
 import org.w3c.dom.CustomEvent
 import org.w3c.dom.CustomEventInit
@@ -132,6 +137,13 @@ enum class ExperimentPhase {
 
   }
 
+}
+
+enum class TrialPhase {
+  UNSELECTED,
+  SELECTED_UNLABELLED,
+  SELECTED_LABELLED,
+  FINISHED
 }
 
 abstract class EventDispatcher<T>(type: String? = null) {
@@ -371,6 +383,9 @@ class DrawingTrial(
   val segments: List<Segment>, val segCycle: ListIterator<Segment>, dData: DrawingData
 ): Drawing by dData {
 
+  val phaseProp = VarProp(UNSELECTED)
+  var phase by phaseProp
+
   fun registerInteraction(logMessage: String) {
 	ExperimentState.lastInteract = Date.now()
 	println(logMessage)
@@ -395,7 +410,11 @@ class DrawingTrial(
   val segmentsWithResponse get() = segments.filter { it.hasResponse }
   val completionFraction get() = "${segmentsWithResponse.size}/${segments.size}"
 
-  val finishedProp = segments.map { it.hasResponseProp }.reduce { r1, r2 -> r1.and(r2) }
+  val finishedProp = segments.map { it.hasResponseProp }.reduce { r1, r2 -> r1.and(r2) }.apply {
+	onChange {
+	  if (it) phase = FINISHED
+	}
+  }
   val isFinished get() = finishedProp.value
   val isNotFinished get() = !isFinished
   var selectedSeg = BindableProperty<Segment?>(null)
@@ -429,10 +448,17 @@ class DrawingTrial(
 	if (selectedSeg.value == seg) return
 	registerInteraction("selected $seg")
 	selectedSeg.value = seg
-	if (seg == null) div.selectCanvas.hidden = true
-	else {
-	  if (seg.hasResponse) seg.showAsLabeled()
-	  else div.selectCanvas.put(seg.selectPixels)
+	if (seg == null) {
+	  div.selectCanvas.hidden = true
+	  if (isNotFinished) phase = UNSELECTED
+	} else {
+	  if (seg.hasResponse) {
+		seg.showAsLabeled()
+		if (isNotFinished) phase = SELECTED_LABELLED
+	  } else {
+		div.selectCanvas.put(seg.selectPixels)
+		if (isNotFinished) phase = SELECTED_UNLABELLED
+	  }
 	  div.selectCanvas.hidden = false
 	}
   }

@@ -20,6 +20,7 @@ import matt.kjs.img.context2D
 import matt.kjs.pixelIndexIn
 import matt.kjs.props.disabledProperty
 import matt.kjs.props.hiddenProperty
+import matt.kjs.props.innerHTMLProperty
 import matt.kjs.setOnMouseMove
 import matt.klib.dmap.withStoringDefault
 import matt.sempart.client.const.HEIGHT
@@ -31,12 +32,17 @@ import matt.sempart.client.state.DrawingData.Segment
 import matt.sempart.client.state.DrawingTrial
 import matt.sempart.client.state.ExperimentPhase.Trial
 import matt.sempart.client.state.ExperimentState
+import matt.sempart.client.state.TrialPhase.FINISHED
+import matt.sempart.client.state.TrialPhase.SELECTED_LABELLED
+import matt.sempart.client.state.TrialPhase.SELECTED_UNLABELLED
+import matt.sempart.client.state.TrialPhase.UNSELECTED
 import matt.sempart.client.state.UI
 import matt.sempart.client.state.currentLeftProp
 import matt.sempart.client.state.onlyShowIn
 import matt.sempart.client.sty.MED_SPACE
 import matt.sempart.client.sty.box
 import matt.sempart.client.sty.boxButton
+import matt.sempart.client.ui.boxButton
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLDivElement
@@ -143,13 +149,10 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	  box()
 	}
 	(LABELS.shuffled() + "Something else" + "I don't know").forEach { l ->
-	  button {
+	  boxButton {
 		disabledProperty().bind(UI.disabledProp orDebug selectedSegResponse.eq(l))
 		innerHTML = l
-		sty {
-		  boxButton()
-		  fontStyle = italic
-		}
+		sty.fontStyle = italic
 		onclick = interaction("selected label: $l") {
 		  selectedSeg.value!!.labelledCanvas.hidden = false
 		  val hadNoResponse = selectedSeg.value!!.hasNoResponse
@@ -172,20 +175,16 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	hidden = PARAMS.removeNpButtonsKeepUnlabelledNpButtons
   }
 
-  val previousSegmentButton = regularNextSegButtonBox.button {
+  val previousSegmentButton = regularNextSegButtonBox.boxButton {
 	disabledProperty().bind(UI.disabledProp)
-	type = ButtonType.button.realValue
-	sty.boxButton()
 	innerHTML = "Previous Segment"
 	onclick = interaction("previousSegmentButton clicked", disableUI = true) {
 	  switchSegment(next = false, unlabelled = false)
 	}
   }
 
-  val nextSegmentButton = regularNextSegButtonBox.button {
+  val nextSegmentButton = regularNextSegButtonBox.boxButton {
 	disabledProperty().bind(UI.disabledProp)
-	type = ButtonType.button.realValue
-	sty.boxButton()
 	innerHTML = "Next Segment"
 	onclick = interaction("nextSegmentButton.onclick", disableUI = true) {
 	  switchSegment(next = true, unlabelled = false)
@@ -194,10 +193,8 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 
   private val unlabelledString = if (PARAMS.removeNpButtonsKeepUnlabelledNpButtons) "" else " Unlabeled"
 
-  val previousUnlabeledSegmentButton = buttonsDiv.button {
-	disabledProperty().bind(UI.disabledProp.or(finishedProp))
-	type = ButtonType.button.realValue
-	sty.boxButton()
+  val previousUnlabeledSegmentButton = buttonsDiv.boxButton {
+	disabledProperty().bind(UI.disabledProp or finishedProp)
 	innerHTML = "Previous$unlabelledString Segment"
 	onclick = interaction("previous unlabeled segment button clicked", disableUI = true) {
 	  switchSegment(next = false, unlabelled = true)
@@ -205,10 +202,8 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
   }
 
 
-  val nextUnlabeledSegmentButton = buttonsDiv.button {
+  val nextUnlabeledSegmentButton = buttonsDiv.boxButton {
 	disabledProperty().bind(UI.disabledProp.or(finishedProp))
-	type = ButtonType.button.realValue
-	sty.boxButton()
 	innerHTML = "Next$unlabelledString Segment"
 	onclick = interaction("next unlabeled segment button clicked", disableUI = true) {
 	  switchSegment(next = true, unlabelled = true)
@@ -227,6 +222,17 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	  boxButton()
 	  innerHTML = "Submit Responses and Show Next Image"
 	}
+  }
+
+  val helpText = controlsDiv.p {
+	innerHTMLProperty().bind(phaseProp.binding {
+	  when (it) {
+		UNSELECTED          -> "UNSELECTED"
+		SELECTED_UNLABELLED -> "SELECTED_UNLABELLED"
+		SELECTED_LABELLED   -> "SELECTED_LABELLED"
+		FINISHED            -> "FINISHED"
+	  }
+	})
   }
 
 }
