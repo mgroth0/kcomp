@@ -43,11 +43,11 @@ fun main() = defaultMain {
   document.body!!.appendChilds(
 	input {
 	  type = "range"
+	  step = "0.01"
 	  min = "0.5"
 	  defaultValue = "1.0"
 	  value = "1"
 	  max = "1.5"
-	  step = "0.01"
 	  sty {
 		width = 80.percent
 	  }
