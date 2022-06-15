@@ -1,7 +1,6 @@
 package matt.sempart.client
 
 import kotlinx.browser.document
-import kotlinx.css.map
 import kotlinx.html.dom.append
 import kotlinx.html.js.style
 import matt.kjs.Path
@@ -69,7 +68,7 @@ fun main() = defaultMain {
 		position = absolute
 		left = 10.percent
 		top = 10.percent
-		transform = ""
+//		transform = Tra
 	  }
 	  oninput = {
 		//		headStyleElement.innerHTML = ".$mainDivClass {transform: scale(${value});}"
