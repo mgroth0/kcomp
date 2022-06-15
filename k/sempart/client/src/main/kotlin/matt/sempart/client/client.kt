@@ -106,7 +106,7 @@ fun main() = defaultMain {
   }
 
   fun LoadingProcess.finishLoadingScreen() {
-	working = false
+	working = falseZ
 	finish()
   }
 
@@ -159,6 +159,7 @@ fun main() = defaultMain {
 	  drawingTrial.log.add(Date.now().toLong() to "trial start")
 	  fun submit(f: ()->Unit) {
 		drawingTrial.log.add(Date.now().toLong() to "submit")
+		drawingTrial.cleanup()
 		post(
 		  Path("send?PROLIFIC_PID=$pid"), ExperimentData(
 			responses = drawingTrial.segments.associate { it.id to it.response!! },            /*"image" to im,*/
