@@ -148,7 +148,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 		}
 		setOnClick {
 		  ExperimentState.lastInteract = Date.now()
-		  log.add(Date.now().toLong() to "selected label: $l")
+		  log += "selected label: $l"
 
 		  println("getting labelledCanvas of $selectedSeg")
 		  selectedSeg.value!!.labelledCanvas.hidden = false
