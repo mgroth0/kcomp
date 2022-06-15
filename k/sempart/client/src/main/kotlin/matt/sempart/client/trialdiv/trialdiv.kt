@@ -101,10 +101,12 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	onclick = interaction("click") {
 	  select(eventToSeg(it))
 	}
+  }
 
+  init {
 	segments.forEach { theSeg: Segment ->
 	  val zIdx = theSeg.cycleIndex + 1
-	  insertBefore(
+	  stackDiv.insertBefore(
 		theSeg.labelledCanvas.apply {
 		  width = WIDTH
 		  height = HEIGHT
@@ -116,11 +118,10 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 			leftProperty().bind(currentLeftProp)
 		  }
 		  context2D.drawImage(theSeg.labelledIm, 0.0, 0.0)
-		}, children[zIdx]
+		}, stackDiv.children[zIdx]
 	  )
 	}
   }
-
 
   val controlsDiv: HTMLDivElement = element.div {
 	sty {
