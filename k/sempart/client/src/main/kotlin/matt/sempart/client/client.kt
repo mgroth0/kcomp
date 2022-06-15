@@ -5,6 +5,7 @@ import matt.kjs.Path
 import matt.kjs.appendChilds
 import matt.kjs.css.Color.black
 import matt.kjs.css.Color.white
+import matt.kjs.css.percent
 import matt.kjs.css.sty
 import matt.kjs.defaultMain
 import matt.kjs.elements.appendWrapper
@@ -44,9 +45,12 @@ fun main() = defaultMain {
 	instructionsDiv, resizeDiv, loadingDiv, completeDiv, breakDiv, inactiveDiv,
 	input {
 	  type = "range"
-	  min = "0.1"
-	  max = "10.0"
+	  min = "0.5"
+	  max = "2.0"
 	  value = "1.0"
+	  sty {
+		width = 80.percent
+	  }
 	  oninput = {
 		document.body!!.sty["transform"] = "scale(${value})"
 		Unit
