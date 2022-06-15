@@ -2,6 +2,7 @@ package matt.sempart.client.instructionsDiv.instructionsVid
 
 import matt.kjs.css.Position.absolute
 import matt.kjs.css.TextAlign.center
+import matt.kjs.css.Transform
 import matt.kjs.css.auto
 import matt.kjs.css.percent
 import matt.kjs.css.sty
@@ -28,7 +29,9 @@ val instructionsVidDiv by lazy {
 	  position = absolute
 	  top = 50.percent
 	  left = 50.percent
-	  transform = "translate(-50%,-50%)"
+	  transform = Transform().apply {
+		map["translate"] = listOf("-50%", "-50%")
+	  }
 	}
 	val vid = video {
 	  source {
