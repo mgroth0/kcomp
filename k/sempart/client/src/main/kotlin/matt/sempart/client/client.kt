@@ -5,6 +5,7 @@ import matt.kjs.Path
 import matt.kjs.appendChilds
 import matt.kjs.css.Color.black
 import matt.kjs.css.Color.white
+import matt.kjs.css.Position.absolute
 import matt.kjs.css.percent
 import matt.kjs.css.sty
 import matt.kjs.defaultMain
@@ -50,6 +51,7 @@ fun main() = defaultMain {
 	  max = "1.5"
 	  sty {
 		width = 80.percent
+		position = absolute
 		left = 10.percent
 	  }
 	  oninput = {
