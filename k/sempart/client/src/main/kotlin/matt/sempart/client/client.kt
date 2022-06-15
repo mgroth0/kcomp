@@ -146,7 +146,7 @@ fun main() = defaultMain {
   fun presentImage(im: String) {
 	val drawingData = preloadedDrawingData ?: DrawingData(im, theImg)
 	val loadingProcess = startLoadingScreen("downloading image data")
-	drawingData.setOnReady {
+	drawingData.whenReady {
 	  val drawingTrial = drawingData.trial!!
 	  trialDiv?.remove()
 	  trialDiv = drawingTrial.div

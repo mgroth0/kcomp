@@ -256,9 +256,13 @@ class DrawingData(
   private var ranOp = false
   private fun ready() = loadedImage && trial != null && this.loadedIms == trial!!.segments.size*5
   private var onReadyOp: (()->Unit)? = null
-  fun setOnReady(op: ()->Unit) {
+  fun whenReady(op: ()->Unit) {
 	require(onReadyOp == null)
 	onReadyOp = op
+	if (ready()) {
+	  ranOp = true
+	  op()
+	}
   }
 
   private fun runOpIfReady() {
