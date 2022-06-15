@@ -18,7 +18,7 @@ import matt.sempart.client.state.onlyShowIn
 
 val instructionsVidDiv by lazy {
   div {
-	classList.add("mainDiv")
+	classList.add(mainDivClass)
 	onlyShowIn(InstructionsVid)
 	sty.textAlign = center
 

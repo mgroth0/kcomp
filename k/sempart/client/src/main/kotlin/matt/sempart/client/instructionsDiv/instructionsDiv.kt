@@ -17,7 +17,7 @@ import matt.sempart.client.state.onlyShowIn
 
 val instructionsDiv by lazy {
   div {
-	classList.add("mainDiv")
+	classList.add(mainDivClass)
 	onlyShowIn(Instructions)
 	sty.textAlign = center
 	img {

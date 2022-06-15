@@ -17,7 +17,7 @@ import kotlin.js.Date
 
 val breakDiv by lazy {
   div {
-	classList.add("mainDiv")
+	classList.add(mainDivClass)
 	onlyShowIn(Break)
 	sty.textAlign = center
 	p {
