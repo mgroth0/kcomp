@@ -1,6 +1,7 @@
 package matt.sempart.client
 
 import kotlinx.browser.document
+import kotlinx.css.map
 import kotlinx.html.dom.append
 import kotlinx.html.js.style
 import matt.kjs.Path
@@ -79,8 +80,13 @@ fun main() = defaultMain {
 		//		document.body!!.sty.transform = "scale(${value})"
 		divs.forEach {
 		  when (it) {
-			is HTMLElement           -> it.sty.transform = "scale(${value})"
-			is HTMLElementWrapper<*> -> it.element.sty.transform = "scale(${value})"
+			is HTMLElement           -> it.sty.transform = it.sty.transform.apply {
+			  map["scale"] = listOf(value)
+			}
+
+			is HTMLElementWrapper<*> -> it.element.sty.transform = it.element.sty.transform.apply {
+			  map["scale"] = listOf(value)
+			}
 		  }
 		}
 		Unit
