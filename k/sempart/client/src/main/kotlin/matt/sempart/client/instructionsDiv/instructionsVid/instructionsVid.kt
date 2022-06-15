@@ -12,6 +12,7 @@ import matt.kjs.elements.source
 import matt.kjs.elements.video
 import matt.kjs.setOnClick
 import matt.sempart.client.const.INSTRUCTIONS_VID_WOLFRAM
+import matt.sempart.client.mainDivClass
 import matt.sempart.client.state.ExperimentPhase.InstructionsVid
 import matt.sempart.client.state.ExperimentState
 import matt.sempart.client.state.onlyShowIn

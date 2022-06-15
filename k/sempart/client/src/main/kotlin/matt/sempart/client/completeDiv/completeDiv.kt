@@ -1,6 +1,7 @@
 package matt.sempart.client.completeDiv
 
 import matt.kjs.elements.div
+import matt.sempart.client.mainDivClass
 import matt.sempart.client.state.ExperimentPhase.Complete
 import matt.sempart.client.state.onlyShowIn
 
