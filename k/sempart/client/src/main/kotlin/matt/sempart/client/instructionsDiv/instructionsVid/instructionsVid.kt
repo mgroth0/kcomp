@@ -21,6 +21,13 @@ val instructionsVidDiv by lazy {
 	onlyShowIn(InstructionsVid)
 	sty.textAlign = center
 
+	/*https://stackoverflow.com/a/31029494/6596010*/
+	sty {
+	  position = absolute
+	  top = 50.percent
+	  left = 50.percent
+	  transform = "translate(-50%,-50%)"
+	}
 
 	val vid = video {
 	  source {
@@ -44,13 +51,7 @@ val instructionsVidDiv by lazy {
 	  sty.margin = auto
 
 
-	  /*https://stackoverflow.com/a/31029494/6596010*/
-	  sty {
-		position = absolute
-		top = 50.percent
-		left = 50.percent
-		transform = "translate(-50%,-50%)"
-	  }
+
 
 
 
@@ -59,5 +60,8 @@ val instructionsVidDiv by lazy {
 	  innerHTML = "Click here when ready to move on"
 	  setOnClick { ExperimentState.finishedVid = true }
 	}
+
+
+
   }
 }
