@@ -11,6 +11,7 @@ import matt.kjs.css.Position.absolute
 import matt.kjs.css.percent
 import matt.kjs.css.sty
 import matt.kjs.defaultMain
+import matt.kjs.elements.HTMLElementWrapper
 import matt.kjs.elements.appendWrapper
 import matt.kjs.elements.input
 import matt.kjs.ifConfirm
@@ -36,6 +37,7 @@ import matt.sempart.client.state.ExperimentState
 import matt.sempart.client.state.Participant
 import matt.sempart.client.state.PhaseChange
 import matt.sempart.client.trialdiv.div
+import org.w3c.dom.HTMLElement
 
 val mainDivClass = "maindiv"
 
@@ -51,6 +53,7 @@ fun main() = defaultMain {
 	color = white
   }
 
+  val divs = listOf(instructionsVidDiv, instructionsDiv, resizeDiv, loadingDiv, completeDiv, breakDiv, inactiveDiv)
 
   document.body!!.appendChilds(
 	input {
@@ -73,11 +76,17 @@ fun main() = defaultMain {
 		//
 		////		  it.sty.transform = "scale(${value})"
 		//		}
-		document.body!!.sty.transform = "scale(${value})"
+		//		document.body!!.sty.transform = "scale(${value})"
+		divs.forEach {
+		  when (it) {
+			is HTMLElement           -> it.sty.transform = "scale(${value})"
+			is HTMLElementWrapper<*> -> it.element.sty.transform = "scale(${value})"
+		  }
+		}
 		Unit
 	  }
 	},
-	instructionsVidDiv, instructionsDiv, resizeDiv, loadingDiv, completeDiv, breakDiv, inactiveDiv
+	*divs.toTypedArray()
   )
 
   val images = listOf(TRAIN_IM) + ORIG_DRAWING_IMS.shuffled()
