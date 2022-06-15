@@ -40,7 +40,6 @@ import matt.sempart.client.state.ExperimentState.working
 import matt.sempart.client.trialdiv.div
 import org.w3c.dom.CustomEvent
 import org.w3c.dom.CustomEventInit
-import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLImageElement
 import org.w3c.dom.events.Event
@@ -406,8 +405,6 @@ class DrawingTrial(
   var hoveredSeg = BindableProperty<Segment?>(null)
 
   override fun toString() = "${this::class.simpleName} for $imString"
-
-  val allButtons = mutableListOf<HTMLButtonElement>()
 
   fun Segment.showAsLabeled() = div.selectCanvas.put(selectLabeledPixels)
 

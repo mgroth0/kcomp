@@ -145,8 +145,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	  box()
 	}
 	(LABELS.shuffled() + "Something else" + "I don't know").forEach { l ->
-
-	  allButtons.add(button {
+	  button {
 		disabledProperty().bind(UI.disabledProp orDebug selectedSegResponse.eq(l))
 		innerHTML = l
 		sty {
@@ -163,7 +162,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 			nextSeg()
 		  }
 		}
-	  })
+	  }
 	}
   }
 
