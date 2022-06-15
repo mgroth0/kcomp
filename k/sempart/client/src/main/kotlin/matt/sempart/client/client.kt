@@ -64,9 +64,10 @@ fun main() = defaultMain {
 		width = 80.percent
 		position = absolute
 		left = 10.percent
+		transform = ""
 	  }
 	  oninput = {
-//		headStyleElement.innerHTML = ".$mainDivClass {transform: scale(${value});}"
+		//		headStyleElement.innerHTML = ".$mainDivClass {transform: scale(${value});}"
 		//		divs.forEach {
 		//
 		////		  it.sty.transform = "scale(${value})"
