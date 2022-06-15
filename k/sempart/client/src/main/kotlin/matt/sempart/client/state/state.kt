@@ -7,6 +7,7 @@ import kotlinx.serialization.json.Json
 import matt.kjs.Loop
 import matt.kjs.Path
 import matt.kjs.allHTMLElementsRecursive
+import matt.kjs.elements.AwesomeElement
 import matt.kjs.elements.canvas
 import matt.kjs.elements.div
 import matt.kjs.every
@@ -46,6 +47,7 @@ object Participant {
 object ExperimentState {
   var lastInteract = Date.now().apply {
 	/*only way to check for lastInteract I think*/
+	/*I could also check every time lastInteract changes, but that could be even more expensive because of mouse moves?*/
 	every(PARAMS.idleCheckPeriodMS.milliseconds) {
 	  PhaseChange.dispatchToAllHTML(ExperimentPhase.determine())
 	}
@@ -94,11 +96,22 @@ enum class ExperimentPhase {
 
 abstract class EventDispatcher<T>(type: String? = null) {
   val type: String = type ?: this::class.simpleName!!
-  fun dispatchToAllHTML(t: T) {
+  open fun dispatchToAllHTML(t: T) {
 	val e = CustomEvent(type, object: CustomEventInit {
 	  override var detail: Any? = t
 	})
 	document.allHTMLElementsRecursive().forEach { it.dispatchEvent(e) }
+  }
+}
+
+abstract class ChangeEventDispatcher<T>(type: String? = null): EventDispatcher<T>(type) {
+  private var didFirstDispatch = false
+  private var lastDispatch: T? = null
+  override fun dispatchToAllHTML(t: T) {
+	if (!didFirstDispatch || t != lastDispatch) {
+	  lastDispatch = t
+	  super.dispatchToAllHTML(t)
+	}
   }
 }
 
@@ -109,9 +122,10 @@ fun <T> EventTarget.listen(d: EventDispatcher<T>, op: (T)->Unit) {
   })
 }
 
-object PhaseChange: EventDispatcher<ExperimentPhase>()
-object MyResizeLeft: EventDispatcher<Int>()
+object PhaseChange: ChangeEventDispatcher<ExperimentPhase>()
+object MyResizeLeft: ChangeEventDispatcher<Int>()
 
+fun AwesomeElement<*>.onlyShowIn(phase: ExperimentPhase) = element.onlyShowIn(phase)
 fun HTMLElement.onlyShowIn(phase: ExperimentPhase) {
   hidden = ExperimentPhase.determine() != phase
   listen(PhaseChange) {
@@ -131,7 +145,6 @@ interface Drawing {
   val imString: String
   val imElement: HTMLImageElement
   val log: MutableList<Pair<Long, String>>
-  fun ready(): Boolean
   fun cleanup()
 }
 
@@ -160,7 +173,10 @@ class DrawingData(
 			(document.createElement("img") as HTMLImageElement).also {
 			  loadDiv.appendChild(it)
 			  it.hidden = true
-			  it.setOnLoad { loadedIms++ }
+			  it.setOnLoad {
+				loadedIms++
+				runOpIfReady()
+			  }
 			}
 		  }
 		  val (highlightIm, selectIm, labelledIm, selectLabeledIm, hiLabeledIm) = ims
@@ -189,11 +205,14 @@ class DrawingData(
 		}.sortedBy { it.cycleIndex }
 
 	  trial = DrawingTrial(segs, Loop(segs).iterator(), this)
+	  runOpIfReady()
 	}
 	imElement.setOnLoad {
 	  loadedImage = true
+	  runOpIfReady()
 	}
 	imElement.setAttribute("src", "data/all/${imString}_All.png")
+
   }
 
   inner class Segment(
@@ -234,7 +253,22 @@ class DrawingData(
 	hidden = true
   }
 
-  override fun ready() = loadedImage && trial != null && this.loadedIms == trial!!.segments.size*5
+  private var ranOp = false
+  private fun ready() = loadedImage && trial != null && this.loadedIms == trial!!.segments.size*5
+  private var onReadyOp: (()->Unit)? = null
+  fun setOnReady(op: ()->Unit) {
+	require(onReadyOp == null)
+	onReadyOp = op
+  }
+
+  private fun runOpIfReady() {
+	require(!ranOp)
+	if (ready()) {
+	  ranOp = true
+	  onReadyOp?.invoke()
+	}
+  }
+
   override fun cleanup() = loadDiv.remove()
 
 

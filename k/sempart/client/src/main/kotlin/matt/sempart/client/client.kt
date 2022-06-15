@@ -13,7 +13,9 @@ import matt.kjs.elements.appendWrapper
 import matt.kjs.elements.button
 import matt.kjs.elements.div
 import matt.kjs.elements.img
+import matt.kjs.elements.loadingText
 import matt.kjs.elements.p
+import matt.kjs.node.LoadingProcess
 import matt.kjs.req.post
 import matt.kjs.setOnClick
 import matt.kjs.setOnMouseMove
@@ -55,7 +57,6 @@ fun main() = defaultMain {
 	background = "black"
 	color = "white"
   }
-
   document.body!!.div {
 	onlyShowIn(Instructions)
 	sty.textAlign = center
@@ -80,10 +81,8 @@ fun main() = defaultMain {
 	  setOnClick { begun = true }
 	}
   }
-
   val theImg = document.body!!.img { hidden = true }
   var trialDiv: TrialDiv? = null
-
   document.body!!.div {
 	onlyShowIn(Resize)
 	p {
@@ -92,10 +91,26 @@ fun main() = defaultMain {
 		"Your window is too small. Please enlarge the browser window so it is at least matt.sempart.client.const.getWidth=900 by matt.sempart.client.const.getHeight=750."
 	}
   }
-
-  val loadingDiv = document.body!!.div {
+  val loadingDiv = document.body!!.loadingText("Loading") {
 	onlyShowIn(Loading)
-	innerHTML = "Loading"
+  }
+
+  fun <R> inLoadingScreen(desc: String, op: ()->R): R = loadingDiv.withLoadingMessage(desc) {
+	working = true
+	val r = op()
+	working = false
+	r
+  }
+
+  fun startLoadingScreen(desc: String): LoadingProcess {
+	working = true
+	return LoadingProcess(loadingDiv, desc).apply { start() }
+  }
+
+  fun <R> LoadingProcess.finishedLoadingScreen(desc: String? = null, op: ()->R): R {
+	val r = finish(desc) { op() }
+	working = false
+	return r
   }
 
   document.body!!.div {
@@ -103,7 +118,6 @@ fun main() = defaultMain {
 	innerHTML =
 	  "Experiment complete. Thank you! Please click this link. It will confirm you have completed the study with Prolific so that you can be paid: <a href=\"https://app.prolific.co/submissions/complete?cc=92B81EA2\">Click here to confirm your completion of this study with Prolific</a>"
   }
-
   document.body!!.div {
 	onlyShowIn(Break)
 	sty.textAlign = center
@@ -122,59 +136,30 @@ fun main() = defaultMain {
 	}
   }
   val continueButton = document.getElementById("continueButton") as HTMLButtonElement
-
   document.body!!.div {
 	onlyShowIn(Inactive)
 	innerHTML = "Sorry, you have been inactive for too long and the experiment has been cancelled."
   }
-
   var debugTic: Double?
-
   var preloadedDrawingData: DrawingData? = null
-  var loadingMessage = ""
-  val loadDotN = 1
-
-
-  window.setInterval({
-	if (!loadingDiv.hidden) {
-	  var dotString = " "
-	  repeat((0..loadDotN).count()) {
-		dotString = "$dotString."
-	  }
-	  loadingDiv.innerHTML = "${loadingMessage}${dotString}"
-	}
-  }, 100)
-
-  fun workingOn(s: String) {
-	loadingMessage = s
-	console.log("working on: $s")
-	working = true
-  }
-
   var imI = 0
-
   fun presentImage(im: String) {
 	val drawingData = preloadedDrawingData ?: DrawingData(im, theImg)
-	workingOn("downloading image data")
-	var theInterval: Int? = null
-	theInterval = window.setInterval({
-	  if (drawingData.ready()) {
-		val drawingTrial = drawingData.trial!!
-
-		trialDiv?.remove()
-		trialDiv = drawingTrial.div
-		println("about to append ${trialDiv}")
-		document.body!!.appendWrapper(trialDiv!!)
-
-		workingOn("processing image data")
+	val loadingProcess = startLoadingScreen("downloading image data")
+	drawingData.setOnReady {
+	  val drawingTrial = drawingData.trial!!
+	  trialDiv?.remove()
+	  trialDiv = drawingTrial.div
+	  println("about to append $trialDiv")
+	  document.body!!.appendWrapper(trialDiv!!)
+	  val imageInterval = loadingProcess.finishedLoadingScreen(
+		"processing image data"
+	  ) {
 		console.log("setting up handlers")
-
 		var lastEvent: Event? = null
 		var lastEventWorked: Event? = null
 		var lastSelectedSegWorked: Segment? = null
-
 		trialDiv!!.eventCanvasIDK.setOnMouseMove { lastEvent = it }
-
 		fun eventToSeg(e: MouseEvent): Segment? {
 		  val x = e.clientX - trialDiv!!.mainCanvas.offsetLeft
 		  val y = e.clientY - trialDiv!!.mainCanvas.offsetTop
@@ -183,26 +168,16 @@ fun main() = defaultMain {
 			it.pixels[y][x]
 		  }
 		}
-
 		drawingTrial.selectedSeg.value = null
 		drawingTrial.hoveredSeg.value = null
-
 		trialDiv!!.eventCanvasIDK.setOnClick { e: Event ->
 		  println("canvas4.onclick")
 		  lastInteract = Date.now()
 		  drawingTrial.selectedSeg.value = eventToSeg(e as MouseEvent)
 		}
-
 		trialDiv!!.selectCanvas.hidden = true
-
-
-
-
-
-
 		trialDiv!!.hoverCanvas.hidden = true
-
-		val imageInterval = window.setInterval({
+		window.setInterval({
 		  if (lastEvent != lastEventWorked || lastSelectedSegWorked != drawingTrial.selectedSeg.value) {
 			lastInteract = Date.now()
 			lastSelectedSegWorked = drawingTrial.selectedSeg.value
@@ -213,81 +188,60 @@ fun main() = defaultMain {
 			}
 		  }
 		}, 25)
-		working = false
-		window.clearInterval(theInterval!!)
-		drawingTrial.log.add(Date.now().toLong() to "trial start")
-
-
-
-
-
-
-		fun submit(f: ()->Unit) {
-		  drawingTrial.log.add(Date.now().toLong() to "submit")
-		  drawingTrial.cleanup()
-		  post(
-			Path("send?PROLIFIC_PID=$pid"), ExperimentData(
-			  responses = drawingTrial.segments.associate { it.id to it.response!! },            /*"image" to im,*/
-			  trialLog = drawingTrial.log
-			), f
-		  )
-		}
-
-		if (imI < images.size - 1) {
-		  preloadedDrawingData = DrawingData(images[imI + 1], theImg)
-		}
-
-		trialDiv!!.nextImageButton.onclick = {
-
-		  console.log("next image button clicked")
-
-		  lastInteract = Date.now()
-		  if (window.confirm("Are you sure you are ready to proceed? You cannot go back to this image.")) {
-			trialDiv!!.nextImageButton.disabled = true
-			submit {
-			  println("in submit op")
-			  debugTic = Date.now()
-			  window.clearInterval(imageInterval)
-			  trialDiv!!.nextImageButton.disabled = true
-			  imI++
-			  println("imI is now $imI (images.size=${images.size})")
-			  if (imI < images.size) {
-				if (imI%PARAMS.breakInterval == 0) {
-				  onBreak = true
-				  println("break started")
-				  val tempInterval = window.setInterval({
-					lastInteract = Date.now()
-				  }, 1000)
-				  continueButton.onclick = {
-					println("continueButton clicked")
-					window.clearInterval(tempInterval)
-					lastInteract = Date.now()
-					onBreak = false
-					println("break ended")
-					presentImage(images[imI])
-				  }
-				} else presentImage(images[imI])
-
-			  } else {
-				complete = true
-			  }
-			  val debugToc = Date.now()
-			  val computeTime = debugToc - debugTic!!
-			  console.log("computeTime:${computeTime/1000.0}s")
-			}
-		  }
-
-		}
-
 	  }
-	}, 10)
-
+	  drawingTrial.log.add(Date.now().toLong() to "trial start")
+	  fun submit(f: ()->Unit) {
+		drawingTrial.log.add(Date.now().toLong() to "submit")
+		drawingTrial.cleanup()
+		post(
+		  Path("send?PROLIFIC_PID=$pid"), ExperimentData(
+			responses = drawingTrial.segments.associate { it.id to it.response!! },            /*"image" to im,*/
+			trialLog = drawingTrial.log
+		  ), f
+		)
+	  }
+	  if (imI < images.size - 1) {
+		preloadedDrawingData = DrawingData(images[imI + 1], theImg)
+	  }
+	  trialDiv!!.nextImageButton.onclick = {
+		console.log("next image button clicked")
+		lastInteract = Date.now()
+		if (window.confirm("Are you sure you are ready to proceed? You cannot go back to this image.")) {
+		  trialDiv!!.nextImageButton.disabled = true
+		  submit {
+			println("in submit op")
+			debugTic = Date.now()
+			window.clearInterval(imageInterval)
+			trialDiv!!.nextImageButton.disabled = true
+			imI++
+			println("imI is now $imI (images.size=${images.size})")
+			if (imI < images.size) {
+			  if (imI%PARAMS.breakInterval == 0) {
+				onBreak = true
+				println("break started")
+				val tempInterval = window.setInterval({
+				  lastInteract = Date.now()
+				}, 1000)
+				continueButton.onclick = {
+				  println("continueButton clicked")
+				  window.clearInterval(tempInterval)
+				  lastInteract = Date.now()
+				  onBreak = false
+				  println("break ended")
+				  presentImage(images[imI])
+				}
+			  } else presentImage(images[imI])
+			} else complete = true
+			val debugToc = Date.now()
+			val computeTime = debugToc - debugTic!!
+			console.log("computeTime:${computeTime/1000.0}s")
+		  }
+		}
+	  }
+	}
   }
   presentImage(images[imI])
-
-  val fireResizeEvent = {
-	MyResizeLeft.dispatchToAllHTML(currentLeft())
-  }
+  val fireResizeEvent = { MyResizeLeft.dispatchToAllHTML(currentLeft()) }
   window.addEventListener("resize", {
 	fireResizeEvent()
 	PhaseChange.dispatchToAllHTML(ExperimentPhase.determine())
