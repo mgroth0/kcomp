@@ -1,9 +1,8 @@
 package matt.sempart.client.sty
 
-import kotlinx.css.Display
-import kotlinx.css.Display.block
 import matt.kjs.css.BorderStyle.solid
 import matt.kjs.css.BorderWidth.thin
+import matt.kjs.css.Display.block
 import matt.kjs.css.MyStyleDsl
 import matt.kjs.css.px
 
@@ -21,5 +20,5 @@ fun MyStyleDsl.boxButton() {
   marginBottom = SMALL_SPACE
   marginTop = SMALL_SPACE
   marginLeft = SMALL_SPACE
-  display = Display.block
+  display = block
 }
