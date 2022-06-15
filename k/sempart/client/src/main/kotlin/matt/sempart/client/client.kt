@@ -41,13 +41,12 @@ fun main() = defaultMain {
 	color = white
   }
   document.body!!.appendChilds(
-	instructionsVidDiv,
-	instructionsDiv, resizeDiv, loadingDiv, completeDiv, breakDiv, inactiveDiv,
 	input {
 	  type = "range"
 	  min = "0.5"
-	  max = "2.0"
 	  value = "1.0"
+	  max = "1.5"
+	  step = "0.01"
 	  sty {
 		width = 80.percent
 	  }
@@ -55,7 +54,9 @@ fun main() = defaultMain {
 		document.body!!.sty["transform"] = "scale(${value})"
 		Unit
 	  }
-	}
+	},
+	instructionsVidDiv,
+	instructionsDiv, resizeDiv, loadingDiv, completeDiv, breakDiv, inactiveDiv,
   )
 
   val images = listOf(TRAIN_IM) + ORIG_DRAWING_IMS.shuffled()
