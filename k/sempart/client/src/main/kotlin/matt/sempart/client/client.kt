@@ -65,7 +65,7 @@ fun main() = defaultMain {
 			)
 		  ) {
 			if (nextDrawingData != null) {
-			  if ((nextDrawingData.idx - 1)%PARAMS.breakInterval == 0) {
+			  if (!training && (nextDrawingData.idx - 1)%PARAMS.breakInterval == 0) {
 				PhaseChange.afterEndOfNext(Break) {
 				  presentImage(nextDrawingData)
 				}
