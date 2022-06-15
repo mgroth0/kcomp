@@ -105,6 +105,11 @@ fun main() = defaultMain {
 	return LoadingProcess(loadingDiv, desc).apply { start() }
   }
 
+  fun LoadingProcess.finishLoadingScreen() {
+	working = true
+	finish()
+  }
+
 
 
   document.body!!.div {
@@ -184,7 +189,7 @@ fun main() = defaultMain {
 		  }
 		}
 	  }
-	  loadingProcess.finish()
+	  loadingProcess.finishLoadingScreen()
 	}
   }
   presentImage(images[imI])
