@@ -66,11 +66,12 @@ fun main() = defaultMain {
 		left = 10.percent
 	  }
 	  oninput = {
-		headStyleElement.innerHTML = ".$mainDivClass {transform: scale(${value});}"
+//		headStyleElement.innerHTML = ".$mainDivClass {transform: scale(${value});}"
 		//		divs.forEach {
 		//
 		////		  it.sty.transform = "scale(${value})"
 		//		}
+		document.body!!.sty.transform = "scale(${value})"
 		Unit
 	  }
 	},
