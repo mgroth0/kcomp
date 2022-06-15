@@ -46,6 +46,7 @@ import matt.sempart.client.ui.boxButton
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLDivElement
+import org.w3c.dom.HTMLParagraphElement
 import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.get
 import kotlin.js.Date
@@ -55,6 +56,7 @@ interface TrialDiv: HTMLElementWrapper<HTMLDivElement> {
   val mainCanvas: HTMLCanvasElement
   val hoverCanvas: HTMLCanvasElement
   val selectCanvas: HTMLCanvasElement
+  val helpText: HTMLParagraphElement
 }
 
 private val trialsDivs = WeakMap<DrawingTrial, TrialDiv>().withStoringDefault { it.trialDiv() }
@@ -224,13 +226,13 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	}
   }
 
-  val helpText = controlsDiv.p {
+  override val helpText = controlsDiv.p {
 	innerHTMLProperty().bind(phaseProp.binding {
-	  when (it) {
-		UNSELECTED          -> "UNSELECTED"
-		SELECTED_UNLABELLED -> "SELECTED_UNLABELLED"
-		SELECTED_LABELLED   -> "SELECTED_LABELLED"
-		FINISHED            -> "FINISHED"
+	  "This first drawing is for training purposes only and the data will not be used.\n\n" + when (it) {
+		UNSELECTED          -> "You may select a segment by clicking it. You may also click the \"${nextUnlabeledSegmentButton.innerHTML}\" button or the \"${previousUnlabeledSegmentButton.innerHTML}\" button to cycle through unselected segments automatically."
+		SELECTED_UNLABELLED -> "Now that a segment is selected, you may choose a label. Please choose the label by clicking the label button that you think best fits this segment. If you change your mind after selecting a label you can reselect the segment and change your response. After choosing a label for a segment for the first time, the next unlabelled segment will automatically be selected for you."
+		SELECTED_LABELLED   -> "This segment is already labelled. You can still change which label you are assigning to this segment by clicking one of the label buttons."
+		FINISHED            -> "Great job. You chosen a label for every segment in this drawing. You can still go back and change your responses before continuing. Once ready, click the \"${nextImageButton.innerHTML}\" button. After moving onto the next drawing, you will not be able to come back and change your responses on the current drawing."
 	  }
 	})
   }

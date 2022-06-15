@@ -10,6 +10,7 @@ val HALF_WIDTH = WIDTH/2
 val DATA_FOLDER = Path("data")
 
 
+val TRAIN_IM = "Face/Bd_Jul2018_M_Face_PO1"
 val ORIG_DRAWING_IMS =
   mutableListOf(
 	"Face/Bd_Jul2018_M_Face_PO1",

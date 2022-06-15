@@ -16,6 +16,7 @@ import matt.sempart.client.breakDiv.breakDiv
 import matt.sempart.client.completeDiv.completeDiv
 import matt.sempart.client.const.ORIG_DRAWING_IMS
 import matt.sempart.client.const.SEND_DATA_PREFIX
+import matt.sempart.client.const.TRAIN_IM
 import matt.sempart.client.const.TRIAL_CONFIRM_MESSAGE
 import matt.sempart.client.inactiveDiv.inactiveDiv
 import matt.sempart.client.instructionsDiv.instructionsDiv
@@ -42,13 +43,14 @@ fun main() = defaultMain {
 	instructionsDiv, resizeDiv, loadingDiv, completeDiv, breakDiv, inactiveDiv
   )
 
-  val images = ORIG_DRAWING_IMS.shuffled()
+  val images = listOf(TRAIN_IM) + ORIG_DRAWING_IMS.shuffled()
   val imIterator = images.withIndex().toList().listIterator()
 
-  fun presentImage(drawingData: DrawingData) {
+  fun presentImage(drawingData: DrawingData, training: Boolean = false) {
 	val loadingProcess = DrawingLoadingProcess("downloading image data")
 	drawingData.whenReady {
 	  val trial = drawingData.trial!!
+	  trial.div.helpText.hidden = !training
 	  document.body!!.appendWrapper(trial.div)
 	  val nextDrawingData = imIterator.nextOrNull()?.let { DrawingData(it) }
 	  trial.div.nextImageButton.onclick = trial.interaction("nextImageButton clicked") {
@@ -77,7 +79,7 @@ fun main() = defaultMain {
 	  trial.log += "trial start"
 	}
   }
-  presentImage(DrawingData(imIterator.next()))
+  presentImage(DrawingData(imIterator.next()), training = true)
 }
 
 
