@@ -2,6 +2,8 @@ package matt.sempart.client.trialdiv
 
 import kotlinx.html.ButtonType
 import matt.kjs.WeakMap
+import matt.kjs.bindings.binding
+import matt.kjs.bindings.isNull
 import matt.kjs.css.Display.InlineBlock
 import matt.kjs.css.FontStyle.italic
 import matt.kjs.css.FontWeight.bold
@@ -11,8 +13,9 @@ import matt.kjs.css.sty
 import matt.kjs.elements.AwesomeElement
 import matt.kjs.elements.HTMLElementWrapper
 import matt.kjs.img.context2D
-import matt.kjs.prop.hiddenProperty
-import matt.kjs.prop.isNull
+import matt.kjs.props.hiddenProperty
+import matt.kjs.props.leftProperty
+import matt.kjs.props.marginLeftProperty
 import matt.kjs.setOnClick
 import matt.kjs.setOnMouseMove
 import matt.sempart.client.const.HEIGHT
@@ -55,9 +58,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 
   override val element = div {
 	onlyShowIn(Trial)
-	currentLeftProp.onChange {
-	  style.marginLeft = it.toString() + "px"
-	}
+	sty.marginLeftProperty().bind(currentLeftProp)
   }
   val stackDiv = element.div {
 	sty.display = InlineBlock
@@ -70,9 +71,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	  position = absolute
 	  zIndex = idx
 	  top = 0.px
-	}
-	currentLeftProp.onChange {
-	  style.left = it.toString() + "px"
+	  leftProperty().bind(currentLeftProp)
 	}
 	if (idx > 1) {
 	  sty.zIndex = idx + segments.size
@@ -117,11 +116,9 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 			position = absolute
 			top = 0.px
 			zIndex = zIdx
+			leftProperty().bind(currentLeftProp)
 		  }
 		  context2D.drawImage(theSeg.labelledIm, 0.0, 0.0)
-		  currentLeftProp.onChange {
-			sty.left = it.px
-		  }
 		}, stackDiv.children[zIdx]
 	  )
 	}
@@ -133,9 +130,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	  display = InlineBlock
 	  position = absolute
 	}
-	currentLeftProp.onChange {
-	  style.left = (it + WIDTH).toString() + "px"
-	}
+	sty.leftProperty().bind(currentLeftProp.binding { it + WIDTH })
 
   }
 

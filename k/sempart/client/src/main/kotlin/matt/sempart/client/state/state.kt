@@ -7,6 +7,8 @@ import kotlinx.serialization.json.Json
 import matt.kjs.Loop
 import matt.kjs.Path
 import matt.kjs.allHTMLElementsRecursive
+import matt.kjs.css.Px
+import matt.kjs.css.px
 import matt.kjs.elements.AwesomeElement
 import matt.kjs.elements.canvas
 import matt.kjs.elements.div
@@ -165,9 +167,9 @@ object PhaseChange: ChangeEventDispatcher<Pair<ExperimentPhase, ExperimentPhase>
   }
 }
 
-val currentLeftProp: ReadOnlyBindableProperty<Int> = BindableProperty(currentLeft()).apply {
+val currentLeftProp: ReadOnlyBindableProperty<Px> = BindableProperty(currentLeft().px).apply {
   window.addEventListener("resize", {
-	value = currentLeft()
+	value = currentLeft().px
   })
 }
 
