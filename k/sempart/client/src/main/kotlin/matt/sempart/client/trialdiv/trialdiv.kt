@@ -171,14 +171,9 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 		  }
 		}
 	  })
-	  br
+//	  br
 	}
   }
-//
-  //  init {
-  //	controlsDiv.br
-  //	controlsDiv.br
-  //  }
 
   val buttonsDiv = controlsDiv.div {
 	sty.box()
