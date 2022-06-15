@@ -20,8 +20,6 @@ import matt.kjs.img.context2D
 import matt.kjs.pixelIndexIn
 import matt.kjs.props.disabledProperty
 import matt.kjs.props.hiddenProperty
-import matt.kjs.props.leftProperty
-import matt.kjs.props.marginLeftProperty
 import matt.kjs.setOnMouseMove
 import matt.klib.dmap.withStoringDefault
 import matt.sempart.client.const.HEIGHT
