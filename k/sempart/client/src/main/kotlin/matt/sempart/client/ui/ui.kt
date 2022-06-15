@@ -10,4 +10,5 @@ import org.w3c.dom.HTMLDivElement
 fun HTMLDivElement.boxButton(op: HTMLButtonElement.()->Unit = {}) = button {
   type = ButtonType.button.realValue
   sty.boxButton()
+  op()
 }
