@@ -1,7 +1,6 @@
 package matt.sempart.client
 
 import kotlinx.browser.document
-import kotlinx.browser.window
 import matt.kjs.Path
 import matt.kjs.appendChilds
 import matt.kjs.css.Color.black
@@ -9,12 +8,15 @@ import matt.kjs.css.Color.white
 import matt.kjs.css.sty
 import matt.kjs.defaultMain
 import matt.kjs.elements.appendWrapper
+import matt.kjs.ifConfirm
 import matt.kjs.nextOrNull
 import matt.kjs.req.post
 import matt.sempart.ExperimentData
 import matt.sempart.client.breakDiv.breakDiv
 import matt.sempart.client.completeDiv.completeDiv
 import matt.sempart.client.const.ORIG_DRAWING_IMS
+import matt.sempart.client.const.SEND_DATA_PREFIX
+import matt.sempart.client.const.TRIAL_CONFIRM_MESSAGE
 import matt.sempart.client.inactiveDiv.inactiveDiv
 import matt.sempart.client.instructionsDiv.instructionsDiv
 import matt.sempart.client.loadingDiv.DrawingLoadingProcess
@@ -46,15 +48,13 @@ fun main() = defaultMain {
 	drawingData.whenReady {
 	  val trial = drawingData.trial!!
 	  document.body!!.appendWrapper(trial.div)
-	  trial.log += "trial start"
 	  val nextDrawingData = imIterator.nextOrNull()?.let { DrawingData(it) }
-	  trial.div.nextImageButton.onclick = trial.interaction("next image button clicked") {
-		if (window.confirm("Are you sure you are ready to proceed? You cannot go back to this image.")) {
+	  trial.div.nextImageButton.onclick = trial.interaction("nextImageButton clicked") {
+		ifConfirm(TRIAL_CONFIRM_MESSAGE) {
 		  trial.registerInteraction("submit confirmed")
-		  trial.div.nextImageButton.disabled = true
 		  trial.cleanup()
 		  post(
-			Path("send?PROLIFIC_PID=${Participant.pid}"),
+			Path(SEND_DATA_PREFIX + Participant.pid),
 			ExperimentData(
 			  responses = trial.segments.associate { it.id to it.response!! },
 			  trialLog = trial.log.get()
@@ -72,6 +72,7 @@ fun main() = defaultMain {
 		}
 	  }
 	  loadingProcess.finish()
+	  trial.log += "trial start"
 	}
   }
   presentImage(DrawingData(imIterator.next()))

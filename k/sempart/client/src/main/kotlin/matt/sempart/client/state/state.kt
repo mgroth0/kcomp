@@ -344,7 +344,7 @@ class DrawingData(
   }
 
   override fun cleanup() {
-	trial!!.div.remove()
+	trial!!.div.element.remove()
 	loadDiv.remove()
   }
 
