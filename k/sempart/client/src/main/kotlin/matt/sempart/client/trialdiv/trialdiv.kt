@@ -62,39 +62,39 @@ private val trialsDivs = WeakMap<DrawingTrial, TrialDiv>().withStoringDefault { 
 val DrawingTrial.div: TrialDiv get() = trialsDivs[this]
 
 private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
-//  flex,
+  //  flex,
   Trial,
   flexDir = row
 ), TrialDiv {
 
   fun eventToSeg(e: MouseEvent) = e.pixelIndexIn(mainCanvas)?.let { segmentOf(it) }
 
-//  override val element = div {
-//	//	classList.add(mainDivClass)
-//	//	sty.transform = Transform().apply {
-//	//	  map["scale"] = scaleDiv.sty.transform.map["scale"]!!
-//	//	}
-////	onlyShowIn(Trial, debug = true)
-//	//	sty.marginLeftProperty().bind(currentLeftProp)
-//	//	sty.centerInParent()
-//	//	sty.transform = sty.transform.apply {
-//	//	  map["translate"] = listOf(-HALF_WIDTH)
-//	//	}
-//	//	sty {
-//	//	  height = HEIGHT.px // + 200.px
-//	//	  width = WIDTH.px + 300.px
-//	//	}
-//
-////	sty {
-//////	  println("SETTING FLEX")
-////	  display = flex
-////	  println("SET FLEX")
-//////	  justifyContent = JustifyContent.center
-//////	  alignItems = AlignItems.center
-////	  //	  flexDirection = column
-////	}
-//
-//  }
+  //  override val element = div {
+  //	//	classList.add(mainDivClass)
+  //	//	sty.transform = Transform().apply {
+  //	//	  map["scale"] = scaleDiv.sty.transform.map["scale"]!!
+  //	//	}
+  ////	onlyShowIn(Trial, debug = true)
+  //	//	sty.marginLeftProperty().bind(currentLeftProp)
+  //	//	sty.centerInParent()
+  //	//	sty.transform = sty.transform.apply {
+  //	//	  map["translate"] = listOf(-HALF_WIDTH)
+  //	//	}
+  //	//	sty {
+  //	//	  height = HEIGHT.px // + 200.px
+  //	//	  width = WIDTH.px + 300.px
+  //	//	}
+  //
+  ////	sty {
+  //////	  println("SETTING FLEX")
+  ////	  display = flex
+  ////	  println("SET FLEX")
+  //////	  justifyContent = JustifyContent.center
+  //////	  alignItems = AlignItems.center
+  ////	  //	  flexDirection = column
+  ////	}
+  //
+  //  }
   val stackDiv = element.div {
 	//	sty.
 	sty {
@@ -102,6 +102,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 	  width = WIDTH.px
 	  height = HEIGHT.px
 	  //	  display = inlineBlock
+
 	}
   }
 
@@ -111,8 +112,8 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 	sty {
 	  //	  centerOnWindow()
 	  position = absolute
-	  top = 0.px
-	  left = 0.px
+	  //	  top = 0.px
+	  //	  left = 0.px
 	  zIndex = idx
 	  //	  top = 0.px
 	  //	  leftProperty().bind(currentLeftProp)
@@ -158,8 +159,8 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 		  sty {
 			//			sty.centerOnWindow()
 			position = absolute
-			top = 0.px
-			left = 0.px
+			//			top = 0.px
+			//			left = 0.px
 			zIndex = zIdx
 			//			leftProperty().bind(currentLeftProp)
 		  }
