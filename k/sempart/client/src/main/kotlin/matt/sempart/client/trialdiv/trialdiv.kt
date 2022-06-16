@@ -117,17 +117,17 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 	  stackCanvas(theSeg.selectLabeledIm) {
 		hiddenProperty().bind(selectedSegments.binding(theSeg.responseProp) { theSeg !in it || theSeg.hasNoResponse })
 	  }
-//	  appendChilds(
-//		//		theSeg.labelledCanvas.withConfig {
-//		//		  canvasConfig(theSeg.labelledIm)
-//		//		},
-////		theSeg.selectCanvas.withConfig {
-////		  canvasConfig(theSeg.selectIm)
-////		},
-////		theSeg.selectLabeledCanvas.withConfig {
-////		  canvasConfig(theSeg.selectLabeledIm)
-////		}
-//	  )
+	  //	  appendChilds(
+	  //		//		theSeg.labelledCanvas.withConfig {
+	  //		//		  canvasConfig(theSeg.labelledIm)
+	  //		//		},
+	  ////		theSeg.selectCanvas.withConfig {
+	  ////		  canvasConfig(theSeg.selectIm)
+	  ////		},
+	  ////		theSeg.selectLabeledCanvas.withConfig {
+	  ////		  canvasConfig(theSeg.selectLabeledIm)
+	  ////		}
+	  //	  )
 	}
 	stackCanvas(im = null, hide = false) {
 	  setOnMouseMove {
@@ -136,9 +136,9 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 	  }
 	  onclick = interaction("click") {
 		val seg = eventToSeg(it)
-		if (seg == null) clearSelection()
+		if (seg == null) selectedSegments.clear()
 		else if (seg !in selectedSegments) {
-		  if (!PARAMS.allowMultiSelection || !it.shiftKey) clearSelection()
+		  if (!PARAMS.allowMultiSelection || !it.shiftKey) selectedSegments.clear()
 		  select(seg)
 		}
 	  }
@@ -169,12 +169,12 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 			it.response = l
 			hadNoResponse
 		  }
-//		  redraw()
+		  //		  redraw()
 		  completionP.innerHTML = "$completionFraction segments labelled"
 		  //		  gotFirstResponse.forEach {
 		  //			it.showAsLabeled()
 		  //		  }
-		  if (gotFirstResponse.isNotEmpty()) nextSeg()
+		  if (gotFirstResponse.isNotEmpty()) switchSegment(next = true, unlabelled = true)
 		}
 	  }
 	}
@@ -238,6 +238,17 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
   }
 
   override val helpText = controlsDiv.p {
+
+	selectedSegments.onChange {
+	  if (selectedSegments.isEmpty() && isNotFinished) phase = UNSELECTED
+	  if (selectedSegments.isNotEmpty()) {
+		if (selectedSegments.any { it.hasResponse }) {
+		  if (isNotFinished) phase = SELECTED_LABELLED
+		} else {
+		  if (isNotFinished) phase = SELECTED_UNLABELLED
+		}
+	  }
+	}
 
 	val finished =
 	  "Great job. You have chosen a label for every segment in this drawing. You can still go back and change your responses before continuing. Once ready, click the \"${nextImageButton.innerHTML}\" button. After moving onto the next drawing, you will not be able to come back and change your responses on the current drawing."

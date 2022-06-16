@@ -24,7 +24,7 @@ import matt.kjs.prop.VarProp
 import matt.kjs.req.get
 import matt.kjs.setOnLoad
 import matt.kjs.srcAsPath
-import matt.klib.olist.BasicObservableList
+import matt.klib.oset.BasicObservableSet
 import matt.klib.todo
 import matt.sempart.client.const.DATA_FOLDER
 import matt.sempart.client.const.HEIGHT
@@ -34,8 +34,6 @@ import matt.sempart.client.state.DrawingData.Segment
 import matt.sempart.client.state.ExperimentPhase.Companion.currentPhase
 import matt.sempart.client.state.ExperimentState.working
 import matt.sempart.client.state.TrialPhase.FINISHED
-import matt.sempart.client.state.TrialPhase.SELECTED_LABELLED
-import matt.sempart.client.state.TrialPhase.SELECTED_UNLABELLED
 import matt.sempart.client.state.TrialPhase.UNSELECTED
 import matt.sempart.client.trialdiv.div
 import org.w3c.dom.CustomEvent
@@ -421,7 +419,7 @@ class DrawingTrial(
   }
   val isFinished get() = finishedProp.value
   val isNotFinished get() = !isFinished
-  var selectedSegments = BasicObservableList<Segment>()
+  var selectedSegments = BasicObservableSet<Segment>()
 
   /*val selectedSegResponse = selectedSeg.chainBinding {
 	it?.responseProp
@@ -433,10 +431,10 @@ class DrawingTrial(
 
   fun switchSegment(next: Boolean, unlabelled: Boolean) {
 	val wasEmpty = segments.isEmpty()
-	if (PARAMS.allowMultiSelection) clearSelection()
+	if (PARAMS.allowMultiSelection) selectedSegments.clear()
 	select(when {
 	  isFinished && unlabelled -> {
-		if (!PARAMS.allowMultiSelection) clearSelection()
+		if (!PARAMS.allowMultiSelection) selectedSegments.clear()
 		return
 	  }
 
@@ -450,42 +448,10 @@ class DrawingTrial(
 	})
   }
 
-  fun nextSeg() {
-	println("NEXT SEG")
-	switchSegment(next = true, unlabelled = true)
-  }
-
-  fun clearSelection() {
-	selectedSegments.clear()
-	//	redraw()
-	if (isNotFinished) phase = UNSELECTED
-  }
 
   fun select(seg: Segment) {
-	if (seg in selectedSegments) return
 	registerInteraction("selected $seg")
 	selectedSegments.add(seg)
-	//	selectedSeg.value = seg
-	//	if (seg == null) {
-	//	  div.selectCanvas.hidden = true
-	//	  if (isNotFinished) phase = UNSELECTED
-	//	} else {
-
-	//	seg.redraw()
-	//	if (seg.hasResponse) {
-	//	  seg.selectLabeledCanvas.hidden = false
-	//	} else {
-	//	  seg.selectCanvas.hidden = false
-	//	}
-
-	if (selectedSegments.any { it.hasResponse }) {
-	  if (isNotFinished) phase = SELECTED_LABELLED
-	} else {
-	  //	  div.selectCanvas.put(seg.selectPixels)
-	  if (isNotFinished) phase = SELECTED_UNLABELLED
-	}
-	//	div.selectCanvas.hidden = false
-	//	}
   }
 
   fun hover(seg: Segment?) {
