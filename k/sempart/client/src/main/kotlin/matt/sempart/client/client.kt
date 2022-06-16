@@ -107,7 +107,7 @@ fun main() = defaultMain {
 	  val loadingProcess = DrawingLoadingProcess("downloading image data")
 	  drawingData.whenReady {
 		println("in whenReady of $drawingData")
-		val trial = drawingData.trial!!.value
+		val trial = drawingData.trial!!.value!!
 		trial.div.element.sty.resetTransform {
 		  scale(scaleDiv.sty.transform.funs.filterIsInstance<Scale>().first().args)
 		}
