@@ -12,12 +12,7 @@ import matt.kjs.bind.chainBinding
 import matt.kjs.bindings.and
 import matt.kjs.bindings.isNull
 import matt.kjs.bindings.not
-import matt.kjs.css.Display.none
-import matt.kjs.css.Px
-import matt.kjs.css.px
-import matt.kjs.css.sty
 import matt.kjs.elements.HTMLElementWrapper
-import matt.kjs.elements.WithDefaultDisplay
 import matt.kjs.elements.canvas
 import matt.kjs.elements.div
 import matt.kjs.elements.img
@@ -34,7 +29,6 @@ import matt.kjs.setOnLoad
 import matt.kjs.srcAsPath
 import matt.klib.todo
 import matt.sempart.client.const.DATA_FOLDER
-import matt.sempart.client.const.HALF_WIDTH
 import matt.sempart.client.const.HEIGHT
 import matt.sempart.client.const.WIDTH
 import matt.sempart.client.params.PARAMS
@@ -204,7 +198,9 @@ object PhaseChange: ChangeEventDispatcher<Pair<ExperimentPhase, ExperimentPhase>
   fun afterEndOfNext(phase: ExperimentPhase, listener: (ExperimentPhase)->Unit) {
 	var op: ((Pair<ExperimentPhase, ExperimentPhase>)->Unit)? = null
 	op = { (old: ExperimentPhase, new: ExperimentPhase) ->
+	  println("maybe running afterEndOfNext(${phase})")
 	  if (old == phase && new != phase) {
+		println("yes running")
 		listener(new)
 		beforeDispatchOps.remove(op!!)
 	  }
