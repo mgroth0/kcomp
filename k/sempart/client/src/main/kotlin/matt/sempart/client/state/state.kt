@@ -151,6 +151,7 @@ abstract class EventDispatcher<T>(type: String? = null) {
   val type: String = type ?: this::class.simpleName!!
   protected val beforeDispatchOps = mutableListOf<(T)->Unit>()
   private fun runBeforeDispatchOps(t: T) {
+	println("beforeDispatchOps.size=${beforeDispatchOps.size}")
 	beforeDispatchOps.forEach { it(t) }
   }
 
