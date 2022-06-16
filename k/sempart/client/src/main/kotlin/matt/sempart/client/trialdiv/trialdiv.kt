@@ -121,16 +121,13 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
   }
   val eventCanvasIDK = stackDiv.canvas {
 	canvasConfig(3)
-	onclick = interaction("click") {
-	  println("click.clientX = ${it.clientX}")
-	  println("click.clientY = ${it.clientY}")
-	  select(eventToSeg(it))
-	}
 	setOnMouseMove {
 	  ExperimentState.lastInteract = Date.now()
 	  hover(eventToSeg(it))
 	}
 	onclick = interaction("click") {
+	  println("click.clientX = ${it.clientX}")
+	  println("click.clientY = ${it.clientY}")
 	  select(eventToSeg(it))
 	}
   }
