@@ -11,6 +11,8 @@ import matt.kjs.bindings.orDebug
 import matt.kjs.css.FontStyle.italic
 import matt.kjs.css.FontWeight.bold
 import matt.kjs.css.Position.absolute
+import matt.kjs.css.Position.relative
+import matt.kjs.css.px
 import matt.kjs.css.sty
 import matt.kjs.elements.AwesomeElement
 import matt.kjs.elements.HTMLElementWrapper
@@ -133,8 +135,8 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 		  height = HEIGHT
 		  hidden = true
 		  sty {
-			sty.centerOnWindow()
-			//			position = absolute
+			//			sty.centerOnWindow()
+			position = absolute
 			//			top = 0.px
 			zIndex = zIdx
 			//			leftProperty().bind(currentLeftProp)
@@ -148,8 +150,8 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
   val controlsDiv: HTMLDivElement = element.div {
 	sty {
 	  //	  display = inlineBlock
-	  //	  position = absolute
-	  //	  left = WIDTH.px
+	  position = relative
+	  left = WIDTH.px
 	  //	  sty.centerOnWindow()
 	}
 	sty {
