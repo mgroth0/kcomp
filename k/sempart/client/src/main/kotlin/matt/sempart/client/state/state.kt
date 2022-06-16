@@ -210,7 +210,6 @@ object PhaseChange: ChangeEventDispatcher<Pair<ExperimentPhase, ExperimentPhase>
 }
 
 
-
 class TrialLog(
   private val log: MutableList<Pair<Long, String>> = mutableListOf()
 ) {
@@ -340,18 +339,18 @@ class DrawingData(
   private var ranOp = false
   private fun ready() = loadedImage && trial != null && this.loadedIms == trial!!.segments.size*5
   private var onReadyOp: (()->Unit)? = null
+
   fun whenReady(op: ()->Unit) {
 	require(onReadyOp == null)
 	onReadyOp = op
-	if (ready()) {
-	  ranOp = true
-	  op()
-	}
+	runOpIfReady()
   }
 
   private fun runOpIfReady() {
+	println("runOpIfReady")
 	require(!ranOp)
 	if (ready()) {
+	  println("ready and running!")
 	  ranOp = true
 	  onReadyOp?.invoke()
 	}
