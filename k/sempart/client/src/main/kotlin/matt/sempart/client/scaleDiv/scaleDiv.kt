@@ -4,6 +4,7 @@ package matt.sempart.client.scaleDiv
 import matt.kjs.css.TextAlign.center
 import matt.kjs.css.VerticalAligns
 import matt.kjs.css.auto
+import matt.kjs.css.percent
 import matt.kjs.css.sty
 import matt.kjs.elements.br
 import matt.kjs.elements.button
@@ -20,9 +21,12 @@ val scaleDiv by lazy {
   div {
 	//	classList.add(mainDivClass)
 	onlyShowIn(Scaling)
-	sty.textAlign = center
+	sty {
+	  textAlign = center
+	  verticalAlign = VerticalAligns.middle
+	  height = 100.percent
+	}
 
-	sty.verticalAlign = VerticalAligns.middle
 	img {
 	  src = INSTRUCTIONS_IM_RELATIVE
 	  sty.verticalAlign = VerticalAligns.middle
