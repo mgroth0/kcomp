@@ -201,8 +201,8 @@ object PhaseChange: ChangeEventDispatcher<Pair<ExperimentPhase, ExperimentPhase>
 	  println("maybe running afterEndOfNext(${phase})")
 	  if (old == phase && new != phase) {
 		println("yes running")
-		listener(new)
 		beforeDispatchOps.remove(op!!)
+		listener(new)
 	  }
 	}
 	beforeDispatchOps.add(op)
