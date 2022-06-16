@@ -8,6 +8,7 @@ import matt.kjs.appendChilds
 import matt.kjs.css.Color.black
 import matt.kjs.css.Color.white
 import matt.kjs.css.Position.absolute
+import matt.kjs.css.Transform
 import matt.kjs.css.percent
 import matt.kjs.css.sty
 import matt.kjs.defaultMain
@@ -103,7 +104,7 @@ fun main() = defaultMain {
   )
 
 
-  /*neccesary so first trialDiv doesnt get NPE*/
+  /*neccesary so first trialDiv doesnt get NPE, or if slider is never moved*/
   divs.forEach {
 	when (it) {
 	  is HTMLElement           -> it.sty.transform = it.sty.transform.apply {
@@ -123,6 +124,11 @@ fun main() = defaultMain {
 	val loadingProcess = DrawingLoadingProcess("downloading image data")
 	drawingData.whenReady {
 	  val trial = drawingData.trial!!
+
+	  trial.div.element.sty.transform = Transform().apply {
+		map["scale"] = scaleDiv.sty.transform.map["scale"]!!
+	  }
+
 	  trial.div.helpText.hidden = !training
 	  document.body!!.appendWrapper(trial.div)
 	  val nextDrawingData = imIterator.nextOrNull()?.let { DrawingData(it) }
