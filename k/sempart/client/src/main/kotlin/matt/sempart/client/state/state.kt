@@ -449,6 +449,7 @@ class DrawingTrial(
   }
 
   fun nextSeg() {
+	println("NEXT SEG")
 	switchSegment(next = true, unlabelled = true)
   }
 
