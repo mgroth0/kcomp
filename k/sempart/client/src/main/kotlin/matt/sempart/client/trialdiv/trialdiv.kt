@@ -160,6 +160,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	  position = relative
 	  left = WIDTH.px
 	  width = 300.px
+	  height = HEIGHT.px
 	  //	  sty.centerOnWindow()
 	}
 	sty {
