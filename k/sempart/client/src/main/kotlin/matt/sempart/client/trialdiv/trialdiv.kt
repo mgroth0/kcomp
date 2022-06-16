@@ -11,8 +11,6 @@ import matt.kjs.bindings.orDebug
 import matt.kjs.css.Display.inlineBlock
 import matt.kjs.css.FontStyle.italic
 import matt.kjs.css.FontWeight.bold
-import matt.kjs.css.Position.absolute
-import matt.kjs.css.px
 import matt.kjs.css.sty
 import matt.kjs.elements.AwesomeElement
 import matt.kjs.elements.HTMLElementWrapper
@@ -74,6 +72,9 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	onlyShowIn(Trial)
 	//	sty.marginLeftProperty().bind(currentLeftProp)
 	sty.centerOnWindow()
+	//	sty.transform = sty.transform.apply {
+	//	  map["translate"] = listOf(-HALF_WIDTH)
+	//	}
   }
   val stackDiv = element.div {
 	//	sty.
@@ -87,7 +88,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	height = HEIGHT
 	sty {
 	  //	  centerOnWindow()
-	  position = absolute
+	  //	  position = absolute
 	  zIndex = idx
 	  //	  top = 0.px
 	  //	  leftProperty().bind(currentLeftProp)
@@ -133,7 +134,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 		  hidden = true
 		  sty {
 			//			sty.centerOnWindow()
-			position = absolute
+			//			position = absolute
 			//			top = 0.px
 			zIndex = zIdx
 			//			leftProperty().bind(currentLeftProp)
@@ -146,9 +147,9 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 
   val controlsDiv: HTMLDivElement = element.div {
 	sty {
-	  //	  display = inlineBlock
-	  position = absolute
-	  left = WIDTH.px
+	  display = inlineBlock
+	  //	  position = absolute
+	  //	  left = WIDTH.px
 	  //	  sty.centerOnWindow()
 	}
 	sty {
