@@ -8,6 +8,7 @@ import matt.kjs.appendChilds
 import matt.kjs.css.Color.black
 import matt.kjs.css.Color.white
 import matt.kjs.css.Position.absolute
+import matt.kjs.css.Transform
 import matt.kjs.css.percent
 import matt.kjs.css.sty
 import matt.kjs.defaultMain
@@ -126,9 +127,9 @@ fun main() = defaultMain {
 	  drawingData.whenReady {
 		val trial = drawingData.trial!!
 
-		//	  trial.div.element.sty.transform = Transform().apply {
-		//		map["scale"] = scaleDiv.sty.transform.map["scale"]!!
-		//	  }
+		trial.div.element.sty.transform = Transform().apply {
+		  map["scale"] = scaleDiv.sty.transform.map["scale"]!!
+		}
 
 		trial.div.helpText.hidden = !training
 		document.body!!.appendWrapper(trial.div)
