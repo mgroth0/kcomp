@@ -25,6 +25,7 @@ import matt.kjs.prop.ReadOnlyBindableProperty
 import matt.kjs.prop.VarProp
 import matt.kjs.req.get
 import matt.kjs.setOnLoad
+import matt.kjs.showing
 import matt.kjs.srcAsPath
 import matt.klib.olist.BasicObservableList
 import matt.klib.todo
@@ -331,6 +332,8 @@ class DrawingData(
 	  if (pi.x < 0 || pi.y < 0 || pi.x >= WIDTH || pi.y >= HEIGHT) return false
 	  return pixels[pi.y][pi.x]
 	}
+
+
   }
 
   val loadDiv = document.body!!.div {
@@ -397,6 +400,15 @@ class DrawingTrial(
   val segmentsWithResponse get() = segments.filter { it.hasResponse }
   val completionFraction get() = "${segmentsWithResponse.size}/${segments.size}"
 
+  fun redraw() {
+	segments.forEach { it.redraw() }
+  }
+  fun Segment.redraw() {
+	labelledCanvas.showing = hasResponse
+	selectCanvas.showing = this in selectedSegments
+	selectLabeledCanvas.hidden = hasResponse && this in selectedSegments
+  }
+
   val finishedProp = segments.map { it.hasResponseProp }.reduce { r1, r2 -> r1.and(r2) }.apply {
 	onChange {
 	  if (it) phase = FINISHED
@@ -413,7 +425,6 @@ class DrawingTrial(
 
   override fun toString() = "${this::class.simpleName} for $imString"
 
-  fun Segment.showAsLabeled() = div.selectCanvas.put(selectLabeledPixels)
 
   fun switchSegment(next: Boolean, unlabelled: Boolean) {
 	if (PARAMS.allowMultiSelection) clearSelection()
@@ -426,7 +437,6 @@ class DrawingTrial(
 		next -> segments.first()
 		else -> segments.last()
 	  }
-
 	  next                       -> segCycle.first { !unlabelled || it.hasNoResponse }
 	  else                       -> segCycle.firstBackwards { !unlabelled || it.hasNoResponse }
 	})
@@ -438,7 +448,7 @@ class DrawingTrial(
 
   fun clearSelection() {
 	selectedSegments.clear()
-	div.selectCanvas.hidden = true
+	redraw()
 	if (isNotFinished) phase = UNSELECTED
   }
 
@@ -451,14 +461,21 @@ class DrawingTrial(
 	//	  div.selectCanvas.hidden = true
 	//	  if (isNotFinished) phase = UNSELECTED
 	//	} else {
+
+	seg.redraw()
+//	if (seg.hasResponse) {
+//	  seg.selectLabeledCanvas.hidden = false
+//	} else {
+//	  seg.selectCanvas.hidden = false
+//	}
+
 	if (selectedSegments.any { it.hasResponse }) {
-	  seg.showAsLabeled()
 	  if (isNotFinished) phase = SELECTED_LABELLED
 	} else {
-	  div.selectCanvas.put(seg.selectPixels)
+	  //	  div.selectCanvas.put(seg.selectPixels)
 	  if (isNotFinished) phase = SELECTED_UNLABELLED
 	}
-	div.selectCanvas.hidden = false
+	//	div.selectCanvas.hidden = false
 	//	}
   }
 

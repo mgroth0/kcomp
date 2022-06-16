@@ -53,7 +53,8 @@ interface TrialDiv: HTMLElementWrapper<HTMLDivElement> {
   val nextImageButton: HTMLButtonElement
   val mainCanvas: HTMLCanvasElement
   val hoverCanvas: HTMLCanvasElement
-  val selectCanvas: HTMLCanvasElement
+
+  //  val selectCanvas: HTMLCanvasElement
   val helpText: HTMLParagraphElement
 }
 
@@ -94,32 +95,6 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 	canvasConfig()
 	context2D.drawImage(loadingIm, 0.0, 0.0)
   }
-  override val hoverCanvas = stackDiv.canvas {
-	hidden = true
-	canvasConfig()
-  }
-  override val selectCanvas = stackDiv.canvas {
-	hidden = true
-	canvasConfig()
-  }
-  val eventCanvasIDK = stackDiv.canvas {
-	canvasConfig()
-	setOnMouseMove {
-	  ExperimentState.lastInteract = Date.now()
-	  hover(eventToSeg(it))
-	}
-	onclick = interaction("click") {
-	  val seg = eventToSeg(it)
-	  if (seg == null) {
-		clearSelection()
-	  } else if (seg !in selectedSegments) {
-		if (!PARAMS.allowMultiSelection || !it.shiftKey) {
-		  clearSelection()
-		}
-		select(seg)
-	  }
-	}
-  }
 
   init {
 	segments.forEach { theSeg: Segment ->
@@ -143,6 +118,35 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 	}
   }
 
+  override val hoverCanvas = stackDiv.canvas {
+	hidden = true
+	canvasConfig()
+  }
+
+  //  override val selectCanvas = stackDiv.canvas {
+  //	hidden = true
+  //	canvasConfig()
+  //  }
+  val eventCanvasIDK = stackDiv.canvas {
+	canvasConfig()
+	setOnMouseMove {
+	  ExperimentState.lastInteract = Date.now()
+	  hover(eventToSeg(it))
+	}
+	onclick = interaction("click") {
+	  val seg = eventToSeg(it)
+	  if (seg == null) {
+		clearSelection()
+	  } else if (seg !in selectedSegments) {
+		if (!PARAMS.allowMultiSelection || !it.shiftKey) {
+		  clearSelection()
+		}
+		select(seg)
+	  }
+	}
+  }
+
+
   val controlsDiv: HTMLDivElement = element.div {
 	sty {
 	  marginBottom = MED_SPACE
@@ -162,15 +166,16 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 		sty.fontStyle = italic
 		onclick = interaction("selected label: $l") {
 		  val gotFirstResponse = selectedSegments.filter {
-			it.labelledCanvas.hidden = false
+			//			it.labelledCanvas.hidden = false
 			val hadNoResponse = it.hasNoResponse
 			it.response = l
 			hadNoResponse
 		  }
+		  redraw()
 		  completionP.innerHTML = "$completionFraction segments labelled"
-		  gotFirstResponse.forEach {
-			it.showAsLabeled()
-		  }
+		  //		  gotFirstResponse.forEach {
+		  //			it.showAsLabeled()
+		  //		  }
 		  if (gotFirstResponse.isNotEmpty()) nextSeg()
 		}
 	  }
