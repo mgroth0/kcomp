@@ -4,11 +4,9 @@ package matt.sempart.client.trialdiv
 import kotlinx.html.ButtonType
 import matt.kjs.WeakMap
 import matt.kjs.bind.binding
-import matt.kjs.bindings.eq
-import matt.kjs.bindings.isNull
+import matt.kjs.bindings.isEmptyProperty
 import matt.kjs.bindings.not
 import matt.kjs.bindings.or
-import matt.kjs.bindings.orDebug
 import matt.kjs.css.FlexDirection.row
 import matt.kjs.css.FontStyle.italic
 import matt.kjs.css.FontWeight.bold
@@ -196,24 +194,27 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
   }
 
   val labelsDiv = controlsDiv.div {
-	hiddenProperty().bind(selectedSeg.isNull())
+	hiddenProperty().bind(selectedSegments.isEmptyProperty())
 	sty {
 	  box()
 	}
 	(LABELS.shuffled() + "Something else" + "I don't know").forEach { l ->
 	  boxButton {
-		disabledProperty().bind(UI.disabledProp orDebug selectedSegResponse.eq(l))
+		disabledProperty().bind(UI.disabledProp or selectedSegments.binding { it.all { it.response == l } })
 		innerHTML = l
 		sty.fontStyle = italic
 		onclick = interaction("selected label: $l") {
-		  selectedSeg.value!!.labelledCanvas.hidden = false
-		  val hadNoResponse = selectedSeg.value!!.hasNoResponse
-		  selectedSeg.value!!.response = l
-		  completionP.innerHTML = "$completionFraction segments labelled"
-		  if (hadNoResponse) {
-			selectedSeg.value!!.showAsLabeled()
-			nextSeg()
+		  val gotFirstResponse = selectedSegments.filter {
+			it.labelledCanvas.hidden = false
+			val hadNoResponse = it.hasNoResponse
+			it.response = l
+			hadNoResponse
 		  }
+		  completionP.innerHTML = "$completionFraction segments labelled"
+		  gotFirstResponse.forEach {
+			it.showAsLabeled()
+		  }
+		  if (gotFirstResponse.isNotEmpty()) nextSeg()
 		}
 	  }
 	}
