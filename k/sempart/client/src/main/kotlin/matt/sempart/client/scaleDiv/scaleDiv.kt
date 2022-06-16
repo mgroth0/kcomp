@@ -1,6 +1,8 @@
 package matt.sempart.client.scaleDiv
 
+//import matt.sempart.client.mainDivClass
 import matt.kjs.css.TextAlign.center
+import matt.kjs.css.VerticalAligns
 import matt.kjs.css.auto
 import matt.kjs.css.sty
 import matt.kjs.elements.br
@@ -10,11 +12,9 @@ import matt.kjs.elements.img
 import matt.kjs.elements.p
 import matt.kjs.setOnClick
 import matt.sempart.client.const.INSTRUCTIONS_IM_RELATIVE
-//import matt.sempart.client.mainDivClass
 import matt.sempart.client.state.ExperimentPhase.Scaling
 import matt.sempart.client.state.ExperimentState
 import matt.sempart.client.state.onlyShowIn
-import matt.sempart.client.sty.centerInParent
 
 val scaleDiv by lazy {
   div {
@@ -22,10 +22,10 @@ val scaleDiv by lazy {
 	onlyShowIn(Scaling)
 	sty.textAlign = center
 
-	sty.centerInParent()
+	sty.verticalAlign = VerticalAligns.middle
 	img {
 	  src = INSTRUCTIONS_IM_RELATIVE
-	  sty.centerInParent()
+	  sty.verticalAlign = VerticalAligns.middle
 	}
 	br
 	p {
