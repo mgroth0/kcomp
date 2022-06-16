@@ -78,8 +78,8 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	//	  map["translate"] = listOf(-HALF_WIDTH)
 	//	}
 	sty {
-//	  height = HEIGHT.px + 200.px
-//	  width = WIDTH.px + 300.px
+	  height = HEIGHT.px // + 200.px
+	  width = WIDTH.px + 300.px
 	}
   }
   val stackDiv = element.div {
