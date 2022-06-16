@@ -8,6 +8,7 @@ import matt.kjs.bindings.isNull
 import matt.kjs.bindings.not
 import matt.kjs.bindings.or
 import matt.kjs.bindings.orDebug
+import matt.kjs.css.Display.inlineBlock
 import matt.kjs.css.FontStyle.italic
 import matt.kjs.css.FontWeight.bold
 import matt.kjs.css.Position.absolute
@@ -41,7 +42,6 @@ import matt.sempart.client.sty.MED_SPACE
 import matt.sempart.client.sty.box
 import matt.sempart.client.sty.boxButton
 import matt.sempart.client.sty.centerInParent
-import matt.sempart.client.sty.verticallyCenterInParent
 import matt.sempart.client.ui.boxButton
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
@@ -85,9 +85,10 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
   val stackDiv = element.div {
 	//	sty.
 	sty {
-	  verticallyCenterInParent()
+//	  verticallyCenterInParent()
 	  width = WIDTH.px
 	  height = HEIGHT.px
+	  display = inlineBlock
 	}
   }
 
@@ -157,12 +158,13 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 
   val controlsDiv: HTMLDivElement = element.div {
 	sty {
-	  verticallyCenterInParent()
-	  left = WIDTH.px
+//	  verticallyCenterInParent()
+//	  left = WIDTH.px
 	  //	  position = relative
 	  //	  left = WIDTH.px
 	  width = 300.px
 	  height = HEIGHT.px
+	  display = inlineBlock
 	  //	  sty.centerOnWindow()
 	}
 	sty {
