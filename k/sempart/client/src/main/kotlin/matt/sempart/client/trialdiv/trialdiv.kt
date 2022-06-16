@@ -11,6 +11,8 @@ import matt.kjs.bindings.orDebug
 import matt.kjs.css.Display.inlineBlock
 import matt.kjs.css.FontStyle.italic
 import matt.kjs.css.FontWeight.bold
+import matt.kjs.css.Position.absolute
+import matt.kjs.css.px
 import matt.kjs.css.sty
 import matt.kjs.elements.AwesomeElement
 import matt.kjs.elements.HTMLElementWrapper
@@ -74,18 +76,21 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	sty.centerOnWindow()
   }
   val stackDiv = element.div {
-	sty.display = inlineBlock
+	//	sty.
+	sty {
+	  display = inlineBlock
+	}
   }
 
   private fun HTMLCanvasElement.canvasConfig(idx: Int) {
 	width = WIDTH
 	height = HEIGHT
 	sty {
-	  centerOnWindow()
-//	  position = absolute
+	  //	  centerOnWindow()
+	  position = absolute
 	  zIndex = idx
-//	  top = 0.px
-//	  leftProperty().bind(currentLeftProp)
+	  //	  top = 0.px
+	  //	  leftProperty().bind(currentLeftProp)
 	}
 	if (idx > 1) {
 	  sty.zIndex = idx + segments.size
@@ -127,11 +132,11 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 		  height = HEIGHT
 		  hidden = true
 		  sty {
-			sty.centerOnWindow()
-//			position = absolute
-//			top = 0.px
+			//			sty.centerOnWindow()
+			position = absolute
+			//			top = 0.px
 			zIndex = zIdx
-//			leftProperty().bind(currentLeftProp)
+			//			leftProperty().bind(currentLeftProp)
 		  }
 		  context2D.drawImage(theSeg.labelledIm, 0.0, 0.0)
 		}, stackDiv.children[zIdx]
@@ -141,11 +146,13 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 
   val controlsDiv: HTMLDivElement = element.div {
 	sty {
-	  display = inlineBlock
-//	  position = absolute
+	  //	  display = inlineBlock
+	  position = absolute
+	  left = WIDTH.px
+	  //	  sty.centerOnWindow()
 	}
 	sty {
-//	  leftProperty().bind(currentLeftProp.binding { it + WIDTH })
+	  //	  leftProperty().bind(currentLeftProp.binding { it + WIDTH })
 	  marginBottom = MED_SPACE
 	}
   }
