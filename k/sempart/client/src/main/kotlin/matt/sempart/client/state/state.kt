@@ -278,8 +278,14 @@ class DrawingData(
 		hiLabeledIm.srcAsPath = DATA_FOLDER + "segment_hi_labeled" + imFileName
 
 		Segment(
-		  id = segID, pixels = entry.value, highlightIm = highlightIm, selectIm = selectIm, labelledIm = labelledIm,
-		  selectLabeledIm = selectLabeledIm, hiLabeledIm = hiLabeledIm, cycleIndex = index
+		  id = segID,
+		  pixels = entry.value,
+		  highlightIm = highlightIm,
+		  selectIm = selectIm,
+		  labelledIm = labelledIm,
+		  selectLabeledIm = selectLabeledIm,
+		  hiLabeledIm = hiLabeledIm,
+		  cycleIndex = index
 		)
 	  }.sortedBy { it.cycleIndex }
 
@@ -312,19 +318,12 @@ class DrawingData(
 	val hasNoResponse get() = !hasResponse
 	override fun toString() = "Segment $id of ${this@DrawingData}"
 	val highlightPixels by lazy {
-	  highlightIm.getPixels(w = WIDTH, h = HEIGHT)
+	  highlightIm.getPixels()
 	}
-	val selectPixels by lazy {
-	  selectIm.getPixels(w = WIDTH, h = HEIGHT)
-	}
-	val labelledPixels by lazy {
-	  labelledIm.getPixels(w = WIDTH, h = HEIGHT)
-	}
-	val selectLabeledPixels by lazy {
-	  selectLabeledIm.getPixels(w = WIDTH, h = HEIGHT)
-	}
+	val selectCanvas = canvas()
+	val selectLabeledCanvas = canvas()
 	val hiLabeledPixels by lazy {
-	  hiLabeledIm.getPixels(w = WIDTH, h = HEIGHT)
+	  hiLabeledIm.getPixels()
 	}
 	val labelledCanvas = canvas()
 

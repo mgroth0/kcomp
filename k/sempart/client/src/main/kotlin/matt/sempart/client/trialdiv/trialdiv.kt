@@ -3,6 +3,7 @@ package matt.sempart.client.trialdiv
 //import matt.sempart.client.sty.centerInParent
 import kotlinx.html.ButtonType
 import matt.kjs.WeakMap
+import matt.kjs.appendChilds
 import matt.kjs.bind.binding
 import matt.kjs.bindings.isEmptyProperty
 import matt.kjs.bindings.not
@@ -15,6 +16,7 @@ import matt.kjs.css.px
 import matt.kjs.css.sty
 import matt.kjs.elements.HTMLElementWrapper
 import matt.kjs.img.context2D
+import matt.kjs.img.draw
 import matt.kjs.pixelIndexIn
 import matt.kjs.props.disabledProperty
 import matt.kjs.props.hiddenProperty
@@ -45,7 +47,6 @@ import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLParagraphElement
 import org.w3c.dom.events.MouseEvent
-import org.w3c.dom.get
 import kotlin.js.Date
 
 interface TrialDiv: HTMLElementWrapper<HTMLDivElement> {
@@ -67,81 +68,47 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 
   fun eventToSeg(e: MouseEvent) = e.pixelIndexIn(mainCanvas)?.let { segmentOf(it) }
 
-  //  override val element = div {
-  //	//	classList.add(mainDivClass)
-  //	//	sty.transform = Transform().apply {
-  //	//	  map["scale"] = scaleDiv.sty.transform.map["scale"]!!
-  //	//	}
-  ////	onlyShowIn(Trial, debug = true)
-  //	//	sty.marginLeftProperty().bind(currentLeftProp)
-  //	//	sty.centerInParent()
-  //	//	sty.transform = sty.transform.apply {
-  //	//	  map["translate"] = listOf(-HALF_WIDTH)
-  //	//	}
-  //	//	sty {
-  //	//	  height = HEIGHT.px // + 200.px
-  //	//	  width = WIDTH.px + 300.px
-  //	//	}
-  //
-  ////	sty {
-  //////	  println("SETTING FLEX")
-  ////	  display = flex
-  ////	  println("SET FLEX")
-  //////	  justifyContent = JustifyContent.center
-  //////	  alignItems = AlignItems.center
-  ////	  //	  flexDirection = column
-  ////	}
-  //
-  //  }
   val stackDiv = element.div {
-	//	sty.
 	sty {
-	  //	  verticallyCenterInParent()
 	  width = WIDTH.px
 	  height = HEIGHT.px
-	  //	  display = inlineBlock
-
 	}
   }
+  private var zIdx = 0
 
-  private fun HTMLCanvasElement.canvasConfig(idx: Int) {
+
+  private fun HTMLCanvasElement.canvasConfig() {
 	width = WIDTH
 	height = HEIGHT
 	sty {
-	  //	  centerOnWindow()
 	  position = absolute
-	  //	  top = 0.px
-	  //	  left = 0.px
-	  zIndex = idx
-	  //	  top = 0.px
-	  //	  leftProperty().bind(currentLeftProp)
+	  zIndex = zIdx++
 	}
-	if (idx > 1) {
-	  sty.zIndex = idx + segments.size
-	}
+	//	if (idx > 1) {
+	//	  sty.zIndex = idx + segments.size
+	//	}d
   }
 
+
   override val mainCanvas = stackDiv.canvas {
-	canvasConfig(0)
+	canvasConfig()
 	context2D.drawImage(loadingIm, 0.0, 0.0)
   }
   override val hoverCanvas = stackDiv.canvas {
 	hidden = true
-	canvasConfig(1)
+	canvasConfig()
   }
   override val selectCanvas = stackDiv.canvas {
 	hidden = true
-	canvasConfig(2)
+	canvasConfig()
   }
   val eventCanvasIDK = stackDiv.canvas {
-	canvasConfig(3)
+	canvasConfig()
 	setOnMouseMove {
 	  ExperimentState.lastInteract = Date.now()
 	  hover(eventToSeg(it))
 	}
 	onclick = interaction("click") {
-	  println("click.clientX = ${it.clientX}")
-	  println("click.clientY = ${it.clientY}")
 	  val seg = eventToSeg(it)
 	  if (seg == null) {
 		clearSelection()
@@ -156,39 +123,28 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 
   init {
 	segments.forEach { theSeg: Segment ->
-	  val zIdx = theSeg.cycleIndex + 1
-	  stackDiv.insertBefore(
+	  stackDiv.appendChilds(
 		theSeg.labelledCanvas.apply {
-		  width = WIDTH
-		  height = HEIGHT
 		  hidden = true
-		  sty {
-			//			sty.centerOnWindow()
-			position = absolute
-			//			top = 0.px
-			//			left = 0.px
-			zIndex = zIdx
-			//			leftProperty().bind(currentLeftProp)
-		  }
-		  context2D.drawImage(theSeg.labelledIm, 0.0, 0.0)
-		}, stackDiv.children[zIdx]
+		  canvasConfig()
+		  draw(theSeg.labelledIm)
+		},
+		theSeg.selectCanvas.apply {
+		  hidden = true
+		  canvasConfig()
+		  draw(theSeg.selectIm)
+		},
+		theSeg.selectLabeledCanvas.apply {
+		  hidden = true
+		  canvasConfig()
+		  draw(theSeg.selectLabeledIm)
+		}
 	  )
 	}
   }
 
   val controlsDiv: HTMLDivElement = element.div {
 	sty {
-	  //	  verticallyCenterInParent()
-	  //	  left = WIDTH.px
-	  //	  position = relative
-	  //	  left = WIDTH.px
-	  //	  width = 300.px
-	  //	  height = HEIGHT.px
-	  //	  display = inlineBlock
-	  //	  sty.centerOnWindow()
-	}
-	sty {
-	  //	  leftProperty().bind(currentLeftProp.binding { it + WIDTH })
 	  marginBottom = MED_SPACE
 	  width = WIDTH.px
 	}
