@@ -347,6 +347,7 @@ class DrawingData(
 	val labelledCanvas = canvas()
 
 	operator fun contains(pi: PixelIndex): Boolean {
+	  if (pi.x < 0 || pi.y < 0 || pi.x >= WIDTH || pi.y >= HEIGHT) return false
 	  return pixels[pi.y][pi.x]
 	}
   }

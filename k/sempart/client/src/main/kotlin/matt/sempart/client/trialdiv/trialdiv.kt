@@ -42,6 +42,7 @@ import matt.sempart.client.state.onlyShowIn
 import matt.sempart.client.sty.MED_SPACE
 import matt.sempart.client.sty.box
 import matt.sempart.client.sty.boxButton
+import matt.sempart.client.sty.centerOnWindow
 import matt.sempart.client.ui.boxButton
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
@@ -68,11 +69,12 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 
   override val element = div {
 	//	classList.add(mainDivClass)
-//	sty.transform = Transform().apply {
-//	  map["scale"] = scaleDiv.sty.transform.map["scale"]!!
-//	}
+	//	sty.transform = Transform().apply {
+	//	  map["scale"] = scaleDiv.sty.transform.map["scale"]!!
+	//	}
 	onlyShowIn(Trial)
-	sty.marginLeftProperty().bind(currentLeftProp)
+	//	sty.marginLeftProperty().bind(currentLeftProp)
+	sty.centerOnWindow()
   }
   val stackDiv = element.div {
 	sty.display = inlineBlock
