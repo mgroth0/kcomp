@@ -2,7 +2,6 @@ package matt.sempart.client.scaleDiv
 
 //import matt.sempart.client.mainDivClass
 import matt.kjs.css.auto
-import matt.kjs.css.percent
 import matt.kjs.css.sty
 import matt.kjs.setOnClick
 import matt.sempart.client.const.INSTRUCTIONS_IM_RELATIVE
@@ -14,15 +13,15 @@ val scaleDiv = ExperimentScreen(Scaling) {
   //  div {
   //	classList.add(mainDivClass)
   //	onlyShowIn(Scaling)
-  sty {
+//  sty {
 	//	  display = flex
 	//	  justifyContent = center
 	//	  alignItems = AlignItems.center
 	//	  flexDirection = column
 	//	  textAlign = center
 	//	  verticalAlign = VerticalAligns.middle
-	height = 100.percent
-  }
+//	height = 100.percent
+//  }
 
   img {
 	src = INSTRUCTIONS_IM_RELATIVE

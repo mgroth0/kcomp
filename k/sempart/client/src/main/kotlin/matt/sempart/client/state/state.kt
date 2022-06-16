@@ -152,7 +152,7 @@ abstract class EventDispatcher<T>(type: String? = null) {
   protected val beforeDispatchOps = mutableListOf<(T)->Unit>()
   private fun runBeforeDispatchOps(t: T) {
 	println("beforeDispatchOps.size=${beforeDispatchOps.size}")
-	/*i might modify the list of ops during this iteration so...*/
+	/*i might modify the list of ops during this iteration so... WOW THIS FIXED IT*/
 	beforeDispatchOps.toList().forEach { it(t) }
   }
 

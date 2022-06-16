@@ -13,6 +13,7 @@ import matt.kjs.css.FlexDirection
 import matt.kjs.css.FlexDirection.column
 import matt.kjs.css.JustifyContent
 import matt.kjs.css.Px
+import matt.kjs.css.percent
 import matt.kjs.css.px
 import matt.kjs.css.sty
 import matt.kjs.elements.AwesomeElement
@@ -41,6 +42,7 @@ open class ExperimentScreen(
 		justifyContent = JustifyContent.center
 		alignItems = AlignItems.center
 		flexDirection = flexDir
+		height = 100.percent
 	  }
 	} as HTMLDivElement
   }
