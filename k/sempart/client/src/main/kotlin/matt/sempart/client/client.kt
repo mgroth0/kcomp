@@ -18,6 +18,7 @@ import matt.kjs.elements.input
 import matt.kjs.ifConfirm
 import matt.kjs.nextOrNull
 import matt.kjs.req.post
+import matt.klib.str.tab
 import matt.sempart.ExperimentData
 import matt.sempart.client.breakDiv.breakDiv
 import matt.sempart.client.completeDiv.completeDiv
@@ -128,6 +129,14 @@ fun main() = defaultMain {
 		val trial = drawingData.trial!!
 
 		trial.div.element.sty.transform = Transform().apply {
+		  val scaleDivTransform = scaleDiv.sty.transform
+		  println("scaleDivTransform:")
+		  scaleDivTransform.map.forEach {
+			tab("k=${it.key}")
+			it.value.forEach {
+			  tab("\t$it")
+			}
+		  }
 		  map["scale"] = scaleDiv.sty.transform.map["scale"]!!
 		}
 
