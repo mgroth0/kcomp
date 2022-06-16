@@ -59,14 +59,16 @@ fun main() = defaultMain {
   val divs =
 	listOf(scaleDiv, instructionsVidDiv, instructionsDiv, resizeDiv, loadingDiv, completeDiv, breakDiv, inactiveDiv)
 
+  val defaultScale = "1.0"
+
   document.body!!.appendChilds(
 	input {
 	  onlyShowIn(Scaling)
 	  type = "range"
 	  step = "0.01"
 	  min = "0.5"
-	  defaultValue = "1.0"
-	  value = "1"
+	  defaultValue = defaultScale
+	  value = defaultScale
 	  max = "1.5"
 	  sty {
 		width = 80.percent
@@ -99,6 +101,20 @@ fun main() = defaultMain {
 	},
 	*divs.toTypedArray()
   )
+
+
+  /*neccesary so first trialDiv doesnt get NPE*/
+  divs.forEach {
+	when (it) {
+	  is HTMLElement           -> it.sty.transform = it.sty.transform.apply {
+		map["scale"] = listOf(defaultScale)
+	  }
+
+	  is HTMLElementWrapper<*> -> it.element.sty.transform = it.element.sty.transform.apply {
+		map["scale"] = listOf(defaultScale)
+	  }
+	}
+  }
 
   val images = listOf(TRAIN_IM) + ORIG_DRAWING_IMS.shuffled()
   val imIterator = images.withIndex().toList().listIterator()
