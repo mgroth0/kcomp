@@ -229,6 +229,7 @@ fun HTMLElement.onlyShowIn(phase: ExperimentPhase) {
   listen(PhaseChange) {
 	if (it.second == phase) {
 	  if (sty.display == none) {
+		println("setting display of ${this@onlyShowIn} to ${lastNonNoneDisplay}")
 		sty.display = lastNonNoneDisplay
 	  }
 	} else sty.display = none
