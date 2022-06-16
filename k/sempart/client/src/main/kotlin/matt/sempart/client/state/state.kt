@@ -203,6 +203,7 @@ object PhaseChange: ChangeEventDispatcher<Pair<ExperimentPhase, ExperimentPhase>
 		println("yes running")
 		beforeDispatchOps.remove(op!!)
 		listener(new)
+		println("ran")
 	  }
 	}
 	beforeDispatchOps.add(op)
