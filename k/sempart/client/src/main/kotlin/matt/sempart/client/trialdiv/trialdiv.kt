@@ -18,11 +18,13 @@ import matt.kjs.css.px
 import matt.kjs.css.sty
 import matt.kjs.elements.HTMLElementWrapper
 import matt.kjs.img.draw
+import matt.kjs.img.put
 import matt.kjs.pixelIndexInTarget
 import matt.kjs.props.disabledProperty
 import matt.kjs.props.hiddenProperty
 import matt.kjs.props.innerHTMLProperty
 import matt.kjs.setOnMouseMove
+import matt.kjs.showing
 import matt.klib.dmap.withStoringDefault
 import matt.klib.lang.go
 import matt.sempart.client.const.HEIGHT
@@ -54,7 +56,7 @@ import kotlin.contracts.ExperimentalContracts
 
 interface TrialDiv: HTMLElementWrapper<HTMLDivElement> {
   val nextImageButton: HTMLButtonElement
-  val hoverCanvas: HTMLCanvasElement
+  //  val hoverCanvas: HTMLCanvasElement
 
   //  val selectCanvas: HTMLCanvasElement
   val helpText: HTMLParagraphElement
@@ -97,8 +99,12 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
   val mainCanvas = stackDiv.canvas {
 	canvasConfig(loadingIm, hide = false)
   }
-  override val hoverCanvas = stackDiv.canvas {
+  val hoverCanvas = stackDiv.canvas {
 	canvasConfig(im = null)
+	hoveredSeg.onChange {
+	  showing = it != null
+	  if (it != null) put(if (it.hasResponse) it.hiLabeledPixels else it.highlightPixels)
+	}
   }
 
   init {

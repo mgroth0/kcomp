@@ -19,7 +19,6 @@ import matt.kjs.every
 import matt.kjs.first
 import matt.kjs.firstBackwards
 import matt.kjs.img.getPixels
-import matt.kjs.img.put
 import matt.kjs.prop.BindableProperty
 import matt.kjs.prop.ReadOnlyBindableProperty
 import matt.kjs.prop.VarProp
@@ -491,11 +490,6 @@ class DrawingTrial(
   fun hover(seg: Segment?) {
 	if (seg == hoveredSeg.value) return
 	hoveredSeg.value = seg
-	div.hoverCanvas.showing = hoveredSeg.value != null
-	//	div.hoverCanvas.hidden = hoveredSeg.value == null
-	if (hoveredSeg.value != null) div.hoverCanvas.put(
-	  if (seg!!.hasResponse) seg.hiLabeledPixels else seg.highlightPixels
-	)
   }
 
 }
