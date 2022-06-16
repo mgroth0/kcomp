@@ -8,6 +8,7 @@ import matt.kjs.bindings.isNull
 import matt.kjs.bindings.not
 import matt.kjs.bindings.or
 import matt.kjs.bindings.orDebug
+import matt.kjs.css.Display.inlineBlock
 import matt.kjs.css.FontStyle.italic
 import matt.kjs.css.FontWeight.bold
 import matt.kjs.css.Position.absolute
@@ -85,7 +86,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
   val stackDiv = element.div {
 	//	sty.
 	sty {
-	  //	  display = inlineBlock
+	  display = inlineBlock
 	}
   }
 
@@ -153,7 +154,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 
   val controlsDiv: HTMLDivElement = element.div {
 	sty {
-	  //	  display = inlineBlock
+	  display = inlineBlock
 	  position = relative
 	  left = WIDTH.px
 	  //	  sty.centerOnWindow()
