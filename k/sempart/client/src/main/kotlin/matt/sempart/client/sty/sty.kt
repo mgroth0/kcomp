@@ -4,9 +4,9 @@ import matt.kjs.css.BorderStyle.solid
 import matt.kjs.css.BorderWidth.thin
 import matt.kjs.css.Display.block
 import matt.kjs.css.MyStyleDsl
-import matt.kjs.css.Position.absolute
-import matt.kjs.css.percent
+import matt.kjs.css.VerticalAligns
 import matt.kjs.css.px
+import matt.klib.todo
 
 fun MyStyleDsl.box() {
   borderStyle = solid
@@ -26,32 +26,44 @@ fun MyStyleDsl.boxButton() {
 
 /*https://stackoverflow.com/a/31029494/6596010*/
 fun MyStyleDsl.centerInParent() {
-  position = absolute
+  /*position = absolute
   top = 50.percent
   left = 50.percent
   modifyTransform {
 	translate = -50.percent to -50.percent
-  } //  transform = Transform().apply {
+  } */
+
+  /*verticalAlign = VerticalAligns.middle*/
+  verticallyCenterInParent()
+  horizontallyCenterInParent()
+
+
+  //  transform = Transform().apply {
   //	map["translate"] = listOf("-50%", "-50%")
   //  }
 }
 
 fun MyStyleDsl.verticallyCenterInParent() {
-  position = absolute
+  /*position = absolute
   top = 50.percent
   modifyTransform {
 	translate = -0.percent to -50.percent
-  } //  transform = Transform().apply {
+  } */
+
+  verticalAlign = VerticalAligns.middle
+
+  //  transform = Transform().apply {
   //	map["translate"] = listOf("0%", "-50%")
   //  }
 }
 
 fun MyStyleDsl.horizontallyCenterInParent() {
-  position = absolute
-  left = 50.percent
-  modifyTransform {
-	translate = -50.percent to -0.percent
-  } //  transform = Transform().apply {
-  //	map["translate"] = listOf("-50%", "0%")
-  //  }
+  todo("?")
+  /* position = absolute
+   left = 50.percent
+   modifyTransform {
+	 translate = -50.percent to -0.percent
+   } //  transform = Transform().apply {
+   //	map["translate"] = listOf("-50%", "0%")
+   //  }*/
 }
