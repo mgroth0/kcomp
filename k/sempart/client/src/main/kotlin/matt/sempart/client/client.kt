@@ -125,9 +125,9 @@ fun main() = defaultMain {
 	drawingData.whenReady {
 	  val trial = drawingData.trial!!
 
-	  trial.div.element.sty.transform = Transform().apply {
-		map["scale"] = scaleDiv.sty.transform.map["scale"]!!
-	  }
+//	  trial.div.element.sty.transform = Transform().apply {
+//		map["scale"] = scaleDiv.sty.transform.map["scale"]!!
+//	  }
 
 	  trial.div.helpText.hidden = !training
 	  document.body!!.appendWrapper(trial.div)
