@@ -73,32 +73,32 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	//	sty.transform = Transform().apply {
 	//	  map["scale"] = scaleDiv.sty.transform.map["scale"]!!
 	//	}
-	onlyShowIn(Trial)
+	onlyShowIn(Trial, debug = true)
 	//	sty.marginLeftProperty().bind(currentLeftProp)
-//	sty.centerInParent()
+	//	sty.centerInParent()
 	//	sty.transform = sty.transform.apply {
 	//	  map["translate"] = listOf(-HALF_WIDTH)
 	//	}
-//	sty {
-//	  height = HEIGHT.px // + 200.px
-//	  width = WIDTH.px + 300.px
-//	}
+	//	sty {
+	//	  height = HEIGHT.px // + 200.px
+	//	  width = WIDTH.px + 300.px
+	//	}
 
-	sty{
+	sty {
 	  display = flex
 	  justifyContent = JustifyContent.center
 	  alignItems = AlignItems.center
-//	  flexDirection = column
+	  //	  flexDirection = column
 	}
 
   }
   val stackDiv = element.div {
 	//	sty.
 	sty {
-//	  verticallyCenterInParent()
+	  //	  verticallyCenterInParent()
 	  width = WIDTH.px
 	  height = HEIGHT.px
-//	  display = inlineBlock
+	  //	  display = inlineBlock
 	}
   }
 
@@ -168,13 +168,13 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 
   val controlsDiv: HTMLDivElement = element.div {
 	sty {
-//	  verticallyCenterInParent()
-//	  left = WIDTH.px
+	  //	  verticallyCenterInParent()
+	  //	  left = WIDTH.px
 	  //	  position = relative
 	  //	  left = WIDTH.px
-//	  width = 300.px
-//	  height = HEIGHT.px
-//	  display = inlineBlock
+	  //	  width = 300.px
+	  //	  height = HEIGHT.px
+	  //	  display = inlineBlock
 	  //	  sty.centerOnWindow()
 	}
 	sty {
