@@ -17,6 +17,7 @@ import matt.kjs.elements.input
 import matt.kjs.ifConfirm
 import matt.kjs.nextOrNull
 import matt.kjs.req.post
+import matt.kjs.setOnInput
 import matt.sempart.ExperimentData
 import matt.sempart.client.breakDiv.breakDiv
 import matt.sempart.client.completeDiv.completeDiv
@@ -40,8 +41,6 @@ import matt.sempart.client.state.Participant
 import matt.sempart.client.state.PhaseChange
 import matt.sempart.client.trialdiv.div
 
-//val mainDivClass = "maindiv"
-
 fun main() = defaultMain {
   document.head!!.title = "Semantic Segmentation"
   val headStyleElement = document.head!!.append.style {}
@@ -61,7 +60,6 @@ fun main() = defaultMain {
 
   document.body!!.appendChild(
 	input {
-	  //	  onlyShowIn(Scaling)
 	  PhaseChange.afterEndOfNext(Scaling) {
 		hidden = true
 	  }
@@ -78,22 +76,12 @@ fun main() = defaultMain {
 		top = 10.percent
 		zIndex = 1
 	  }
-	  oninput = {
+	  setOnInput {
 		divs.forEach {
 		  it.sty.resetTransform {
 			scale(value.toDouble())
 		  }
-		  //		  when (it) {
-		  //			is HTMLElement           -> it.sty.resetTransform {
-		  //			  scale(value.toDouble())
-		  //			}
-		  //
-		  //			is HTMLElementWrapper<*> -> it.element.sty.resetTransform {
-		  //			  scale(value.toDouble())
-		  //			}
-		  //		  }
 		}
-		Unit
 	  }
 	}
   )
@@ -107,17 +95,6 @@ fun main() = defaultMain {
 	it.sty.resetTransform {
 	  scale(defaultScale.toDouble())
 	}
-	//	when (it) {
-	//	  is HTMLElement           -> it.sty.resetTransform {
-	//		scale(defaultScale.toDouble())
-	//		//		scale = defaultScale.toDouble()
-	//	  }
-	//
-	//	  is HTMLElementWrapper<*> -> it.element.sty.resetTransform {
-	//		scale(defaultScale.toDouble())
-	//		//		scale = defaultScale.toDouble()
-	//	  }
-	//	}
   }
 
   val images = listOf(TRAIN_IM) + ORIG_DRAWING_IMS.shuffled()
@@ -126,27 +103,14 @@ fun main() = defaultMain {
   /*need scale before creating elements*/
   PhaseChange.afterEndOfNext(Scaling) {
 	fun presentImage(drawingData: DrawingData, training: Boolean = false) {
+	  println("presenting image of ${drawingData}")
 	  val loadingProcess = DrawingLoadingProcess("downloading image data")
 	  drawingData.whenReady {
+		println("in whenReady of ${drawingData}")
 		val trial = drawingData.trial!!
 		trial.div.element.sty.resetTransform {
-		  //		  scale(defaultScale.toDouble())
 		  scale(scaleDiv.sty.transform.funs.filterIsInstance<Scale>().first().args)
-		  //		  scale = scaleDiv.sty.transform.scale
 		}
-		//		trial.div.element.sty.transform = Transform().apply {
-		//		  val scaleDivTransform = scaleDiv.sty.transform
-		//		  println("scaleDivTransform:")
-		////		  scaleDivTransform.map.forEach {
-		////			tab("k=${it.key}")
-		////			it.value.forEach {
-		////			  tab("\t$it")
-		////			}
-		////		  }
-		//
-		//		  map["scale"] = scaleDiv.sty.transform.map["scale"]!!
-		//		}
-
 		trial.div.helpText.hidden = !training
 		document.body!!.appendWrapper(trial.div)
 		val nextDrawingData = imIterator.nextOrNull()?.let { DrawingData(it) }
@@ -179,8 +143,6 @@ fun main() = defaultMain {
 	}
 	presentImage(DrawingData(imIterator.next()), training = true)
   }
-
-
 }
 
 
