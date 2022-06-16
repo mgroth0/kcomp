@@ -224,7 +224,10 @@ fun HTMLElement.onlyShowIn(phase: ExperimentPhase) {
 	sty.display = none
   }
   sty.displayProperty().onChange {
-	if (it != none) lastNonNoneDisplay = it
+	if (it != none) {
+	  lastNonNoneDisplay = it
+	  if (ExperimentPhase.determine() != phase) sty.display = none
+	}
   }
   listen(PhaseChange) {
 	if (it.second == phase) {
