@@ -3,6 +3,7 @@ package matt.sempart.client.scaleDiv
 //import matt.sempart.client.mainDivClass
 import matt.kjs.css.AlignItems
 import matt.kjs.css.Display.flex
+import matt.kjs.css.FlexDirection.column
 import matt.kjs.css.JustifyContent.center
 import matt.kjs.css.auto
 import matt.kjs.css.percent
@@ -26,6 +27,7 @@ val scaleDiv by lazy {
 	  display = flex
 	  justifyContent = center
 	  alignItems = AlignItems.center
+	  flexDirection = column
 	  //	  textAlign = center
 	  //	  verticalAlign = VerticalAligns.middle
 	  height = 100.percent
