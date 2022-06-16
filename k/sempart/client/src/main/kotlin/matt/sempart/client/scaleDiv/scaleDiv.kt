@@ -10,7 +10,7 @@ import matt.kjs.elements.img
 import matt.kjs.elements.p
 import matt.kjs.setOnClick
 import matt.sempart.client.const.INSTRUCTIONS_IM_RELATIVE
-import matt.sempart.client.mainDivClass
+//import matt.sempart.client.mainDivClass
 import matt.sempart.client.state.ExperimentPhase.Scaling
 import matt.sempart.client.state.ExperimentState
 import matt.sempart.client.state.onlyShowIn
@@ -18,7 +18,7 @@ import matt.sempart.client.sty.centerOnWindow
 
 val scaleDiv by lazy {
   div {
-	classList.add(mainDivClass)
+//	classList.add(mainDivClass)
 	onlyShowIn(Scaling)
 	sty.textAlign = center
 

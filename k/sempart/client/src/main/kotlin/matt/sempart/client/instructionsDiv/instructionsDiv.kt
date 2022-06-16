@@ -11,14 +11,14 @@ import matt.kjs.elements.p
 import matt.kjs.setOnClick
 import matt.sempart.client.const.INSTRUCTIONS_IM_RELATIVE
 import matt.sempart.client.const.WIDTH
-import matt.sempart.client.mainDivClass
+//import matt.sempart.client.mainDivClass
 import matt.sempart.client.state.ExperimentPhase.Instructions
 import matt.sempart.client.state.ExperimentState
 import matt.sempart.client.state.onlyShowIn
 
 val instructionsDiv by lazy {
   div {
-	classList.add(mainDivClass)
+//	classList.add(mainDivClass)
 	onlyShowIn(Instructions)
 	sty.textAlign = center
 	img {

@@ -4,13 +4,13 @@ import matt.kjs.css.auto
 import matt.kjs.css.sty
 import matt.kjs.elements.div
 import matt.kjs.elements.p
-import matt.sempart.client.mainDivClass
+//import matt.sempart.client.mainDivClass
 import matt.sempart.client.state.ExperimentPhase.Resize
 import matt.sempart.client.state.onlyShowIn
 
 val resizeDiv by lazy {
   div {
-	classList.add(mainDivClass)
+//	classList.add(mainDivClass)
 	onlyShowIn(Resize)
 	p {
 	  sty.margin = auto

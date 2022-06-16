@@ -2,14 +2,14 @@ package matt.sempart.client.loadingDiv
 
 import matt.kjs.elements.loadingText
 import matt.kjs.node.LoadingProcess
-import matt.sempart.client.mainDivClass
+//import matt.sempart.client.mainDivClass
 import matt.sempart.client.state.ExperimentPhase.Loading
 import matt.sempart.client.state.ExperimentState
 import matt.sempart.client.state.onlyShowIn
 
 val loadingDiv by lazy {
   loadingText("Loading") {
-	element.classList.add(mainDivClass)
+//	element.classList.add(mainDivClass)
 	onlyShowIn(Loading)
   }
 }
