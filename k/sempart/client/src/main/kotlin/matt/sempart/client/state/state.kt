@@ -16,7 +16,8 @@ import matt.kjs.css.Display.none
 import matt.kjs.css.Px
 import matt.kjs.css.px
 import matt.kjs.css.sty
-import matt.kjs.elements.AwesomeElement
+import matt.kjs.elements.HTMLElementWrapper
+import matt.kjs.elements.WithDefaultDisplay
 import matt.kjs.elements.canvas
 import matt.kjs.elements.div
 import matt.kjs.elements.img
@@ -47,7 +48,6 @@ import matt.sempart.client.state.TrialPhase.UNSELECTED
 import matt.sempart.client.trialdiv.div
 import org.w3c.dom.CustomEvent
 import org.w3c.dom.CustomEventInit
-import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLImageElement
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.EventTarget
@@ -190,6 +190,12 @@ fun <T> EventTarget.listen(d: EventDispatcher<T>, op: (T)->Unit) {
   })
 }
 
+fun <T> HTMLElementWrapper<*>.listen(d: EventDispatcher<T>, op: (T)->Unit) {
+  element.addEventListener(d.type, {
+	@Suppress("UNCHECKED_CAST") op((it as CustomEvent).detail as T)
+  })
+}
+
 object PhaseChange: ChangeEventDispatcher<Pair<ExperimentPhase, ExperimentPhase>>() {
   init {
 	beforeDispatch { println("Phase Change: $it") }
@@ -217,27 +223,17 @@ val currentLeftProp: ReadOnlyBindableProperty<Px> = BindableProperty(currentLeft
 //
 //}
 
-fun AwesomeElement<*>.onlyShowIn(phase: ExperimentPhase) = element.onlyShowIn(phase)
+//fun AwesomeElement<*>.onlyShowIn(phase: ExperimentPhase) = element.onlyShowIn(phase)
 
-fun HTMLElement.onlyShowIn(phase: ExperimentPhase, debug: Boolean = false) {
-  var lastNonNoneDisplay = sty.display
-  if (debug) println("original lastNonNoneDisplay=${lastNonNoneDisplay}")
+
+fun WithDefaultDisplay<*>.onlyShowIn(phase: ExperimentPhase, debug: Boolean = false) {
   if (ExperimentPhase.determine() != phase) {
 	sty.display = none
-  }
-  sty.displayProperty().onChange {
-	if (debug) println("display changed: $it")
-	if (it != none) {
-	  lastNonNoneDisplay = it
-	  if (debug) println("lastNonNoneDisplay1=${lastNonNoneDisplay}")
-	  if (ExperimentPhase.determine() != phase) sty.display = none
-	}
   }
   listen(PhaseChange) {
 	if (it.second == phase) {
 	  if (sty.display == none) {
-		if (debug) println("setting display of ${this@onlyShowIn} to $lastNonNoneDisplay")
-		sty.display = lastNonNoneDisplay
+		sty.display = defaultDisplay
 	  }
 	} else sty.display = none
   }
