@@ -324,12 +324,13 @@ class DrawingData(
 	val highlightPixels by lazy {
 	  highlightIm.getPixels()
 	}
-//	val selectCanvas = canvas()
-//	val selectLabeledCanvas = canvas()
+
+	//	val selectCanvas = canvas()
+	//	val selectLabeledCanvas = canvas()
 	val hiLabeledPixels by lazy {
 	  hiLabeledIm.getPixels()
 	}
-//	val labelledCanvas = canvas()
+	//	val labelledCanvas = canvas()
 
 	operator fun contains(pi: PixelIndex): Boolean {
 	  if (pi.x < 0 || pi.y < 0 || pi.x >= WIDTH || pi.y >= HEIGHT) return false
@@ -403,15 +404,15 @@ class DrawingTrial(
   val segmentsWithResponse get() = segments.filter { it.hasResponse }
   val completionFraction get() = "${segmentsWithResponse.size}/${segments.size}"
 
-//  fun redraw() {
-//	segments.forEach { it.redraw() }
-//  }
+  //  fun redraw() {
+  //	segments.forEach { it.redraw() }
+  //  }
 
-//  fun Segment.redraw() {
-//	labelledCanvas.showing = hasResponse
-//	selectCanvas.showing = this in selectedSegments
-//	selectLabeledCanvas.showing = hasResponse && this in selectedSegments
-//  }
+  //  fun Segment.redraw() {
+  //	labelledCanvas.showing = hasResponse
+  //	selectCanvas.showing = this in selectedSegments
+  //	selectLabeledCanvas.showing = hasResponse && this in selectedSegments
+  //  }
 
   val finishedProp = segments.map { it.hasResponseProp }.reduce { r1, r2 -> r1.and(r2) }.apply {
 	onChange {
@@ -431,6 +432,7 @@ class DrawingTrial(
 
 
   fun switchSegment(next: Boolean, unlabelled: Boolean) {
+	val wasEmpty = segments.isEmpty()
 	if (PARAMS.allowMultiSelection) clearSelection()
 	select(when {
 	  isFinished && unlabelled -> {
@@ -438,13 +440,13 @@ class DrawingTrial(
 		return
 	  }
 
-	  selectedSegments.isEmpty() -> when {
+	  wasEmpty                 -> when {
 		next -> segments.first()
 		else -> segments.last()
 	  }
 
-	  next -> segCycle.first { !unlabelled || it.hasNoResponse }
-	  else -> segCycle.firstBackwards { !unlabelled || it.hasNoResponse }
+	  next                     -> segCycle.first { !unlabelled || it.hasNoResponse }
+	  else                     -> segCycle.firstBackwards { !unlabelled || it.hasNoResponse }
 	})
   }
 
@@ -455,7 +457,7 @@ class DrawingTrial(
 
   fun clearSelection() {
 	selectedSegments.clear()
-//	redraw()
+	//	redraw()
 	if (isNotFinished) phase = UNSELECTED
   }
 
@@ -469,7 +471,7 @@ class DrawingTrial(
 	//	  if (isNotFinished) phase = UNSELECTED
 	//	} else {
 
-//	seg.redraw()
+	//	seg.redraw()
 	//	if (seg.hasResponse) {
 	//	  seg.selectLabeledCanvas.hidden = false
 	//	} else {
