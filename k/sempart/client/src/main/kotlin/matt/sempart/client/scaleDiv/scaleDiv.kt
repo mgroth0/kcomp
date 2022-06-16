@@ -18,13 +18,14 @@ import matt.sempart.client.sty.centerInParent
 
 val scaleDiv by lazy {
   div {
-//	classList.add(mainDivClass)
+	//	classList.add(mainDivClass)
 	onlyShowIn(Scaling)
 	sty.textAlign = center
 
 	sty.centerInParent()
 	img {
 	  src = INSTRUCTIONS_IM_RELATIVE
+	  sty.centerInParent()
 	}
 	br
 	p {
