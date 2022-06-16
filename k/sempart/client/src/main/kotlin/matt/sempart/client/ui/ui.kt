@@ -28,7 +28,8 @@ import org.w3c.dom.HTMLDivElement
 open class ExperimentScreen(
   phase: ExperimentPhase,
   override val defaultDisplay: Display = flex,
-  val flexDir: FlexDirection = column
+  val flexDir: FlexDirection = column,
+  val cfg: ExperimentScreen.()->Unit = {}
 ): AwesomeElement<HTMLDivElement>(), WithDefaultDisplay<HTMLDivElement> {
   final override val element by lazy {
 	div {
@@ -42,6 +43,10 @@ open class ExperimentScreen(
 
   init {
 	onlyShowIn(phase)
+  }
+
+  init {
+	cfg()
   }
 }
 

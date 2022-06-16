@@ -7,8 +7,8 @@ import matt.sempart.client.ui.ExperimentScreen
 
 //import matt.sempart.client.sty.centerInParent
 
-val inactiveDiv = ExperimentScreen(Inactive).apply {
-  div {    //	classList.add(mainDivClass)
+val inactiveDiv = ExperimentScreen(Inactive) {
+//  div {    //	classList.add(mainDivClass)
 	//	onlyShowIn(Inactive)
 	//	sty {
 	//	  display = flex
@@ -17,6 +17,6 @@ val inactiveDiv = ExperimentScreen(Inactive).apply {
 	//	  flexDirection = column
 	//	}
 	//	sty.centerInParent()
-	innerHTML = "Sorry, you have been inactive for too long and the experiment has been cancelled."
-  }
+	element.innerHTML = "Sorry, you have been inactive for too long and the experiment has been cancelled."
+//  }
 }

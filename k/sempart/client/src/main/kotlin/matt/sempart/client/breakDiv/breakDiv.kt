@@ -17,33 +17,33 @@ import kotlin.js.Date
 
 val breakDiv = ExperimentScreen(
   Break
-).apply {
-  div {
-	//	classList.add(mainDivClass)
-	//	onlyShowIn(Break)
-	//	sty.centerInParent()
-	////	sty.textAlign = center
-	//	sty{
-	////	  display = flex
-	////	  justifyContent = center
-	////	  alignItems = AlignItems.center
-	//	  flexDirection = column
-	//	}
-	p {
-	  sty {
-		width = WIDTH.px
-		margin = auto
-		innerHTML = "You may take a break and continue when you are ready."
-		button {
-		  type = ButtonType.button.realValue
-		  sty.margin = auto
-		  innerHTML = "Continue"
-		  setOnClick {
-			ExperimentState.lastInteract = Date.now()
-			ExperimentState.onBreak = false
-		  }
+) {
+  //  div {
+  //	classList.add(mainDivClass)
+  //	onlyShowIn(Break)
+  //	sty.centerInParent()
+  ////	sty.textAlign = center
+  //	sty{
+  ////	  display = flex
+  ////	  justifyContent = center
+  ////	  alignItems = AlignItems.center
+  //	  flexDirection = column
+  //	}
+  p {
+	sty {
+	  width = WIDTH.px
+	  margin = auto
+	  innerHTML = "You may take a break and continue when you are ready."
+	  button {
+		type = ButtonType.button.realValue
+		sty.margin = auto
+		innerHTML = "Continue"
+		setOnClick {
+		  ExperimentState.lastInteract = Date.now()
+		  ExperimentState.onBreak = false
 		}
 	  }
 	}
   }
+  //  }
 }

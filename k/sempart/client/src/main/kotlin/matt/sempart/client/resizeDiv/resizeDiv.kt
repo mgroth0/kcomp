@@ -8,21 +8,21 @@ import matt.sempart.client.ui.ExperimentScreen
 
 //import matt.sempart.client.sty.centerInParent
 
-val resizeDiv = ExperimentScreen(Resize).apply {
-  div {
-//	classList.add(mainDivClass)
-//	onlyShowIn(Resize)
-//	sty{
-//	  display = flex
-//	  justifyContent = JustifyContent.center
-//	  alignItems = AlignItems.center
-//	  flexDirection = column
-//	}
-//	sty.centerInParent()
-	p {
-	  sty.margin = auto
-	  innerHTML =
-		"Your window is too small. Please enlarge the browser window so it is at least matt.sempart.client.const.getWidth=900 by matt.sempart.client.const.getHeight=750."
-	}
+val resizeDiv = ExperimentScreen(Resize) {
+  //  div {
+  //	classList.add(mainDivClass)
+  //	onlyShowIn(Resize)
+  //	sty{
+  //	  display = flex
+  //	  justifyContent = JustifyContent.center
+  //	  alignItems = AlignItems.center
+  //	  flexDirection = column
+  //	}
+  //	sty.centerInParent()
+  p {
+	sty.margin = auto
+	innerHTML =
+	  "Your window is too small. Please enlarge the browser window so it is at least matt.sempart.client.const.getWidth=900 by matt.sempart.client.const.getHeight=750."
   }
+  //  }
 }

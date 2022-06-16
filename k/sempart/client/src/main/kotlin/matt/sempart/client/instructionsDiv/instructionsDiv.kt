@@ -13,37 +13,37 @@ import matt.sempart.client.ui.ExperimentScreen
 
 //import matt.sempart.client.sty.centerInParent
 
-val instructionsDiv = ExperimentScreen(Instructions).apply {
-  div {
-	//	classList.add(mainDivClass)
-	//	onlyShowIn(Instructions)
-	//	sty{
-	//	  display = flex
-	//	  justifyContent = JustifyContent.center
-	//	  alignItems = AlignItems.center
-	//	  flexDirection = column
-	//	}
-	//	sty.textAlign = center
-	//	sty.centerInParent()
-	img {
-	  src = INSTRUCTIONS_IM_RELATIVE
+val instructionsDiv = ExperimentScreen(Instructions) {
+  //  div {
+  //	classList.add(mainDivClass)
+  //	onlyShowIn(Instructions)
+  //	sty{
+  //	  display = flex
+  //	  justifyContent = JustifyContent.center
+  //	  alignItems = AlignItems.center
+  //	  flexDirection = column
+  //	}
+  //	sty.textAlign = center
+  //	sty.centerInParent()
+  img {
+	src = INSTRUCTIONS_IM_RELATIVE
+  }
+  p {
+	sty {
+	  width = WIDTH.px
+	  margin = auto
 	}
-	p {
-	  sty {
-		width = WIDTH.px
-		margin = auto
-	  }
-	  innerHTML = """
+	innerHTML = """
 			Please select the label that you think best matches each segment for
         each
         image. You may select segments either by clicking or by iterating through them with the "next" and
         "previous" buttons. All segments must be given a label before advancing to the next image.
 		  """.trimIndent()
-	}
-	button {
-	  sty.margin = auto
-	  innerHTML = "Begin Experiment"
-	  setOnClick { ExperimentState.begun = true }
-	}
   }
+  button {
+	sty.margin = auto
+	innerHTML = "Begin Experiment"
+	setOnClick { ExperimentState.begun = true }
+  }
+  //  }
 }
