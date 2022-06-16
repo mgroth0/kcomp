@@ -219,23 +219,19 @@ val currentLeftProp: ReadOnlyBindableProperty<Px> = BindableProperty(currentLeft
 
 fun AwesomeElement<*>.onlyShowIn(phase: ExperimentPhase) = element.onlyShowIn(phase)
 fun HTMLElement.onlyShowIn(phase: ExperimentPhase) {
-  var lastDisplay = sty.display
+  var lastNonNoneDisplay = sty.display
   if (ExperimentPhase.determine() != phase) {
 	sty.display = none
   }
-  //  hidden =
+  sty.displayProperty().onChange {
+	if (it != none) lastNonNoneDisplay = it
+  }
   listen(PhaseChange) {
 	if (it.second == phase) {
 	  if (sty.display == none) {
-		sty.display = lastDisplay
+		sty.display = lastNonNoneDisplay
 	  }
-	} else {
-	  if (lastDisplay != none) {
-		lastDisplay = sty.display
-		sty.display = none
-	  }
-	}
-	//	hidden = it.second != phase
+	} else sty.display = none
   }
 }
 
