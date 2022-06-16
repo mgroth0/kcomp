@@ -419,7 +419,10 @@ class DrawingTrial(
   fun switchSegment(next: Boolean, unlabelled: Boolean) {
 	if (PARAMS.allowMultiSelection) clearSelection()
 	select(when {
-	  isFinished && unlabelled   -> if (PARAMS.allowMultiSelection) return else run { clearSelection(); return }
+	  isFinished && unlabelled   -> {
+		if (!PARAMS.allowMultiSelection) clearSelection()
+		return
+	  }
 	  selectedSegments.isEmpty() -> when {
 		next -> segments.first()
 		else -> segments.last()
