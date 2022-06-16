@@ -8,6 +8,7 @@ import matt.kjs.Loop
 import matt.kjs.Path
 import matt.kjs.PixelIndex
 import matt.kjs.allHTMLElementsRecursive
+import matt.kjs.bind.binding
 import matt.kjs.bindings.and
 import matt.kjs.bindings.isNull
 import matt.kjs.bindings.not
@@ -21,6 +22,8 @@ import matt.kjs.img.getPixels
 import matt.kjs.prop.BindableProperty
 import matt.kjs.prop.ReadOnlyBindableProperty
 import matt.kjs.prop.VarProp
+import matt.kjs.prop.bProp
+import matt.kjs.prop.iProp
 import matt.kjs.req.get
 import matt.kjs.setOnLoad
 import matt.kjs.srcAsPath
@@ -244,10 +247,10 @@ class DrawingData(
   override val imString = indexedIm.value
   val idx = indexedIm.index
   override val log = TrialLog()
-  var loadedImage = false
-  var loadedIms = 0
+  val loadedImage = bProp(false)
+  var loadedIms = iProp(0)
   var finishedProcessesingResp = false
-  var trial: DrawingTrial? = null
+  var trial = VarProp<DrawingTrial?>(null)
 
   init {
 	get(
@@ -261,8 +264,7 @@ class DrawingData(
 			loadDiv.appendChild(it)
 			it.hidden = true
 			it.setOnLoad {
-			  loadedIms++
-			  runOpIfReady()
+			  loadedIms.value++
 			}
 		  }
 		}
@@ -291,12 +293,10 @@ class DrawingData(
 		)
 	  }.sortedBy { it.cycleIndex }
 
-	  trial = DrawingTrial(segs, Loop(segs).iterator(), this)
-	  runOpIfReady()
+	  trial.value = DrawingTrial(segs, Loop(segs).iterator(), this)
 	}
 	loadingIm.setOnLoad {
-	  loadedImage = true
-	  runOpIfReady()
+	  loadedImage.value = true
 	}
 	loadingIm.setAttribute("src", "data/all/${imString}_All.png")
 
@@ -343,28 +343,22 @@ class DrawingData(
 	hidden = true
   }
 
-  private var ranOp = false
-  private fun ready() = loadedImage && trial != null && this.loadedIms == trial!!.segments.size*5
-  private var onReadyOp: (()->Unit)? = null
-
-  fun whenReady(op: ()->Unit) {
-	require(onReadyOp == null)
-	onReadyOp = op
-	runOpIfReady()
+  val ready = loadedImage.binding(trial, loadedIms) {
+	it && trial.value != null && loadedIms.value == trial.value!!.segments.size*5
   }
 
-  private fun runOpIfReady() {
-	println("runOpIfReady")
-	require(!ranOp)
-	if (ready()) {
-	  println("ready and running!")
-	  ranOp = true
-	  onReadyOp?.invoke()
+  fun whenReady(op: ()->Unit) {
+	if (ready.value) op()
+	else {
+	  ready.onChangeUntil({ it }) {
+		if (it) op()
+	  }
 	}
   }
 
+
   override fun cleanup() {
-	trial!!.div.element.remove()
+	trial.value!!.div.element.remove()
 	loadDiv.remove()
   }
 

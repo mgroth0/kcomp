@@ -103,10 +103,10 @@ fun main() = defaultMain {
   /*need scale before creating elements*/
   PhaseChange.afterEndOfNext(Scaling) {
 	fun presentImage(drawingData: DrawingData, training: Boolean = false) {
-	  println("presenting image of ${drawingData}")
+	  println("presenting image of $drawingData")
 	  val loadingProcess = DrawingLoadingProcess("downloading image data")
 	  drawingData.whenReady {
-		println("in whenReady of ${drawingData}")
+		println("in whenReady of $drawingData")
 		val trial = drawingData.trial!!
 		trial.div.element.sty.resetTransform {
 		  scale(scaleDiv.sty.transform.funs.filterIsInstance<Scale>().first().args)
