@@ -12,8 +12,10 @@ import matt.kjs.bind.chainBinding
 import matt.kjs.bindings.and
 import matt.kjs.bindings.isNull
 import matt.kjs.bindings.not
+import matt.kjs.css.Display.none
 import matt.kjs.css.Px
 import matt.kjs.css.px
+import matt.kjs.css.sty
 import matt.kjs.elements.AwesomeElement
 import matt.kjs.elements.canvas
 import matt.kjs.elements.div
@@ -217,9 +219,23 @@ val currentLeftProp: ReadOnlyBindableProperty<Px> = BindableProperty(currentLeft
 
 fun AwesomeElement<*>.onlyShowIn(phase: ExperimentPhase) = element.onlyShowIn(phase)
 fun HTMLElement.onlyShowIn(phase: ExperimentPhase) {
-  hidden = ExperimentPhase.determine() != phase
+  var lastDisplay = sty.display
+  if (ExperimentPhase.determine() != phase) {
+	sty.display = none
+  }
+  //  hidden =
   listen(PhaseChange) {
-	hidden = it.second != phase
+	if (it.second == phase) {
+	  if (sty.display == none) {
+		sty.display = lastDisplay
+	  }
+	} else {
+	  if (lastDisplay != none) {
+		lastDisplay = sty.display
+		sty.display = none
+	  }
+	}
+	//	hidden = it.second != phase
   }
 }
 
