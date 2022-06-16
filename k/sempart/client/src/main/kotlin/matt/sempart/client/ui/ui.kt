@@ -65,7 +65,7 @@ val currentLeftProp: ReadOnlyBindableProperty<Px> = BindableProperty(currentLeft
 //fun AwesomeElement<*>.onlyShowIn(phase: ExperimentPhase) = element.onlyShowIn(phase)
 
 
-fun WithDefaultDisplay<*>.onlyShowIn(phase: ExperimentPhase, debug: Boolean = false) {
+fun WithDefaultDisplay<*>.onlyShowIn(phase: ExperimentPhase) {
   if (ExperimentPhase.determine() != phase) {
 	sty.display = none
   }
