@@ -485,7 +485,8 @@ class DrawingTrial(
   fun hover(seg: Segment?) {
 	if (seg == hoveredSeg.value) return
 	hoveredSeg.value = seg
-	div.hoverCanvas.hidden = hoveredSeg.value == null
+	div.hoverCanvas.displayAsBlockOrNone = hoveredSeg.value != null
+	//	div.hoverCanvas.hidden = hoveredSeg.value == null
 	if (hoveredSeg.value != null) div.hoverCanvas.put(
 	  if (seg!!.hasResponse) seg.hiLabeledPixels else seg.highlightPixels
 	)
