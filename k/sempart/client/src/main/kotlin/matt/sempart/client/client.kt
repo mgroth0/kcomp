@@ -4,7 +4,6 @@ import kotlinx.browser.document
 import kotlinx.html.dom.append
 import kotlinx.html.js.style
 import matt.kjs.Path
-import matt.kjs.appendChilds
 import matt.kjs.css.Color.black
 import matt.kjs.css.Color.white
 import matt.kjs.css.Position.absolute
@@ -13,6 +12,7 @@ import matt.kjs.css.percent
 import matt.kjs.css.sty
 import matt.kjs.defaultMain
 import matt.kjs.elements.appendWrapper
+import matt.kjs.elements.appendWrappers
 import matt.kjs.elements.input
 import matt.kjs.ifConfirm
 import matt.kjs.nextOrNull
@@ -59,7 +59,7 @@ fun main() = defaultMain {
 
   val defaultScale = "1.0"
 
-  document.body!!.appendChilds(
+  document.body!!.appendChild(
 	input {
 	  //	  onlyShowIn(Scaling)
 	  PhaseChange.afterEndOfNext(Scaling) {
@@ -95,7 +95,9 @@ fun main() = defaultMain {
 		}
 		Unit
 	  }
-	},
+	}
+  )
+  document.body!!.appendWrappers(
 	*divs.toTypedArray()
   )
 
