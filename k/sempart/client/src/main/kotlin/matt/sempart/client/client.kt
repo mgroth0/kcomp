@@ -8,7 +8,6 @@ import matt.kjs.appendChilds
 import matt.kjs.css.Color.black
 import matt.kjs.css.Color.white
 import matt.kjs.css.Position.absolute
-import matt.kjs.css.Transform
 import matt.kjs.css.percent
 import matt.kjs.css.sty
 import matt.kjs.defaultMain
@@ -18,7 +17,6 @@ import matt.kjs.elements.input
 import matt.kjs.ifConfirm
 import matt.kjs.nextOrNull
 import matt.kjs.req.post
-import matt.klib.str.tab
 import matt.sempart.ExperimentData
 import matt.sempart.client.breakDiv.breakDiv
 import matt.sempart.client.completeDiv.completeDiv
@@ -89,12 +87,11 @@ fun main() = defaultMain {
 		//		document.body!!.sty.transform = "scale(${value})"
 		divs.forEach {
 		  when (it) {
-			is HTMLElement           -> it.sty.transform = it.sty.transform.apply {
-			  map["scale"] = listOf(value)
+			is HTMLElement           -> it.sty.modifyTransform {
+			  scale = value.toDouble()
 			}
-
-			is HTMLElementWrapper<*> -> it.element.sty.transform = it.element.sty.transform.apply {
-			  map["scale"] = listOf(value)
+			is HTMLElementWrapper<*> -> it.element.sty.modifyTransform {
+			  scale = value.toDouble()
 			}
 		  }
 		}
@@ -108,12 +105,12 @@ fun main() = defaultMain {
   /*neccesary so first trialDiv doesnt get NPE, or if slider is never moved*/
   divs.forEach {
 	when (it) {
-	  is HTMLElement           -> it.sty.transform = it.sty.transform.apply {
-		map["scale"] = listOf(defaultScale)
+	  is HTMLElement           -> it.sty.modifyTransform {
+		scale = defaultScale.toDouble()
 	  }
 
-	  is HTMLElementWrapper<*> -> it.element.sty.transform = it.element.sty.transform.apply {
-		map["scale"] = listOf(defaultScale)
+	  is HTMLElementWrapper<*> -> it.element.sty.modifyTransform {
+		scale = defaultScale.toDouble()
 	  }
 	}
   }
@@ -127,18 +124,21 @@ fun main() = defaultMain {
 	  val loadingProcess = DrawingLoadingProcess("downloading image data")
 	  drawingData.whenReady {
 		val trial = drawingData.trial!!
-
-		trial.div.element.sty.transform = Transform().apply {
-		  val scaleDivTransform = scaleDiv.sty.transform
-		  println("scaleDivTransform:")
-		  scaleDivTransform.map.forEach {
-			tab("k=${it.key}")
-			it.value.forEach {
-			  tab("\t$it")
-			}
-		  }
-		  map["scale"] = scaleDiv.sty.transform.map["scale"]!!
+		trial.div.element.sty.modifyTransform {
+		  scale = scaleDiv.sty.transform.scale
 		}
+//		trial.div.element.sty.transform = Transform().apply {
+//		  val scaleDivTransform = scaleDiv.sty.transform
+//		  println("scaleDivTransform:")
+////		  scaleDivTransform.map.forEach {
+////			tab("k=${it.key}")
+////			it.value.forEach {
+////			  tab("\t$it")
+////			}
+////		  }
+//
+//		  map["scale"] = scaleDiv.sty.transform.map["scale"]!!
+//		}
 
 		trial.div.helpText.hidden = !training
 		document.body!!.appendWrapper(trial.div)

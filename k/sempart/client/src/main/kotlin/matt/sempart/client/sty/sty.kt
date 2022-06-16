@@ -5,7 +5,6 @@ import matt.kjs.css.BorderWidth.thin
 import matt.kjs.css.Display.block
 import matt.kjs.css.MyStyleDsl
 import matt.kjs.css.Position.absolute
-import matt.kjs.css.Transform
 import matt.kjs.css.percent
 import matt.kjs.css.px
 
@@ -30,23 +29,29 @@ fun MyStyleDsl.centerInParent() {
   position = absolute
   top = 50.percent
   left = 50.percent
-  transform = Transform().apply {
-	map["translate"] = listOf("-50%", "-50%")
-  }
+  modifyTransform {
+	translate = -50.percent to -50.percent
+  } //  transform = Transform().apply {
+  //	map["translate"] = listOf("-50%", "-50%")
+  //  }
 }
 
 fun MyStyleDsl.verticallyCenterInParent() {
   position = absolute
   top = 50.percent
-  transform = Transform().apply {
-    map["translate"] = listOf("0%", "-50%")
-  }
+  modifyTransform {
+	translate = -0.percent to -50.percent
+  } //  transform = Transform().apply {
+  //	map["translate"] = listOf("0%", "-50%")
+  //  }
 }
 
 fun MyStyleDsl.horizontallyCenterInParent() {
   position = absolute
   left = 50.percent
-  transform = Transform().apply {
-    map["translate"] = listOf("-50%", "0%")
-  }
+  modifyTransform {
+	translate = -50.percent to -0.percent
+  } //  transform = Transform().apply {
+  //	map["translate"] = listOf("-50%", "0%")
+  //  }
 }
