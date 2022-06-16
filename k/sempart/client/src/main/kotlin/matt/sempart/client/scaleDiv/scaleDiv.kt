@@ -14,7 +14,7 @@ import matt.sempart.client.const.INSTRUCTIONS_IM_RELATIVE
 import matt.sempart.client.state.ExperimentPhase.Scaling
 import matt.sempart.client.state.ExperimentState
 import matt.sempart.client.state.onlyShowIn
-import matt.sempart.client.sty.centerOnWindow
+import matt.sempart.client.sty.centerInParent
 
 val scaleDiv by lazy {
   div {
@@ -22,7 +22,7 @@ val scaleDiv by lazy {
 	onlyShowIn(Scaling)
 	sty.textAlign = center
 
-	sty.centerOnWindow()
+	sty.centerInParent()
 	img {
 	  src = INSTRUCTIONS_IM_RELATIVE
 	}

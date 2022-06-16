@@ -8,11 +8,9 @@ import matt.kjs.bindings.isNull
 import matt.kjs.bindings.not
 import matt.kjs.bindings.or
 import matt.kjs.bindings.orDebug
-import matt.kjs.css.Display.inlineBlock
 import matt.kjs.css.FontStyle.italic
 import matt.kjs.css.FontWeight.bold
 import matt.kjs.css.Position.absolute
-import matt.kjs.css.Position.relative
 import matt.kjs.css.px
 import matt.kjs.css.sty
 import matt.kjs.elements.AwesomeElement
@@ -42,7 +40,8 @@ import matt.sempart.client.state.onlyShowIn
 import matt.sempart.client.sty.MED_SPACE
 import matt.sempart.client.sty.box
 import matt.sempart.client.sty.boxButton
-import matt.sempart.client.sty.centerOnWindow
+import matt.sempart.client.sty.centerInParent
+import matt.sempart.client.sty.verticallyCenterInParent
 import matt.sempart.client.ui.boxButton
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
@@ -74,7 +73,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	//	}
 	onlyShowIn(Trial)
 	//	sty.marginLeftProperty().bind(currentLeftProp)
-	sty.centerOnWindow()
+	sty.centerInParent()
 	//	sty.transform = sty.transform.apply {
 	//	  map["translate"] = listOf(-HALF_WIDTH)
 	//	}
@@ -86,7 +85,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
   val stackDiv = element.div {
 	//	sty.
 	sty {
-	  display = inlineBlock
+	  verticallyCenterInParent()
 	}
   }
 
@@ -156,9 +155,10 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 
   val controlsDiv: HTMLDivElement = element.div {
 	sty {
-	  display = inlineBlock
-	  position = relative
+	  verticallyCenterInParent()
 	  left = WIDTH.px
+	  //	  position = relative
+	  //	  left = WIDTH.px
 	  width = 300.px
 	  height = HEIGHT.px
 	  //	  sty.centerOnWindow()

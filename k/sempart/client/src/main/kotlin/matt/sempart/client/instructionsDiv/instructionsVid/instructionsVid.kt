@@ -14,7 +14,7 @@ import matt.sempart.client.const.INSTRUCTIONS_VID_WOLFRAM
 import matt.sempart.client.state.ExperimentPhase.InstructionsVid
 import matt.sempart.client.state.ExperimentState
 import matt.sempart.client.state.onlyShowIn
-import matt.sempart.client.sty.centerOnWindow
+import matt.sempart.client.sty.centerInParent
 
 val instructionsVidDiv by lazy {
   div {
@@ -22,7 +22,7 @@ val instructionsVidDiv by lazy {
 	onlyShowIn(InstructionsVid)
 	sty.textAlign = center
 
-	sty.centerOnWindow()
+	sty.centerInParent()
 	val vid = video {
 	  source {
 		src = INSTRUCTIONS_VID_WOLFRAM

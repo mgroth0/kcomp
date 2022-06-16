@@ -26,11 +26,27 @@ fun MyStyleDsl.boxButton() {
 }
 
 /*https://stackoverflow.com/a/31029494/6596010*/
-fun MyStyleDsl.centerOnWindow() {
+fun MyStyleDsl.centerInParent() {
   position = absolute
   top = 50.percent
   left = 50.percent
   transform = Transform().apply {
 	map["translate"] = listOf("-50%", "-50%")
+  }
+}
+
+fun MyStyleDsl.verticallyCenterInParent() {
+  position = absolute
+  top = 50.percent
+  transform = Transform().apply {
+    map["translate"] = listOf("0%", "-50%")
+  }
+}
+
+fun MyStyleDsl.horizontallyCenterInParent() {
+  position = absolute
+  left = 50.percent
+  transform = Transform().apply {
+    map["translate"] = listOf("-50%", "0%")
   }
 }
