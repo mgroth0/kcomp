@@ -12,6 +12,7 @@ import matt.kjs.css.Display.inlineBlock
 import matt.kjs.css.FontStyle.italic
 import matt.kjs.css.FontWeight.bold
 import matt.kjs.css.Position.absolute
+import matt.kjs.css.Transform
 import matt.kjs.css.px
 import matt.kjs.css.sty
 import matt.kjs.elements.AwesomeElement
@@ -26,8 +27,8 @@ import matt.klib.dmap.withStoringDefault
 import matt.sempart.client.const.HEIGHT
 import matt.sempart.client.const.LABELS
 import matt.sempart.client.const.WIDTH
-import matt.sempart.client.mainDivClass
 import matt.sempart.client.params.PARAMS
+import matt.sempart.client.scaleDiv.scaleDiv
 import matt.sempart.client.state.DrawingData.Companion.loadingIm
 import matt.sempart.client.state.DrawingData.Segment
 import matt.sempart.client.state.DrawingTrial
@@ -68,7 +69,10 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
   fun eventToSeg(e: MouseEvent) = e.pixelIndexIn(mainCanvas)?.let { segmentOf(it) }
 
   override val element = div {
-	classList.add(mainDivClass)
+	//	classList.add(mainDivClass)
+	sty.transform = Transform().apply {
+	  map["scale"] = scaleDiv.sty.transform.map["scale"]!!
+	}
 	onlyShowIn(Trial)
 	sty.marginLeftProperty().bind(currentLeftProp)
   }

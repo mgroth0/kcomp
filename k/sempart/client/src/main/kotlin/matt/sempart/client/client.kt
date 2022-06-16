@@ -42,7 +42,7 @@ import matt.sempart.client.state.onlyShowIn
 import matt.sempart.client.trialdiv.div
 import org.w3c.dom.HTMLElement
 
-val mainDivClass = "maindiv"
+//val mainDivClass = "maindiv"
 
 fun main() = defaultMain {
   document.head!!.title = "Semantic Segmentation"
