@@ -218,6 +218,7 @@ val currentLeftProp: ReadOnlyBindableProperty<Px> = BindableProperty(currentLeft
 //}
 
 fun AwesomeElement<*>.onlyShowIn(phase: ExperimentPhase) = element.onlyShowIn(phase)
+
 fun HTMLElement.onlyShowIn(phase: ExperimentPhase, debug: Boolean = false) {
   var lastNonNoneDisplay = sty.display
   if (debug) println("original lastNonNoneDisplay=${lastNonNoneDisplay}")
