@@ -1,6 +1,10 @@
 package matt.sempart.client.instructionsDiv
 
-import matt.kjs.css.TextAlign.center
+//import matt.sempart.client.mainDivClass
+import matt.kjs.css.AlignItems
+import matt.kjs.css.Display.flex
+import matt.kjs.css.FlexDirection.column
+import matt.kjs.css.JustifyContent
 import matt.kjs.css.auto
 import matt.kjs.css.px
 import matt.kjs.css.sty
@@ -11,7 +15,6 @@ import matt.kjs.elements.p
 import matt.kjs.setOnClick
 import matt.sempart.client.const.INSTRUCTIONS_IM_RELATIVE
 import matt.sempart.client.const.WIDTH
-//import matt.sempart.client.mainDivClass
 import matt.sempart.client.state.ExperimentPhase.Instructions
 import matt.sempart.client.state.ExperimentState
 import matt.sempart.client.state.onlyShowIn
@@ -21,7 +24,13 @@ val instructionsDiv by lazy {
   div {
 //	classList.add(mainDivClass)
 	onlyShowIn(Instructions)
-	sty.textAlign = center
+	sty{
+	  display = flex
+	  justifyContent = JustifyContent.center
+	  alignItems = AlignItems.center
+	  flexDirection = column
+	}
+//	sty.textAlign = center
 //	sty.centerInParent()
 	img {
 	  src = INSTRUCTIONS_IM_RELATIVE

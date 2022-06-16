@@ -1,6 +1,10 @@
 package matt.sempart.client.instructionsDiv.instructionsVid
 
-import matt.kjs.css.TextAlign.center
+//import matt.sempart.client.mainDivClass
+import matt.kjs.css.AlignItems
+import matt.kjs.css.Display.flex
+import matt.kjs.css.FlexDirection.column
+import matt.kjs.css.JustifyContent
 import matt.kjs.css.auto
 import matt.kjs.css.sty
 import matt.kjs.elements.br
@@ -10,7 +14,6 @@ import matt.kjs.elements.source
 import matt.kjs.elements.video
 import matt.kjs.setOnClick
 import matt.sempart.client.const.INSTRUCTIONS_VID_WOLFRAM
-//import matt.sempart.client.mainDivClass
 import matt.sempart.client.state.ExperimentPhase.InstructionsVid
 import matt.sempart.client.state.ExperimentState
 import matt.sempart.client.state.onlyShowIn
@@ -20,7 +23,13 @@ val instructionsVidDiv by lazy {
   div {
 //	classList.add(mainDivClass)
 	onlyShowIn(InstructionsVid)
-	sty.textAlign = center
+	sty{
+	  display = flex
+	  justifyContent = JustifyContent.center
+	  alignItems = AlignItems.center
+	  flexDirection = column
+	}
+//	sty.textAlign = center
 
 //	sty.centerInParent()
 	val vid = video {

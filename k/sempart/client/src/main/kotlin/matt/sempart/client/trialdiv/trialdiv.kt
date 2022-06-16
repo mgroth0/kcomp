@@ -1,5 +1,6 @@
 package matt.sempart.client.trialdiv
 
+//import matt.sempart.client.sty.centerInParent
 import kotlinx.html.ButtonType
 import matt.kjs.WeakMap
 import matt.kjs.bind.binding
@@ -8,9 +9,11 @@ import matt.kjs.bindings.isNull
 import matt.kjs.bindings.not
 import matt.kjs.bindings.or
 import matt.kjs.bindings.orDebug
-import matt.kjs.css.Display.inlineBlock
+import matt.kjs.css.AlignItems
+import matt.kjs.css.Display.flex
 import matt.kjs.css.FontStyle.italic
 import matt.kjs.css.FontWeight.bold
+import matt.kjs.css.JustifyContent
 import matt.kjs.css.Position.absolute
 import matt.kjs.css.px
 import matt.kjs.css.sty
@@ -41,7 +44,6 @@ import matt.sempart.client.state.onlyShowIn
 import matt.sempart.client.sty.MED_SPACE
 import matt.sempart.client.sty.box
 import matt.sempart.client.sty.boxButton
-//import matt.sempart.client.sty.centerInParent
 import matt.sempart.client.ui.boxButton
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
@@ -77,10 +79,18 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	//	sty.transform = sty.transform.apply {
 	//	  map["translate"] = listOf(-HALF_WIDTH)
 	//	}
-	sty {
-	  height = HEIGHT.px // + 200.px
-	  width = WIDTH.px + 300.px
+//	sty {
+//	  height = HEIGHT.px // + 200.px
+//	  width = WIDTH.px + 300.px
+//	}
+
+	sty{
+	  display = flex
+	  justifyContent = JustifyContent.center
+	  alignItems = AlignItems.center
+//	  flexDirection = column
 	}
+
   }
   val stackDiv = element.div {
 	//	sty.
@@ -88,7 +98,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 //	  verticallyCenterInParent()
 	  width = WIDTH.px
 	  height = HEIGHT.px
-	  display = inlineBlock
+//	  display = inlineBlock
 	}
   }
 
@@ -162,9 +172,9 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 //	  left = WIDTH.px
 	  //	  position = relative
 	  //	  left = WIDTH.px
-	  width = 300.px
-	  height = HEIGHT.px
-	  display = inlineBlock
+//	  width = 300.px
+//	  height = HEIGHT.px
+//	  display = inlineBlock
 	  //	  sty.centerOnWindow()
 	}
 	sty {

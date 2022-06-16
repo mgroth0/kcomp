@@ -1,6 +1,10 @@
 package matt.sempart.client.loadingDiv
 
 //import matt.sempart.client.mainDivClass
+import matt.kjs.css.AlignItems
+import matt.kjs.css.Display.flex
+import matt.kjs.css.FlexDirection.column
+import matt.kjs.css.JustifyContent
 import matt.kjs.css.sty
 import matt.kjs.elements.loadingText
 import matt.kjs.node.LoadingProcess
@@ -14,6 +18,12 @@ val loadingDiv by lazy {
 //	element.classList.add(mainDivClass)
 	onlyShowIn(Loading)
 //	element.sty.centerInParent()
+	element.sty{
+	  display = flex
+	  justifyContent = JustifyContent.center
+	  alignItems = AlignItems.center
+	  flexDirection = column
+	}
   }
 
 }

@@ -1,5 +1,9 @@
 package matt.sempart.client.resizeDiv
 
+import matt.kjs.css.AlignItems
+import matt.kjs.css.Display.flex
+import matt.kjs.css.FlexDirection.column
+import matt.kjs.css.JustifyContent
 import matt.kjs.css.auto
 import matt.kjs.css.sty
 import matt.kjs.elements.div
@@ -13,6 +17,12 @@ val resizeDiv by lazy {
   div {
 //	classList.add(mainDivClass)
 	onlyShowIn(Resize)
+	sty{
+	  display = flex
+	  justifyContent = JustifyContent.center
+	  alignItems = AlignItems.center
+	  flexDirection = column
+	}
 //	sty.centerInParent()
 	p {
 	  sty.margin = auto
