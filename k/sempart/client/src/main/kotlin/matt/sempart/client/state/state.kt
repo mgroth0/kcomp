@@ -12,7 +12,6 @@ import matt.kjs.bindings.and
 import matt.kjs.bindings.isNull
 import matt.kjs.bindings.not
 import matt.kjs.elements.HTMLElementWrapper
-import matt.kjs.elements.canvas
 import matt.kjs.elements.div
 import matt.kjs.elements.img
 import matt.kjs.every
@@ -24,7 +23,6 @@ import matt.kjs.prop.ReadOnlyBindableProperty
 import matt.kjs.prop.VarProp
 import matt.kjs.req.get
 import matt.kjs.setOnLoad
-import matt.kjs.showing
 import matt.kjs.srcAsPath
 import matt.klib.olist.BasicObservableList
 import matt.klib.todo
@@ -470,7 +468,7 @@ class DrawingTrial(
 	//	  if (isNotFinished) phase = UNSELECTED
 	//	} else {
 
-	seg.redraw()
+//	seg.redraw()
 	//	if (seg.hasResponse) {
 	//	  seg.selectLabeledCanvas.hidden = false
 	//	} else {
