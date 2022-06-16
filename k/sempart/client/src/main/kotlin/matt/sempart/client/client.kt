@@ -73,6 +73,7 @@ fun main() = defaultMain {
 		position = absolute
 		left = 10.percent
 		top = 10.percent
+		zIndex = 1
 		//		transform = Tra
 	  }
 	  oninput = {
