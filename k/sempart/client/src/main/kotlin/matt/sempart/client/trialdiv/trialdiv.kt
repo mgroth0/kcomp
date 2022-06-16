@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalContracts::class)
+
 package matt.sempart.client.trialdiv
 
 //import matt.sempart.client.sty.centerInParent
@@ -15,7 +17,6 @@ import matt.kjs.css.Position.absolute
 import matt.kjs.css.px
 import matt.kjs.css.sty
 import matt.kjs.elements.HTMLElementWrapper
-import matt.kjs.img.context2D
 import matt.kjs.img.draw
 import matt.kjs.pixelIndexInTarget
 import matt.kjs.props.disabledProperty
@@ -23,6 +24,7 @@ import matt.kjs.props.hiddenProperty
 import matt.kjs.props.innerHTMLProperty
 import matt.kjs.setOnMouseMove
 import matt.klib.dmap.withStoringDefault
+import matt.klib.lang.go
 import matt.sempart.client.const.HEIGHT
 import matt.sempart.client.const.LABELS
 import matt.sempart.client.const.WIDTH
@@ -45,13 +47,13 @@ import matt.sempart.client.ui.boxButton
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLDivElement
+import org.w3c.dom.HTMLImageElement
 import org.w3c.dom.HTMLParagraphElement
 import org.w3c.dom.events.MouseEvent
-import kotlin.js.Date
+import kotlin.contracts.ExperimentalContracts
 
 interface TrialDiv: HTMLElementWrapper<HTMLDivElement> {
   val nextImageButton: HTMLButtonElement
-  val mainCanvas: HTMLCanvasElement
   val hoverCanvas: HTMLCanvasElement
 
   //  val selectCanvas: HTMLCanvasElement
@@ -61,6 +63,7 @@ interface TrialDiv: HTMLElementWrapper<HTMLDivElement> {
 private val trialsDivs = WeakMap<DrawingTrial, TrialDiv>().withStoringDefault { it.trialDiv() }
 val DrawingTrial.div: TrialDiv get() = trialsDivs[this]
 
+@OptIn(ExperimentalContracts::class)
 private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
   //  flex,
   Trial,
@@ -75,84 +78,60 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 	  height = HEIGHT.px
 	}
   }
+
   private var zIdx = 0
-
-
-  private fun HTMLCanvasElement.canvasConfig() {
+  private fun HTMLCanvasElement.canvasConfig(
+	im: HTMLImageElement?,
+	hide: Boolean = true,
+  ) {
 	width = WIDTH
 	height = HEIGHT
 	sty {
 	  position = absolute
 	  zIndex = zIdx++
 	}
-	//	if (idx > 1) {
-	//	  sty.zIndex = idx + segments.size
-	//	}d
+	im?.go { draw(it) }
+	hidden = hide
   }
 
-
-  override val mainCanvas = stackDiv.canvas {
-	println("adding mainCanvas with zIdx $zIdx")
-	canvasConfig()
-	context2D.drawImage(loadingIm, 0.0, 0.0)
+  val mainCanvas = stackDiv.canvas {
+	canvasConfig(loadingIm, hide = false)
   }
-
   override val hoverCanvas = stackDiv.canvas {
-	hidden = true
-	println("adding hoverCanvas with zIdx ${zIdx}")
-	canvasConfig()
+	canvasConfig(im = null)
   }
 
   init {
-	println("adding segments with zIdx ${zIdx}")
-	println("segments.size=${segments.size}")
 	segments.forEach { theSeg: Segment ->
 	  stackDiv.appendChilds(
 		theSeg.labelledCanvas.withConfig {
-		  hidden = true
-		  canvasConfig()
-		  draw(theSeg.labelledIm)
+		  canvasConfig(theSeg.labelledIm)
 		},
 		theSeg.selectCanvas.withConfig {
-		  hidden = true
-		  canvasConfig()
-		  draw(theSeg.selectIm)
+		  canvasConfig(theSeg.selectIm)
 		},
 		theSeg.selectLabeledCanvas.withConfig {
-		  hidden = true
-		  canvasConfig()
-		  draw(theSeg.selectLabeledIm)
+		  canvasConfig(theSeg.selectLabeledIm)
 		}
 	  )
 	}
   }
 
-
-
-  //  override val selectCanvas = stackDiv.canvas {
-  //	hidden = true
-  //	canvasConfig()
-  //  }
   val eventCanvasIDK = stackDiv.canvas {
-	println("adding eventCanvasIDK with zIdx ${zIdx}")
-	canvasConfig()
+	canvasConfig(im = null, hide = false)
 	setOnMouseMove {
-	  ExperimentState.lastInteract = Date.now()
+	  ExperimentState.interacted()
 	  hover(eventToSeg(it))
 	}
 	onclick = interaction("click") {
 	  val seg = eventToSeg(it)
-	  if (seg == null) {
-		clearSelection()
-	  } else if (seg !in selectedSegments) {
-		if (!PARAMS.allowMultiSelection || !it.shiftKey) {
-		  clearSelection()
-		}
+	  if (seg == null) clearSelection()
+	  else if (seg !in selectedSegments) {
+		if (!PARAMS.allowMultiSelection || !it.shiftKey) clearSelection()
 		select(seg)
 	  }
 	}
   }
-
 
   val controlsDiv: HTMLDivElement = element.div {
 	sty {

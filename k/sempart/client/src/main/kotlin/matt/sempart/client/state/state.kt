@@ -64,12 +64,18 @@ object Participant {
 
 
 object ExperimentState {
-  var lastInteract = Date.now()
+  fun interacted() {
+	lastInteract = Date.now()
+  }
+
+  private var lastInteract = Date.now()
 	.apply {    /*only way to check for lastInteract I think*/    /*I could also check every time lastInteract changes, but that could be even more expensive because of mouse moves?*/
 	  every(PARAMS.idleCheckPeriodMS.milliseconds) {
 		PhaseChange.dispatchToAllHTML(currentPhase.value to ExperimentPhase.determine())
 	  }
 	}
+
+  fun idle() = Date.now() - ExperimentState.lastInteract >= PARAMS.idleThresholdMS
   var finishedScaling by Delegates.observable(false) { _, _, _ ->
 	PhaseChange.dispatchToAllHTML(currentPhase.value to ExperimentPhase.determine())
   }
@@ -118,15 +124,15 @@ enum class ExperimentPhase {
 	  val w = window.innerWidth
 	  val h = window.innerHeight
 	  val phase = when {
-		!ExperimentState.finishedScaling                                    -> Scaling
-		!ExperimentState.finishedVid                                        -> InstructionsVid
-		!ExperimentState.begun                                              -> Instructions
-		ExperimentState.complete                                            -> Complete
-		ExperimentState.onBreak                                             -> Break
-		Date.now() - ExperimentState.lastInteract >= PARAMS.idleThresholdMS -> Inactive
-		w < 1200 || h < 750                                                 -> Resize
-		working                                                             -> Loading
-		else                                                                -> Trial
+		!ExperimentState.finishedScaling -> Scaling
+		!ExperimentState.finishedVid     -> InstructionsVid
+		!ExperimentState.begun           -> Instructions
+		ExperimentState.complete         -> Complete
+		ExperimentState.onBreak          -> Break
+		ExperimentState.idle()           -> Inactive
+		w < 1200 || h < 750              -> Resize
+		working                          -> Loading
+		else                             -> Trial
 	  }
 	  return phase
 	}
@@ -377,7 +383,7 @@ class DrawingTrial(
   var phase by phaseProp
 
   fun registerInteraction(logMessage: String) {
-	ExperimentState.lastInteract = Date.now()
+	ExperimentState.interacted()
 	println(logMessage)
 	log += logMessage
   }
@@ -430,7 +436,7 @@ class DrawingTrial(
   fun switchSegment(next: Boolean, unlabelled: Boolean) {
 	if (PARAMS.allowMultiSelection) clearSelection()
 	select(when {
-	  isFinished && unlabelled   -> {
+	  isFinished && unlabelled -> {
 		if (!PARAMS.allowMultiSelection) clearSelection()
 		return
 	  }
@@ -440,8 +446,8 @@ class DrawingTrial(
 		else -> segments.last()
 	  }
 
-	  next                       -> segCycle.first { !unlabelled || it.hasNoResponse }
-	  else                       -> segCycle.firstBackwards { !unlabelled || it.hasNoResponse }
+	  next -> segCycle.first { !unlabelled || it.hasNoResponse }
+	  else -> segCycle.firstBackwards { !unlabelled || it.hasNoResponse }
 	})
   }
 
