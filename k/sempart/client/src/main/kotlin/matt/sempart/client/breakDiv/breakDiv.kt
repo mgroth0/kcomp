@@ -12,7 +12,6 @@ import matt.sempart.client.const.WIDTH
 import matt.sempart.client.state.ExperimentPhase.Break
 import matt.sempart.client.state.ExperimentState
 import matt.sempart.client.ui.ExperimentScreen
-import kotlin.js.Date
 
 
 val breakDiv = ExperimentScreen(
@@ -39,7 +38,7 @@ val breakDiv = ExperimentScreen(
 		sty.margin = auto
 		innerHTML = "Continue"
 		setOnClick {
-		  ExperimentState.lastInteract = Date.now()
+		  ExperimentState.interacted()
 		  ExperimentState.onBreak = false
 		}
 	  }
