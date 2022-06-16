@@ -26,6 +26,7 @@ import matt.klib.dmap.withStoringDefault
 import matt.sempart.client.const.HEIGHT
 import matt.sempart.client.const.LABELS
 import matt.sempart.client.const.WIDTH
+import matt.sempart.client.mainDivClass
 import matt.sempart.client.params.PARAMS
 import matt.sempart.client.state.DrawingData.Companion.loadingIm
 import matt.sempart.client.state.DrawingData.Segment
@@ -67,6 +68,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
   fun eventToSeg(e: MouseEvent) = e.pixelIndexIn(mainCanvas)?.let { segmentOf(it) }
 
   override val element = div {
+	classList.add(mainDivClass)
 	onlyShowIn(Trial)
 	sty.marginLeftProperty().bind(currentLeftProp)
   }

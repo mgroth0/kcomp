@@ -23,7 +23,7 @@ val scaleDiv by lazy {
 	sty.textAlign = center
 
 	sty.centerOnWindow()
-	val sclaingImage = img {
+	img {
 	  src = INSTRUCTIONS_IM_RELATIVE
 	}
 	br
