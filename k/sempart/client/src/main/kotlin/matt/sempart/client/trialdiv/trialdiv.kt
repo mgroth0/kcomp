@@ -8,7 +8,6 @@ import matt.kjs.bind.binding
 import matt.kjs.bindings.isEmptyProperty
 import matt.kjs.bindings.not
 import matt.kjs.bindings.or
-import matt.kjs.css.Display.none
 import matt.kjs.css.FlexDirection.row
 import matt.kjs.css.FontStyle.italic
 import matt.kjs.css.FontWeight.bold
@@ -103,18 +102,18 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 	println("segments.size=${segments.size}")
 	segments.forEach { theSeg: Segment ->
 	  stackDiv.appendChilds(
-		theSeg.labelledCanvas.apply {
-		  sty.display = none
+		theSeg.labelledCanvas.withConfig {
+		  hidden = true
 		  canvasConfig()
 		  draw(theSeg.labelledIm)
 		},
-		theSeg.selectCanvas.apply {
-		  sty.display = none
+		theSeg.selectCanvas.withConfig {
+		  hidden = true
 		  canvasConfig()
 		  draw(theSeg.selectIm)
 		},
-		theSeg.selectLabeledCanvas.apply {
-		  sty.display = none
+		theSeg.selectLabeledCanvas.withConfig {
+		  hidden = true
 		  canvasConfig()
 		  draw(theSeg.selectLabeledIm)
 		}
@@ -123,7 +122,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
   }
 
   override val hoverCanvas = stackDiv.canvas {
-	sty.display = none
+	hidden = true
 	println("adding hoverCanvas with zIdx ${zIdx}")
 	canvasConfig()
   }

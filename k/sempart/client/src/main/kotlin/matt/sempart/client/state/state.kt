@@ -11,7 +11,6 @@ import matt.kjs.allHTMLElementsRecursive
 import matt.kjs.bindings.and
 import matt.kjs.bindings.isNull
 import matt.kjs.bindings.not
-import matt.kjs.displayAsBlockOrNone
 import matt.kjs.elements.HTMLElementWrapper
 import matt.kjs.elements.canvas
 import matt.kjs.elements.div
@@ -26,6 +25,7 @@ import matt.kjs.prop.ReadOnlyBindableProperty
 import matt.kjs.prop.VarProp
 import matt.kjs.req.get
 import matt.kjs.setOnLoad
+import matt.kjs.showing
 import matt.kjs.srcAsPath
 import matt.klib.olist.BasicObservableList
 import matt.klib.todo
@@ -405,9 +405,9 @@ class DrawingTrial(
   }
 
   fun Segment.redraw() {
-	labelledCanvas.displayAsBlockOrNone = hasResponse
-	selectCanvas.displayAsBlockOrNone = this in selectedSegments
-	selectLabeledCanvas.displayAsBlockOrNone = hasResponse && this in selectedSegments
+	labelledCanvas.showing = hasResponse
+	selectCanvas.showing = this in selectedSegments
+	selectLabeledCanvas.showing = hasResponse && this in selectedSegments
   }
 
   val finishedProp = segments.map { it.hasResponseProp }.reduce { r1, r2 -> r1.and(r2) }.apply {
@@ -485,7 +485,7 @@ class DrawingTrial(
   fun hover(seg: Segment?) {
 	if (seg == hoveredSeg.value) return
 	hoveredSeg.value = seg
-	div.hoverCanvas.displayAsBlockOrNone = hoveredSeg.value != null
+	div.hoverCanvas.showing = hoveredSeg.value != null
 	//	div.hoverCanvas.hidden = hoveredSeg.value == null
 	if (hoveredSeg.value != null) div.hoverCanvas.put(
 	  if (seg!!.hasResponse) seg.hiLabeledPixels else seg.highlightPixels
