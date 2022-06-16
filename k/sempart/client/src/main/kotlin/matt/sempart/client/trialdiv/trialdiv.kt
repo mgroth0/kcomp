@@ -11,8 +11,6 @@ import matt.kjs.bindings.orDebug
 import matt.kjs.css.Display.inlineBlock
 import matt.kjs.css.FontStyle.italic
 import matt.kjs.css.FontWeight.bold
-import matt.kjs.css.Position.absolute
-import matt.kjs.css.px
 import matt.kjs.css.sty
 import matt.kjs.elements.AwesomeElement
 import matt.kjs.elements.HTMLElementWrapper
@@ -37,7 +35,6 @@ import matt.sempart.client.state.TrialPhase.SELECTED_LABELLED
 import matt.sempart.client.state.TrialPhase.SELECTED_UNLABELLED
 import matt.sempart.client.state.TrialPhase.UNSELECTED
 import matt.sempart.client.state.UI
-import matt.sempart.client.state.currentLeftProp
 import matt.sempart.client.state.onlyShowIn
 import matt.sempart.client.sty.MED_SPACE
 import matt.sempart.client.sty.box
@@ -84,10 +81,11 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	width = WIDTH
 	height = HEIGHT
 	sty {
-	  position = absolute
+	  centerOnWindow()
+//	  position = absolute
 	  zIndex = idx
-	  top = 0.px
-	  leftProperty().bind(currentLeftProp)
+//	  top = 0.px
+//	  leftProperty().bind(currentLeftProp)
 	}
 	if (idx > 1) {
 	  sty.zIndex = idx + segments.size
@@ -129,10 +127,11 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 		  height = HEIGHT
 		  hidden = true
 		  sty {
-			position = absolute
-			top = 0.px
+			sty.centerOnWindow()
+//			position = absolute
+//			top = 0.px
 			zIndex = zIdx
-			leftProperty().bind(currentLeftProp)
+//			leftProperty().bind(currentLeftProp)
 		  }
 		  context2D.drawImage(theSeg.labelledIm, 0.0, 0.0)
 		}, stackDiv.children[zIdx]
@@ -143,10 +142,10 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
   val controlsDiv: HTMLDivElement = element.div {
 	sty {
 	  display = inlineBlock
-	  position = absolute
+//	  position = absolute
 	}
 	sty {
-	  leftProperty().bind(currentLeftProp.binding { it + WIDTH })
+//	  leftProperty().bind(currentLeftProp.binding { it + WIDTH })
 	  marginBottom = MED_SPACE
 	}
   }
