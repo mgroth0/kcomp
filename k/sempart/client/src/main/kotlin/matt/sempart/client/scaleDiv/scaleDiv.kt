@@ -35,7 +35,7 @@ val scaleDiv by lazy {
 	button {
 	  sty.margin = auto
 	  innerHTML = "Click here when finished rescaling"
-	  setOnClick { ExperimentState.finishedVid = true }
+	  setOnClick { ExperimentState.finishedScaling = true }
 	}
   }
 }
