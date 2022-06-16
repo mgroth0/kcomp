@@ -5,7 +5,6 @@ package matt.sempart.client.trialdiv
 //import matt.sempart.client.sty.centerInParent
 import kotlinx.html.ButtonType
 import matt.kjs.WeakMap
-import matt.kjs.appendChilds
 import matt.kjs.bind.binding
 import matt.kjs.bindings.isEmptyProperty
 import matt.kjs.bindings.not
@@ -74,67 +73,74 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 
   fun eventToSeg(e: MouseEvent) = segmentOf(e.pixelIndexInTarget())
 
+  private var zIdx = 0
+
+  private
+
   val stackDiv = element.div {
 	sty {
 	  width = WIDTH.px
 	  height = HEIGHT.px
 	}
-  }
-
-  private var zIdx = 0
-  private fun HTMLCanvasElement.canvasConfig(
-	im: HTMLImageElement?,
-	hide: Boolean = true,
-  ) {
-	width = WIDTH
-	height = HEIGHT
-	sty {
-	  position = absolute
-	  zIndex = zIdx++
-	}
-	im?.go { draw(it) }
-	hidden = hide
-  }
-
-  val mainCanvas = stackDiv.canvas {
-	canvasConfig(loadingIm, hide = false)
-  }
-  val hoverCanvas = stackDiv.canvas {
-	canvasConfig(im = null)
-	hoveredSeg.onChange {
-	  showing = it != null
-	  if (it != null) put(if (it.hasResponse) it.hiLabeledPixels else it.highlightPixels)
-	}
-  }
-
-  init {
-	segments.forEach { theSeg: Segment ->
-	  stackDiv.appendChilds(
-		theSeg.labelledCanvas.withConfig {
-		  canvasConfig(theSeg.labelledIm)
-		},
-		theSeg.selectCanvas.withConfig {
-		  canvasConfig(theSeg.selectIm)
-		},
-		theSeg.selectLabeledCanvas.withConfig {
-		  canvasConfig(theSeg.selectLabeledIm)
+	fun stackCanvas(
+	  im: HTMLImageElement?,
+	  hide: Boolean = true,
+	  op: HTMLCanvasElement.()->Unit = {}
+	) {
+	  canvas {
+		width = WIDTH
+		height = HEIGHT
+		sty {
+		  position = absolute
+		  zIndex = zIdx++
 		}
-	  )
+		im?.go { draw(it) }
+		hidden = hide
+		op()
+	  }
 	}
-  }
+	stackCanvas(loadingIm, hide = false)
+	stackCanvas(im = null) {
+	  hoveredSeg.onChange {
+		showing = it != null
+		if (it != null) put(if (it.hasResponse) it.hiLabeledPixels else it.highlightPixels)
+	  }
+	}
 
-  val eventCanvasIDK = stackDiv.canvas {
-	canvasConfig(im = null, hide = false)
-	setOnMouseMove {
-	  ExperimentState.interacted()
-	  hover(eventToSeg(it))
+	segments.forEach { theSeg: Segment ->
+	  stackCanvas(theSeg.labelledIm) {
+		hiddenProperty().bind(theSeg.hasResponseProp.not())
+	  }
+	  stackCanvas(theSeg.selectIm) {
+		hiddenProperty().bind(selectedSegments.binding { theSeg !in it })
+	  }
+	  stackCanvas(theSeg.selectLabeledIm) {
+		hiddenProperty().bind(selectedSegments.binding(theSeg.responseProp) { theSeg !in it || theSeg.hasNoResponse })
+	  }
+//	  appendChilds(
+//		//		theSeg.labelledCanvas.withConfig {
+//		//		  canvasConfig(theSeg.labelledIm)
+//		//		},
+////		theSeg.selectCanvas.withConfig {
+////		  canvasConfig(theSeg.selectIm)
+////		},
+////		theSeg.selectLabeledCanvas.withConfig {
+////		  canvasConfig(theSeg.selectLabeledIm)
+////		}
+//	  )
 	}
-	onclick = interaction("click") {
-	  val seg = eventToSeg(it)
-	  if (seg == null) clearSelection()
-	  else if (seg !in selectedSegments) {
-		if (!PARAMS.allowMultiSelection || !it.shiftKey) clearSelection()
-		select(seg)
+	stackCanvas(im = null, hide = false) {
+	  setOnMouseMove {
+		ExperimentState.interacted()
+		hover(eventToSeg(it))
+	  }
+	  onclick = interaction("click") {
+		val seg = eventToSeg(it)
+		if (seg == null) clearSelection()
+		else if (seg !in selectedSegments) {
+		  if (!PARAMS.allowMultiSelection || !it.shiftKey) clearSelection()
+		  select(seg)
+		}
 	  }
 	}
   }
@@ -163,7 +169,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 			it.response = l
 			hadNoResponse
 		  }
-		  redraw()
+//		  redraw()
 		  completionP.innerHTML = "$completionFraction segments labelled"
 		  //		  gotFirstResponse.forEach {
 		  //			it.showAsLabeled()
