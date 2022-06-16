@@ -41,7 +41,7 @@ import matt.sempart.client.state.onlyShowIn
 import matt.sempart.client.sty.MED_SPACE
 import matt.sempart.client.sty.box
 import matt.sempart.client.sty.boxButton
-import matt.sempart.client.sty.centerInParent
+//import matt.sempart.client.sty.centerInParent
 import matt.sempart.client.ui.boxButton
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
@@ -73,7 +73,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	//	}
 	onlyShowIn(Trial)
 	//	sty.marginLeftProperty().bind(currentLeftProp)
-	sty.centerInParent()
+//	sty.centerInParent()
 	//	sty.transform = sty.transform.apply {
 	//	  map["translate"] = listOf(-HALF_WIDTH)
 	//	}

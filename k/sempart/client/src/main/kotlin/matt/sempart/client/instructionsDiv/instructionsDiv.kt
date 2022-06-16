@@ -15,14 +15,14 @@ import matt.sempart.client.const.WIDTH
 import matt.sempart.client.state.ExperimentPhase.Instructions
 import matt.sempart.client.state.ExperimentState
 import matt.sempart.client.state.onlyShowIn
-import matt.sempart.client.sty.centerInParent
+//import matt.sempart.client.sty.centerInParent
 
 val instructionsDiv by lazy {
   div {
 //	classList.add(mainDivClass)
 	onlyShowIn(Instructions)
 	sty.textAlign = center
-	sty.centerInParent()
+//	sty.centerInParent()
 	img {
 	  src = INSTRUCTIONS_IM_RELATIVE
 	}

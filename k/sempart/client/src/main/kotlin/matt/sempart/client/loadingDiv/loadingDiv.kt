@@ -7,13 +7,13 @@ import matt.kjs.node.LoadingProcess
 import matt.sempart.client.state.ExperimentPhase.Loading
 import matt.sempart.client.state.ExperimentState
 import matt.sempart.client.state.onlyShowIn
-import matt.sempart.client.sty.centerInParent
+//import matt.sempart.client.sty.centerInParent
 
 val loadingDiv by lazy {
   loadingText("Loading") {
 //	element.classList.add(mainDivClass)
 	onlyShowIn(Loading)
-	element.sty.centerInParent()
+//	element.sty.centerInParent()
   }
 
 }

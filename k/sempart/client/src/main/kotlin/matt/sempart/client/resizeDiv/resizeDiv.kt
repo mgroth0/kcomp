@@ -7,13 +7,13 @@ import matt.kjs.elements.p
 //import matt.sempart.client.mainDivClass
 import matt.sempart.client.state.ExperimentPhase.Resize
 import matt.sempart.client.state.onlyShowIn
-import matt.sempart.client.sty.centerInParent
+//import matt.sempart.client.sty.centerInParent
 
 val resizeDiv by lazy {
   div {
 //	classList.add(mainDivClass)
 	onlyShowIn(Resize)
-	sty.centerInParent()
+//	sty.centerInParent()
 	p {
 	  sty.margin = auto
 	  innerHTML =

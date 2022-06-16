@@ -14,14 +14,14 @@ import matt.sempart.client.const.WIDTH
 import matt.sempart.client.state.ExperimentPhase.Break
 import matt.sempart.client.state.ExperimentState
 import matt.sempart.client.state.onlyShowIn
-import matt.sempart.client.sty.centerInParent
+//import matt.sempart.client.sty.centerInParent
 import kotlin.js.Date
 
 val breakDiv by lazy {
   div {
 //	classList.add(mainDivClass)
 	onlyShowIn(Break)
-	sty.centerInParent()
+//	sty.centerInParent()
 	sty.textAlign = center
 	p {
 	  sty {
