@@ -13,7 +13,8 @@ data class Params(
   val removeNpButtonsKeepUnlabelledNpButtons: Boolean = true,
   val randomSegmentOrder: Boolean = true,
   val idleThresholdMS: Int = HOUR_MS,
-  val idleCheckPeriodMS: Int = MINUTE_MS
+  val idleCheckPeriodMS: Int = MINUTE_MS,
+  val allowMultiSelection: Boolean = true
 ) {
   init {
 	todo("HOUR_MS just for dev, use minute for final?")

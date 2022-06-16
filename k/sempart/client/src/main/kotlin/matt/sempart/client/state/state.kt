@@ -8,7 +8,6 @@ import matt.kjs.Loop
 import matt.kjs.Path
 import matt.kjs.PixelIndex
 import matt.kjs.allHTMLElementsRecursive
-import matt.kjs.bind.chainBinding
 import matt.kjs.bindings.and
 import matt.kjs.bindings.isNull
 import matt.kjs.bindings.not
@@ -27,6 +26,7 @@ import matt.kjs.prop.VarProp
 import matt.kjs.req.get
 import matt.kjs.setOnLoad
 import matt.kjs.srcAsPath
+import matt.klib.olist.BasicObservableList
 import matt.klib.todo
 import matt.sempart.client.const.DATA_FOLDER
 import matt.sempart.client.const.HEIGHT
@@ -405,10 +405,11 @@ class DrawingTrial(
   }
   val isFinished get() = finishedProp.value
   val isNotFinished get() = !isFinished
-  var selectedSeg = BindableProperty<Segment?>(null)
-  val selectedSegResponse = selectedSeg.chainBinding {
+  var selectedSegments = BasicObservableList<Segment>()
+
+  /*val selectedSegResponse = selectedSeg.chainBinding {
 	it?.responseProp
-  }
+  }*/
   var hoveredSeg = BindableProperty<Segment?>(null)
 
   override fun toString() = "${this::class.simpleName} for $imString"
@@ -416,15 +417,16 @@ class DrawingTrial(
   fun Segment.showAsLabeled() = div.selectCanvas.put(selectLabeledPixels)
 
   fun switchSegment(next: Boolean, unlabelled: Boolean) {
+	if (PARAMS.allowMultiSelection) clearSelection()
 	select(when {
-	  isFinished && unlabelled  -> null
-	  selectedSeg.value == null -> when {
+	  isFinished && unlabelled   -> if (PARAMS.allowMultiSelection) return else run { clearSelection(); return }
+	  selectedSegments.isEmpty() -> when {
 		next -> segments.first()
 		else -> segments.last()
 	  }
 
-	  next                      -> segCycle.first { !unlabelled || it.hasNoResponse }
-	  else                      -> segCycle.firstBackwards { !unlabelled || it.hasNoResponse }
+	  next                       -> segCycle.first { !unlabelled || it.hasNoResponse }
+	  else                       -> segCycle.firstBackwards { !unlabelled || it.hasNoResponse }
 	})
   }
 
@@ -432,23 +434,30 @@ class DrawingTrial(
 	switchSegment(next = true, unlabelled = true)
   }
 
-  fun select(seg: Segment?) {
-	if (selectedSeg.value == seg) return
+  fun clearSelection() {
+	selectedSegments.clear()
+	div.selectCanvas.hidden = true
+	if (isNotFinished) phase = UNSELECTED
+  }
+
+  fun select(seg: Segment) {
+	if (seg in selectedSegments) return
 	registerInteraction("selected $seg")
-	selectedSeg.value = seg
-	if (seg == null) {
-	  div.selectCanvas.hidden = true
-	  if (isNotFinished) phase = UNSELECTED
+	selectedSegments.add(seg)
+	//	selectedSeg.value = seg
+	//	if (seg == null) {
+	//	  div.selectCanvas.hidden = true
+	//	  if (isNotFinished) phase = UNSELECTED
+	//	} else {
+	if (selectedSegments.any { it.hasResponse }) {
+	  seg.showAsLabeled()
+	  if (isNotFinished) phase = SELECTED_LABELLED
 	} else {
-	  if (seg.hasResponse) {
-		seg.showAsLabeled()
-		if (isNotFinished) phase = SELECTED_LABELLED
-	  } else {
-		div.selectCanvas.put(seg.selectPixels)
-		if (isNotFinished) phase = SELECTED_UNLABELLED
-	  }
-	  div.selectCanvas.hidden = false
+	  div.selectCanvas.put(seg.selectPixels)
+	  if (isNotFinished) phase = SELECTED_UNLABELLED
 	}
+	div.selectCanvas.hidden = false
+	//	}
   }
 
   fun hover(seg: Segment?) {
