@@ -99,6 +99,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 
   init {
 	println("adding segments with zIdx ${zIdx}")
+	println("segments.size=${segments.size}")
 	segments.forEach { theSeg: Segment ->
 	  stackDiv.appendChilds(
 		theSeg.labelledCanvas.apply {
