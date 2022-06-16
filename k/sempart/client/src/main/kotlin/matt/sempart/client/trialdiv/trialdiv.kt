@@ -85,7 +85,9 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	//	}
 
 	sty {
+	  println("SETTING FLEX")
 	  display = flex
+	  println("SET FLEX")
 	  justifyContent = JustifyContent.center
 	  alignItems = AlignItems.center
 	  //	  flexDirection = column

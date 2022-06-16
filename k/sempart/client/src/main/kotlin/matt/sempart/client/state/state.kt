@@ -225,6 +225,7 @@ fun HTMLElement.onlyShowIn(phase: ExperimentPhase, debug: Boolean = false) {
 	sty.display = none
   }
   sty.displayProperty().onChange {
+	if (debug) println("display changed: $it")
 	if (it != none) {
 	  lastNonNoneDisplay = it
 	  if (debug) println("lastNonNoneDisplay1=${lastNonNoneDisplay}")
