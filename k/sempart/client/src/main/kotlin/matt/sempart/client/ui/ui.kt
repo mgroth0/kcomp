@@ -1,7 +1,10 @@
 package matt.sempart.client.ui
 
+import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.html.ButtonType
+import kotlinx.html.div
+import kotlinx.html.dom.create
 import matt.kjs.css.AlignItems
 import matt.kjs.css.Display
 import matt.kjs.css.Display.flex
@@ -32,13 +35,13 @@ open class ExperimentScreen(
   val cfg: ExperimentScreen.()->Unit = {}
 ): AwesomeElement<HTMLDivElement>(), WithDefaultDisplay<HTMLDivElement> {
   final override val element by lazy {
-	div {
+	document.create.div {
 	  sty {
 		justifyContent = JustifyContent.center
 		alignItems = AlignItems.center
 		flexDirection = flexDir
 	  }
-	}
+	} as HTMLDivElement
   }
 
   init {
