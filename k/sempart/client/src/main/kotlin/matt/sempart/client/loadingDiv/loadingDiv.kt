@@ -1,35 +1,31 @@
 package matt.sempart.client.loadingDiv
 
-//import matt.sempart.client.mainDivClass
-import matt.kjs.css.AlignItems
-import matt.kjs.css.Display.flex
-import matt.kjs.css.FlexDirection.column
-import matt.kjs.css.JustifyContent
-import matt.kjs.css.sty
-import matt.kjs.elements.loadingText
 import matt.kjs.node.LoadingProcess
+
+//import matt.sempart.client.mainDivClass
+//Zimport matt.kjs.node.LoadingProcess
 import matt.sempart.client.state.ExperimentPhase.Loading
 import matt.sempart.client.state.ExperimentState
-import matt.sempart.client.state.onlyShowIn
+import matt.sempart.client.ui.ExperimentScreen
+
 //import matt.sempart.client.sty.centerInParent
 
-val loadingDiv by lazy {
-  loadingText("Loading") {
-//	element.classList.add(mainDivClass)
-	onlyShowIn(Loading)
-//	element.sty.centerInParent()
-	element.sty{
-	  display = flex
-	  justifyContent = JustifyContent.center
-	  alignItems = AlignItems.center
-	  flexDirection = column
-	}
+object LoadingDiv: ExperimentScreen(Loading) {
+  val lt = loadingText("Loading") {
+	//	element.classList.add(mainDivClass)
+	//	onlyShowIn(Loading)
+	//	element.sty.centerInParent()
+	//	element.sty{
+	//	  display = flex
+	//	  justifyContent = JustifyContent.center
+	//	  alignItems = AlignItems.center
+	//	  flexDirection = column
+	//	}
   }
-
 }
 
 
-class DrawingLoadingProcess(desc: String): LoadingProcess(loadingDiv, desc) {
+class DrawingLoadingProcess(desc: String): LoadingProcess(LoadingDiv.lt, desc) {
   override fun start() {
 	ExperimentState.working = true
 	super.start()

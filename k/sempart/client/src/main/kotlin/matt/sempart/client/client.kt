@@ -12,7 +12,6 @@ import matt.kjs.css.Transform.Scale
 import matt.kjs.css.percent
 import matt.kjs.css.sty
 import matt.kjs.defaultMain
-import matt.kjs.elements.HTMLElementWrapper
 import matt.kjs.elements.appendWrapper
 import matt.kjs.elements.input
 import matt.kjs.ifConfirm
@@ -29,7 +28,7 @@ import matt.sempart.client.inactiveDiv.inactiveDiv
 import matt.sempart.client.instructionsDiv.instructionsDiv
 import matt.sempart.client.instructionsDiv.instructionsVid.instructionsVidDiv
 import matt.sempart.client.loadingDiv.DrawingLoadingProcess
-import matt.sempart.client.loadingDiv.loadingDiv
+import matt.sempart.client.loadingDiv.LoadingDiv
 import matt.sempart.client.params.PARAMS
 import matt.sempart.client.resizeDiv.resizeDiv
 import matt.sempart.client.scaleDiv.scaleDiv
@@ -39,9 +38,7 @@ import matt.sempart.client.state.ExperimentPhase.Scaling
 import matt.sempart.client.state.ExperimentState
 import matt.sempart.client.state.Participant
 import matt.sempart.client.state.PhaseChange
-import matt.sempart.client.state.onlyShowIn
 import matt.sempart.client.trialdiv.div
-import org.w3c.dom.HTMLElement
 
 //val mainDivClass = "maindiv"
 
@@ -58,13 +55,16 @@ fun main() = defaultMain {
   }
 
   val divs =
-	listOf(scaleDiv, instructionsVidDiv, instructionsDiv, resizeDiv, loadingDiv, completeDiv, breakDiv, inactiveDiv)
+	listOf(scaleDiv, instructionsVidDiv, instructionsDiv, resizeDiv, LoadingDiv, completeDiv, breakDiv, inactiveDiv)
 
   val defaultScale = "1.0"
 
   document.body!!.appendChilds(
 	input {
-	  onlyShowIn(Scaling)
+	  //	  onlyShowIn(Scaling)
+	  PhaseChange.afterEndOfNext(Scaling) {
+		hidden = true
+	  }
 	  type = "range"
 	  step = "0.01"
 	  min = "0.5"
@@ -77,28 +77,21 @@ fun main() = defaultMain {
 		left = 10.percent
 		top = 10.percent
 		zIndex = 1
-		//		transform = Tra
 	  }
 	  oninput = {
-		//		headStyleElement.innerHTML = ".$mainDivClass {transform: scale(${value});}"
-		//		divs.forEach {
-		//
-		////		  it.sty.transform = "scale(${value})"
-		//		}
-		//		document.body!!.sty.transform = "scale(${value})"
 		divs.forEach {
-		  when (it) {
-			is HTMLElement           -> it.sty.resetTransform {
-			  //			  scale()
-			  scale(value.toDouble())
-			  //			  scale = value.toDouble()
-			}
-
-			is HTMLElementWrapper<*> -> it.element.sty.resetTransform {
-			  scale(value.toDouble())
-			  //			  scale = value.toDouble()
-			}
+		  it.sty.resetTransform {
+			scale(value.toDouble())
 		  }
+		  //		  when (it) {
+		  //			is HTMLElement           -> it.sty.resetTransform {
+		  //			  scale(value.toDouble())
+		  //			}
+		  //
+		  //			is HTMLElementWrapper<*> -> it.element.sty.resetTransform {
+		  //			  scale(value.toDouble())
+		  //			}
+		  //		  }
 		}
 		Unit
 	  }
@@ -109,17 +102,20 @@ fun main() = defaultMain {
 
   /*neccesary so first trialDiv doesnt get NPE, or if slider is never moved*/
   divs.forEach {
-	when (it) {
-	  is HTMLElement           -> it.sty.resetTransform {
-		scale(defaultScale.toDouble())
-//		scale = defaultScale.toDouble()
-	  }
-
-	  is HTMLElementWrapper<*> -> it.element.sty.resetTransform {
-		scale(defaultScale.toDouble())
-//		scale = defaultScale.toDouble()
-	  }
+	it.sty.resetTransform {
+	  scale(defaultScale.toDouble())
 	}
+	//	when (it) {
+	//	  is HTMLElement           -> it.sty.resetTransform {
+	//		scale(defaultScale.toDouble())
+	//		//		scale = defaultScale.toDouble()
+	//	  }
+	//
+	//	  is HTMLElementWrapper<*> -> it.element.sty.resetTransform {
+	//		scale(defaultScale.toDouble())
+	//		//		scale = defaultScale.toDouble()
+	//	  }
+	//	}
   }
 
   val images = listOf(TRAIN_IM) + ORIG_DRAWING_IMS.shuffled()
@@ -132,9 +128,9 @@ fun main() = defaultMain {
 	  drawingData.whenReady {
 		val trial = drawingData.trial!!
 		trial.div.element.sty.resetTransform {
-//		  scale(defaultScale.toDouble())
+		  //		  scale(defaultScale.toDouble())
 		  scale(scaleDiv.sty.transform.funs.filterIsInstance<Scale>().first().args)
-//		  scale = scaleDiv.sty.transform.scale
+		  //		  scale = scaleDiv.sty.transform.scale
 		}
 		//		trial.div.element.sty.transform = Transform().apply {
 		//		  val scaleDivTransform = scaleDiv.sty.transform

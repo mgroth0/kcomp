@@ -9,15 +9,12 @@ import matt.kjs.bindings.isNull
 import matt.kjs.bindings.not
 import matt.kjs.bindings.or
 import matt.kjs.bindings.orDebug
-import matt.kjs.css.AlignItems
-import matt.kjs.css.Display.flex
+import matt.kjs.css.FlexDirection.row
 import matt.kjs.css.FontStyle.italic
 import matt.kjs.css.FontWeight.bold
-import matt.kjs.css.JustifyContent
 import matt.kjs.css.Position.absolute
 import matt.kjs.css.px
 import matt.kjs.css.sty
-import matt.kjs.elements.AwesomeElement
 import matt.kjs.elements.HTMLElementWrapper
 import matt.kjs.img.context2D
 import matt.kjs.pixelIndexIn
@@ -40,10 +37,10 @@ import matt.sempart.client.state.TrialPhase.SELECTED_LABELLED
 import matt.sempart.client.state.TrialPhase.SELECTED_UNLABELLED
 import matt.sempart.client.state.TrialPhase.UNSELECTED
 import matt.sempart.client.state.UI
-import matt.sempart.client.state.onlyShowIn
 import matt.sempart.client.sty.MED_SPACE
 import matt.sempart.client.sty.box
 import matt.sempart.client.sty.boxButton
+import matt.sempart.client.ui.ExperimentScreen
 import matt.sempart.client.ui.boxButton
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
@@ -64,36 +61,40 @@ interface TrialDiv: HTMLElementWrapper<HTMLDivElement> {
 private val trialsDivs = WeakMap<DrawingTrial, TrialDiv>().withStoringDefault { it.trialDiv() }
 val DrawingTrial.div: TrialDiv get() = trialsDivs[this]
 
-private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivElement>(), TrialDiv {
+private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
+//  flex,
+  Trial,
+  flexDir = row
+), TrialDiv {
 
   fun eventToSeg(e: MouseEvent) = e.pixelIndexIn(mainCanvas)?.let { segmentOf(it) }
 
-  override val element = div {
-	//	classList.add(mainDivClass)
-	//	sty.transform = Transform().apply {
-	//	  map["scale"] = scaleDiv.sty.transform.map["scale"]!!
-	//	}
-	onlyShowIn(Trial, debug = true)
-	//	sty.marginLeftProperty().bind(currentLeftProp)
-	//	sty.centerInParent()
-	//	sty.transform = sty.transform.apply {
-	//	  map["translate"] = listOf(-HALF_WIDTH)
-	//	}
-	//	sty {
-	//	  height = HEIGHT.px // + 200.px
-	//	  width = WIDTH.px + 300.px
-	//	}
-
-	sty {
-	  println("SETTING FLEX")
-	  display = flex
-	  println("SET FLEX")
-	  justifyContent = JustifyContent.center
-	  alignItems = AlignItems.center
-	  //	  flexDirection = column
-	}
-
-  }
+//  override val element = div {
+//	//	classList.add(mainDivClass)
+//	//	sty.transform = Transform().apply {
+//	//	  map["scale"] = scaleDiv.sty.transform.map["scale"]!!
+//	//	}
+////	onlyShowIn(Trial, debug = true)
+//	//	sty.marginLeftProperty().bind(currentLeftProp)
+//	//	sty.centerInParent()
+//	//	sty.transform = sty.transform.apply {
+//	//	  map["translate"] = listOf(-HALF_WIDTH)
+//	//	}
+//	//	sty {
+//	//	  height = HEIGHT.px // + 200.px
+//	//	  width = WIDTH.px + 300.px
+//	//	}
+//
+////	sty {
+//////	  println("SETTING FLEX")
+////	  display = flex
+////	  println("SET FLEX")
+//////	  justifyContent = JustifyContent.center
+//////	  alignItems = AlignItems.center
+////	  //	  flexDirection = column
+////	}
+//
+//  }
   val stackDiv = element.div {
 	//	sty.
 	sty {

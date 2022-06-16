@@ -213,39 +213,7 @@ object PhaseChange: ChangeEventDispatcher<Pair<ExperimentPhase, ExperimentPhase>
   }
 }
 
-val currentLeftProp: ReadOnlyBindableProperty<Px> = BindableProperty(currentLeft().px).apply {
-  window.addEventListener("resize", {
-	value = currentLeft().px
-  })
-}
 
-//object MyResizeLeft: ChangeEventDispatcher<Int>() {
-//
-//}
-
-//fun AwesomeElement<*>.onlyShowIn(phase: ExperimentPhase) = element.onlyShowIn(phase)
-
-
-fun WithDefaultDisplay<*>.onlyShowIn(phase: ExperimentPhase, debug: Boolean = false) {
-  if (ExperimentPhase.determine() != phase) {
-	sty.display = none
-  }
-  listen(PhaseChange) {
-	if (it.second == phase) {
-	  if (sty.display == none) {
-		sty.display = defaultDisplay
-	  }
-	} else sty.display = none
-  }
-}
-
-fun currentLeft() = (window.innerWidth/2) - HALF_WIDTH
-//fun HTMLElement.onMyResizeLeft(onLeft: (Int)->Unit) {
-//  onLeft(currentLeft())
-//  listen(MyResizeLeft) {
-//	onLeft(it)
-//  }
-//}
 
 class TrialLog(
   private val log: MutableList<Pair<Long, String>> = mutableListOf()

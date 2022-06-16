@@ -3,35 +3,32 @@ package matt.sempart.client.breakDiv
 //import matt.sempart.client.mainDivClass
 //import matt.sempart.client.sty.centerInParent
 import kotlinx.html.ButtonType
-import matt.kjs.css.AlignItems
-import matt.kjs.css.Display.flex
-import matt.kjs.css.FlexDirection.column
-import matt.kjs.css.JustifyContent
 import matt.kjs.css.auto
 import matt.kjs.css.px
 import matt.kjs.css.sty
 import matt.kjs.elements.button
-import matt.kjs.elements.div
-import matt.kjs.elements.p
 import matt.kjs.setOnClick
 import matt.sempart.client.const.WIDTH
 import matt.sempart.client.state.ExperimentPhase.Break
 import matt.sempart.client.state.ExperimentState
-import matt.sempart.client.state.onlyShowIn
+import matt.sempart.client.ui.ExperimentScreen
 import kotlin.js.Date
 
-val breakDiv by lazy {
+
+val breakDiv = ExperimentScreen(
+  Break
+).apply {
   div {
-//	classList.add(mainDivClass)
-	onlyShowIn(Break)
-//	sty.centerInParent()
-//	sty.textAlign = center
-	sty{
-	  display = flex
-	  justifyContent = JustifyContent.center
-	  alignItems = AlignItems.center
-	  flexDirection = column
-	}
+	//	classList.add(mainDivClass)
+	//	onlyShowIn(Break)
+	//	sty.centerInParent()
+	////	sty.textAlign = center
+	//	sty{
+	////	  display = flex
+	////	  justifyContent = center
+	////	  alignItems = AlignItems.center
+	//	  flexDirection = column
+	//	}
 	p {
 	  sty {
 		width = WIDTH.px
