@@ -190,6 +190,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 	sty {
 	  //	  leftProperty().bind(currentLeftProp.binding { it + WIDTH })
 	  marginBottom = MED_SPACE
+	  width = WIDTH.px
 	}
   }
 
