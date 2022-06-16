@@ -86,6 +86,8 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	//	sty.
 	sty {
 	  verticallyCenterInParent()
+	  width = WIDTH.px
+	  height = HEIGHT.px
 	}
   }
 
