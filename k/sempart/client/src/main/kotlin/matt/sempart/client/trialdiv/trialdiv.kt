@@ -97,6 +97,12 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 	context2D.drawImage(loadingIm, 0.0, 0.0)
   }
 
+  override val hoverCanvas = stackDiv.canvas {
+	hidden = true
+	println("adding hoverCanvas with zIdx ${zIdx}")
+	canvasConfig()
+  }
+
   init {
 	println("adding segments with zIdx ${zIdx}")
 	println("segments.size=${segments.size}")
@@ -121,11 +127,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 	}
   }
 
-  override val hoverCanvas = stackDiv.canvas {
-	hidden = true
-	println("adding hoverCanvas with zIdx ${zIdx}")
-	canvasConfig()
-  }
+
 
   //  override val selectCanvas = stackDiv.canvas {
   //	hidden = true
