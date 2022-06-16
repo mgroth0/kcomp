@@ -17,7 +17,7 @@ import matt.kjs.css.sty
 import matt.kjs.elements.HTMLElementWrapper
 import matt.kjs.img.context2D
 import matt.kjs.img.draw
-import matt.kjs.pixelIndexIn
+import matt.kjs.pixelIndexInTarget
 import matt.kjs.props.disabledProperty
 import matt.kjs.props.hiddenProperty
 import matt.kjs.props.innerHTMLProperty
@@ -67,7 +67,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
   flexDir = row
 ), TrialDiv {
 
-  fun eventToSeg(e: MouseEvent) = e.pixelIndexIn(mainCanvas)?.let { segmentOf(it) }
+  fun eventToSeg(e: MouseEvent) = segmentOf(e.pixelIndexInTarget())
 
   val stackDiv = element.div {
 	sty {
