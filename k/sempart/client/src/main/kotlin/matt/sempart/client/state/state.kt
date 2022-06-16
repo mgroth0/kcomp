@@ -456,7 +456,7 @@ class DrawingTrial(
 
   fun clearSelection() {
 	selectedSegments.clear()
-	redraw()
+//	redraw()
 	if (isNotFinished) phase = UNSELECTED
   }
 
