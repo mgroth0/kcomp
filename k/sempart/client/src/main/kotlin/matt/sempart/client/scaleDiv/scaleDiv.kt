@@ -1,8 +1,9 @@
 package matt.sempart.client.scaleDiv
 
 //import matt.sempart.client.mainDivClass
-import matt.kjs.css.TextAlign.center
-import matt.kjs.css.VerticalAligns
+import matt.kjs.css.AlignItems
+import matt.kjs.css.Display.flex
+import matt.kjs.css.JustifyContent.center
 import matt.kjs.css.auto
 import matt.kjs.css.percent
 import matt.kjs.css.sty
@@ -22,14 +23,17 @@ val scaleDiv by lazy {
 	//	classList.add(mainDivClass)
 	onlyShowIn(Scaling)
 	sty {
-	  textAlign = center
-	  verticalAlign = VerticalAligns.middle
+	  display = flex
+	  justifyContent = center
+	  alignItems = AlignItems.center
+	  //	  textAlign = center
+	  //	  verticalAlign = VerticalAligns.middle
 	  height = 100.percent
 	}
 
 	img {
 	  src = INSTRUCTIONS_IM_RELATIVE
-	  sty.verticalAlign = VerticalAligns.middle
+	  //	  sty.verticalAlign = VerticalAligns.middle
 	}
 	br
 	p {
