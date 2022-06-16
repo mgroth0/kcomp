@@ -31,11 +31,14 @@ import matt.sempart.client.loadingDiv.DrawingLoadingProcess
 import matt.sempart.client.loadingDiv.loadingDiv
 import matt.sempart.client.params.PARAMS
 import matt.sempart.client.resizeDiv.resizeDiv
+import matt.sempart.client.scaleDiv.scaleDiv
 import matt.sempart.client.state.DrawingData
 import matt.sempart.client.state.ExperimentPhase.Break
+import matt.sempart.client.state.ExperimentPhase.Scaling
 import matt.sempart.client.state.ExperimentState
 import matt.sempart.client.state.Participant
 import matt.sempart.client.state.PhaseChange
+import matt.sempart.client.state.onlyShowIn
 import matt.sempart.client.trialdiv.div
 import org.w3c.dom.HTMLElement
 
@@ -53,10 +56,12 @@ fun main() = defaultMain {
 	color = white
   }
 
-  val divs = listOf(instructionsVidDiv, instructionsDiv, resizeDiv, loadingDiv, completeDiv, breakDiv, inactiveDiv)
+  val divs =
+	listOf(scaleDiv, instructionsVidDiv, instructionsDiv, resizeDiv, loadingDiv, completeDiv, breakDiv, inactiveDiv)
 
   document.body!!.appendChilds(
 	input {
+	  onlyShowIn(Scaling)
 	  type = "range"
 	  step = "0.01"
 	  min = "0.5"
@@ -68,7 +73,7 @@ fun main() = defaultMain {
 		position = absolute
 		left = 10.percent
 		top = 10.percent
-//		transform = Tra
+		//		transform = Tra
 	  }
 	  oninput = {
 		//		headStyleElement.innerHTML = ".$mainDivClass {transform: scale(${value});}"

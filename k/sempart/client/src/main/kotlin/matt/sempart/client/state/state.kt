@@ -73,6 +73,9 @@ object ExperimentState {
 		PhaseChange.dispatchToAllHTML(currentPhase.value to ExperimentPhase.determine())
 	  }
 	}
+  var finishedScaling by Delegates.observable(false) { _, _, _ ->
+	PhaseChange.dispatchToAllHTML(currentPhase.value to ExperimentPhase.determine())
+  }
   var finishedVid by Delegates.observable(false) { _, _, _ ->
 	PhaseChange.dispatchToAllHTML(currentPhase.value to ExperimentPhase.determine())
   }
@@ -103,6 +106,7 @@ object ExperimentState {
 //}
 
 enum class ExperimentPhase {
+  Scaling,
   InstructionsVid,
   Instructions, Trial, Break, Complete, Inactive, Resize, Loading;
 
@@ -117,6 +121,7 @@ enum class ExperimentPhase {
 	  val w = window.innerWidth
 	  val h = window.innerHeight
 	  val phase = when {
+		!ExperimentState.finishedScaling                                    -> Scaling
 		!ExperimentState.finishedVid                                        -> InstructionsVid
 		!ExperimentState.begun                                              -> Instructions
 		ExperimentState.complete                                            -> Complete

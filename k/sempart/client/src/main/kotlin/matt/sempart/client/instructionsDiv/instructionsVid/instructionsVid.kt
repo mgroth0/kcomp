@@ -1,10 +1,7 @@
 package matt.sempart.client.instructionsDiv.instructionsVid
 
-import matt.kjs.css.Position.absolute
 import matt.kjs.css.TextAlign.center
-import matt.kjs.css.Transform
 import matt.kjs.css.auto
-import matt.kjs.css.percent
 import matt.kjs.css.sty
 import matt.kjs.elements.br
 import matt.kjs.elements.button
@@ -17,6 +14,7 @@ import matt.sempart.client.mainDivClass
 import matt.sempart.client.state.ExperimentPhase.InstructionsVid
 import matt.sempart.client.state.ExperimentState
 import matt.sempart.client.state.onlyShowIn
+import matt.sempart.client.sty.centerOnWindow
 
 val instructionsVidDiv by lazy {
   div {
@@ -24,15 +22,7 @@ val instructionsVidDiv by lazy {
 	onlyShowIn(InstructionsVid)
 	sty.textAlign = center
 
-	/*https://stackoverflow.com/a/31029494/6596010*/
-	sty {
-	  position = absolute
-	  top = 50.percent
-	  left = 50.percent
-	  transform = Transform().apply {
-		map["translate"] = listOf("-50%", "-50%")
-	  }
-	}
+	sty.centerOnWindow()
 	val vid = video {
 	  source {
 		src = INSTRUCTIONS_VID_WOLFRAM

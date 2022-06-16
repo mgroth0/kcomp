@@ -4,6 +4,9 @@ import matt.kjs.css.BorderStyle.solid
 import matt.kjs.css.BorderWidth.thin
 import matt.kjs.css.Display.block
 import matt.kjs.css.MyStyleDsl
+import matt.kjs.css.Position.absolute
+import matt.kjs.css.Transform
+import matt.kjs.css.percent
 import matt.kjs.css.px
 
 fun MyStyleDsl.box() {
@@ -20,4 +23,14 @@ fun MyStyleDsl.boxButton() {
   marginTop = SMALL_SPACE
   marginLeft = SMALL_SPACE
   display = block
+}
+
+/*https://stackoverflow.com/a/31029494/6596010*/
+fun MyStyleDsl.centerOnWindow() {
+  position = absolute
+  top = 50.percent
+  left = 50.percent
+  transform = Transform().apply {
+	map["translate"] = listOf("-50%", "-50%")
+  }
 }
