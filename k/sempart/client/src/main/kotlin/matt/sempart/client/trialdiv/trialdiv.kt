@@ -92,11 +92,13 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 
 
   override val mainCanvas = stackDiv.canvas {
+	println("adding mainCanvas with zIdx ${zIdx}")
 	canvasConfig()
 	context2D.drawImage(loadingIm, 0.0, 0.0)
   }
 
   init {
+	println("adding segments with zIdx ${zIdx}")
 	segments.forEach { theSeg: Segment ->
 	  stackDiv.appendChilds(
 		theSeg.labelledCanvas.apply {
@@ -120,6 +122,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 
   override val hoverCanvas = stackDiv.canvas {
 	hidden = true
+	println("adding hoverCanvas with zIdx ${zIdx}")
 	canvasConfig()
   }
 
@@ -128,6 +131,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
   //	canvasConfig()
   //  }
   val eventCanvasIDK = stackDiv.canvas {
+	println("adding eventCanvasIDK with zIdx ${zIdx}")
 	canvasConfig()
 	setOnMouseMove {
 	  ExperimentState.lastInteract = Date.now()
