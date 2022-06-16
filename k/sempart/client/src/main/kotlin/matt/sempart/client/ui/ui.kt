@@ -37,6 +37,7 @@ open class ExperimentScreen(
   final override val element by lazy {
 	document.create.div {
 	  sty {
+		display = defaultDisplay
 		justifyContent = JustifyContent.center
 		alignItems = AlignItems.center
 		flexDirection = flexDir
