@@ -8,7 +8,6 @@ import matt.kjs.appendChilds
 import matt.kjs.css.Color.black
 import matt.kjs.css.Color.white
 import matt.kjs.css.Position.absolute
-import matt.kjs.css.Transform
 import matt.kjs.css.percent
 import matt.kjs.css.sty
 import matt.kjs.defaultMain
@@ -120,46 +119,51 @@ fun main() = defaultMain {
   val images = listOf(TRAIN_IM) + ORIG_DRAWING_IMS.shuffled()
   val imIterator = images.withIndex().toList().listIterator()
 
-  fun presentImage(drawingData: DrawingData, training: Boolean = false) {
-	val loadingProcess = DrawingLoadingProcess("downloading image data")
-	drawingData.whenReady {
-	  val trial = drawingData.trial!!
+  /*need scale before creating elements*/
+  PhaseChange.afterEndOfNext(Scaling) {
+	fun presentImage(drawingData: DrawingData, training: Boolean = false) {
+	  val loadingProcess = DrawingLoadingProcess("downloading image data")
+	  drawingData.whenReady {
+		val trial = drawingData.trial!!
 
-//	  trial.div.element.sty.transform = Transform().apply {
-//		map["scale"] = scaleDiv.sty.transform.map["scale"]!!
-//	  }
+		//	  trial.div.element.sty.transform = Transform().apply {
+		//		map["scale"] = scaleDiv.sty.transform.map["scale"]!!
+		//	  }
 
-	  trial.div.helpText.hidden = !training
-	  document.body!!.appendWrapper(trial.div)
-	  val nextDrawingData = imIterator.nextOrNull()?.let { DrawingData(it) }
-	  trial.div.nextImageButton.onclick = trial.interaction("nextImageButton clicked") {
-		ifConfirm(TRIAL_CONFIRM_MESSAGE) {
-		  trial.registerInteraction("submit confirmed")
-		  trial.cleanup()
-		  if (training) presentImage(nextDrawingData!!)
-		  else post(
-			Path(SEND_DATA_PREFIX + Participant.pid),
-			ExperimentData(
-			  responses = trial.segments.associate { it.id to it.response!! },
-			  trialLog = trial.log.get()
-			)
-		  ) {
-			if (nextDrawingData != null) {
-			  if ((nextDrawingData.idx - 1)%PARAMS.breakInterval == 0) {
-				PhaseChange.afterEndOfNext(Break) {
-				  presentImage(nextDrawingData)
-				}
-				ExperimentState.onBreak = true
-			  } else presentImage(nextDrawingData)
-			} else ExperimentState.complete = true
+		trial.div.helpText.hidden = !training
+		document.body!!.appendWrapper(trial.div)
+		val nextDrawingData = imIterator.nextOrNull()?.let { DrawingData(it) }
+		trial.div.nextImageButton.onclick = trial.interaction("nextImageButton clicked") {
+		  ifConfirm(TRIAL_CONFIRM_MESSAGE) {
+			trial.registerInteraction("submit confirmed")
+			trial.cleanup()
+			if (training) presentImage(nextDrawingData!!)
+			else post(
+			  Path(SEND_DATA_PREFIX + Participant.pid),
+			  ExperimentData(
+				responses = trial.segments.associate { it.id to it.response!! },
+				trialLog = trial.log.get()
+			  )
+			) {
+			  if (nextDrawingData != null) {
+				if ((nextDrawingData.idx - 1)%PARAMS.breakInterval == 0) {
+				  PhaseChange.afterEndOfNext(Break) {
+					presentImage(nextDrawingData)
+				  }
+				  ExperimentState.onBreak = true
+				} else presentImage(nextDrawingData)
+			  } else ExperimentState.complete = true
+			}
 		  }
 		}
+		loadingProcess.finish()
+		trial.log += "trial start"
 	  }
-	  loadingProcess.finish()
-	  trial.log += "trial start"
 	}
+	presentImage(DrawingData(imIterator.next()), training = true)
   }
-  presentImage(DrawingData(imIterator.next()), training = true)
+
+
 }
 
 
