@@ -96,6 +96,8 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	sty {
 	  //	  centerOnWindow()
 	  position = absolute
+	  top = 0.px
+	  left = 0.px
 	  zIndex = idx
 	  //	  top = 0.px
 	  //	  leftProperty().bind(currentLeftProp)
@@ -142,7 +144,8 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 		  sty {
 			//			sty.centerOnWindow()
 			position = absolute
-			//			top = 0.px
+			top = 0.px
+			left = 0.px
 			zIndex = zIdx
 			//			leftProperty().bind(currentLeftProp)
 		  }
@@ -157,6 +160,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: AwesomeElement<HTMLDivEl
 	  display = inlineBlock
 	  position = relative
 	  left = WIDTH.px
+	  width = 300.px
 	  //	  sty.centerOnWindow()
 	}
 	sty {
