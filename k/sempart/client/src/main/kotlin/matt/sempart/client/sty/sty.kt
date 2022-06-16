@@ -5,6 +5,7 @@ import matt.kjs.css.BorderWidth.thin
 import matt.kjs.css.Display.block
 import matt.kjs.css.MyStyleDsl
 import matt.kjs.css.VerticalAligns
+import matt.kjs.css.percent
 import matt.kjs.css.px
 import matt.klib.todo
 
@@ -51,6 +52,7 @@ fun MyStyleDsl.verticallyCenterInParent() {
   } */
 
   verticalAlign = VerticalAligns.middle
+  height = 100.percent
 
   //  transform = Transform().apply {
   //	map["translate"] = listOf("0%", "-50%")
