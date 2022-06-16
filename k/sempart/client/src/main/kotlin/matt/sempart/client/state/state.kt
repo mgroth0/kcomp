@@ -11,6 +11,7 @@ import matt.kjs.allHTMLElementsRecursive
 import matt.kjs.bindings.and
 import matt.kjs.bindings.isNull
 import matt.kjs.bindings.not
+import matt.kjs.displayAsBlockOrNone
 import matt.kjs.elements.HTMLElementWrapper
 import matt.kjs.elements.canvas
 import matt.kjs.elements.div
@@ -25,7 +26,6 @@ import matt.kjs.prop.ReadOnlyBindableProperty
 import matt.kjs.prop.VarProp
 import matt.kjs.req.get
 import matt.kjs.setOnLoad
-import matt.kjs.showing
 import matt.kjs.srcAsPath
 import matt.klib.olist.BasicObservableList
 import matt.klib.todo
@@ -403,10 +403,11 @@ class DrawingTrial(
   fun redraw() {
 	segments.forEach { it.redraw() }
   }
+
   fun Segment.redraw() {
-	labelledCanvas.showing = hasResponse
-	selectCanvas.showing = this in selectedSegments
-	selectLabeledCanvas.hidden = hasResponse && this in selectedSegments
+	labelledCanvas.displayAsBlockOrNone = hasResponse
+	selectCanvas.displayAsBlockOrNone = this in selectedSegments
+	selectLabeledCanvas.displayAsBlockOrNone = hasResponse && this in selectedSegments
   }
 
   val finishedProp = segments.map { it.hasResponseProp }.reduce { r1, r2 -> r1.and(r2) }.apply {
@@ -433,10 +434,12 @@ class DrawingTrial(
 		if (!PARAMS.allowMultiSelection) clearSelection()
 		return
 	  }
+
 	  selectedSegments.isEmpty() -> when {
 		next -> segments.first()
 		else -> segments.last()
 	  }
+
 	  next                       -> segCycle.first { !unlabelled || it.hasNoResponse }
 	  else                       -> segCycle.firstBackwards { !unlabelled || it.hasNoResponse }
 	})
@@ -463,11 +466,11 @@ class DrawingTrial(
 	//	} else {
 
 	seg.redraw()
-//	if (seg.hasResponse) {
-//	  seg.selectLabeledCanvas.hidden = false
-//	} else {
-//	  seg.selectCanvas.hidden = false
-//	}
+	//	if (seg.hasResponse) {
+	//	  seg.selectLabeledCanvas.hidden = false
+	//	} else {
+	//	  seg.selectCanvas.hidden = false
+	//	}
 
 	if (selectedSegments.any { it.hasResponse }) {
 	  if (isNotFinished) phase = SELECTED_LABELLED

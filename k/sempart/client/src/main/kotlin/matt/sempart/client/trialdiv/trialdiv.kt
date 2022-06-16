@@ -8,6 +8,7 @@ import matt.kjs.bind.binding
 import matt.kjs.bindings.isEmptyProperty
 import matt.kjs.bindings.not
 import matt.kjs.bindings.or
+import matt.kjs.css.Display.none
 import matt.kjs.css.FlexDirection.row
 import matt.kjs.css.FontStyle.italic
 import matt.kjs.css.FontWeight.bold
@@ -92,7 +93,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 
 
   override val mainCanvas = stackDiv.canvas {
-	println("adding mainCanvas with zIdx ${zIdx}")
+	println("adding mainCanvas with zIdx $zIdx")
 	canvasConfig()
 	context2D.drawImage(loadingIm, 0.0, 0.0)
   }
@@ -103,17 +104,17 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 	segments.forEach { theSeg: Segment ->
 	  stackDiv.appendChilds(
 		theSeg.labelledCanvas.apply {
-		  hidden = true
+		  sty.display = none
 		  canvasConfig()
 		  draw(theSeg.labelledIm)
 		},
 		theSeg.selectCanvas.apply {
-		  hidden = true
+		  sty.display = none
 		  canvasConfig()
 		  draw(theSeg.selectIm)
 		},
 		theSeg.selectLabeledCanvas.apply {
-		  hidden = true
+		  sty.display = none
 		  canvasConfig()
 		  draw(theSeg.selectLabeledIm)
 		}
@@ -122,7 +123,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
   }
 
   override val hoverCanvas = stackDiv.canvas {
-	hidden = true
+	sty.display = none
 	println("adding hoverCanvas with zIdx ${zIdx}")
 	canvasConfig()
   }
