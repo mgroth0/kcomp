@@ -6,7 +6,6 @@ import matt.kjs.html.elements.button.HTMLButtonWrapper
 import matt.sempart.Feedback
 import matt.sempart.client.const.COMPLETION_URL
 import matt.sempart.client.state.ExperimentPhase.Complete
-import matt.sempart.client.state.ExperimentPhase.Scaling
 import matt.sempart.client.state.sendData
 import matt.sempart.client.ui.ExperimentScreen
 

@@ -29,6 +29,8 @@ import matt.sempart.client.trialdiv.div
 import matt.sempart.client.ui.SCREENS
 import kotlin.time.Duration.Companion.milliseconds
 
+
+
 fun main() = defaultMain {
   document.head!!.apply {
 	title = "Semantic Segmentation"
@@ -41,6 +43,8 @@ fun main() = defaultMain {
 	background = black
 	color = white
   }
+
+  
 //  println("innerHTML5=${debugButton?.innerHTML}")
   println("innerHTML5.element=${debugButton?.element?.innerHTML}")
   document.body!!.appendWrappers(scaleInput, *SCREENS.toTypedArray())

@@ -171,13 +171,13 @@ enum class ExperimentPhase {
 	  val h = window.innerHeight
 	  return when {
 		ExperimentState.error != null    -> Err
+		w < 1200 || h < 750              -> Resize
 		!ExperimentState.finishedScaling -> Scaling
 		!ExperimentState.finishedVid     -> InstructionsVid
 		!ExperimentState.begun           -> Instructions
 		ExperimentState.complete         -> Complete
 		ExperimentState.onBreak          -> Break
 		ExperimentState.idle()           -> Inactive
-		w < 1200 || h < 750              -> Resize
 		working                          -> Loading
 		else                             -> Trial
 	  }
