@@ -280,6 +280,14 @@ interface Drawing {
   fun cleanup()
 }
 
+object Something {
+  init {
+	img {
+
+	}
+  }
+}
+
 class DrawingData(
   indexedIm: IndexedValue<String>
 ): Drawing {
@@ -299,6 +307,9 @@ class DrawingData(
   var trial = VarProp<DrawingTrial?>(null)
 
   init {
+	img {
+
+	}
 	HTTPRequester(
 	  GET,
 	  DATA_FOLDER + "segment_data2" + "${baseImageName}.json",
