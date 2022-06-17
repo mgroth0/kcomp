@@ -21,7 +21,18 @@ import matt.kjs.elements.WithDefaultDisplay
 import matt.kjs.elements.button
 import matt.kjs.prop.BindableProperty
 import matt.kjs.prop.ReadOnlyBindableProperty
+import matt.sempart.client.breakDiv.breakDiv
+import matt.sempart.client.completeDiv.completeDiv
 import matt.sempart.client.const.HALF_WIDTH
+import matt.sempart.client.errorDiv.errorDiv
+import matt.sempart.client.inactiveDiv.inactiveDiv
+import matt.sempart.client.instructionsDiv.instructionsDiv
+import matt.sempart.client.instructionsDiv.instructionsVid.instructionsVidDiv
+import matt.sempart.client.loadingDiv.LoadingDiv
+import matt.sempart.client.resizeDiv.resizeDiv
+import matt.sempart.client.scaleDiv.DEFAULT_SCALE
+import matt.sempart.client.scaleDiv.scaleDiv
+import matt.sempart.client.scaleDiv.scaleProp
 import matt.sempart.client.state.ExperimentPhase
 import matt.sempart.client.state.PhaseChange
 import matt.sempart.client.state.listen
@@ -29,7 +40,34 @@ import matt.sempart.client.sty.boxButton
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLDivElement
 
-
+val SCREENS by lazy {
+  val list = listOf(
+	scaleDiv,
+	instructionsVidDiv,
+	instructionsDiv,
+	resizeDiv,
+	LoadingDiv,
+	completeDiv,
+	breakDiv,
+	inactiveDiv,
+	errorDiv
+  )
+  require(list.size == ExperimentPhase.values().size - 1) {
+	"did you forget to add a new div to the div list?"
+  }
+  scaleProp.onChange { scale ->
+	list.forEach {
+	  it.sty.resetTransform {
+		scale(scale.toDouble())
+	  }
+	}
+  }
+  list.onEach {
+	it.sty.resetTransform {
+	  scale(DEFAULT_SCALE.toDouble())
+	}
+  }
+}
 
 open class ExperimentScreen(
   phase: ExperimentPhase,

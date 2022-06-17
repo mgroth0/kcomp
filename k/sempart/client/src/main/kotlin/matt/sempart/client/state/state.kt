@@ -12,6 +12,7 @@ import matt.kjs.bind.binding
 import matt.kjs.bindings.and
 import matt.kjs.bindings.isNull
 import matt.kjs.bindings.not
+import matt.kjs.currentTimeMillis
 import matt.kjs.elements.HTMLElementWrapper
 import matt.kjs.elements.div
 import matt.kjs.elements.img
@@ -34,6 +35,7 @@ import matt.kjs.srcAsPath
 import matt.klib.oset.BasicObservableSet
 import matt.klib.todo
 import matt.sempart.ExperimentData
+import matt.sempart.Issue
 import matt.sempart.LogMessage
 import matt.sempart.QueryParams
 import matt.sempart.client.const.DATA_FOLDER
@@ -44,6 +46,7 @@ import matt.sempart.client.errorDiv.errorDiv
 import matt.sempart.client.params.PARAMS
 import matt.sempart.client.state.DrawingData.Segment
 import matt.sempart.client.state.ExperimentPhase.Companion.currentPhase
+import matt.sempart.client.state.ExperimentPhase.Inactive
 import matt.sempart.client.state.ExperimentState.working
 import matt.sempart.client.state.TrialPhase.FINISHED
 import matt.sempart.client.state.TrialPhase.UNSELECTED
@@ -110,6 +113,16 @@ object ExperimentState {
 	  every(PARAMS.idleCheckPeriodMS.milliseconds) {
 		PhaseChange.dispatchToAllHTML(currentPhase.value to ExperimentPhase.determine())
 	  }
+
+
+	  PhaseChange.beforeDispatch {
+		if (it.second == Inactive) {
+		  sendData(Issue(currentTimeMillis(), "participant went idle and experiment was cancelled"))
+		}
+	  }
+
+
+
 	}
 
   fun idle() = Date.now() - ExperimentState.lastInteract >= PARAMS.idleThresholdMS

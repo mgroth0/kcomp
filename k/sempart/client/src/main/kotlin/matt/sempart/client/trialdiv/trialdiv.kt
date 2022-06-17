@@ -13,6 +13,7 @@ import matt.kjs.css.FlexDirection.row
 import matt.kjs.css.FontStyle.italic
 import matt.kjs.css.FontWeight.bold
 import matt.kjs.css.Position.absolute
+import matt.kjs.css.Transform.Scale
 import matt.kjs.css.px
 import matt.kjs.css.sty
 import matt.kjs.elements.HTMLElementWrapper
@@ -32,6 +33,8 @@ import matt.sempart.client.const.HEIGHT
 import matt.sempart.client.const.LABELS
 import matt.sempart.client.const.WIDTH
 import matt.sempart.client.params.PARAMS
+import matt.sempart.client.scaleDiv.scaleDiv
+import matt.sempart.client.scaleDiv.scaleProp
 import matt.sempart.client.state.DrawingData.Companion.loadingIm
 import matt.sempart.client.state.DrawingData.Segment
 import matt.sempart.client.state.DrawingTrial
@@ -73,13 +76,22 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
   flexDir = row
 ), TrialDiv {
 
+  init {
+	element.sty.resetTransform {
+	  scale(scaleProp.value.toDouble())
+	}
+	scaleProp.onChange {
+	  element.sty.resetTransform {
+		scale(scaleDiv.sty.transform.funs.filterIsInstance<Scale>().first().args)
+	  }
+	}
+  }
+
   fun eventToSeg(e: MouseEvent) = segmentOf(e.pixelIndexInTarget())
 
   private var zIdx = 0
 
-  private
-
-  val stackDiv = element.div {
+  private val stackDiv = element.div {
 	sty {
 	  width = WIDTH.px
 	  height = HEIGHT.px

@@ -22,6 +22,7 @@ class V1Gui(startup: GuiMode, remoteStatus: StatusLabel?): VBox() {
 
   init {
 
+
 	alignment = TOP_CENTER/*val figHeightProp = DProp(500.0)*/
 
 	val visPane = VisualizerPane(startup)
