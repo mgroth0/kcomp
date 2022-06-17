@@ -120,7 +120,7 @@ fun main() = defaultMain {
 		trial.div.nextImageButton.apply {
 		  trial.div.nextImageButton.setOnPointerDown {
 			if (enabled) {
-			  interval = every(50.milliseconds) {
+			  interval = every(10.milliseconds) {
 				width += 1
 				percent = width
 				if (width == 100) {
