@@ -31,13 +31,14 @@ val completeDiv = ExperimentScreen(Complete) {
 
   println("creating button")
   b = button {
+	id = "debugButtons"
 	println("configuring button")
 	+"Submit Feedback"
 	setOnClick {
 	  enabled = false
 	  sendData(Feedback(ta.value))
 	}
-	println("configured button")
+	println("configured button (innerHTML=$innerHTML)")
   }
   println("created button")
 
