@@ -6,12 +6,13 @@ import matt.kjs.props.valueProperty
 import matt.sempart.Feedback
 import matt.sempart.client.const.COMPLETION_URL
 import matt.sempart.client.state.ExperimentPhase.Complete
+import matt.sempart.client.state.ExperimentPhase.Scaling
 import matt.sempart.client.state.sendData
 import matt.sempart.client.ui.ExperimentScreen
 
 var debugButton: HTMLButtonWrapper? = null
 
-val completeDiv = ExperimentScreen(Complete) {
+val completeDiv = ExperimentScreen(Scaling) {
 
 
   +"The experiment is complete. Thank you for your participation!"
