@@ -314,7 +314,7 @@ class DrawingData(
 	  GET,
 	  DATA_FOLDER + "segment_data2" + "${baseImageName}.json",
 	  responses = {
-		println("statusCode=$statusCode")
+		println("statusCode=$statusCode, readyState=${readyState}")
 		when (statusCode) {
 		  200  -> SuccessText(responseText)
 		  else -> Failure(statusCode, statusText)
@@ -340,13 +340,13 @@ class DrawingData(
 				  }
 				}
 			  }
-//			  (document.createElement("img") as HTMLImageElement).also {
-//				loadDiv.appendChild(it)
-//				it.hidden = true
-//				it.setOnLoad {
-//
-//				}
-//			  }
+			  //			  (document.createElement("img") as HTMLImageElement).also {
+			  //				loadDiv.appendChild(it)
+			  //				it.hidden = true
+			  //				it.setOnLoad {
+			  //
+			  //				}
+			  //			  }
 			}
 			val (highlightIm, selectIm, labelledIm, selectLabeledIm, hiLabeledIm) = ims
 
