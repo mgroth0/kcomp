@@ -32,6 +32,7 @@ import matt.sempart.client.params.PARAMS
 import matt.sempart.client.resizeDiv.resizeDiv
 import matt.sempart.client.scaleDiv.scaleDiv
 import matt.sempart.client.state.DrawingData
+import matt.sempart.client.state.ExperimentPhase
 import matt.sempart.client.state.ExperimentPhase.Break
 import matt.sempart.client.state.ExperimentPhase.Inactive
 import matt.sempart.client.state.ExperimentPhase.Scaling
@@ -55,8 +56,19 @@ fun main() = defaultMain {
 	color = white
   }
 
-  val divs =
-	listOf(scaleDiv, instructionsVidDiv, instructionsDiv, resizeDiv, LoadingDiv, completeDiv, breakDiv, inactiveDiv)
+
+  val divs = listOf(
+	scaleDiv,
+	instructionsVidDiv,
+	instructionsDiv,
+	resizeDiv,
+	LoadingDiv,
+	completeDiv,
+	breakDiv,
+	inactiveDiv
+  )
+
+  require(divs.size == ExperimentPhase.values().size - 1)
 
   val defaultScale = "1.0"
 

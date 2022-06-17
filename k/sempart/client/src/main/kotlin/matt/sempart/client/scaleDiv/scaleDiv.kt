@@ -10,22 +10,8 @@ import matt.sempart.client.state.ExperimentState
 import matt.sempart.client.ui.ExperimentScreen
 
 val scaleDiv = ExperimentScreen(Scaling) {
-  //  div {
-  //	classList.add(mainDivClass)
-  //	onlyShowIn(Scaling)
-//  sty {
-	//	  display = flex
-	//	  justifyContent = center
-	//	  alignItems = AlignItems.center
-	//	  flexDirection = column
-	//	  textAlign = center
-	//	  verticalAlign = VerticalAligns.middle
-//	height = 100.percent
-//  }
-
   img {
 	src = INSTRUCTIONS_IM_RELATIVE
-	//	  sty.verticalAlign = VerticalAligns.middle
   }
   br
   p {
@@ -38,5 +24,4 @@ val scaleDiv = ExperimentScreen(Scaling) {
 	innerHTML = "Click here when finished rescaling"
 	setOnClick { ExperimentState.finishedScaling = true }
   }
-  //  }
 }

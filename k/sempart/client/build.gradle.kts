@@ -7,3 +7,6 @@ implementations(
 plugins {
   kotlin("plugin.serialization")
 }
+dependencies {
+  implementation(kotlin("reflect"))
+}
