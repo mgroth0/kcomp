@@ -42,8 +42,10 @@ fun main() = defaultMain {
 	color = white
   }
   println("innerHTML5=${debugButton?.innerHTML}")
+  println("innerHTML5.element=${debugButton?.element?.innerHTML}")
   document.body!!.appendWrappers(scaleInput, *SCREENS.toTypedArray())
   println("innerHTML6=${debugButton?.innerHTML}")
+  println("innerHTML6.element=${debugButton?.element?.innerHTML}")
 
   val images = listOf(TRAIN_IM) + ORIG_DRAWING_IMS.shuffled()
   val imIterator = images.withIndex().toList().listIterator()
@@ -51,6 +53,8 @@ fun main() = defaultMain {
   /*need scale before creating elements*/
   PhaseChange.afterEndOfNext(Scaling) {
 	println("innerHTML7=${debugButton?.innerHTML}")
+	println("innerHTML7.element=${debugButton?.element?.innerHTML}")
+	println("innerHTML7.element.id=${debugButton?.element?.id}")
 	fun presentImage(drawingData: DrawingData, training: Boolean = false) {
 	  val loadingProcess = DrawingLoadingProcess("downloading image data")
 	  drawingData.whenReady {
