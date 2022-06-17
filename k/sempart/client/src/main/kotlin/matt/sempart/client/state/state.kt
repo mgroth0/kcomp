@@ -309,6 +309,7 @@ class DrawingData(
 
   val loadDiv = /*document.body!!.*/div {
 	todo("loadDiv is not ideal")
+	id = "loadDiv"
 	hidden = true
   }
 
@@ -347,6 +348,7 @@ class DrawingData(
 				  loadedIms.value++
 				}
 			  }.apply {
+				todo("this is so not ideal")
 				configure()
 			  }
 			  //			  (document.createElement("img") as HTMLImageElement).also {
