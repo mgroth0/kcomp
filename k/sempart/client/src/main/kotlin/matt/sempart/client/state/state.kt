@@ -26,10 +26,12 @@ import matt.kjs.prop.VarProp
 import matt.kjs.prop.bProp
 import matt.kjs.prop.iProp
 import matt.kjs.req.Failure
+import matt.kjs.req.HTTPRequester
+import matt.kjs.req.HTTPType.GET
+import matt.kjs.req.HTTPType.POST
+import matt.kjs.req.SimpleSuccess
 import matt.kjs.req.Success
 import matt.kjs.req.SuccessText
-import matt.kjs.req.get
-import matt.kjs.req.post
 import matt.kjs.setOnLoad
 import matt.kjs.srcAsPath
 import matt.klib.oset.BasicObservableSet
@@ -62,24 +64,29 @@ import kotlin.properties.Delegates
 import kotlin.time.Duration.Companion.milliseconds
 
 fun sendData(d: ExperimentData, callback: ()->Unit = {}) {
-  post(
-	Path(SEND_DATA_PREFIX + Participant.pid), d
+  val it = HTTPRequester(
+	POST,
+	Path(SEND_DATA_PREFIX + Participant.pid),
+	d
   ) {
-	println("IN CALLBACK: ${it}")
-	@Suppress("UNUSED_VARIABLE")
-	val exhaust = when (it) {
-	  is Success -> {
-		callback()
-		123
-	  }
+	when (statusCode) {
+	  201  -> SimpleSuccess
+	  else -> Failure(statusCode, statusText)
+	}
+  }.send()
 
-	  is Failure -> {
-		println("IN FAILURE HANDLER IN CALLBACL: ${it}")
-		ExperimentState.error = it
-		123
-	  }
+  @Suppress("UNUSED_VARIABLE")
+  val exhaust = when (it) {
+	is Success -> {
+	  callback()
+	  123
 	}
 
+	is Failure -> {
+	  println("IN FAILURE HANDLER IN CALLBACL: ${it}")
+	  ExperimentState.error = it
+	  123
+	}
   }
 }
 
@@ -120,7 +127,6 @@ object ExperimentState {
 		  sendData(Issue(currentTimeMillis(), "participant went idle and experiment was cancelled"))
 		}
 	  }
-
 
 
 	}
@@ -301,9 +307,16 @@ class DrawingData(
   var trial = VarProp<DrawingTrial?>(null)
 
   init {
-	get(
-	  DATA_FOLDER + "segment_data2" + "${baseImageName}.json"
-	) { resp ->
+	HTTPRequester(
+	  GET,
+	  DATA_FOLDER + "segment_data2" + "${baseImageName}.json",
+	  responses = {
+		when (statusCode) {
+		  200  -> SuccessText(responseText)
+		  else -> Failure(statusCode, statusText)
+		}
+	  }
+	).sendAsync { resp ->
 	  @Suppress("UNUSED_VARIABLE")
 	  val exhaust = when (resp) {
 		is Failure     -> {
