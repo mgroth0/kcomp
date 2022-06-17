@@ -314,6 +314,7 @@ class DrawingData(
 	  GET,
 	  DATA_FOLDER + "segment_data2" + "${baseImageName}.json",
 	  responses = {
+		println("statusCode=$statusCode")
 		when (statusCode) {
 		  200  -> SuccessText(responseText)
 		  else -> Failure(statusCode, statusText)
