@@ -27,7 +27,7 @@ val completeDiv = ExperimentScreen(Complete) {
 	}
 	println("configured textarea")
   }
-  prinln("added textarea")
+  println("added textarea")
 
   println("creating button")
   b = button {
