@@ -312,12 +312,9 @@ class DrawingData(
 	hidden = true
   }
 
-  val ready = loadedImage.binding(trial, loadedIms, debug = true) {
+  val ready = loadedImage.binding(trial, loadedIms) {
+	println("(trial=${trial.value},loadedIms=${loadedIms.value},loadedImage=${loadedImage})")
 	it && trial.value != null && loadedIms.value == trial.value!!.segments.size*5
-  }.apply {
-	onChange {
-	  println("ready=$it (trial=${trial.value},loadedIms=${loadedIms.value},loadedImage=${loadedImage})")
-	}
   }
 
   init {
