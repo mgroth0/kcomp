@@ -63,7 +63,7 @@ import kotlin.js.Date
 import kotlin.properties.Delegates
 import kotlin.time.Duration.Companion.milliseconds
 
-inline fun <reified D: ExperimentData> sendData(d: D, callback: ()->Unit = {}) {
+fun sendData(d: ExperimentData, callback: ()->Unit = {}) {
   val it = HTTPRequester(
 	POST,
 	Path(SEND_DATA_PREFIX + Participant.pid),
