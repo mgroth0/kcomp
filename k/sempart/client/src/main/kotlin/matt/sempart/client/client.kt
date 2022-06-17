@@ -2,7 +2,6 @@ package matt.sempart.client
 
 import kotlinx.browser.document
 import matt.kjs.Interval
-import matt.kjs.Path
 import matt.kjs.css.Color.black
 import matt.kjs.css.Color.white
 import matt.kjs.css.Position.absolute
@@ -16,13 +15,13 @@ import matt.kjs.elements.input
 import matt.kjs.elements.link
 import matt.kjs.every
 import matt.kjs.nextOrNull
-import matt.kjs.req.post
 import matt.kjs.setOnInput
-import matt.sempart.ExperimentData
+import matt.sempart.Issue
+import matt.sempart.SegmentResponse
+import matt.sempart.TrialData
 import matt.sempart.client.breakDiv.breakDiv
 import matt.sempart.client.completeDiv.completeDiv
 import matt.sempart.client.const.ORIG_DRAWING_IMS
-import matt.sempart.client.const.SEND_DATA_PREFIX
 import matt.sempart.client.const.TRAIN_IM
 import matt.sempart.client.inactiveDiv.inactiveDiv
 import matt.sempart.client.instructionsDiv.instructionsDiv
@@ -37,9 +36,10 @@ import matt.sempart.client.state.ExperimentPhase.Break
 import matt.sempart.client.state.ExperimentPhase.Inactive
 import matt.sempart.client.state.ExperimentPhase.Scaling
 import matt.sempart.client.state.ExperimentState
-import matt.sempart.client.state.Participant
 import matt.sempart.client.state.PhaseChange
+import matt.sempart.client.state.sendData
 import matt.sempart.client.trialdiv.div
+import kotlin.js.Date
 import kotlin.time.Duration.Companion.milliseconds
 
 fun main() = defaultMain {
@@ -101,7 +101,7 @@ fun main() = defaultMain {
 
   PhaseChange.beforeDispatch {
 	if (it.second == Inactive) {
-
+	  sendData(Issue(Date.now().toLong(), "participant went idle and experiment was cancelled"))
 	}
   }
 
@@ -135,10 +135,11 @@ fun main() = defaultMain {
 				  trial.registerInteraction("submit confirmed")
 				  trial.cleanup()
 				  if (training) presentImage(nextDrawingData!!)
-				  else post(
-					Path(SEND_DATA_PREFIX + Participant.pid),
-					ExperimentData(
-					  responses = trial.segments.associate { it.id to it.response!! },
+				  else sendData(
+					TrialData(
+					  image = drawingData.baseImageName,
+					  index = drawingData.idx,
+					  responses = trial.segments.map { SegmentResponse(it.id, it.response!!) },
 					  trialLog = trial.log.get()
 					)
 				  ) {
@@ -151,6 +152,7 @@ fun main() = defaultMain {
 					  } else presentImage(nextDrawingData)
 					} else ExperimentState.complete = true
 				  }
+
 				}
 			  }
 			}

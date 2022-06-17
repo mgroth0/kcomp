@@ -25,13 +25,17 @@ import matt.kjs.prop.VarProp
 import matt.kjs.prop.bProp
 import matt.kjs.prop.iProp
 import matt.kjs.req.get
+import matt.kjs.req.post
 import matt.kjs.setOnLoad
 import matt.kjs.srcAsPath
 import matt.klib.oset.BasicObservableSet
 import matt.klib.todo
+import matt.sempart.ExperimentData
+import matt.sempart.LogMessage
 import matt.sempart.QueryParams
 import matt.sempart.client.const.DATA_FOLDER
 import matt.sempart.client.const.HEIGHT
+import matt.sempart.client.const.SEND_DATA_PREFIX
 import matt.sempart.client.const.WIDTH
 import matt.sempart.client.params.PARAMS
 import matt.sempart.client.state.DrawingData.Segment
@@ -50,6 +54,14 @@ import kotlin.js.Date
 import kotlin.properties.Delegates
 import kotlin.time.Duration.Companion.milliseconds
 
+fun sendData(d: ExperimentData, callback: ()->Unit = {}) {
+  post(
+	Path(SEND_DATA_PREFIX + Participant.pid),
+	d
+  ) {
+	callback()
+  }
+}
 
 object UI {
   val enabledProp = BindableProperty(true)
@@ -220,17 +232,17 @@ object PhaseChange: ChangeEventDispatcher<Pair<ExperimentPhase, ExperimentPhase>
 
 
 class TrialLog(
-  private val log: MutableList<Pair<Long, String>> = mutableListOf()
+  private val log: MutableList<LogMessage> = mutableListOf()
 ) {
   fun get() = log.toList()
   operator fun plusAssign(s: String) {
-	log.add(Date.now().toLong() to s)
+	log.add(LogMessage(Date.now().toLong(), s))
   }
 }
 
 
 interface Drawing {
-  val imString: String
+  val baseImageName: String
   val log: TrialLog
   fun cleanup()
 }
@@ -245,7 +257,7 @@ class DrawingData(
 	}
   }
 
-  override val imString = indexedIm.value
+  override val baseImageName = indexedIm.value
   val idx = indexedIm.index
   override val log = TrialLog()
   val loadedImage = bProp(false)
@@ -255,7 +267,7 @@ class DrawingData(
 
   init {
 	get(
-	  DATA_FOLDER + "segment_data2" + "${imString}.json"
+	  DATA_FOLDER + "segment_data2" + "${baseImageName}.json"
 	) { resp ->
 	  val segs = Json.decodeFromString<Map<String, List<List<Boolean>>>>(resp).entries.let {
 		if (PARAMS.randomSegmentOrder) it.shuffled() else it
@@ -274,7 +286,7 @@ class DrawingData(
 		val segID = entry.key
 
 
-		val imFileName = Path("${imString}_L${segID}.png")
+		val imFileName = Path("${baseImageName}_L${segID}.png")
 
 		highlightIm.srcAsPath = DATA_FOLDER + "segment_highlighted" + imFileName
 		selectIm.srcAsPath = DATA_FOLDER + "segment_selected" + imFileName
@@ -299,7 +311,7 @@ class DrawingData(
 	loadingIm.setOnLoad {
 	  loadedImage.value = true
 	}
-	loadingIm.setAttribute("src", "data/all/${imString}_All.png")
+	loadingIm.setAttribute("src", "data/all/${baseImageName}_All.png")
 
   }
 
@@ -421,7 +433,7 @@ class DrawingTrial(
   }*/
   var hoveredSeg = BindableProperty<Segment?>(null)
 
-  override fun toString() = "${this::class.simpleName} for $imString"
+  override fun toString() = "${this::class.simpleName} for $baseImageName"
 
 
   fun switchSegment(next: Boolean, unlabelled: Boolean) {
