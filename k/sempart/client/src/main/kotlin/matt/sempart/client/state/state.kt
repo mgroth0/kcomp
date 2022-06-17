@@ -346,6 +346,8 @@ class DrawingData(
 				setOnLoad {
 				  loadedIms.value++
 				}
+			  }.apply {
+				configure()
 			  }
 			  //			  (document.createElement("img") as HTMLImageElement).also {
 			  //				loadDiv.appendChild(it)
