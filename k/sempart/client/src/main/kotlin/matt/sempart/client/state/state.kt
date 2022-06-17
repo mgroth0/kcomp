@@ -307,6 +307,18 @@ class DrawingData(
   var finishedProcessesingResp = false
   var trial = VarProp<DrawingTrial?>(null)
 
+  val loadDiv = /*document.body!!.*/div {
+	todo("loadDiv is not ideal")
+	hidden = true
+  }
+
+  val ready = loadedImage.binding(trial, loadedIms) {
+	it && trial.value != null && loadedIms.value == trial.value!!.segments.size*5
+  }.apply {
+	onChange {
+	  println("ready=$it (trial=${trial.value},loadedIms=${loadedIms.value},loadedImage=${loadedImage})")
+	}
+  }
 
   init {
 	HTTPRequester(
@@ -413,18 +425,7 @@ class DrawingData(
 
   }
 
-  val loadDiv = /*document.body!!.*/div {
-	todo("loadDiv is not ideal")
-	hidden = true
-  }
 
-  val ready = loadedImage.binding(trial, loadedIms) {
-	it && trial.value != null && loadedIms.value == trial.value!!.segments.size*5
-  }.apply {
-	onChange {
-	  println("ready=$it (trial=${trial.value},loadedIms=${loadedIms.value},loadedImage=${loadedImage})")
-	}
-  }
 
   fun whenReady(op: ()->Unit) {
 	if (ready.value) op()
