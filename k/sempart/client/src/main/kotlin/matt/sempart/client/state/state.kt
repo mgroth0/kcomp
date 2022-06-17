@@ -416,6 +416,10 @@ class DrawingData(
 
   val ready = loadedImage.binding(trial, loadedIms) {
 	it && trial.value != null && loadedIms.value == trial.value!!.segments.size*5
+  }.apply {
+	onChange {
+	  println("ready=$it (trial=${trial.value},loadedIms=${loadedIms.value},loadedImage=${loadedImage})")
+	}
   }
 
   fun whenReady(op: ()->Unit) {
