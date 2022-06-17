@@ -345,7 +345,7 @@ class DrawingData(
 			if (PARAMS.randomSegmentOrder) it.shuffled() else it
 		  }.mapIndexed { index, entry ->
 			val ims = (1..5).map {
-			  loadDiv.img {
+			  val im = loadDiv.img {
 				hidden = true
 				setOnLoad {
 				  loadedIms.value++
@@ -356,6 +356,7 @@ class DrawingData(
 			  }
 			  todo("really really bad")
 			  loadDiv.configure()
+			  im
 			  //			  (document.createElement("img") as HTMLImageElement).also {
 			  //				loadDiv.appendChild(it)
 			  //				it.hidden = true
