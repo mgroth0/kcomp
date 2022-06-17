@@ -74,18 +74,10 @@ fun sendData(d: ExperimentData, callback: ()->Unit = {}) {
 	  else -> Failure(statusCode, statusText)
 	}
   }.send()
-
-  @Suppress("UNUSED_VARIABLE")
-  val exhaust = when (it) {
-	is Success -> {
-	  callback()
-	  123
-	}
-
+  when (it) {
+	is Success -> callback()
 	is Failure -> {
-	  println("IN FAILURE HANDLER IN CALLBACL: ${it}")
 	  ExperimentState.error = it
-	  123
 	}
   }
 }
@@ -317,11 +309,9 @@ class DrawingData(
 		}
 	  }
 	).sendAsync { resp ->
-	  @Suppress("UNUSED_VARIABLE")
-	  val exhaust = when (resp) {
+	  when (resp) {
 		is Failure     -> {
 		  ExperimentState.error = resp
-		  123
 		}
 
 		is SuccessText -> {
@@ -357,7 +347,6 @@ class DrawingData(
 		  }.sortedBy { it.cycleIndex }
 
 		  trial.value = DrawingTrial(segs, Loop(segs).iterator(), this)
-		  123
 		}
 	  }
 	}
