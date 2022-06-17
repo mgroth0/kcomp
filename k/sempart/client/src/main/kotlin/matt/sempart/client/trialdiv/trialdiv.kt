@@ -18,7 +18,6 @@ import matt.kjs.css.Position.absolute
 import matt.kjs.css.px
 import matt.kjs.css.sty
 import matt.kjs.elements.HTMLElementWrapper
-import matt.kjs.elements.div
 import matt.kjs.img.draw
 import matt.kjs.img.put
 import matt.kjs.pixelIndexInTarget
