@@ -17,8 +17,8 @@ import matt.kjs.css.percent
 import matt.kjs.css.px
 import matt.kjs.css.sty
 import matt.kjs.html.elements.AwesomeElement
+import matt.kjs.html.elements.HTMLElementWrapper
 import matt.kjs.html.elements.WithDefaultDisplay
-import matt.kjs.html.elements.button
 import matt.kjs.html.elements.button.HTMLButtonWrapper
 import matt.kjs.prop.BindableProperty
 import matt.kjs.prop.ReadOnlyBindableProperty
@@ -96,7 +96,7 @@ open class ExperimentScreen(
   }
 }
 
-fun HTMLDivElement.boxButton(op: HTMLButtonWrapper.()->Unit = {}) = button {
+fun HTMLElementWrapper<HTMLDivElement>.boxButton(op: HTMLButtonWrapper.()->Unit = {}) = button {
   type = ButtonType.button.realValue
   sty.boxButton()
   op()

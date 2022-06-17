@@ -2,6 +2,7 @@ package matt.sempart.client.instructionsDiv.instructionsVid
 
 import matt.kjs.css.auto
 import matt.kjs.css.sty
+import matt.kjs.handlers.setOnClick
 import matt.sempart.client.const.INSTRUCTIONS_VID_WOLFRAM
 import matt.sempart.client.state.ExperimentPhase.InstructionsVid
 import matt.sempart.client.state.ExperimentState
@@ -17,7 +18,7 @@ val instructionsVidDiv = ExperimentScreen(InstructionsVid) {
   br
   button {
 	sty.margin = auto
-	innerHTML = "play/pause"
+	+"play/pause"
 	setOnClick {
 	  if (vid.paused) vid.play()
 	  else vid.pause()
@@ -25,7 +26,7 @@ val instructionsVidDiv = ExperimentScreen(InstructionsVid) {
   }
   button {
 	sty.margin = auto
-	innerHTML = "Click here when ready to move on"
+	+"Click here when ready to move on"
 	setOnClick { ExperimentState.finishedVid = true }
   }
 }

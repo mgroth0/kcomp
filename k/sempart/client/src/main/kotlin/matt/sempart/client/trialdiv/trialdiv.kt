@@ -88,7 +88,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 
   private var zIdx = 0
 
-  private val stackDiv = element.div {
+  private val stackDiv = div {
 	sty {
 	  width = WIDTH.px
 	  height = HEIGHT.px
@@ -156,7 +156,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 	}
   }
 
-  val controlsDiv: HTMLDivElement = element.div {
+  val controlsDiv: HTMLDivElement = div {
 	sty {
 	  marginBottom = MED_SPACE
 	  width = WIDTH.px
@@ -171,7 +171,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 	(LABELS.shuffled() + "Something else" + "I don't know").forEach { l ->
 	  boxButton {
 		disabledProperty().bind(UI.disabledProp or selectedSegments.binding { it.all { it.response == l } })
-		innerHTML = l
+		+l
 		sty.fontStyle = italic
 		onclick = interaction("selected label: $l") {
 		  val gotFirstResponse = selectedSegments.filter {
