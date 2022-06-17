@@ -29,7 +29,7 @@ import matt.sempart.client.errorDiv.errorDiv
 import matt.sempart.client.inactiveDiv.inactiveDiv
 import matt.sempart.client.instructionsDiv.instructionsDiv
 import matt.sempart.client.instructionsDiv.instructionsVid.instructionsVidDiv
-import matt.sempart.client.loadingDiv.LoadingDiv
+import matt.sempart.client.loadingDiv.loadingDiv
 import matt.sempart.client.resizeDiv.resizeDiv
 import matt.sempart.client.scaleDiv.DEFAULT_SCALE
 import matt.sempart.client.scaleDiv.scaleDiv
@@ -46,7 +46,7 @@ val SCREENS by lazy {
 	instructionsVidDiv,
 	instructionsDiv,
 	resizeDiv,
-	LoadingDiv,
+	loadingDiv,
 	completeDiv,
 	breakDiv,
 	inactiveDiv,

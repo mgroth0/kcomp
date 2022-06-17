@@ -20,6 +20,7 @@ import matt.kjs.handlers.setOnLoad
 import matt.kjs.html.elements.HTMLElementWrapper
 import matt.kjs.html.elements.body.wrapped
 import matt.kjs.html.elements.img
+import matt.kjs.html.elements.img.HTMLImageWrapper
 import matt.kjs.html.elements.img.getPixels
 import matt.kjs.prop.BindableProperty
 import matt.kjs.prop.ReadOnlyBindableProperty
@@ -44,8 +45,6 @@ import matt.sempart.client.const.HEIGHT
 import matt.sempart.client.const.SEND_DATA_PREFIX
 import matt.sempart.client.const.WIDTH
 import matt.sempart.client.errorDiv.errorDiv
-import matt.sempart.client.loadingDiv.LoadingDiv.div
-import matt.sempart.client.loadingDiv.LoadingDiv.img
 import matt.sempart.client.params.PARAMS
 import matt.sempart.client.state.DrawingData.Segment
 import matt.sempart.client.state.ExperimentPhase.Companion.currentPhase
@@ -372,8 +371,7 @@ class DrawingData(
 	loadingIm.setOnLoad {
 	  loadedImage.value = true
 	}
-	loadingIm.setAttribute("src", "data/all/${baseImageName}_All.png")
-
+	loadingIm.src = "data/all/${baseImageName}_All.png"
   }
 
 
@@ -411,7 +409,7 @@ class DrawingData(
 
   }
 
-  val loadDiv = document.body!!.div {
+  val loadDiv = /*document.body!!.*/div {
 	todo("loadDiv is not ideal")
 	hidden = true
   }

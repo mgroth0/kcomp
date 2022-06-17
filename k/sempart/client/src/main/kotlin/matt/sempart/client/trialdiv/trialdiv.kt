@@ -16,11 +16,15 @@ import matt.kjs.css.Position.absolute
 import matt.kjs.css.Transform.Scale
 import matt.kjs.css.px
 import matt.kjs.css.sty
+import matt.kjs.handlers.setOnMouseMove
 import matt.kjs.html.elements.HTMLElementWrapper
 import matt.kjs.html.elements.appendWrapper
 import matt.kjs.html.elements.canvas.HTMLCanvasWrapper
 import matt.kjs.html.elements.canvas.draw
+import matt.kjs.html.elements.canvas.put
+import matt.kjs.html.elements.div.HTMLDivWrapper
 import matt.kjs.html.elements.img.HTMLImageWrapper
+import matt.kjs.html.elements.p.HTMLParagraphWrapper
 import matt.kjs.node.HoldButton
 import matt.kjs.pixelIndexInTarget
 import matt.kjs.props.disabledProperty
@@ -50,10 +54,7 @@ import matt.sempart.client.sty.box
 import matt.sempart.client.sty.boxButton
 import matt.sempart.client.ui.ExperimentScreen
 import matt.sempart.client.ui.boxButton
-import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLDivElement
-import org.w3c.dom.HTMLImageElement
-import org.w3c.dom.HTMLParagraphElement
 import org.w3c.dom.events.MouseEvent
 import kotlin.contracts.ExperimentalContracts
 
@@ -63,7 +64,7 @@ interface TrialDiv: HTMLElementWrapper<HTMLDivElement> {
   //  val hoverCanvas: HTMLCanvasElement
 
   //  val selectCanvas: HTMLCanvasElement
-  val helpText: HTMLParagraphElement
+  val helpText: HTMLParagraphWrapper
 }
 
 private val trialsDivs = WeakMap<DrawingTrial, TrialDiv>().withStoringDefault { it.trialDiv() }
@@ -159,7 +160,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 	}
   }
 
-  val controlsDiv: HTMLDivElement = div {
+  val controlsDiv: HTMLDivWrapper = div {
 	sty {
 	  marginBottom = MED_SPACE
 	  width = WIDTH.px
