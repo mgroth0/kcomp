@@ -18,6 +18,9 @@ import matt.kjs.css.px
 import matt.kjs.css.sty
 import matt.kjs.html.elements.HTMLElementWrapper
 import matt.kjs.html.elements.appendWrapper
+import matt.kjs.html.elements.canvas.HTMLCanvasWrapper
+import matt.kjs.html.elements.canvas.draw
+import matt.kjs.html.elements.img.HTMLImageWrapper
 import matt.kjs.node.HoldButton
 import matt.kjs.pixelIndexInTarget
 import matt.kjs.props.disabledProperty
@@ -94,9 +97,9 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 	  height = HEIGHT.px
 	}
 	fun stackCanvas(
-	  im: HTMLImageElement?,
+	  im: HTMLImageWrapper?,
 	  hide: Boolean = true,
-	  op: HTMLCanvasElement.()->Unit = {}
+	  op: HTMLCanvasWrapper.()->Unit = {}
 	) {
 	  canvas {
 		width = WIDTH
