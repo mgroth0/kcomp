@@ -62,6 +62,7 @@ fun sendData(d: ExperimentData, callback: ()->Unit = {}) {
   post(
 	Path(SEND_DATA_PREFIX + Participant.pid), d
   ) {
+	println("IN CALLBACK: ${it}")
 	@Suppress("UNUSED_VARIABLE")
 	val exhaust = when (it) {
 	  is Success -> {
@@ -70,6 +71,7 @@ fun sendData(d: ExperimentData, callback: ()->Unit = {}) {
 	  }
 
 	  is Failure -> {
+		println("IN FAILURE HANDLER IN CALLBACL: ${it}")
 		ExperimentState.error = it
 		123
 	  }
