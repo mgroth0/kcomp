@@ -50,6 +50,7 @@ fun main() = defaultMain {
 
   /*need scale before creating elements*/
   PhaseChange.afterEndOfNext(Scaling) {
+	println("innerHTML7=${debugButton?.innerHTML}")
 	fun presentImage(drawingData: DrawingData, training: Boolean = false) {
 	  val loadingProcess = DrawingLoadingProcess("downloading image data")
 	  drawingData.whenReady {
