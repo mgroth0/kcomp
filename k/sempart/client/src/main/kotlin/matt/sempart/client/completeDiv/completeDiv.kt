@@ -31,7 +31,6 @@ val completeDiv = ExperimentScreen(Complete) {
 
   println("creating button")
   b = button {
-	id = "debugButtons"
 	println("configuring button")
 	+"Submit Feedback"
 	setOnClick {
@@ -40,6 +39,7 @@ val completeDiv = ExperimentScreen(Complete) {
 	}
 	println("configured button (innerHTML=$innerHTML)")
   }
+  b.id = "debugButton"
   println("created button")
 
   +"To confirm your completion of the study with Prolific (which necessary for payment) please "
