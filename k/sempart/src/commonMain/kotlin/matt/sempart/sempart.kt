@@ -3,16 +3,16 @@ package matt.sempart
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed interface ExperimentData
+sealed class ExperimentData
 
 @Serializable
 class Issue(
   val unixTimeMS: Long,
   val message: String
-): ExperimentData
+): ExperimentData()
 
 @Serializable
-class Feedback(val feedback: String): ExperimentData
+class Feedback(val feedback: String): ExperimentData()
 
 @Serializable
 class TrialData(
@@ -20,7 +20,7 @@ class TrialData(
   val index: Int,
   val responses: List<SegmentResponse>,
   val trialLog: List<LogMessage>,
-): ExperimentData {
+): ExperimentData() {
   init {
 	require(responses.map { it.segmentID }.toSet().size == responses.size)
   }
