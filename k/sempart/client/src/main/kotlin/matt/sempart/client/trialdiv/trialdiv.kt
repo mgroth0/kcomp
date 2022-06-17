@@ -18,14 +18,11 @@ import matt.kjs.css.px
 import matt.kjs.css.sty
 import matt.kjs.html.elements.HTMLElementWrapper
 import matt.kjs.html.elements.appendWrapper
-import matt.kjs.html.elements.img.draw
-import matt.kjs.html.elements.img.put
 import matt.kjs.node.HoldButton
 import matt.kjs.pixelIndexInTarget
 import matt.kjs.props.disabledProperty
 import matt.kjs.props.hiddenProperty
 import matt.kjs.props.innerHTMLProperty
-import matt.kjs.setOnMouseMove
 import matt.kjs.showing
 import matt.klib.dmap.withStoringDefault
 import matt.klib.lang.go

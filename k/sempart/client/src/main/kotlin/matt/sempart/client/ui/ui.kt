@@ -19,6 +19,7 @@ import matt.kjs.css.sty
 import matt.kjs.html.elements.AwesomeElement
 import matt.kjs.html.elements.WithDefaultDisplay
 import matt.kjs.html.elements.button
+import matt.kjs.html.elements.button.HTMLButtonWrapper
 import matt.kjs.prop.BindableProperty
 import matt.kjs.prop.ReadOnlyBindableProperty
 import matt.sempart.client.breakDiv.breakDiv
@@ -37,7 +38,6 @@ import matt.sempart.client.state.ExperimentPhase
 import matt.sempart.client.state.PhaseChange
 import matt.sempart.client.state.listen
 import matt.sempart.client.sty.boxButton
-import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLDivElement
 
 val SCREENS by lazy {
@@ -96,7 +96,7 @@ open class ExperimentScreen(
   }
 }
 
-fun HTMLDivElement.boxButton(op: HTMLButtonElement.()->Unit = {}) = button {
+fun HTMLDivElement.boxButton(op: HTMLButtonWrapper.()->Unit = {}) = button {
   type = ButtonType.button.realValue
   sty.boxButton()
   op()

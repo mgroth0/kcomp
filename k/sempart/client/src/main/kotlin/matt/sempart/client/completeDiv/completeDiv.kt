@@ -1,15 +1,13 @@
 package matt.sempart.client.completeDiv
 
-import matt.kjs.html.elements.enabled
+import matt.kjs.handlers.setOnClick
+import matt.kjs.html.elements.button.HTMLButtonWrapper
 import matt.kjs.props.valueProperty
-import matt.kjs.setOnClick
 import matt.sempart.Feedback
 import matt.sempart.client.const.COMPLETION_URL
 import matt.sempart.client.state.ExperimentPhase.Complete
 import matt.sempart.client.state.sendData
 import matt.sempart.client.ui.ExperimentScreen
-import org.w3c.dom.HTMLButtonElement
-
 
 
 val completeDiv = ExperimentScreen(Complete) {
@@ -18,7 +16,7 @@ val completeDiv = ExperimentScreen(Complete) {
   br
   br
 
-  var b: HTMLButtonElement? = null
+  var b: HTMLButtonWrapper? = null
 
   +"Optionally, if you would like to give the researchers feedback on this experiment please submit it here."
   val ta = textArea {
