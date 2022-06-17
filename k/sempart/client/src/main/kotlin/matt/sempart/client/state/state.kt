@@ -320,6 +320,7 @@ class DrawingData(
 		}
 	  }
 	).sendAsync { resp ->
+	  println("resp=${resp}")
 	  when (resp) {
 		is Failure     -> {
 		  ExperimentState.error = resp
