@@ -280,14 +280,6 @@ interface Drawing {
   fun cleanup()
 }
 
-object Something {
-  init {
-	img {
-
-	}
-  }
-}
-
 class DrawingData(
   indexedIm: IndexedValue<String>
 ): Drawing {
@@ -429,8 +421,6 @@ class DrawingData(
 	  if (pi.x < 0 || pi.y < 0 || pi.x >= WIDTH || pi.y >= HEIGHT) return false
 	  return pixels[pi.y][pi.x]
 	}
-
-
   }
 
 
@@ -443,13 +433,10 @@ class DrawingData(
 	}
   }
 
-
   override fun cleanup() {
 	trial.value!!.div.element.remove()
 	loadDiv.remove()
   }
-
-
 }
 
 class DrawingTrial(

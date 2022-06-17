@@ -9,7 +9,9 @@ import matt.kjs.handlers.setOnClick
 import matt.kjs.handlers.setOnInput
 import matt.kjs.html.elements.input
 import matt.kjs.prop.VarProp
+import matt.sempart.client.const.HEIGHT
 import matt.sempart.client.const.INSTRUCTIONS_IM_RELATIVE
+import matt.sempart.client.const.WIDTH
 import matt.sempart.client.state.ExperimentPhase.Scaling
 import matt.sempart.client.state.ExperimentState
 import matt.sempart.client.state.PhaseChange
@@ -20,6 +22,8 @@ const val DEFAULT_SCALE = "1.0"
 val scaleDiv = ExperimentScreen(Scaling) {
   img {
 	src = INSTRUCTIONS_IM_RELATIVE
+	height = HEIGHT
+	width = WIDTH
   }
   br
   p {
