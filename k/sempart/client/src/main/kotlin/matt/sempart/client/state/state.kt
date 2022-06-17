@@ -354,6 +354,8 @@ class DrawingData(
 				todo("this is so not ideal")
 				configure()
 			  }
+			  todo("really really bad")
+			  loadDiv.configure()
 			  //			  (document.createElement("img") as HTMLImageElement).also {
 			  //				loadDiv.appendChild(it)
 			  //				it.hidden = true
