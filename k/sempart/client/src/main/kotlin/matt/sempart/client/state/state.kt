@@ -293,7 +293,7 @@ class DrawingData(
 	val loadingIm = img {
 	  todo("loadingIm is not ideal either")
 	  hidden = true
-	}.also { document.body!!.append(it) }
+	}.also { document.body!!.append(it.element) }
 
 	//	  (document.body!! as HTMLBodyElement).append
 	//	  .
