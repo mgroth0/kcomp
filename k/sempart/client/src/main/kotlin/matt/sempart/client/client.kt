@@ -2,12 +2,12 @@ package matt.sempart.client
 
 import kotlinx.browser.document
 import matt.kjs.Interval
+import matt.kjs.Path
 import matt.kjs.css.Color.black
 import matt.kjs.css.Color.white
 import matt.kjs.css.Position.absolute
 import matt.kjs.css.Transform.Scale
 import matt.kjs.css.percent
-import matt.kjs.css.px
 import matt.kjs.css.sty
 import matt.kjs.defaultMain
 import matt.kjs.elements.appendWrapper
@@ -16,20 +16,27 @@ import matt.kjs.elements.input
 import matt.kjs.elements.link
 import matt.kjs.every
 import matt.kjs.nextOrNull
+import matt.kjs.req.post
 import matt.kjs.setOnInput
+import matt.sempart.ExperimentData
 import matt.sempart.client.breakDiv.breakDiv
 import matt.sempart.client.completeDiv.completeDiv
 import matt.sempart.client.const.ORIG_DRAWING_IMS
+import matt.sempart.client.const.SEND_DATA_PREFIX
 import matt.sempart.client.const.TRAIN_IM
 import matt.sempart.client.inactiveDiv.inactiveDiv
 import matt.sempart.client.instructionsDiv.instructionsDiv
 import matt.sempart.client.instructionsDiv.instructionsVid.instructionsVidDiv
 import matt.sempart.client.loadingDiv.DrawingLoadingProcess
 import matt.sempart.client.loadingDiv.LoadingDiv
+import matt.sempart.client.params.PARAMS
 import matt.sempart.client.resizeDiv.resizeDiv
 import matt.sempart.client.scaleDiv.scaleDiv
 import matt.sempart.client.state.DrawingData
+import matt.sempart.client.state.ExperimentPhase.Break
 import matt.sempart.client.state.ExperimentPhase.Scaling
+import matt.sempart.client.state.ExperimentState
+import matt.sempart.client.state.Participant
 import matt.sempart.client.state.PhaseChange
 import matt.sempart.client.trialdiv.div
 import kotlin.time.Duration.Companion.milliseconds
@@ -109,40 +116,46 @@ fun main() = defaultMain {
 		document.body!!.appendWrapper(trial.div)
 		val nextDrawingData = imIterator.nextOrNull()?.let { DrawingData(it) }
 		var interval: Interval? = null
-		trial.div.nextImageButton.onpointerdown = {
-		  var width = 10.px
-		  interval = every(100.milliseconds) {
-			width += 10.px
-			trial.div.nextImageButtonLine.sty.width = width
+		var width = 0
+		trial.div.nextImageButton.apply {
+		  trial.div.nextImageButton.setOnPointerDown {
+			if (enabled) {
+			  interval = every(50.milliseconds) {
+				width += 1
+				percent = width
+				if (width == 100) {
+				  trial.registerInteraction("submit confirmed")
+				  trial.cleanup()
+				  if (training) presentImage(nextDrawingData!!)
+				  else post(
+					Path(SEND_DATA_PREFIX + Participant.pid),
+					ExperimentData(
+					  responses = trial.segments.associate { it.id to it.response!! },
+					  trialLog = trial.log.get()
+					)
+				  ) {
+					if (nextDrawingData != null) {
+					  if ((nextDrawingData.idx - 1)%PARAMS.breakInterval == 0) {
+						PhaseChange.afterEndOfNext(Break) {
+						  presentImage(nextDrawingData)
+						}
+						ExperimentState.onBreak = true
+					  } else presentImage(nextDrawingData)
+					} else ExperimentState.complete = true
+				  }
+				}
+			  }
+			}
 		  }
-		  Unit
-		}
-		trial.div.nextImageButton.onpointerup = {
-		  interval?.stop()
-		  Unit
+		  setOnPointerUp {
+			width = 0
+			percent = width
+		  }
 		}
 		/*trial.div.nextImageButton.onclick = trial.interaction("nextImageButton clicked") {
 
 		  ifConfirm(TRIAL_CONFIRM_MESSAGE) {
-			trial.registerInteraction("submit confirmed")
-			trial.cleanup()
-			if (training) presentImage(nextDrawingData!!)
-			else post(
-			  Path(SEND_DATA_PREFIX + Participant.pid),
-			  ExperimentData(
-				responses = trial.segments.associate { it.id to it.response!! },
-				trialLog = trial.log.get()
-			  )
-			) {
-			  if (nextDrawingData != null) {
-				if ((nextDrawingData.idx - 1)%PARAMS.breakInterval == 0) {
-				  PhaseChange.afterEndOfNext(Break) {
-					presentImage(nextDrawingData)
-				  }
-				  ExperimentState.onBreak = true
-				} else presentImage(nextDrawingData)
-			  } else ExperimentState.complete = true
-			}
+
 		  }
 		}*/
 		loadingProcess.finish()

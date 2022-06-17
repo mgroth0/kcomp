@@ -9,8 +9,6 @@ import matt.kjs.bind.binding
 import matt.kjs.bindings.isEmptyProperty
 import matt.kjs.bindings.not
 import matt.kjs.bindings.or
-import matt.kjs.css.Color.blue
-import matt.kjs.css.Display.block
 import matt.kjs.css.FlexDirection.row
 import matt.kjs.css.FontStyle.italic
 import matt.kjs.css.FontWeight.bold
@@ -18,8 +16,10 @@ import matt.kjs.css.Position.absolute
 import matt.kjs.css.px
 import matt.kjs.css.sty
 import matt.kjs.elements.HTMLElementWrapper
+import matt.kjs.elements.appendWrapper
 import matt.kjs.img.draw
 import matt.kjs.img.put
+import matt.kjs.node.HoldButton
 import matt.kjs.pixelIndexInTarget
 import matt.kjs.props.disabledProperty
 import matt.kjs.props.hiddenProperty
@@ -47,7 +47,6 @@ import matt.sempart.client.sty.box
 import matt.sempart.client.sty.boxButton
 import matt.sempart.client.ui.ExperimentScreen
 import matt.sempart.client.ui.boxButton
-import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLImageElement
@@ -56,8 +55,8 @@ import org.w3c.dom.events.MouseEvent
 import kotlin.contracts.ExperimentalContracts
 
 interface TrialDiv: HTMLElementWrapper<HTMLDivElement> {
-  val nextImageButton: HTMLButtonElement
-  val nextImageButtonLine: HTMLDivElement
+  val nextImageButton: HoldButton
+  //  val nextImageButtonLine: HTMLDivElement
   //  val hoverCanvas: HTMLCanvasElement
 
   //  val selectCanvas: HTMLCanvasElement
@@ -230,26 +229,15 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 	innerHTML = "$completionFraction segments labelled"
   }
 
-  override val nextImageButton = controlsDiv.button {
-	disabledProperty().bind(finishedProp.not())
-	type = ButtonType.button.realValue
-	sty {
-	  fontWeight = bold
-	  boxButton()
-
-	}
-	p {
-	  sty.display = block
-	  innerHTML = "Submit Responses and Show Next Image (you cannot go back)"
-	}
-  }
-
-  override val nextImageButtonLine = nextImageButton.div {
-	sty {
-	  background = blue
-	  height = 10.px
-	}
-  }
+  override val nextImageButton =
+	controlsDiv.appendWrapper(HoldButton("Submit Responses").withConfig {
+	  disabledProperty().bind(finishedProp.not())
+	  type = ButtonType.button.realValue
+	  sty {
+		fontWeight = bold
+		boxButton()
+	  }
+	})
 
 
   override val helpText = controlsDiv.p {
@@ -266,7 +254,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 	}
 
 	val finished =
-	  "Great job. You have chosen a label for every segment in this drawing. You can still go back and change your responses before continuing. Once ready, click the \"${nextImageButton.innerHTML}\" button. After moving onto the next drawing, you will not be able to come back and change your responses on the current drawing."
+	  "Great job. You have chosen a label for every segment in this drawing. You can still go back and change your responses before continuing. Once ready, click and hold the \"${nextImageButton.text}\" button. After moving onto the next drawing, you will not be able to come back and change your responses on the current drawing."
 
 	if (PARAMS.allowMultiSelection) {
 	  innerHTMLProperty().bind(phaseProp.binding {
