@@ -1,11 +1,10 @@
 package matt.sempart.client.completeDiv
 
 import matt.kjs.handlers.setOnClick
+import matt.kjs.handlers.setOnInput
 import matt.kjs.html.elements.button.HTMLButtonWrapper
-import matt.kjs.props.valueProperty
 import matt.sempart.Feedback
 import matt.sempart.client.const.COMPLETION_URL
-import matt.sempart.client.state.ExperimentPhase.Complete
 import matt.sempart.client.state.ExperimentPhase.Scaling
 import matt.sempart.client.state.sendData
 import matt.sempart.client.ui.ExperimentScreen
@@ -25,7 +24,7 @@ val completeDiv = ExperimentScreen(Scaling) {
   +"Optionally, if you would like to give the researchers feedback on this experiment please submit it here."
   val ta = textArea {
 	println("configuring textArea")
-	valueProperty().onChange {
+	setOnInput {
 	  println("in value changed")
 	  b!!.enabled = true
 	  println("b!!.enabled=${b!!.enabled}")
