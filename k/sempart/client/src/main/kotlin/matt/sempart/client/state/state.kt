@@ -326,6 +326,7 @@ class DrawingData(
 		}
 
 		is SuccessText -> {
+		  println("resp.text:${resp.text}")
 		  val segs = Json.decodeFromString<Map<String, List<List<Boolean>>>>(resp.text!!).entries.let {
 			if (PARAMS.randomSegmentOrder) it.shuffled() else it
 		  }.mapIndexed { index, entry ->
