@@ -186,7 +186,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 			hadNoResponse
 		  }
 		  //		  redraw()
-		  completionP.innerHTML = "$completionFraction segments labelled"
+		  completionP.innerText = "$completionFraction segments labelled"
 		  //		  gotFirstResponse.forEach {
 		  //			it.showAsLabeled()
 		  //		  }
@@ -206,7 +206,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 
   val previousSegmentButton = regularNextSegButtonBox.boxButton {
 	disabledProperty().bind(UI.disabledProp)
-	innerHTML = "Previous Segment"
+	innerText = "Previous Segment"
 	onclick = interaction("previousSegmentButton clicked", disableUI = true) {
 	  switchSegment(next = false, unlabelled = false)
 	}
@@ -214,7 +214,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 
   val nextSegmentButton = regularNextSegButtonBox.boxButton {
 	disabledProperty().bind(UI.disabledProp)
-	innerHTML = "Next Segment"
+	innerText = "Next Segment"
 	onclick = interaction("nextSegmentButton.onclick", disableUI = true) {
 	  switchSegment(next = true, unlabelled = false)
 	}
@@ -224,7 +224,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 
   val previousUnlabeledSegmentButton = buttonsDiv.boxButton {
 	disabledProperty().bind(UI.disabledProp or finishedProp)
-	innerHTML = "Previous$unlabelledString Segment"
+	innerText = "Previous$unlabelledString Segment"
 	onclick = interaction("previous unlabeled segment button clicked", disableUI = true) {
 	  switchSegment(next = false, unlabelled = true)
 	}
@@ -233,14 +233,14 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 
   val nextUnlabeledSegmentButton = buttonsDiv.boxButton {
 	disabledProperty().bind(UI.disabledProp.or(finishedProp))
-	innerHTML = "Next$unlabelledString Segment"
+	innerText = "Next$unlabelledString Segment"
 	onclick = interaction("next unlabeled segment button clicked", disableUI = true) {
 	  switchSegment(next = true, unlabelled = true)
 	}
   }
 
   val completionP = controlsDiv.p {
-	innerHTML = "$completionFraction segments labelled"
+	innerText = "$completionFraction segments labelled"
   }
 
   override val nextImageButton =
@@ -273,7 +273,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 	if (PARAMS.allowMultiSelection) {
 	  innerHTMLProperty().bind(phaseProp.binding {
 		"This first drawing is for training purposes only and the data will not be used.<br><br>" + when (it) {
-		  UNSELECTED          -> "You may select one or more segments by clicking them. Normally, clicking a segment will deselect your previous selections. In order to select multiple segments, hold down the SHIFT key. You may also click the \"${nextUnlabeledSegmentButton.innerHTML}\" button or the \"${previousUnlabeledSegmentButton.innerHTML}\" button to cycle through unselected segments automatically. This will also deselect your previous selection(s)."
+		  UNSELECTED          -> "You may select one or more segments by clicking them. Normally, clicking a segment will deselect your previous selections. In order to select multiple segments, hold down the SHIFT key. You may also click the \"${nextUnlabeledSegmentButton.innerText}\" button or the \"${previousUnlabeledSegmentButton.innerText}\" button to cycle through unselected segments automatically. This will also deselect your previous selection(s)."
 		  SELECTED_UNLABELLED -> "Now that one or more segments are selected, you may choose a label. Please choose the label by clicking the label button that you think best fits the segment(s). If you change your mind after selecting a label you can reselect the segment(s) and change your response. After choosing a label for a segment for the first time, your selection will be cleared and the next unlabelled segment will automatically be selected for you."
 		  SELECTED_LABELLED   -> "One or more selected segments are already labelled. You can still change which label you are assigning to these segments by clicking one of the label buttons."
 		  FINISHED            -> finished
@@ -282,7 +282,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 	} else {
 	  innerHTMLProperty().bind(phaseProp.binding {
 		"This first drawing is for training purposes only and the data will not be used.<br><br>" + when (it) {
-		  UNSELECTED          -> "You may select a segment by clicking it. You may also click the \"${nextUnlabeledSegmentButton.innerHTML}\" button or the \"${previousUnlabeledSegmentButton.innerHTML}\" button to cycle through unselected segments automatically."
+		  UNSELECTED          -> "You may select a segment by clicking it. You may also click the \"${nextUnlabeledSegmentButton.innerText}\" button or the \"${previousUnlabeledSegmentButton.innerText}\" button to cycle through unselected segments automatically."
 		  SELECTED_UNLABELLED -> "Now that a segment is selected, you may choose a label. Please choose the label by clicking the label button that you think best fits this segment. If you change your mind after selecting a label you can reselect the segment and change your response. After choosing a label for a segment for the first time, the next unlabelled segment will automatically be selected for you."
 		  SELECTED_LABELLED   -> "This segment is already labelled. You can still change which label you are assigning to this segment by clicking one of the label buttons."
 		  FINISHED            -> finished
