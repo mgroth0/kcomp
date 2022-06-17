@@ -64,7 +64,7 @@ import kotlin.properties.Delegates
 import kotlin.time.Duration.Companion.milliseconds
 
 fun sendData(d: ExperimentData, callback: ()->Unit = {}) {
-  val it = HTTPRequester(
+  HTTPRequester(
 	POST,
 	Path(SEND_DATA_PREFIX + Participant.pid),
   ) {
@@ -72,11 +72,12 @@ fun sendData(d: ExperimentData, callback: ()->Unit = {}) {
 	  201  -> SimpleSuccess
 	  else -> Failure(statusCode, statusText)
 	}
-  }.send(d)
-  when (it) {
-	is Success -> callback()
-	is Failure -> {
-	  ExperimentState.error = it
+  }.sendAsync(d) {
+	when (it) {
+	  is Success -> callback()
+	  is Failure -> {
+		ExperimentState.error = it
+	  }
 	}
   }
 }
