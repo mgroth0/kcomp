@@ -33,6 +33,7 @@ val completeDiv = ExperimentScreen(Scaling) {
   }
   b = button {
 	+"Submit Feedback"
+	enabled = false
 	setOnClick {
 	  enabled = false
 	  sendData(Feedback(ta.value))
