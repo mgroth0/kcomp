@@ -19,23 +19,35 @@ val completeDiv = ExperimentScreen(Complete) {
   var b: HTMLButtonWrapper? = null
 
   +"Optionally, if you would like to give the researchers feedback on this experiment please submit it here."
+  println("adding textarea")
   val ta = textArea {
+	println("configuring textarea")
 	valueProperty().onChange {
 	  b!!.enabled = true
 	}
+	println("configured textarea")
   }
+  prinln("added textarea")
 
+  println("creating button")
   b = button {
+	println("configuring button")
 	+"Submit Feedback"
 	setOnClick {
 	  enabled = false
 	  sendData(Feedback(ta.value))
 	}
+	println("configured button")
   }
+  println("created button")
 
   +"To confirm your completion of the study with Prolific (which necessary for payment) please "
+  println("creating a")
   a {
+	println("configuring a")
 	href = COMPLETION_URL
 	+"click here"
+	println("configured a")
   }
+  println("created a")
 }

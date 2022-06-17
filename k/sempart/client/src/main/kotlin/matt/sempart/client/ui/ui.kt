@@ -73,7 +73,7 @@ open class ExperimentScreen(
   phase: ExperimentPhase,
   override val defaultDisplay: Display = flex,
   val flexDir: FlexDirection = column,
-  val cfg: ExperimentScreen.()->Unit = {}
+  cfg: ExperimentScreen.()->Unit = {}
 ): AwesomeElement<HTMLDivElement>(), WithDefaultDisplay<HTMLDivElement> {
   final override val element by lazy {
 	document.create.div {
