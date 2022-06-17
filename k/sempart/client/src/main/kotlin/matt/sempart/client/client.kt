@@ -131,7 +131,7 @@ fun main() = defaultMain {
 		  interval?.stop()
 		  Unit
 		}
-		trial.div.nextImageButton.onclick = trial.interaction("nextImageButton clicked") {
+		/*trial.div.nextImageButton.onclick = trial.interaction("nextImageButton clicked") {
 
 		  ifConfirm(TRIAL_CONFIRM_MESSAGE) {
 			trial.registerInteraction("submit confirmed")
@@ -154,7 +154,7 @@ fun main() = defaultMain {
 			  } else ExperimentState.complete = true
 			}
 		  }
-		}
+		}*/
 		loadingProcess.finish()
 		trial.log += "trial start"
 	  }
