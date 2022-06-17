@@ -18,7 +18,6 @@ import matt.kjs.first
 import matt.kjs.firstBackwards
 import matt.kjs.handlers.setOnLoad
 import matt.kjs.html.elements.HTMLElementWrapper
-import matt.kjs.html.elements.body.wrapped
 import matt.kjs.html.elements.div
 import matt.kjs.html.elements.img
 import matt.kjs.html.elements.img.HTMLImageWrapper
@@ -56,7 +55,6 @@ import matt.sempart.client.state.TrialPhase.UNSELECTED
 import matt.sempart.client.trialdiv.div
 import org.w3c.dom.CustomEvent
 import org.w3c.dom.CustomEventInit
-import org.w3c.dom.HTMLBodyElement
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.EventTarget
 import org.w3c.dom.url.URLSearchParams
@@ -292,10 +290,13 @@ class DrawingData(
   indexedIm: IndexedValue<String>
 ): Drawing {
   companion object {
-	val loadingIm = (document.body!! as HTMLBodyElement).wrapped().img {
+	val loadingIm = img {
 	  todo("loadingIm is not ideal either")
 	  hidden = true
-	}
+	}.also { document.body!!.append(it) }
+
+	//	  (document.body!! as HTMLBodyElement).append
+	//	  .
   }
 
   override val baseImageName = indexedIm.value
