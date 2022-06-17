@@ -19,6 +19,7 @@ import matt.kjs.firstBackwards
 import matt.kjs.handlers.setOnLoad
 import matt.kjs.html.elements.HTMLElementWrapper
 import matt.kjs.html.elements.body.wrapped
+import matt.kjs.html.elements.div
 import matt.kjs.html.elements.img
 import matt.kjs.html.elements.img.HTMLImageWrapper
 import matt.kjs.html.elements.img.getPixels
