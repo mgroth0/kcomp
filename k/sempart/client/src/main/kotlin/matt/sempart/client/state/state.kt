@@ -18,9 +18,9 @@ import matt.kjs.first
 import matt.kjs.firstBackwards
 import matt.kjs.handlers.setOnLoad
 import matt.kjs.html.elements.HTMLElementWrapper
+import matt.kjs.html.elements.body.wrapped
 import matt.kjs.html.elements.img
 import matt.kjs.html.elements.img.getPixels
-import matt.kjs.html.elements.wrapped
 import matt.kjs.prop.BindableProperty
 import matt.kjs.prop.ReadOnlyBindableProperty
 import matt.kjs.prop.VarProp
