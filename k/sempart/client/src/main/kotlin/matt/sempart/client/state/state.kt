@@ -24,6 +24,9 @@ import matt.kjs.prop.ReadOnlyBindableProperty
 import matt.kjs.prop.VarProp
 import matt.kjs.prop.bProp
 import matt.kjs.prop.iProp
+import matt.kjs.req.Failure
+import matt.kjs.req.Success
+import matt.kjs.req.SuccessText
 import matt.kjs.req.get
 import matt.kjs.req.post
 import matt.kjs.setOnLoad
@@ -37,6 +40,7 @@ import matt.sempart.client.const.DATA_FOLDER
 import matt.sempart.client.const.HEIGHT
 import matt.sempart.client.const.SEND_DATA_PREFIX
 import matt.sempart.client.const.WIDTH
+import matt.sempart.client.errorDiv.errorDiv
 import matt.sempart.client.params.PARAMS
 import matt.sempart.client.state.DrawingData.Segment
 import matt.sempart.client.state.ExperimentPhase.Companion.currentPhase
@@ -56,10 +60,21 @@ import kotlin.time.Duration.Companion.milliseconds
 
 fun sendData(d: ExperimentData, callback: ()->Unit = {}) {
   post(
-	Path(SEND_DATA_PREFIX + Participant.pid),
-	d
+	Path(SEND_DATA_PREFIX + Participant.pid), d
   ) {
-	callback()
+	@Suppress("UNUSED_VARIABLE")
+	val exhaust = when (it) {
+	  is Success -> {
+		callback()
+		123
+	  }
+
+	  is Failure -> {
+		ExperimentState.error = it
+		123
+	  }
+	}
+
   }
 }
 
@@ -78,6 +93,14 @@ object Participant {
 object ExperimentState {
   fun interacted() {
 	lastInteract = Date.now()
+  }
+
+  var error by Delegates.observable<Failure?>(null) { _, _, n ->
+
+	errorDiv.element.innerHTML = n.toString()
+
+	PhaseChange.dispatchToAllHTML(currentPhase.value to ExperimentPhase.determine())
+
   }
 
   private var lastInteract = Date.now()
@@ -121,9 +144,7 @@ object ExperimentState {
 //}
 
 enum class ExperimentPhase {
-  Scaling,
-  InstructionsVid,
-  Instructions, Trial, Break, Complete, Inactive, Resize, Loading;
+  Scaling, InstructionsVid, Instructions, Trial, Break, Complete, Inactive, Resize, Loading, Err;
 
   companion object {
 	val currentPhase: ReadOnlyBindableProperty<ExperimentPhase> = BindableProperty(determine()).apply {
@@ -136,6 +157,7 @@ enum class ExperimentPhase {
 	  val w = window.innerWidth
 	  val h = window.innerHeight
 	  return when {
+		ExperimentState.error != null    -> Err
 		!ExperimentState.finishedScaling -> Scaling
 		!ExperimentState.finishedVid     -> InstructionsVid
 		!ExperimentState.begun           -> Instructions
@@ -159,18 +181,16 @@ enum class ExperimentPhase {
 }
 
 enum class TrialPhase {
-  UNSELECTED,
-  SELECTED_UNLABELLED,
-  SELECTED_LABELLED,
-  FINISHED
+  UNSELECTED, SELECTED_UNLABELLED, SELECTED_LABELLED, FINISHED
 }
 
 abstract class EventDispatcher<T>(type: String? = null) {
   val type: String = type ?: this::class.simpleName!!
   protected val beforeDispatchOps = mutableListOf<(T)->Unit>()
   private fun runBeforeDispatchOps(t: T) {
-	println("beforeDispatchOps.size=${beforeDispatchOps.size}")
-	/*i might modify the list of ops during this iteration so... WOW THIS FIXED IT*/
+	println(
+	  "beforeDispatchOps.size=${beforeDispatchOps.size}"
+	)    /*i might modify the list of ops during this iteration so... WOW THIS FIXED IT*/
 	beforeDispatchOps.toList().forEach { it(t) }
   }
 
@@ -269,44 +289,49 @@ class DrawingData(
 	get(
 	  DATA_FOLDER + "segment_data2" + "${baseImageName}.json"
 	) { resp ->
-	  val segs = Json.decodeFromString<Map<String, List<List<Boolean>>>>(resp).entries.let {
-		if (PARAMS.randomSegmentOrder) it.shuffled() else it
-	  }.mapIndexed { index, entry ->
-		val ims = (1..5).map {
-		  (document.createElement("img") as HTMLImageElement).also {
-			loadDiv.appendChild(it)
-			it.hidden = true
-			it.setOnLoad {
-			  loadedIms.value++
-			}
-		  }
+	  @Suppress("UNUSED_VARIABLE")
+	  val exhaust = when (resp) {
+		is Failure     -> {
+		  ExperimentState.error = resp
+		  123
 		}
-		val (highlightIm, selectIm, labelledIm, selectLabeledIm, hiLabeledIm) = ims
 
-		val segID = entry.key
+		is SuccessText -> {
+		  val segs = Json.decodeFromString<Map<String, List<List<Boolean>>>>(resp.text!!).entries.let {
+			if (PARAMS.randomSegmentOrder) it.shuffled() else it
+		  }.mapIndexed { index, entry ->
+			val ims = (1..5).map {
+			  (document.createElement("img") as HTMLImageElement).also {
+				loadDiv.appendChild(it)
+				it.hidden = true
+				it.setOnLoad {
+				  loadedIms.value++
+				}
+			  }
+			}
+			val (highlightIm, selectIm, labelledIm, selectLabeledIm, hiLabeledIm) = ims
+
+			val segID = entry.key
 
 
-		val imFileName = Path("${baseImageName}_L${segID}.png")
+			val imFileName = Path("${baseImageName}_L${segID}.png")
 
-		highlightIm.srcAsPath = DATA_FOLDER + "segment_highlighted" + imFileName
-		selectIm.srcAsPath = DATA_FOLDER + "segment_selected" + imFileName
-		labelledIm.srcAsPath = DATA_FOLDER + "segment_labelled" + imFileName
-		selectLabeledIm.srcAsPath = DATA_FOLDER + "segment_selected_labeled" + imFileName
-		hiLabeledIm.srcAsPath = DATA_FOLDER + "segment_hi_labeled" + imFileName
+			highlightIm.srcAsPath = DATA_FOLDER + "segment_highlighted" + imFileName
+			selectIm.srcAsPath = DATA_FOLDER + "segment_selected" + imFileName
+			labelledIm.srcAsPath = DATA_FOLDER + "segment_labelled" + imFileName
+			selectLabeledIm.srcAsPath = DATA_FOLDER + "segment_selected_labeled" + imFileName
+			hiLabeledIm.srcAsPath = DATA_FOLDER + "segment_hi_labeled" + imFileName
 
-		Segment(
-		  id = segID,
-		  pixels = entry.value,
-		  highlightIm = highlightIm,
-		  selectIm = selectIm,
-		  labelledIm = labelledIm,
-		  selectLabeledIm = selectLabeledIm,
-		  hiLabeledIm = hiLabeledIm,
-		  cycleIndex = index
-		)
-	  }.sortedBy { it.cycleIndex }
+			Segment(
+			  id = segID, pixels = entry.value, highlightIm = highlightIm, selectIm = selectIm, labelledIm = labelledIm,
+			  selectLabeledIm = selectLabeledIm, hiLabeledIm = hiLabeledIm, cycleIndex = index
+			)
+		  }.sortedBy { it.cycleIndex }
 
-	  trial.value = DrawingTrial(segs, Loop(segs).iterator(), this)
+		  trial.value = DrawingTrial(segs, Loop(segs).iterator(), this)
+		  123
+		}
+	  }
 	}
 	loadingIm.setOnLoad {
 	  loadedImage.value = true
@@ -340,8 +365,7 @@ class DrawingData(
 	//	val selectLabeledCanvas = canvas()
 	val hiLabeledPixels by lazy {
 	  hiLabeledIm.getPixels()
-	}
-	//	val labelledCanvas = canvas()
+	}    //	val labelledCanvas = canvas()
 
 	operator fun contains(pi: PixelIndex): Boolean {
 	  if (pi.x < 0 || pi.y < 0 || pi.x >= WIDTH || pi.y >= HEIGHT) return false
@@ -392,9 +416,7 @@ class DrawingTrial(
   }
 
   fun <E: Event> interaction(
-	logMessage: String,
-	disableUI: Boolean = false,
-	op: (E)->Unit
+	logMessage: String, disableUI: Boolean = false, op: (E)->Unit
   ): (E)->Unit = {
 	registerInteraction(logMessage)
 	if (disableUI) UI.enabled = false
