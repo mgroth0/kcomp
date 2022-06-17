@@ -1,5 +1,6 @@
 package matt.sempart.client.completeDiv
 
+import kotlinx.browser.document
 import matt.kjs.handlers.setOnClick
 import matt.kjs.html.elements.button.HTMLButtonWrapper
 import matt.kjs.props.valueProperty
@@ -31,6 +32,7 @@ val completeDiv = ExperimentScreen(Complete) {
 
   println("creating button")
   b = button {
+	println("innerHTML3=${document.getElementById("debugButton")?.innerHTML}")
 	println("configuring button")
 	+"Submit Feedback"
 	setOnClick {
@@ -38,9 +40,11 @@ val completeDiv = ExperimentScreen(Complete) {
 	  sendData(Feedback(ta.value))
 	}
 	println("configured button (innerHTML=$innerHTML)")
+	println("innerHTML4=${document.getElementById("debugButton")?.innerHTML}")
   }
   b.id = "debugButton"
   println("created button")
+  println("innerHTML1=${document.getElementById("debugButton")?.innerHTML}")
 
   +"To confirm your completion of the study with Prolific (which necessary for payment) please "
   println("creating a")
@@ -51,4 +55,5 @@ val completeDiv = ExperimentScreen(Complete) {
 	println("configured a")
   }
   println("created a")
+  println("innerHTML2=${document.getElementById("debugButton")?.innerHTML}")
 }

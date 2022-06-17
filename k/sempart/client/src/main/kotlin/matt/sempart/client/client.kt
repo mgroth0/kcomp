@@ -40,7 +40,9 @@ fun main() = defaultMain {
 	background = black
 	color = white
   }
+  println("innerHTML5=${document.getElementById("debugButton")?.innerHTML}")
   document.body!!.appendWrappers(scaleInput, *SCREENS.toTypedArray())
+  println("innerHTML6=${document.getElementById("debugButton")?.innerHTML}")
 
   val images = listOf(TRAIN_IM) + ORIG_DRAWING_IMS.shuffled()
   val imIterator = images.withIndex().toList().listIterator()
