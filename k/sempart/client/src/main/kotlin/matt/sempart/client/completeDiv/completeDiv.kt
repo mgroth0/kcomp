@@ -32,20 +32,20 @@ val completeDiv = ExperimentScreen(Complete) {
 
   println("creating button")
   b = button {
-	println("innerHTML3=${debugButton?.innerHTML}")
+//	println("innerHTML3=${debugButton?.innerHTML}")
 	println("configuring button")
 	+"Submit Feedback"
 	setOnClick {
 	  enabled = false
 	  sendData(Feedback(ta.value))
 	}
-	println("configured button (innerHTML=$innerHTML)")
-	println("innerHTML4=${debugButton?.innerHTML}")
+//	println("configured button (innerHTML=$innerHTML)")
+//	println("innerHTML4=${debugButton?.innerHTML}")
   }
   debugButton = b
   b.id = "debugButton"
   println("created button")
-  println("innerHTML1=${debugButton?.innerHTML}")
+//  println("innerHTML1=${debugButton?.innerHTML}")
 
   +"To confirm your completion of the study with Prolific (which necessary for payment) please "
   println("creating a")
@@ -56,5 +56,5 @@ val completeDiv = ExperimentScreen(Complete) {
 	println("configured a")
   }
   println("created a")
-  println("innerHTML2=${debugButton?.innerHTML}")
+//  println("innerHTML2=${debugButton?.innerHTML}")
 }
