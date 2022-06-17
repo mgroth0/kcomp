@@ -306,6 +306,7 @@ class DrawingData(
   var finishedProcessesingResp = false
   var trial = VarProp<DrawingTrial?>(null)
 
+
   init {
 	img {
 
