@@ -9,6 +9,8 @@ import matt.kjs.bind.binding
 import matt.kjs.bindings.isEmptyProperty
 import matt.kjs.bindings.not
 import matt.kjs.bindings.or
+import matt.kjs.css.Color.blue
+import matt.kjs.css.Display.block
 import matt.kjs.css.FlexDirection.row
 import matt.kjs.css.FontStyle.italic
 import matt.kjs.css.FontWeight.bold
@@ -16,6 +18,7 @@ import matt.kjs.css.Position.absolute
 import matt.kjs.css.px
 import matt.kjs.css.sty
 import matt.kjs.elements.HTMLElementWrapper
+import matt.kjs.elements.div
 import matt.kjs.img.draw
 import matt.kjs.img.put
 import matt.kjs.pixelIndexInTarget
@@ -55,6 +58,7 @@ import kotlin.contracts.ExperimentalContracts
 
 interface TrialDiv: HTMLElementWrapper<HTMLDivElement> {
   val nextImageButton: HTMLButtonElement
+  val nextImageButtonLine: HTMLDivElement
   //  val hoverCanvas: HTMLCanvasElement
 
   //  val selectCanvas: HTMLCanvasElement
@@ -233,9 +237,21 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 	sty {
 	  fontWeight = bold
 	  boxButton()
-	  innerHTML = "Submit Responses and Show Next Image"
+
+	}
+	p {
+	  sty.display = block
+	  innerHTML = "Submit Responses and Show Next Image (you cannot go back)"
 	}
   }
+
+  override val nextImageButtonLine = nextImageButton.div {
+	sty {
+	  background = blue
+	  height = 10.px
+	}
+  }
+
 
   override val helpText = controlsDiv.p {
 

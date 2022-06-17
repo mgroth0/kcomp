@@ -1,18 +1,21 @@
 package matt.sempart.client
 
 import kotlinx.browser.document
+import matt.kjs.Interval
 import matt.kjs.Path
 import matt.kjs.css.Color.black
 import matt.kjs.css.Color.white
 import matt.kjs.css.Position.absolute
 import matt.kjs.css.Transform.Scale
 import matt.kjs.css.percent
+import matt.kjs.css.px
 import matt.kjs.css.sty
 import matt.kjs.defaultMain
 import matt.kjs.elements.appendWrapper
 import matt.kjs.elements.appendWrappers
 import matt.kjs.elements.input
 import matt.kjs.elements.link
+import matt.kjs.every
 import matt.kjs.ifConfirm
 import matt.kjs.nextOrNull
 import matt.kjs.req.post
@@ -39,9 +42,10 @@ import matt.sempart.client.state.ExperimentState
 import matt.sempart.client.state.Participant
 import matt.sempart.client.state.PhaseChange
 import matt.sempart.client.trialdiv.div
+import kotlin.time.Duration.Companion.milliseconds
 
 fun main() = defaultMain {
-  document.head!!.apply{
+  document.head!!.apply {
 	title = "Semantic Segmentation"
 	link {
 	  rel = "stylesheet"
@@ -114,7 +118,21 @@ fun main() = defaultMain {
 		trial.div.helpText.hidden = !training
 		document.body!!.appendWrapper(trial.div)
 		val nextDrawingData = imIterator.nextOrNull()?.let { DrawingData(it) }
+		var interval: Interval? = null
+		trial.div.nextImageButton.onpointerdown = {
+		  var width = 10.px
+		  interval = every(100.milliseconds) {
+			width += 10.px
+			trial.div.nextImageButtonLine.sty.width = width
+		  }
+		  Unit
+		}
+		trial.div.nextImageButton.onpointerup = {
+		  interval?.stop()
+		  Unit
+		}
 		trial.div.nextImageButton.onclick = trial.interaction("nextImageButton clicked") {
+
 		  ifConfirm(TRIAL_CONFIRM_MESSAGE) {
 			trial.registerInteraction("submit confirmed")
 			trial.cleanup()
