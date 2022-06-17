@@ -78,6 +78,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 ), TrialDiv {
 
   init {
+	id = "trialDiv"
 	element.sty.resetTransform {
 	  scale(scaleProp.value.toDouble())
 	}
