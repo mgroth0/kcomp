@@ -312,7 +312,7 @@ class DrawingData(
 	hidden = true
   }
 
-  val ready = loadedImage.binding(trial, loadedIms) {
+  val ready = loadedImage.binding(trial, loadedIms, debug = true) {
 	it && trial.value != null && loadedIms.value == trial.value!!.segments.size*5
   }.apply {
 	onChange {
@@ -424,7 +424,6 @@ class DrawingData(
 
 
   }
-
 
 
   fun whenReady(op: ()->Unit) {
