@@ -1,6 +1,6 @@
 package matt.sempart.client.completeDiv
 
-import matt.kjs.elements.enabled
+import matt.kjs.html.elements.enabled
 import matt.kjs.props.valueProperty
 import matt.kjs.setOnClick
 import matt.sempart.Feedback

@@ -15,17 +15,17 @@ val breakDiv = ExperimentScreen(
   Break
 ) {
   p {
+	+"You may take a break and continue when you are ready."
 	sty {
 	  width = WIDTH.px
 	  margin = auto
-	  innerHTML = "You may take a break and continue when you are ready."
 	  button {
 		type = ButtonType.button.realValue
 		sty.margin = auto
-		innerHTML = "Continue"
+		+"Continue"
 		setOnClick {
 		  ExperimentState.interacted()
-		  ExperimentState.onBreak = false
+		  ExperimxentState.onBreak = false
 		}
 	  }
 	}

@@ -2,7 +2,7 @@ package matt.sempart.client.instructionsDiv.instructionsVid
 
 import matt.kjs.css.auto
 import matt.kjs.css.sty
-import matt.kjs.elements.source
+import matt.kjs.html.elements.source
 import matt.kjs.setOnClick
 import matt.sempart.client.const.INSTRUCTIONS_VID_WOLFRAM
 import matt.sempart.client.state.ExperimentPhase.InstructionsVid

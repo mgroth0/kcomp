@@ -16,9 +16,9 @@ import matt.kjs.css.Px
 import matt.kjs.css.percent
 import matt.kjs.css.px
 import matt.kjs.css.sty
-import matt.kjs.elements.AwesomeElement
-import matt.kjs.elements.WithDefaultDisplay
-import matt.kjs.elements.button
+import matt.kjs.html.elements.AwesomeElement
+import matt.kjs.html.elements.WithDefaultDisplay
+import matt.kjs.html.elements.button
 import matt.kjs.prop.BindableProperty
 import matt.kjs.prop.ReadOnlyBindableProperty
 import matt.sempart.client.breakDiv.breakDiv

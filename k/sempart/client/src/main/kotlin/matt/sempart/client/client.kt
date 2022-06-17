@@ -6,10 +6,10 @@ import matt.kjs.css.Color.black
 import matt.kjs.css.Color.white
 import matt.kjs.css.sty
 import matt.kjs.defaultMain
-import matt.kjs.elements.appendWrapper
-import matt.kjs.elements.appendWrappers
-import matt.kjs.elements.link
 import matt.kjs.every
+import matt.kjs.html.elements.appendWrapper
+import matt.kjs.html.elements.appendWrappers
+import matt.kjs.html.elements.link
 import matt.kjs.nextOrNull
 import matt.sempart.SegmentResponse
 import matt.sempart.TrialData
@@ -40,8 +40,7 @@ fun main() = defaultMain {
 	background = black
 	color = white
   }
-  document.body!!.appendChild(scaleInput)
-  document.body!!.appendWrappers(*SCREENS.toTypedArray())
+  document.body!!.appendWrappers(scaleInput, *SCREENS.toTypedArray())
 
   val images = listOf(TRAIN_IM) + ORIG_DRAWING_IMS.shuffled()
   val imIterator = images.withIndex().toList().listIterator()

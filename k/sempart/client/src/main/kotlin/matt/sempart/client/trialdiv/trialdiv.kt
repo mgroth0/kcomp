@@ -16,10 +16,10 @@ import matt.kjs.css.Position.absolute
 import matt.kjs.css.Transform.Scale
 import matt.kjs.css.px
 import matt.kjs.css.sty
-import matt.kjs.elements.HTMLElementWrapper
-import matt.kjs.elements.appendWrapper
-import matt.kjs.img.draw
-import matt.kjs.img.put
+import matt.kjs.html.elements.HTMLElementWrapper
+import matt.kjs.html.elements.appendWrapper
+import matt.kjs.html.elements.img.draw
+import matt.kjs.html.elements.img.put
 import matt.kjs.node.HoldButton
 import matt.kjs.pixelIndexInTarget
 import matt.kjs.props.disabledProperty

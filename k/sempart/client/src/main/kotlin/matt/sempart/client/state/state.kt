@@ -13,13 +13,14 @@ import matt.kjs.bindings.and
 import matt.kjs.bindings.isNull
 import matt.kjs.bindings.not
 import matt.kjs.currentTimeMillis
-import matt.kjs.elements.HTMLElementWrapper
-import matt.kjs.elements.div
-import matt.kjs.elements.img
 import matt.kjs.every
 import matt.kjs.first
 import matt.kjs.firstBackwards
-import matt.kjs.img.getPixels
+import matt.kjs.handlers.setOnLoad
+import matt.kjs.html.elements.HTMLElementWrapper
+import matt.kjs.html.elements.img
+import matt.kjs.html.elements.img.getPixels
+import matt.kjs.html.elements.wrapped
 import matt.kjs.prop.BindableProperty
 import matt.kjs.prop.ReadOnlyBindableProperty
 import matt.kjs.prop.VarProp
@@ -32,8 +33,6 @@ import matt.kjs.req.HTTPType.POST
 import matt.kjs.req.SimpleSuccess
 import matt.kjs.req.Success
 import matt.kjs.req.SuccessText
-import matt.kjs.setOnLoad
-import matt.kjs.srcAsPath
 import matt.klib.oset.BasicObservableSet
 import matt.klib.todo
 import matt.sempart.ExperimentData
@@ -45,6 +44,8 @@ import matt.sempart.client.const.HEIGHT
 import matt.sempart.client.const.SEND_DATA_PREFIX
 import matt.sempart.client.const.WIDTH
 import matt.sempart.client.errorDiv.errorDiv
+import matt.sempart.client.loadingDiv.LoadingDiv.div
+import matt.sempart.client.loadingDiv.LoadingDiv.img
 import matt.sempart.client.params.PARAMS
 import matt.sempart.client.state.DrawingData.Segment
 import matt.sempart.client.state.ExperimentPhase.Companion.currentPhase
@@ -55,7 +56,7 @@ import matt.sempart.client.state.TrialPhase.UNSELECTED
 import matt.sempart.client.trialdiv.div
 import org.w3c.dom.CustomEvent
 import org.w3c.dom.CustomEventInit
-import org.w3c.dom.HTMLImageElement
+import org.w3c.dom.HTMLBodyElement
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.EventTarget
 import org.w3c.dom.url.URLSearchParams
@@ -283,7 +284,7 @@ class DrawingData(
   indexedIm: IndexedValue<String>
 ): Drawing {
   companion object {
-	val loadingIm = document.body!!.img {
+	val loadingIm = (document.body!! as HTMLBodyElement).wrapped().img {
 	  todo("loadingIm is not ideal either")
 	  hidden = true
 	}
@@ -318,13 +319,21 @@ class DrawingData(
 			if (PARAMS.randomSegmentOrder) it.shuffled() else it
 		  }.mapIndexed { index, entry ->
 			val ims = (1..5).map {
-			  (document.createElement("img") as HTMLImageElement).also {
-				loadDiv.appendChild(it)
-				it.hidden = true
-				it.setOnLoad {
-				  loadedIms.value++
+			  img {
+				loadDiv.img {
+				  hidden = true
+				  setOnLoad {
+					loadedIms.value++
+				  }
 				}
 			  }
+//			  (document.createElement("img") as HTMLImageElement).also {
+//				loadDiv.appendChild(it)
+//				it.hidden = true
+//				it.setOnLoad {
+//
+//				}
+//			  }
 			}
 			val (highlightIm, selectIm, labelledIm, selectLabeledIm, hiLabeledIm) = ims
 
@@ -360,11 +369,11 @@ class DrawingData(
   inner class Segment(
 	val id: String,
 	val pixels: List<List<Boolean>>,
-	val highlightIm: HTMLImageElement,
-	val selectIm: HTMLImageElement,
-	val labelledIm: HTMLImageElement,
-	val selectLabeledIm: HTMLImageElement,
-	val hiLabeledIm: HTMLImageElement,
+	val highlightIm: HTMLImageWrapper,
+	val selectIm: HTMLImageWrapper,
+	val labelledIm: HTMLImageWrapper,
+	val selectLabeledIm: HTMLImageWrapper,
+	val hiLabeledIm: HTMLImageWrapper,
 	val cycleIndex: Int
   ) {
 	val responseProp = BindableProperty<String?>(null)
