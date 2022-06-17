@@ -29,6 +29,7 @@ import matt.kjs.setOnLoad
 import matt.kjs.srcAsPath
 import matt.klib.oset.BasicObservableSet
 import matt.klib.todo
+import matt.sempart.QueryParams
 import matt.sempart.client.const.DATA_FOLDER
 import matt.sempart.client.const.HEIGHT
 import matt.sempart.client.const.WIDTH
@@ -49,6 +50,7 @@ import kotlin.js.Date
 import kotlin.properties.Delegates
 import kotlin.time.Duration.Companion.milliseconds
 
+
 object UI {
   val enabledProp = BindableProperty(true)
   var enabled by enabledProp
@@ -57,7 +59,7 @@ object UI {
 }
 
 object Participant {
-  val pid = URLSearchParams(window.location.href.substringAfter("?")).get("PROLIFIC_PID")
+  val pid = URLSearchParams(window.location.href.substringAfter("?")).get(QueryParams.PROLIFIC_PID)
 }
 
 
@@ -121,7 +123,7 @@ enum class ExperimentPhase {
 	fun determine(): ExperimentPhase {
 	  val w = window.innerWidth
 	  val h = window.innerHeight
-	  val phase = when {
+	  return when {
 		!ExperimentState.finishedScaling -> Scaling
 		!ExperimentState.finishedVid     -> InstructionsVid
 		!ExperimentState.begun           -> Instructions
@@ -132,7 +134,6 @@ enum class ExperimentPhase {
 		working                          -> Loading
 		else                             -> Trial
 	  }
-	  return phase
 	}
 
 	init {

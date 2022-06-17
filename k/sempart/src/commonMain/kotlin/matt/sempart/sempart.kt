@@ -12,3 +12,10 @@ data class ExperimentData(
 )
 
 
+
+object QueryParams {
+  val PROLIFIC_PID = "PROLIFIC_PID"
+  val SESSION_ID = "SESSION_ID"
+  val STUDY_ID = "STUDY_ID"
+  val preview = "preview"
+}

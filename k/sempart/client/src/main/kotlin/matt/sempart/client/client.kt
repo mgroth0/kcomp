@@ -34,6 +34,7 @@ import matt.sempart.client.resizeDiv.resizeDiv
 import matt.sempart.client.scaleDiv.scaleDiv
 import matt.sempart.client.state.DrawingData
 import matt.sempart.client.state.ExperimentPhase.Break
+import matt.sempart.client.state.ExperimentPhase.Inactive
 import matt.sempart.client.state.ExperimentPhase.Scaling
 import matt.sempart.client.state.ExperimentState
 import matt.sempart.client.state.Participant
@@ -95,6 +96,12 @@ fun main() = defaultMain {
   divs.forEach {
 	it.sty.resetTransform {
 	  scale(defaultScale.toDouble())
+	}
+  }
+
+  PhaseChange.beforeDispatch {
+	if (it.second == Inactive) {
+
 	}
   }
 
