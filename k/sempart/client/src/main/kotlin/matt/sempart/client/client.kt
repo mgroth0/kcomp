@@ -13,6 +13,7 @@ import matt.kjs.html.elements.link
 import matt.kjs.nextOrNull
 import matt.sempart.SegmentResponse
 import matt.sempart.TrialData
+import matt.sempart.client.completeDiv.debugButton
 import matt.sempart.client.const.ORIG_DRAWING_IMS
 import matt.sempart.client.const.TRAIN_IM
 import matt.sempart.client.loadingDiv.DrawingLoadingProcess
@@ -40,9 +41,9 @@ fun main() = defaultMain {
 	background = black
 	color = white
   }
-  println("innerHTML5=${document.getElementById("debugButton")?.innerHTML}")
+  println("innerHTML5=${debugButton?.innerHTML}")
   document.body!!.appendWrappers(scaleInput, *SCREENS.toTypedArray())
-  println("innerHTML6=${document.getElementById("debugButton")?.innerHTML}")
+  println("innerHTML6=${debugButton?.innerHTML}")
 
   val images = listOf(TRAIN_IM) + ORIG_DRAWING_IMS.shuffled()
   val imIterator = images.withIndex().toList().listIterator()

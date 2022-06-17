@@ -1,6 +1,5 @@
 package matt.sempart.client.completeDiv
 
-import kotlinx.browser.document
 import matt.kjs.handlers.setOnClick
 import matt.kjs.html.elements.button.HTMLButtonWrapper
 import matt.kjs.props.valueProperty
@@ -10,6 +9,7 @@ import matt.sempart.client.state.ExperimentPhase.Complete
 import matt.sempart.client.state.sendData
 import matt.sempart.client.ui.ExperimentScreen
 
+var debugButton: HTMLButtonWrapper? = null
 
 val completeDiv = ExperimentScreen(Complete) {
   +"The experiment is complete. Thank you for your participation!"
@@ -32,7 +32,7 @@ val completeDiv = ExperimentScreen(Complete) {
 
   println("creating button")
   b = button {
-	println("innerHTML3=${document.getElementById("debugButton")?.innerHTML}")
+	println("innerHTML3=${debugButton?.innerHTML}")
 	println("configuring button")
 	+"Submit Feedback"
 	setOnClick {
@@ -40,11 +40,12 @@ val completeDiv = ExperimentScreen(Complete) {
 	  sendData(Feedback(ta.value))
 	}
 	println("configured button (innerHTML=$innerHTML)")
-	println("innerHTML4=${document.getElementById("debugButton")?.innerHTML}")
+	println("innerHTML4=${debugButton?.innerHTML}")
   }
+  debugButton = b
   b.id = "debugButton"
   println("created button")
-  println("innerHTML1=${document.getElementById("debugButton")?.innerHTML}")
+  println("innerHTML1=${debugButton?.innerHTML}")
 
   +"To confirm your completion of the study with Prolific (which necessary for payment) please "
   println("creating a")
@@ -55,5 +56,5 @@ val completeDiv = ExperimentScreen(Complete) {
 	println("configured a")
   }
   println("created a")
-  println("innerHTML2=${document.getElementById("debugButton")?.innerHTML}")
+  println("innerHTML2=${debugButton?.innerHTML}")
 }
