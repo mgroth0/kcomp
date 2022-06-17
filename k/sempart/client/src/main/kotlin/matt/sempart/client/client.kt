@@ -124,6 +124,7 @@ fun main() = defaultMain {
 				width += 1
 				percent = width
 				if (width == 100) {
+				  interval!!.stop()
 				  trial.registerInteraction("submit confirmed")
 				  trial.cleanup()
 				  if (training) presentImage(nextDrawingData!!)
@@ -148,6 +149,7 @@ fun main() = defaultMain {
 			}
 		  }
 		  setOnPointerUp {
+			interval?.stop()
 			width = 0
 			percent = width
 		  }
