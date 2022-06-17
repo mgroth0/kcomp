@@ -1,8 +1,6 @@
 package matt.sempart.client
 
 import kotlinx.browser.document
-import kotlinx.html.dom.append
-import kotlinx.html.js.style
 import matt.kjs.Path
 import matt.kjs.css.Color.black
 import matt.kjs.css.Color.white
@@ -14,6 +12,7 @@ import matt.kjs.defaultMain
 import matt.kjs.elements.appendWrapper
 import matt.kjs.elements.appendWrappers
 import matt.kjs.elements.input
+import matt.kjs.elements.link
 import matt.kjs.ifConfirm
 import matt.kjs.nextOrNull
 import matt.kjs.req.post
@@ -42,11 +41,12 @@ import matt.sempart.client.state.PhaseChange
 import matt.sempart.client.trialdiv.div
 
 fun main() = defaultMain {
-  document.head!!.title = "Semantic Segmentation"
-  val headStyleElement = document.head!!.append.style {}
-  headStyleElement.apply {
-	type = "text/css"
-	this.setAttribute("rel", "stylesheet")
+  document.head!!.apply{
+	title = "Semantic Segmentation"
+	link {
+	  rel = "stylesheet"
+	  href = "style.css"
+	}
   }
   document.body!!.sty {
 	background = black
