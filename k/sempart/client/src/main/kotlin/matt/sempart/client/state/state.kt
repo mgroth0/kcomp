@@ -365,7 +365,10 @@ class DrawingData(
 			)
 		  }.sortedBy { it.cycleIndex }
 
+		  println("about to set trial.value")
+
 		  trial.value = DrawingTrial(segs, Loop(segs).iterator(), this)
+		  println("set trial.value")
 		}
 	  }
 	}
