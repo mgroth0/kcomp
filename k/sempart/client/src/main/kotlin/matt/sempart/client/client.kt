@@ -68,7 +68,9 @@ fun main() = defaultMain {
 	inactiveDiv
   )
 
-  require(divs.size == ExperimentPhase.values().size - 1)
+  require(divs.size == ExperimentPhase.values().size - 1) {
+	"did you forget to add a new div to the div list?"
+  }
 
   val defaultScale = "1.0"
 
