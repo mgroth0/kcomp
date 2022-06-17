@@ -308,9 +308,6 @@ class DrawingData(
 
 
   init {
-	img {
-
-	}
 	HTTPRequester(
 	  GET,
 	  DATA_FOLDER + "segment_data2" + "${baseImageName}.json",
@@ -328,17 +325,15 @@ class DrawingData(
 		}
 
 		is SuccessText -> {
-		  println("resp.text:${resp.text}")
+		  //		  println("resp.text:${resp.text}")
 		  val segs = Json.decodeFromString<Map<String, List<List<Boolean>>>>(resp.text!!).entries.let {
 			if (PARAMS.randomSegmentOrder) it.shuffled() else it
 		  }.mapIndexed { index, entry ->
 			val ims = (1..5).map {
-			  img {
-				loadDiv.img {
-				  hidden = true
-				  setOnLoad {
-					loadedIms.value++
-				  }
+			  loadDiv.img {
+				hidden = true
+				setOnLoad {
+				  loadedIms.value++
 				}
 			  }
 			  //			  (document.createElement("img") as HTMLImageElement).also {
