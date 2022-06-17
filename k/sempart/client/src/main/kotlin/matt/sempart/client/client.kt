@@ -56,14 +56,23 @@ fun main() = defaultMain {
 	println("innerHTML7.element=${debugButton?.element?.innerHTML}")
 	println("innerHTML7.element.id=${debugButton?.element?.id}")
 	fun presentImage(drawingData: DrawingData, training: Boolean = false) {
+	  println("innerHTML8=${debugButton?.innerHTML}")
+	  println("innerHTML8.element=${debugButton?.element?.innerHTML}")
+	  println("innerHTML8.element.id=${debugButton?.element?.id}")
 	  val loadingProcess = DrawingLoadingProcess("downloading image data")
 	  drawingData.whenReady {
+		println("innerHTML9=${debugButton?.innerHTML}")
+		println("innerHTML9.element=${debugButton?.element?.innerHTML}")
+		println("innerHTML9.element.id=${debugButton?.element?.id}")
 		val trial = drawingData.trial.value!!
 		trial.div.helpText.hidden = !training
 		document.body!!.appendWrapper(trial.div)
 		val nextDrawingData = imIterator.nextOrNull()?.let { DrawingData(it) }
 		var interval: Interval? = null
 		var width = 0
+		println("innerHTML10=${debugButton?.innerHTML}")
+		println("innerHTML10.element=${debugButton?.element?.innerHTML}")
+		println("innerHTML10.element.id=${debugButton?.element?.id}")
 		trial.div.nextImageButton.apply {
 		  setOnPointerDown {
 			if (enabled) {
