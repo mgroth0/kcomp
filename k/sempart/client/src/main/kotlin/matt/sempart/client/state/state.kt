@@ -18,6 +18,7 @@ import matt.kjs.first
 import matt.kjs.firstBackwards
 import matt.kjs.handlers.setOnLoad
 import matt.kjs.html.elements.HTMLElementWrapper
+import matt.kjs.html.elements.appendWrapper
 import matt.kjs.html.elements.div
 import matt.kjs.html.elements.img
 import matt.kjs.html.elements.img.HTMLImageWrapper
@@ -311,6 +312,8 @@ class DrawingData(
 	todo("loadDiv is not ideal")
 	id = "loadDiv"
 	hidden = true
+  }.also {
+	document.body!!.appendWrapper(it)
   }
 
   val ready = loadedImage.binding(trial, loadedIms) {
