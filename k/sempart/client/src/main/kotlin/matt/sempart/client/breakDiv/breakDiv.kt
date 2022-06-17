@@ -4,7 +4,7 @@ import kotlinx.html.ButtonType
 import matt.kjs.css.auto
 import matt.kjs.css.px
 import matt.kjs.css.sty
-import matt.kjs.setOnClick
+import matt.kjs.handlers.setOnClick
 import matt.sempart.client.const.WIDTH
 import matt.sempart.client.state.ExperimentPhase.Break
 import matt.sempart.client.state.ExperimentState
