@@ -76,7 +76,7 @@ val completeDiv = ExperimentScreen(Complete) {
 
   span {
 	sty.margin = MED_SPACE
-	+"To confirm your completion of the study with Prolific (which necessary for payment) please "
+	+"To confirm your completion of the study with Prolific (which is necessary for payment) please "
 	a {
 	  href = COMPLETION_URL
 	  +"click here"

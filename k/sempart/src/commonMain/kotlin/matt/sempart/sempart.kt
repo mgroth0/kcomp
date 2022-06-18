@@ -2,20 +2,26 @@ package matt.sempart
 
 import kotlinx.serialization.Serializable
 
+interface HasPid {
+  val pid: String
+}
+
 @Serializable
-sealed class ExperimentData
+sealed class ExperimentData(): HasPid
 
 @Serializable
 class Issue(
+  override val pid: String,
   val unixTimeMS: Long,
   val message: String
 ): ExperimentData()
 
 @Serializable
-class Feedback(val feedback: String): ExperimentData()
+class Feedback(override val pid: String, val feedback: String): ExperimentData()
 
 @Serializable
 class TrialData(
+  override val pid: String,
   val image: String,
   val index: Int,
   val responses: List<SegmentResponse>,
