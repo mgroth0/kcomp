@@ -10,6 +10,7 @@ import matt.kjs.html.elements.button.HTMLButtonWrapper
 import matt.sempart.client.const.INSTRUCTIONS_VID_WOLFRAM
 import matt.sempart.client.state.ExperimentPhase.InstructionsVid
 import matt.sempart.client.state.ExperimentState
+import matt.sempart.client.state.PhaseChange
 import matt.sempart.client.trialdiv.ImageAndControlsScreen
 
 val instructionsVidDiv = ImageAndControlsScreen(InstructionsVid) {
@@ -27,6 +28,9 @@ val instructionsVidDiv = ImageAndControlsScreen(InstructionsVid) {
 	setOnEnded {
 	  playPauseButton!!.disabled = false
 	  moveOnButton!!.disabled = false
+	}
+	PhaseChange.atStartOf(InstructionsVid) {
+	  play()
 	}
   }
   controlsDiv.sty {
