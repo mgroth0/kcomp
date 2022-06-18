@@ -3,6 +3,7 @@ package matt.sempart.client.completeDiv
 import matt.kjs.css.Display.flex
 import matt.kjs.css.FlexDirection.column
 import matt.kjs.css.JustifyContent.center
+import matt.kjs.css.JustifyContent.spaceEvenly
 import matt.kjs.css.TextAlign
 import matt.kjs.css.px
 import matt.kjs.css.sty
@@ -36,7 +37,7 @@ val completeDiv = ExperimentScreen(Complete) {
 	  box()
 	  display = flex
 	  flexDirection = column
-	  justifyContent = center
+	  justifyContent = spaceEvenly
 	  textAlign = TextAlign.center
 	  margin = MED_SPACE
 	  padding = MED_SPACE

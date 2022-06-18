@@ -287,12 +287,12 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ImageAndControlsScreen(
 	sty {
 	  box()
 	  borderColor = red
-	  height = 200.px
+	  height = 100.px
 	}
 	p {
 
 	  sty {
-		fontSize = 15.px
+		fontSize = 14.px
 	  }
 
 	  selectedSegments.onChange {
