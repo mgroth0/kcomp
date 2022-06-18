@@ -41,6 +41,7 @@ val completeDiv = ExperimentScreen(Complete) {
 	  textAlign = TextAlign.center
 	  margin = MED_SPACE
 	  padding = MED_SPACE
+	  height = 400.px
 	}
 	+"Optionally, if you would like to give the researchers feedback on this experiment please submit it here."
 	val ta = textArea {
