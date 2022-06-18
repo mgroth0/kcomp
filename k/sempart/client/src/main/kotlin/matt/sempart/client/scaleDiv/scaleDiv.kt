@@ -20,8 +20,8 @@ import matt.sempart.client.sty.MED_SPACE
 import matt.sempart.client.trialdiv.ImageAndControlsScreen
 
 const val MIN_SCALE = 0.1
-const val DEFAULT_SCALE = 1.5
-const val MAX_SCALE = 2.9
+const val DEFAULT_SCALE = 1.0
+const val MAX_SCALE = 3.0
 val scaleProp = VarProp(DEFAULT_SCALE)
 fun neededHeight() = scaleProp.value*HEIGHT
 fun neededWidth() = scaleProp.value*ImageAndControlsScreen.TOTAL_WIDTH
