@@ -210,7 +210,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ImageAndControlsScreen(
   }
 
   val buttonsDiv = controlsDiv.div {
-	sty.box()
+	//	sty.box()
 	sty {
 	  display = flex
 	  flexDirection = row
@@ -257,19 +257,26 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ImageAndControlsScreen(
 	}
   }
 
-  val completionP = controlsDiv.p {
+  val nextImageBox = controlsDiv.div {
+	sty {
+	  display = flex
+	  flexDirection = row
+	  //	  justifyContent = spaceEvenly
+	}
+  }
+
+  val completionP = nextImageBox.p {
 	innerText = "$completionFraction segments labelled"
   }
 
-  override val nextImageButton =
-	controlsDiv.appendWrapper(HoldButton("Submit Responses").withConfig {
-	  disabledProperty().bind(finishedProp.not())
-	  type = ButtonType.button.realValue
-	  sty {
-		fontWeight = bold
-		boxButton()
-	  }
-	})
+  override val nextImageButton = nextImageBox.appendWrapper(HoldButton("Submit Responses").withConfig {
+	disabledProperty().bind(finishedProp.not())
+	type = ButtonType.button.realValue
+	sty {
+	  fontWeight = bold
+	  boxButton()
+	}
+  })
 
 
   val helpText = controlsDiv.div {

@@ -37,7 +37,6 @@ import matt.sempart.client.scaleDiv.scaleProp
 import matt.sempart.client.state.ExperimentPhase
 import matt.sempart.client.state.PhaseChange
 import matt.sempart.client.state.listen
-import matt.sempart.client.sty.boxButton
 import org.w3c.dom.HTMLDivElement
 
 val SCREENS by lazy {
@@ -58,13 +57,13 @@ val SCREENS by lazy {
   scaleProp.onChange { scale ->
 	list.forEach {
 	  it.sty.resetTransform {
-		scale(scale.toDouble())
+		scale(scale)
 	  }
 	}
   }
   list.onEach {
 	it.sty.resetTransform {
-	  scale(DEFAULT_SCALE.toDouble())
+	  scale(DEFAULT_SCALE)
 	}
   }
 }
@@ -98,7 +97,8 @@ open class ExperimentScreen(
 
 fun HTMLElementWrapper<HTMLDivElement>.boxButton(op: HTMLButtonWrapper.()->Unit = {}) = button {
   type = ButtonType.button.realValue
-  sty.boxButton()
+//  sty.boxButton()
+
   op()
 }
 
