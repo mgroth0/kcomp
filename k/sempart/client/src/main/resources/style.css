@@ -57,17 +57,22 @@ button {
 }
 
 button:hover {
-    color: #DDDDDD;
-    border-color: #DDDDDD;
+    color: blue;
+    border-color: blue;
 }
 
-button:active:hover {
+button:enabled:hover {
     cursor: pointer;
 }
 
-button:active {
+button:active:enabled {
     color: #BBBBBB;
     border-color: #BBBBBB;
+}
+
+button:disabled {
+    color: grey;
+    border-color: grey;
 }
 
 @media all and (max-width: 30em) {
