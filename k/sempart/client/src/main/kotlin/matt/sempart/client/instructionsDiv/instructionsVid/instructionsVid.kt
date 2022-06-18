@@ -1,6 +1,7 @@
 package matt.sempart.client.instructionsDiv.instructionsVid
 
 import matt.kjs.css.Display.flex
+import matt.kjs.css.FlexDirection.column
 import matt.kjs.css.auto
 import matt.kjs.css.percent
 import matt.kjs.css.sty
@@ -30,6 +31,7 @@ val instructionsVidDiv = ImageAndControlsScreen(InstructionsVid) {
   }
   controlsDiv.sty {
 	display = flex
+	flexDirection = column
   }
   playPauseButton = controlsDiv.button {
 	sty.width = 100.percent
