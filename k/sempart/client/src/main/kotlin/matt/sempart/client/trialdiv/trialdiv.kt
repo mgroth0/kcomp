@@ -78,7 +78,8 @@ open class ImageAndControlsScreen(
   }
   val controlsDiv: HTMLDivWrapper = div {
 	sty {
-	  marginBottom = MED_SPACE
+//	  marginBottom = MED_SPACE
+	  padding = MED_SPACE
 	  width = WIDTH.px
 	}
   }
