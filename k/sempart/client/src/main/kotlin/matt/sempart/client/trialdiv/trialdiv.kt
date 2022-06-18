@@ -6,12 +6,14 @@ import matt.kjs.bind.binding
 import matt.kjs.bindings.isEmptyProperty
 import matt.kjs.bindings.not
 import matt.kjs.bindings.or
+import matt.kjs.css.AlignItems.stretch
 import matt.kjs.css.BoxSizing.borderBox
 import matt.kjs.css.Display.flex
 import matt.kjs.css.FlexDirection.column
 import matt.kjs.css.FlexDirection.row
 import matt.kjs.css.FontStyle.italic
 import matt.kjs.css.FontWeight.bold
+import matt.kjs.css.JustifyContent
 import matt.kjs.css.Position.absolute
 import matt.kjs.css.Transform.Scale
 import matt.kjs.css.px
@@ -84,8 +86,11 @@ open class ImageAndControlsScreen(
 	  boxSizing = borderBox
 	  padding = MED_SPACE
 	  width = WIDTH.px
+	  height = HEIGHT.px
 	  display = flex
 	  flexDirection = column
+	  alignItems = stretch
+	  justifyContent = JustifyContent.spaceEvenly
 	}
   }
   val nothing = cfg()
