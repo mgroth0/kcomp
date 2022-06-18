@@ -54,6 +54,7 @@ import matt.sempart.client.state.TrialPhase.SELECTED_UNLABELLED
 import matt.sempart.client.state.TrialPhase.UNSELECTED
 import matt.sempart.client.state.UI
 import matt.sempart.client.sty.MED_SPACE
+import matt.sempart.client.sty.SMALL_SPACE
 import matt.sempart.client.sty.box
 import matt.sempart.client.ui.ExperimentScreen
 import matt.sempart.client.ui.boxButton
@@ -292,6 +293,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ImageAndControlsScreen(
 	  height = 125.px
 	  display = flex
 	  flexDirection = column
+	  padding = SMALL_SPACE
 	}
 	span {
 
