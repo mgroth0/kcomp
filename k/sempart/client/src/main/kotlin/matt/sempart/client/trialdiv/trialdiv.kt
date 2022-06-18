@@ -290,6 +290,8 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ImageAndControlsScreen(
 	  box()
 	  borderColor = red
 	  height = 125.px
+	  display = flex
+	  flexDirection = column
 	}
 	span {
 
