@@ -55,7 +55,6 @@ import matt.sempart.client.state.TrialPhase.UNSELECTED
 import matt.sempart.client.state.UI
 import matt.sempart.client.sty.MED_SPACE
 import matt.sempart.client.sty.box
-import matt.sempart.client.sty.boxButton
 import matt.sempart.client.ui.ExperimentScreen
 import matt.sempart.client.ui.boxButton
 import org.w3c.dom.HTMLDivElement
