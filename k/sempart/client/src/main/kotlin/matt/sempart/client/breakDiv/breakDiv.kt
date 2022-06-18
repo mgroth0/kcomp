@@ -4,6 +4,7 @@ import kotlinx.html.ButtonType
 import matt.kjs.css.Display.flex
 import matt.kjs.css.FlexDirection.column
 import matt.kjs.css.JustifyContent.center
+import matt.kjs.css.TextAlign
 import matt.kjs.css.px
 import matt.kjs.css.sty
 import matt.kjs.handlers.setOnClick
@@ -21,6 +22,7 @@ val breakDiv = ExperimentScreen(
 	display = flex
 	flexDirection = column
 	justifyContent = center
+	textAlign = TextAlign.center
   }
   p {
 	+"You may take a break and continue when you are ready."
