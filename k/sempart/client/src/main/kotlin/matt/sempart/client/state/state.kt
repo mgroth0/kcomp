@@ -64,7 +64,6 @@ import org.w3c.dom.events.Event
 import org.w3c.dom.events.EventTarget
 import org.w3c.dom.url.URLSearchParams
 import kotlin.js.Date
-import kotlin.properties.Delegates
 import kotlin.time.Duration.Companion.milliseconds
 
 fun sendData(d: ExperimentData, callback: ()->Unit = {}) {
@@ -80,7 +79,7 @@ fun sendData(d: ExperimentData, callback: ()->Unit = {}) {
 	when (it) {
 	  is Success -> callback()
 	  is Failure -> {
-		ExperimentState.error = it
+		ExperimentState.error.value = it
 	  }
 	}
   }
@@ -166,15 +165,15 @@ enum class ExperimentPhase {
 	  val w = window.innerWidth
 	  val h = window.innerHeight
 	  return when {
-		ExperimentState.error != null           -> Err
+		ExperimentState.error.value != null     -> Err
 		w < neededWidth() || h < neededHeight() -> Resize
-		!ExperimentState.finishedScaling        -> Scaling
-		!ExperimentState.finishedVid            -> InstructionsVid
-		!ExperimentState.begun                  -> Instructions
-		ExperimentState.complete                -> Complete
-		ExperimentState.onBreak                 -> Break
+		!ExperimentState.finishedScaling.value  -> Scaling
+		!ExperimentState.finishedVid.value      -> InstructionsVid
+		!ExperimentState.begun.value            -> Instructions
+		ExperimentState.complete.value          -> Complete
+		ExperimentState.onBreak.value           -> Break
 		ExperimentState.idle()                  -> Inactive
-		working                                 -> Loading
+		working.value                           -> Loading
 		else                                    -> Trial
 	  }
 	}
@@ -333,7 +332,7 @@ class DrawingData(
 	).sendAsync { resp ->
 	  when (resp) {
 		is Failure     -> {
-		  ExperimentState.error = resp
+		  ExperimentState.error.value = resp
 		}
 
 		is SuccessText -> {

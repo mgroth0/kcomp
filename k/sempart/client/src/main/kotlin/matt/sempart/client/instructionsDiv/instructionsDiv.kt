@@ -29,6 +29,6 @@ val instructionsDiv = ImageAndControlsScreen(Instructions) {
   controlsDiv.button {
 	sty.margin = auto
 	+"Begin Experiment"
-	setOnClick { ExperimentState.begun = true }
+	setOnClick { ExperimentState.begun.value = true }
   }
 }

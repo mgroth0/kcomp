@@ -32,6 +32,6 @@ val instructionsVidDiv = ImageAndControlsScreen(InstructionsVid) {
   controlsDiv.button {
 	sty.margin = auto
 	+"Click here when ready to move on"
-	setOnClick { ExperimentState.finishedVid = true }
+	setOnClick { ExperimentState.finishedVid.value = true }
   }
 }

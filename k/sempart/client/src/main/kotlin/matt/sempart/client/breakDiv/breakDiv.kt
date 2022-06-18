@@ -25,7 +25,7 @@ val breakDiv = ExperimentScreen(
 		+"Continue"
 		setOnClick {
 		  ExperimentState.interacted()
-		  ExperimentState.onBreak = false
+		  ExperimentState.onBreak.value = false
 		}
 	  }
 	}

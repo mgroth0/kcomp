@@ -14,12 +14,12 @@ val loadingDiv = ExperimentScreen(Loading) {
 
 class DrawingLoadingProcess(desc: String): LoadingProcess(lt, desc) {
   override fun start() {
-	ExperimentState.working = true
+	ExperimentState.working.value = true
 	super.start()
   }
 
   override fun <R> finish(message: String?, op: ()->R): R {
-	ExperimentState.working = false
+	ExperimentState.working.value = false
 	return super.finish(message, op)
   }
 }
