@@ -2,10 +2,10 @@ package matt.sempart.client.resizeDiv
 
 import matt.kjs.css.auto
 import matt.kjs.css.sty
-import matt.sempart.client.const.HEIGHT
+import matt.sempart.client.scaleDiv.neededHeight
+import matt.sempart.client.scaleDiv.neededWidth
 import matt.sempart.client.scaleDiv.scaleProp
 import matt.sempart.client.state.ExperimentPhase.Resize
-import matt.sempart.client.trialdiv.ImageAndControlsScreen.Companion.TOTAL_WIDTH
 import matt.sempart.client.ui.ExperimentScreen
 
 
