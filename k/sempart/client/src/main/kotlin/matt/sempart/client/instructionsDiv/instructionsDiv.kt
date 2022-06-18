@@ -8,13 +8,13 @@ import matt.sempart.client.const.INSTRUCTIONS_IM_RELATIVE
 import matt.sempart.client.const.WIDTH
 import matt.sempart.client.state.ExperimentPhase.Instructions
 import matt.sempart.client.state.ExperimentState
-import matt.sempart.client.ui.ExperimentScreen
+import matt.sempart.client.trialdiv.ImageAndControlsScreen
 
-val instructionsDiv = ExperimentScreen(Instructions) {
-  img {
+val instructionsDiv = ImageAndControlsScreen(Instructions) {
+  stackDiv.img {
 	src = INSTRUCTIONS_IM_RELATIVE
   }
-  p {
+  controlsDiv.p {
 	sty {
 	  width = WIDTH.px
 	  margin = auto
@@ -26,7 +26,7 @@ val instructionsDiv = ExperimentScreen(Instructions) {
         "previous" buttons. All segments must be given a label before advancing to the next image.
 		  """.trimIndent()
   }
-  button {
+  controlsDiv.button {
 	sty.margin = auto
 	+"Begin Experiment"
 	setOnClick { ExperimentState.begun = true }
