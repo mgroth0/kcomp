@@ -14,10 +14,10 @@ val resizeDiv = ExperimentScreen(Resize) {
   p {
 	sty.margin = auto
 
-	+"Your window is too small. Please enlarge the browser window so the width is at least ${neededWidth()} pixels and the height is at least ${neededHeight()} pixels."
+	+"Your window is too small. Please enlarge the browser window so the width is at least ${neededWidth().toInt()} pixels and the height is at least ${neededHeight().toInt()} pixels."
 	scaleProp.onChange {
 	  clear()
-	  +"Your window is too small. Please enlarge the browser window so the width is at least ${neededWidth()} pixels and the height is at least ${neededHeight()} pixels."
+	  +"Your window is too small. Please enlarge the browser window so the width is at least ${neededWidth().toInt()} pixels and the height is at least ${neededHeight().toInt()} pixels."
 	}
 
   }

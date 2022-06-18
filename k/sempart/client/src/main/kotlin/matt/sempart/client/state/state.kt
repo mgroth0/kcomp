@@ -253,12 +253,20 @@ object PhaseChange: ChangeEventDispatcher<Pair<ExperimentPhase, ExperimentPhase>
   fun afterEndOfNext(phase: ExperimentPhase, listener: (ExperimentPhase)->Unit) {
 	var op: ((Pair<ExperimentPhase, ExperimentPhase>)->Unit)? = null
 	op = { (old: ExperimentPhase, new: ExperimentPhase) ->
-	  println("maybe running afterEndOfNext(${phase})")
 	  if (old == phase && new != phase) {
-		println("yes running")
 		beforeDispatchOps.remove(op!!)
 		listener(new)
-		println("ran")
+	  }
+	}
+	beforeDispatchOps.add(op)
+  }
+
+  fun atStartOf(phase: ExperimentPhase, listener: (ExperimentPhase)->Unit) {
+	var op: ((Pair<ExperimentPhase, ExperimentPhase>)->Unit)? = null
+	op = { (old: ExperimentPhase, new: ExperimentPhase) ->
+	  if (old != phase && new == phase) {
+		beforeDispatchOps.remove(op!!)
+		listener(new)
 	  }
 	}
 	beforeDispatchOps.add(op)

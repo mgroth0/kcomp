@@ -12,6 +12,7 @@ import matt.kjs.prop.VarProp
 import matt.sempart.client.const.HEIGHT
 import matt.sempart.client.const.INSTRUCTIONS_IM_RELATIVE
 import matt.sempart.client.const.WIDTH
+import matt.sempart.client.state.ExperimentPhase.InstructionsVid
 import matt.sempart.client.state.ExperimentPhase.Scaling
 import matt.sempart.client.state.ExperimentState
 import matt.sempart.client.state.PhaseChange
@@ -45,7 +46,8 @@ val scaleDiv = ImageAndControlsScreen(Scaling) {
 
 val scaleInput by lazy {
   input {
-	PhaseChange.afterEndOfNext(Scaling) {
+	/*cant do and end of scaling becuase resize phase can happen during*/
+	PhaseChange.atStartOf(InstructionsVid) {
 	  hidden = true
 	}
 	type = "range"
