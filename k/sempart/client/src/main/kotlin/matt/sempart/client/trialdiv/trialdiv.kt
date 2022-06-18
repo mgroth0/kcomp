@@ -289,9 +289,9 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ImageAndControlsScreen(
 	sty {
 	  box()
 	  borderColor = red
-	  height = 100.px
+	  height = 125.px
 	}
-	p {
+	span {
 
 	  sty {
 		fontSize = 14.px
