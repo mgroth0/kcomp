@@ -2,6 +2,7 @@
 :root {
     --color-foreground: blue;
     --color-background: grey;
+    font-size: 20px;
 }
 
 input {
