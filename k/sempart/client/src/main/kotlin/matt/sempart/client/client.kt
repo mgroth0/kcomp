@@ -62,19 +62,15 @@ fun main() = defaultMain {
 		  trial.div.element.remove()
 		  if (trial.training) presentImage(nextDrawingData!!)
 		  else {
-			val sendProcess = DrawingLoadingProcess("sending image data")
-			sendProcess.start()
-			sendData(trial.data()) {
-			  sendProcess.finish()
-			  if (nextDrawingData != null) {
-				if ((nextDrawingData.idx - 1)%PARAMS.breakInterval == 0) {
-				  PhaseChange.afterEndOfNext(Break) {
-					presentImage(nextDrawingData)
-				  }
-				  ExperimentState.onBreak.value = true
-				} else presentImage(nextDrawingData)
-			  } else ExperimentState.complete.value = true
-			}
+			sendData(trial.data())
+			if (nextDrawingData != null) {
+			  if ((nextDrawingData.idx - 1)%PARAMS.breakInterval == 0) {
+				PhaseChange.afterEndOfNext(Break) {
+				  presentImage(nextDrawingData)
+				}
+				ExperimentState.onBreak.value = true
+			  } else presentImage(nextDrawingData)
+			} else ExperimentState.complete.value = true
 		  }
 		}
 		loadingProcess.finish()
