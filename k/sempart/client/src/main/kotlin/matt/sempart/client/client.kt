@@ -9,14 +9,21 @@ import matt.kjs.html.elements.appendWrapper
 import matt.kjs.html.elements.appendWrappers
 import matt.kjs.html.elements.body.wrapped
 import matt.kjs.html.elements.head.wrapped
+import matt.kjs.nextOrNull
+import matt.kjs.prop.whenTrueOnce
 import matt.sempart.client.const.ORIG_DRAWING_IMS
 import matt.sempart.client.const.TRAIN_IM
 import matt.sempart.client.devBar.devBar
 import matt.sempart.client.loadingDiv.DrawingLoadingProcess
+import matt.sempart.client.params.PARAMS
 import matt.sempart.client.scaleDiv.scaleInput
 import matt.sempart.client.state.DrawingData
+import matt.sempart.client.state.ExperimentPhase.Break
 import matt.sempart.client.state.ExperimentPhase.Scaling
+import matt.sempart.client.state.ExperimentState
 import matt.sempart.client.state.PhaseChange
+import matt.sempart.client.state.sendData
+import matt.sempart.client.trialdiv.div
 import matt.sempart.client.ui.SCREENS
 import org.w3c.dom.HTMLBodyElement
 
@@ -46,7 +53,7 @@ fun main() = defaultMain {
 	fun presentImage(drawingData: DrawingData) {
 	  val loadingProcess = DrawingLoadingProcess("downloading image data")
 	  loadingProcess.start()
-	 /* drawingData.ready.whenTrueOnce {
+	  drawingData.ready.whenTrueOnce {
 		val trial = drawingData.trial.value!!
 		document.body!!.appendWrapper(trial.div)
 		val nextDrawingData = imIterator.nextOrNull()?.let { DrawingData(it, training = false) }
@@ -67,7 +74,7 @@ fun main() = defaultMain {
 		}
 		loadingProcess.finish()
 		trial.log += "trial start"
-	  }*/
+	  }
 	}
 	presentImage(DrawingData(imIterator.next(), training = true))
   }
