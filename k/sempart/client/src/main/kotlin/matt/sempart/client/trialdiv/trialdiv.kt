@@ -57,6 +57,7 @@ interface TrialDiv: HTMLElementWrapper<HTMLDivElement> {
 }
 
 
+@Suppress("UNUSED_EXPRESSION")
 open class ImageAndControlsScreen(
   phase: ExperimentPhase,
   cfg: ImageAndControlsScreen.()->Unit = {}
@@ -81,10 +82,7 @@ open class ImageAndControlsScreen(
 	  width = WIDTH.px
 	}
   }
-
-  init {
-	cfg()
-  }
+  val nothing = cfg()
 }
 
 private val trialsDivs = WeakMap<DrawingTrial, TrialDiv>().withStoringDefault { it.trialDiv() }
