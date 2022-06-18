@@ -7,6 +7,8 @@ import matt.kjs.bindings.isEmptyProperty
 import matt.kjs.bindings.not
 import matt.kjs.bindings.or
 import matt.kjs.css.BoxSizing.borderBox
+import matt.kjs.css.Display.flex
+import matt.kjs.css.FlexDirection.column
 import matt.kjs.css.FlexDirection.row
 import matt.kjs.css.FontStyle.italic
 import matt.kjs.css.FontWeight.bold
@@ -82,6 +84,8 @@ open class ImageAndControlsScreen(
 	  boxSizing = borderBox
 	  padding = MED_SPACE
 	  width = WIDTH.px
+	  display = flex
+	  flexDirection = column
 	}
   }
   val nothing = cfg()
