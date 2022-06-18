@@ -45,8 +45,6 @@ import matt.sempart.client.const.SEND_DATA_PREFIX
 import matt.sempart.client.const.WIDTH
 import matt.sempart.client.errorDiv.errorDiv
 import matt.sempart.client.params.PARAMS
-import matt.sempart.client.resizeDiv.neededHeight
-import matt.sempart.client.resizeDiv.neededWidth
 import matt.sempart.client.scaleDiv.neededHeight
 import matt.sempart.client.scaleDiv.neededWidth
 import matt.sempart.client.scaleDiv.scaleProp
