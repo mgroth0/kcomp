@@ -67,9 +67,13 @@ val completeDiv = ExperimentScreen(Complete) {
 		  }
 		}
 	  }
-	  sentFeedback.onChangeUntil({ it }, {
+	  span {
+		sty.opacity = 0
+		sentFeedback.onChangeUntil({ it }, {
+		  sty.opacity = 1
+		})
 		+"Feedback received. Thank you!"
-	  })
+	  }
 
 	}
   }
