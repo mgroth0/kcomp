@@ -18,7 +18,7 @@ import matt.sempart.client.state.PhaseChange
 import matt.sempart.client.sty.MED_SPACE
 import matt.sempart.client.trialdiv.ImageAndControlsScreen
 
-const val DEFAULT_SCALE = "1.0"
+const val DEFAULT_SCALE = 1.0
 
 val scaleDiv = ImageAndControlsScreen(Scaling) {
   stackDiv.img {
@@ -47,8 +47,8 @@ val scaleInput by lazy {
 	type = "range"
 	step = "0.01"
 	min = "0.5"
-	defaultValue = DEFAULT_SCALE
-	value = DEFAULT_SCALE
+	defaultValue = DEFAULT_SCALE.toString()
+	value = DEFAULT_SCALE.toString()
 	max = "1.5"
 	sty {
 	  width = 80.percent
@@ -58,7 +58,7 @@ val scaleInput by lazy {
 	  zIndex = 1
 	}
 	setOnInput {
-	  scaleProp.value = value
+	  scaleProp.value = value.toDouble()
 	}
   }
 }

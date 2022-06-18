@@ -45,18 +45,19 @@ import matt.sempart.client.const.SEND_DATA_PREFIX
 import matt.sempart.client.const.WIDTH
 import matt.sempart.client.errorDiv.errorDiv
 import matt.sempart.client.params.PARAMS
+import matt.sempart.client.resizeDiv.neededHeight
+import matt.sempart.client.resizeDiv.neededWidth
+import matt.sempart.client.scaleDiv.scaleProp
 import matt.sempart.client.state.DrawingData.ImName.HiLabelledIm
 import matt.sempart.client.state.DrawingData.ImName.SegmentHighlighted
 import matt.sempart.client.state.DrawingData.ImName.SegmentLabelled
 import matt.sempart.client.state.DrawingData.ImName.SegmentSelected
 import matt.sempart.client.state.DrawingData.ImName.SegmentSelectedLabelled
 import matt.sempart.client.state.DrawingData.Segment
-import matt.sempart.client.state.ExperimentPhase.Companion.currentPhase
 import matt.sempart.client.state.ExperimentPhase.Inactive
 import matt.sempart.client.state.ExperimentState.working
 import matt.sempart.client.state.TrialPhase.FINISHED
 import matt.sempart.client.state.TrialPhase.UNSELECTED
-import matt.sempart.client.trialdiv.ImageAndControlsScreen.Companion.TOTAL_WIDTH
 import org.w3c.dom.CustomEvent
 import org.w3c.dom.CustomEventInit
 import org.w3c.dom.events.Event
@@ -106,14 +107,16 @@ object ExperimentState {
 
 	errorDiv.element.innerHTML = n.toString()
 
-	PhaseChange.dispatchToAllHTML(currentPhase.value to ExperimentPhase.determine())
+	ExperimentPhase.determineAndEmit()
+
 
   }
 
   private var lastInteract = Date.now()
 	.apply {    /*only way to check for lastInteract I think*/    /*I could also check every time lastInteract changes, but that could be even more expensive because of mouse moves?*/
 	  every(PARAMS.idleCheckPeriodMS.milliseconds) {
-		PhaseChange.dispatchToAllHTML(currentPhase.value to ExperimentPhase.determine())
+		ExperimentPhase.determineAndEmit()
+
 	  }
 
 
@@ -128,22 +131,24 @@ object ExperimentState {
 
   fun idle() = Date.now() - ExperimentState.lastInteract >= PARAMS.idleThresholdMS
   var finishedScaling by Delegates.observable(false) { _, _, _ ->
-	PhaseChange.dispatchToAllHTML(currentPhase.value to ExperimentPhase.determine())
+	ExperimentPhase.determineAndEmit()
+
   }
   var finishedVid by Delegates.observable(false) { _, _, _ ->
-	PhaseChange.dispatchToAllHTML(currentPhase.value to ExperimentPhase.determine())
+	ExperimentPhase.determineAndEmit()
+
   }
   var begun by Delegates.observable(false) { _, _, _ ->
-	PhaseChange.dispatchToAllHTML(currentPhase.value to ExperimentPhase.determine())
+	ExperimentPhase.determineAndEmit()
   }
   var onBreak by Delegates.observable(false) { _, _, _ ->
-	PhaseChange.dispatchToAllHTML(currentPhase.value to ExperimentPhase.determine())
+	ExperimentPhase.determineAndEmit()
   }
   var complete by Delegates.observable(false) { _, _, _ ->
-	PhaseChange.dispatchToAllHTML(currentPhase.value to ExperimentPhase.determine())
+	ExperimentPhase.determineAndEmit()
   }
   var working by Delegates.observable(false) { _, _, _ ->
-	PhaseChange.dispatchToAllHTML(currentPhase.value to ExperimentPhase.determine())
+	ExperimentPhase.determineAndEmit()
   }
 }
 
@@ -155,22 +160,27 @@ enum class ExperimentPhase {
 	  PhaseChange.beforeDispatch {
 		if (it.second != value) value = it.second
 	  }
+
+	}
+
+	fun determineAndEmit() {
+	  PhaseChange.dispatchToAllHTML(currentPhase.value to ExperimentPhase.determine())
 	}
 
 	fun determine(): ExperimentPhase {
 	  val w = window.innerWidth
 	  val h = window.innerHeight
 	  return when {
-		ExperimentState.error != null    -> Err
-		w < TOTAL_WIDTH || h < HEIGHT    -> Resize
-		!ExperimentState.finishedScaling -> Scaling
-		!ExperimentState.finishedVid     -> InstructionsVid
-		!ExperimentState.begun           -> Instructions
-		ExperimentState.complete         -> Complete
-		ExperimentState.onBreak          -> Break
-		ExperimentState.idle()           -> Inactive
-		working                          -> Loading
-		else                             -> Trial
+		ExperimentState.error != null           -> Err
+		w < neededWidth() || h < neededHeight() -> Resize
+		!ExperimentState.finishedScaling        -> Scaling
+		!ExperimentState.finishedVid            -> InstructionsVid
+		!ExperimentState.begun                  -> Instructions
+		ExperimentState.complete                -> Complete
+		ExperimentState.onBreak                 -> Break
+		ExperimentState.idle()                  -> Inactive
+		working                                 -> Loading
+		else                                    -> Trial
 	  }
 	}
 
@@ -178,6 +188,9 @@ enum class ExperimentPhase {
 	  window.addEventListener("resize", {
 		PhaseChange.dispatchToAllHTML(determine().let { it to it })
 	  })
+	  scaleProp.onChange {
+		ExperimentPhase.determineAndEmit()
+	  }
 	}
 
   }
