@@ -476,7 +476,7 @@ class DrawingTrial(
   }
 
   fun data() = TrialData(
-	pid,
+	pid = pid,
 	image = baseImageName,
 	index = idx,
 	responses = segments.map { SegmentResponse(it.id, it.response!!) },

@@ -62,7 +62,9 @@ val completeDiv = ExperimentScreen(Complete) {
 		enabled = false
 		setOnClick {
 		  enabled = false
-		  sendData(Feedback(pid,ta.value))
+		  sendData(Feedback(pid, ta.value)) {
+			sentFeedback.value = true
+		  }
 		}
 	  }
 	  sentFeedback.onChangeUntil({ it }, {
