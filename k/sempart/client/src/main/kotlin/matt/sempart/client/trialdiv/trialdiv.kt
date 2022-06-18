@@ -263,7 +263,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ImageAndControlsScreen(
 	sty {
 	  display = flex
 	  flexDirection = row
-	  //	  justifyContent = spaceEvenly
+	  justifyContent = spaceEvenly
 	}
   }
 
