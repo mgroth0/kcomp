@@ -8,6 +8,7 @@ import matt.sempart.client.ui.ExperimentScreen
 
 private val lt = loadingText("Loading")
 val loadingDiv = ExperimentScreen(Loading) {
+  id = "loadingDiv"
   +lt
 }
 
