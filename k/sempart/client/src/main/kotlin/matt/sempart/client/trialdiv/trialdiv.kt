@@ -181,7 +181,10 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ImageAndControlsScreen(
 	}
 	(LABELS.shuffled() + "Something else" + "I don't know").forEach { l ->
 	  boxButton {
-		disabledProperty().bind(UI.disabledProp or selectedSegments.binding { it.all { it.response == l } })
+		disabledProperty().bind(
+		  UI.disabledProp or selectedSegments.binding(
+			*segments.map { it.responseProp }.toTypedArray()
+		  ) { it.all { it.response == l } })
 		+l
 		sty.fontStyle = italic
 		onclick = interaction("selected label: $l") {
