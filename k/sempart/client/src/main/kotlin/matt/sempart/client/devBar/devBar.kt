@@ -17,6 +17,7 @@ val devBar by lazy {
 	  display = flex
 	  flexDirection = row
 	  opacity = 0.25
+	  zIndex = 1
 	}
 
 	ExperimentPhase.values().forEach { phase ->
