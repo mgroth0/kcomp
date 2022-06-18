@@ -1,6 +1,5 @@
 package matt.sempart.client.instructionsDiv
 
-//import matt.sempart.client.mainDivClass
 import matt.kjs.css.auto
 import matt.kjs.css.px
 import matt.kjs.css.sty
@@ -11,20 +10,7 @@ import matt.sempart.client.state.ExperimentPhase.Instructions
 import matt.sempart.client.state.ExperimentState
 import matt.sempart.client.ui.ExperimentScreen
 
-//import matt.sempart.client.sty.centerInParent
-
 val instructionsDiv = ExperimentScreen(Instructions) {
-  //  div {
-  //	classList.add(mainDivClass)
-  //	onlyShowIn(Instructions)
-  //	sty{
-  //	  display = flex
-  //	  justifyContent = JustifyContent.center
-  //	  alignItems = AlignItems.center
-  //	  flexDirection = column
-  //	}
-  //	sty.textAlign = center
-  //	sty.centerInParent()
   img {
 	src = INSTRUCTIONS_IM_RELATIVE
   }
@@ -45,5 +31,4 @@ val instructionsDiv = ExperimentScreen(Instructions) {
 	+"Begin Experiment"
 	setOnClick { ExperimentState.begun = true }
   }
-  //  }
 }

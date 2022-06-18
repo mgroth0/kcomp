@@ -1,19 +1,16 @@
 package matt.sempart.client
 
 import kotlinx.browser.document
-import matt.kjs.Interval
 import matt.kjs.css.Color.black
 import matt.kjs.css.Color.white
 import matt.kjs.css.sty
 import matt.kjs.defaultMain
-import matt.kjs.every
 import matt.kjs.html.elements.appendWrapper
 import matt.kjs.html.elements.appendWrappers
 import matt.kjs.html.elements.body.wrapped
+import matt.kjs.html.elements.head.wrapped
 import matt.kjs.nextOrNull
-import matt.sempart.SegmentResponse
-import matt.sempart.TrialData
-import matt.sempart.client.completeDiv.debugButton
+import matt.kjs.prop.whenTrueOnce
 import matt.sempart.client.const.ORIG_DRAWING_IMS
 import matt.sempart.client.const.TRAIN_IM
 import matt.sempart.client.loadingDiv.DrawingLoadingProcess
@@ -28,8 +25,6 @@ import matt.sempart.client.state.sendData
 import matt.sempart.client.trialdiv.div
 import matt.sempart.client.ui.SCREENS
 import org.w3c.dom.HTMLBodyElement
-import matt.kjs.html.elements.head.wrapped
-import kotlin.time.Duration.Companion.milliseconds
 
 
 fun main() = defaultMain {
@@ -46,82 +41,38 @@ fun main() = defaultMain {
   }
 
 
-  //  println("innerHTML5=${debugButton?.innerHTML}")
-  println("innerHTML5.element=${debugButton?.element?.innerHTML}")
   document.body!!.appendWrappers(scaleInput, *SCREENS.toTypedArray())
-  //  println("innerHTML6=${debugButton?.innerHTML}")
-  println("innerHTML6.element=${debugButton?.element?.innerHTML}")
 
   val images = listOf(TRAIN_IM) + ORIG_DRAWING_IMS.shuffled()
   val imIterator = images.withIndex().toList().listIterator()
 
-  /*need scale before creating elements*/
   PhaseChange.afterEndOfNext(Scaling) {
-	//	println("innerHTML7=${debugButton?.innerHTML}")
-	println("innerHTML7.element=${debugButton?.element?.innerHTML}")
-	println("innerHTML7.element.id=${debugButton?.element?.id}")
-	fun presentImage(drawingData: DrawingData, training: Boolean = false) {
-	  //	  println("innerHTML8=${debugButton?.innerHTML}")
-	  println("innerHTML8.element=${debugButton?.element?.innerHTML}")
-	  println("innerHTML8.element.id=${debugButton?.element?.id}")
+	fun presentImage(drawingData: DrawingData) {
 	  val loadingProcess = DrawingLoadingProcess("downloading image data")
-	  drawingData.whenReady {
-		//		println("innerHTML9=${debugButton?.innerHTML}")
-		println("innerHTML9.element=${debugButton?.element?.innerHTML}")
-		println("innerHTML9.element.id=${debugButton?.element?.id}")
+	  drawingData.ready.whenTrueOnce {
 		val trial = drawingData.trial.value!!
-		trial.div.helpText.hidden = !training
 		document.body!!.appendWrapper(trial.div)
-		val nextDrawingData = imIterator.nextOrNull()?.let { DrawingData(it) }
-		var interval: Interval? = null
-		var width = 0
-		//		println("innerHTML10=${debugButton?.innerHTML}")
-		println("innerHTML10.element=${debugButton?.element?.innerHTML}")
-		println("innerHTML10.element.id=${debugButton?.element?.id}")
-		trial.div.nextImageButton.apply {
-		  setOnPointerDown {
-			if (enabled) {
-			  interval = every(10.milliseconds) {
-				width += 1
-				percent = width
-				if (width == 100) {
-				  interval!!.stop()
-				  trial.registerInteraction("submit confirmed")
-				  trial.cleanup()
-				  if (training) presentImage(nextDrawingData!!)
-				  else sendData(
-					TrialData(
-					  image = drawingData.baseImageName,
-					  index = drawingData.idx,
-					  responses = trial.segments.map { SegmentResponse(it.id, it.response!!) },
-					  trialLog = trial.log.get()
-					)
-				  ) {
-					if (nextDrawingData != null) {
-					  if ((nextDrawingData.idx - 1)%PARAMS.breakInterval == 0) {
-						PhaseChange.afterEndOfNext(Break) {
-						  presentImage(nextDrawingData)
-						}
-						ExperimentState.onBreak = true
-					  } else presentImage(nextDrawingData)
-					} else ExperimentState.complete = true
-				  }
-
+		val nextDrawingData = imIterator.nextOrNull()?.let { DrawingData(it, training = false) }
+		trial.div.nextImageButton.setOnFullHold {
+		  trial.registerInteraction("submit confirmed")
+		  trial.div.element.remove()
+		  if (trial.training) presentImage(nextDrawingData!!)
+		  else sendData(trial.data()) {
+			if (nextDrawingData != null) {
+			  if ((nextDrawingData.idx - 1)%PARAMS.breakInterval == 0) {
+				PhaseChange.afterEndOfNext(Break) {
+				  presentImage(nextDrawingData)
 				}
-			  }
-			}
-		  }
-		  setOnPointerUp {
-			interval?.stop()
-			width = 0
-			percent = width
+				ExperimentState.onBreak = true
+			  } else presentImage(nextDrawingData)
+			} else ExperimentState.complete = true
 		  }
 		}
 		loadingProcess.finish()
 		trial.log += "trial start"
 	  }
 	}
-	presentImage(DrawingData(imIterator.next()), training = true)
+	presentImage(DrawingData(imIterator.next(), training = true))
   }
 }
 

@@ -1,8 +1,5 @@
-@file:OptIn(ExperimentalContracts::class)
-
 package matt.sempart.client.trialdiv
 
-//import matt.sempart.client.sty.centerInParent
 import kotlinx.html.ButtonType
 import matt.kjs.WeakMap
 import matt.kjs.bind.binding
@@ -24,7 +21,6 @@ import matt.kjs.html.elements.canvas.draw
 import matt.kjs.html.elements.canvas.put
 import matt.kjs.html.elements.div.HTMLDivWrapper
 import matt.kjs.html.elements.img.HTMLImageWrapper
-import matt.kjs.html.elements.p.HTMLParagraphWrapper
 import matt.kjs.node.HoldButton
 import matt.kjs.pixelIndexInTarget
 import matt.kjs.props.disabledProperty
@@ -32,14 +28,12 @@ import matt.kjs.props.hiddenProperty
 import matt.kjs.props.innerHTMLProperty
 import matt.kjs.showing
 import matt.klib.dmap.withStoringDefault
-import matt.klib.lang.go
 import matt.sempart.client.const.HEIGHT
 import matt.sempart.client.const.LABELS
 import matt.sempart.client.const.WIDTH
 import matt.sempart.client.params.PARAMS
 import matt.sempart.client.scaleDiv.scaleDiv
 import matt.sempart.client.scaleDiv.scaleProp
-import matt.sempart.client.state.DrawingData.Companion.loadingIm
 import matt.sempart.client.state.DrawingData.Segment
 import matt.sempart.client.state.DrawingTrial
 import matt.sempart.client.state.ExperimentPhase.Trial
@@ -56,29 +50,20 @@ import matt.sempart.client.ui.ExperimentScreen
 import matt.sempart.client.ui.boxButton
 import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.events.MouseEvent
-import kotlin.contracts.ExperimentalContracts
 
 interface TrialDiv: HTMLElementWrapper<HTMLDivElement> {
   val nextImageButton: HoldButton
-  //  val nextImageButtonLine: HTMLDivElement
-  //  val hoverCanvas: HTMLCanvasElement
-
-  //  val selectCanvas: HTMLCanvasElement
-  val helpText: HTMLParagraphWrapper
 }
 
 private val trialsDivs = WeakMap<DrawingTrial, TrialDiv>().withStoringDefault { it.trialDiv() }
 val DrawingTrial.div: TrialDiv get() = trialsDivs[this]
 
-@OptIn(ExperimentalContracts::class)
 private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
-  //  flex,
   Trial,
   flexDir = row
 ), TrialDiv {
 
   init {
-	id = "trialDiv"
 	element.sty.resetTransform {
 	  scale(scaleProp.value.toDouble())
 	}
@@ -110,12 +95,12 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 		  position = absolute
 		  zIndex = zIdx++
 		}
-		im?.go { draw(it) }
+		im?.let { draw(it) }
 		hidden = hide
 		op()
 	  }
 	}
-	stackCanvas(loadingIm, hide = false)
+	stackCanvas(baseIm, hide = false)
 	stackCanvas(im = null) {
 	  hoveredSeg.onChange {
 		showing = it != null
@@ -133,17 +118,6 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 	  stackCanvas(theSeg.selectLabeledIm) {
 		hiddenProperty().bind(selectedSegments.binding(theSeg.responseProp) { theSeg !in it || theSeg.hasNoResponse })
 	  }
-	  //	  appendChilds(
-	  //		//		theSeg.labelledCanvas.withConfig {
-	  //		//		  canvasConfig(theSeg.labelledIm)
-	  //		//		},
-	  ////		theSeg.selectCanvas.withConfig {
-	  ////		  canvasConfig(theSeg.selectIm)
-	  ////		},
-	  ////		theSeg.selectLabeledCanvas.withConfig {
-	  ////		  canvasConfig(theSeg.selectLabeledIm)
-	  ////		}
-	  //	  )
 	}
 	stackCanvas(im = null, hide = false) {
 	  setOnMouseMove {
@@ -180,16 +154,11 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 		sty.fontStyle = italic
 		onclick = interaction("selected label: $l") {
 		  val gotFirstResponse = selectedSegments.filter {
-			//			it.labelledCanvas.hidden = false
 			val hadNoResponse = it.hasNoResponse
 			it.response = l
 			hadNoResponse
 		  }
-		  //		  redraw()
 		  completionP.innerText = "$completionFraction segments labelled"
-		  //		  gotFirstResponse.forEach {
-		  //			it.showAsLabeled()
-		  //		  }
 		  if (gotFirstResponse.isNotEmpty()) switchSegment(next = true, unlabelled = true)
 		}
 	  }
@@ -254,8 +223,8 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 	})
 
 
-  override val helpText = controlsDiv.p {
-
+  val helpText = controlsDiv.p {
+	hidden = !training
 	selectedSegments.onChange {
 	  if (selectedSegments.isEmpty() && isNotFinished) phase = UNSELECTED
 	  if (selectedSegments.isNotEmpty()) {

@@ -16,17 +16,14 @@ import matt.kjs.currentTimeMillis
 import matt.kjs.every
 import matt.kjs.first
 import matt.kjs.firstBackwards
-import matt.kjs.handlers.setOnLoad
 import matt.kjs.html.elements.HTMLElementWrapper
-import matt.kjs.html.elements.appendWrapper
-import matt.kjs.html.elements.div
-import matt.kjs.html.elements.img
 import matt.kjs.html.elements.img.HTMLImageWrapper
+import matt.kjs.html.elements.img.Img
 import matt.kjs.html.elements.img.getPixels
+import matt.kjs.html.elements.img.preload
 import matt.kjs.prop.BindableProperty
 import matt.kjs.prop.ReadOnlyBindableProperty
 import matt.kjs.prop.VarProp
-import matt.kjs.prop.bProp
 import matt.kjs.prop.iProp
 import matt.kjs.req.Failure
 import matt.kjs.req.HTTPRequester
@@ -36,24 +33,29 @@ import matt.kjs.req.SimpleSuccess
 import matt.kjs.req.Success
 import matt.kjs.req.SuccessText
 import matt.klib.oset.BasicObservableSet
-import matt.klib.todo
 import matt.sempart.ExperimentData
 import matt.sempart.Issue
 import matt.sempart.LogMessage
 import matt.sempart.QueryParams
+import matt.sempart.SegmentResponse
+import matt.sempart.TrialData
 import matt.sempart.client.const.DATA_FOLDER
 import matt.sempart.client.const.HEIGHT
 import matt.sempart.client.const.SEND_DATA_PREFIX
 import matt.sempart.client.const.WIDTH
 import matt.sempart.client.errorDiv.errorDiv
 import matt.sempart.client.params.PARAMS
+import matt.sempart.client.state.DrawingData.ImName.HiLabelledIm
+import matt.sempart.client.state.DrawingData.ImName.SegmentHighlighted
+import matt.sempart.client.state.DrawingData.ImName.SegmentLabelled
+import matt.sempart.client.state.DrawingData.ImName.SegmentSelected
+import matt.sempart.client.state.DrawingData.ImName.SegmentSelectedLabelled
 import matt.sempart.client.state.DrawingData.Segment
 import matt.sempart.client.state.ExperimentPhase.Companion.currentPhase
 import matt.sempart.client.state.ExperimentPhase.Inactive
 import matt.sempart.client.state.ExperimentState.working
 import matt.sempart.client.state.TrialPhase.FINISHED
 import matt.sempart.client.state.TrialPhase.UNSELECTED
-import matt.sempart.client.trialdiv.div
 import org.w3c.dom.CustomEvent
 import org.w3c.dom.CustomEventInit
 import org.w3c.dom.events.Event
@@ -143,18 +145,6 @@ object ExperimentState {
 	PhaseChange.dispatchToAllHTML(currentPhase.value to ExperimentPhase.determine())
   }
 }
-
-
-//fun <R> LoadingProcess.finishedLoadingScreen(desc: String? = null, op: ()->R): R {
-//  val r = finish(desc) { op() }
-//  working = false
-//  return r
-//}
-//
-//fun <R> LoadingProcess.finishedLoadingScreen() {
-//  finish()
-//  working = false
-//}
 
 enum class ExperimentPhase {
   Scaling, InstructionsVid, Instructions, Trial, Break, Complete, Inactive, Resize, Loading, Err;
@@ -277,41 +267,32 @@ class TrialLog(
 interface Drawing {
   val baseImageName: String
   val log: TrialLog
-  fun cleanup()
+  val training: Boolean
+  val baseIm: Img
 }
 
-class DrawingData(
-  indexedIm: IndexedValue<String>
-): Drawing {
-  companion object {
-	val loadingIm = img {
-	  todo("loadingIm is not ideal either")
-	  hidden = true
-	}.also { document.body!!.append(it.element) }
 
-	//	  (document.body!! as HTMLBodyElement).append
-	//	  .
-  }
+class DrawingData(
+  indexedIm: IndexedValue<String>,
+  override val training: Boolean
+): Drawing {
+
 
   override val baseImageName = indexedIm.value
   val idx = indexedIm.index
   override val log = TrialLog()
-  val loadedImage = bProp(false)
-  var loadedIms = iProp(0)
-  var finishedProcessesingResp = false
+  private var loadedIms = iProp(0)
   var trial = VarProp<DrawingTrial?>(null)
-
-  val loadDiv = /*document.body!!.*/div {
-	todo("loadDiv is not ideal")
-	id = "loadDiv"
-	hidden = true
-  }.also {
-	document.body!!.appendWrapper(it)
+  val ready = loadedIms.binding(trial) {
+	trial.value != null && loadedIms.value == trial.value!!.segments.size*5 + 1
   }
 
-  val ready = loadedImage.binding(trial, loadedIms) {
-	println("(trial=${trial.value},loadedIms=${loadedIms.value},loadedImage=${loadedImage.value})")
-	it && trial.value != null && loadedIms.value == trial.value!!.segments.size*5
+  enum class ImName(val s: String) {
+	SegmentHighlighted("segment_highlighted"),
+	SegmentSelected("segment_selected"),
+	SegmentLabelled("segment_labelled"),
+	SegmentSelectedLabelled("segment_selected_labeled"),
+	HiLabelledIm("segment_hi_labeled")
   }
 
   init {
@@ -319,75 +300,47 @@ class DrawingData(
 	  GET,
 	  DATA_FOLDER + "segment_data2" + "${baseImageName}.json",
 	  responses = {
-		println("statusCode=$statusCode, readyState=${readyState}")
 		when (statusCode) {
 		  200  -> SuccessText(responseText)
 		  else -> Failure(statusCode, statusText)
 		}
 	  }
 	).sendAsync { resp ->
-	  println("resp=${resp}")
 	  when (resp) {
 		is Failure     -> {
 		  ExperimentState.error = resp
 		}
 
 		is SuccessText -> {
-		  //		  println("resp.text:${resp.text}")
 		  val segs = Json.decodeFromString<Map<String, List<List<Boolean>>>>(resp.text!!).entries.let {
 			if (PARAMS.randomSegmentOrder) it.shuffled() else it
 		  }.mapIndexed { index, entry ->
-			val ims = (1..5).map {
-			  val im = loadDiv.img {
-				hidden = true
-				setOnLoad {
-				  loadedIms.value++
-				}
-			  }.apply {
-				todo("this is so not ideal")
-				configure()
-			  }
-			  todo("really really bad")
-			  loadDiv.configure()
-			  im
-			  //			  (document.createElement("img") as HTMLImageElement).also {
-			  //				loadDiv.appendChild(it)
-			  //				it.hidden = true
-			  //				it.setOnLoad {
-			  //
-			  //				}
-			  //			  }
-			}
-			val (highlightIm, selectIm, labelledIm, selectLabeledIm, hiLabeledIm) = ims
-
 			val segID = entry.key
-
-
 			val imFileName = Path("${baseImageName}_L${segID}.png")
-
-			highlightIm.srcAsPath = DATA_FOLDER + "segment_highlighted" + imFileName
-			selectIm.srcAsPath = DATA_FOLDER + "segment_selected" + imFileName
-			labelledIm.srcAsPath = DATA_FOLDER + "segment_labelled" + imFileName
-			selectLabeledIm.srcAsPath = DATA_FOLDER + "segment_selected_labeled" + imFileName
-			hiLabeledIm.srcAsPath = DATA_FOLDER + "segment_hi_labeled" + imFileName
-
+			val ims = ImName.values().associateWith {
+			  preload(DATA_FOLDER + it.s + imFileName) {
+				loadedIms.value++
+			  }
+			}
 			Segment(
-			  id = segID, pixels = entry.value, highlightIm = highlightIm, selectIm = selectIm, labelledIm = labelledIm,
-			  selectLabeledIm = selectLabeledIm, hiLabeledIm = hiLabeledIm, cycleIndex = index
+			  id = segID,
+			  pixels = entry.value,
+			  highlightIm = ims[SegmentHighlighted]!!,
+			  selectIm = ims[SegmentSelected]!!,
+			  labelledIm = ims[SegmentLabelled]!!,
+			  selectLabeledIm = ims[SegmentSelectedLabelled]!!,
+			  hiLabeledIm = ims[HiLabelledIm]!!,
+			  cycleIndex = index
 			)
 		  }.sortedBy { it.cycleIndex }
-
-		  println("about to set trial.value")
-
-		  trial.value = DrawingTrial(segs, Loop(segs).iterator(), this)
-		  println("set trial.value")
+		  trial.value = DrawingTrial(segs, Loop(segs).iterator(), this, idx)
 		}
 	  }
 	}
-	loadingIm.setOnLoad {
-	  loadedImage.value = true
-	}
-	loadingIm.src = "data/all/${baseImageName}_All.png"
+  }
+
+  override val baseIm = preload(Path("data") + "all" + (baseImageName + "_All.png")) {
+	loadedIms.value++
   }
 
 
@@ -411,36 +364,22 @@ class DrawingData(
 	  highlightIm.getPixels()
 	}
 
-	//	val selectCanvas = canvas()
-	//	val selectLabeledCanvas = canvas()
 	val hiLabeledPixels by lazy {
 	  hiLabeledIm.getPixels()
-	}    //	val labelledCanvas = canvas()
+	}
 
 	operator fun contains(pi: PixelIndex): Boolean {
 	  if (pi.x < 0 || pi.y < 0 || pi.x >= WIDTH || pi.y >= HEIGHT) return false
 	  return pixels[pi.y][pi.x]
 	}
   }
-
-
-  fun whenReady(op: ()->Unit) {
-	if (ready.value) op()
-	else {
-	  ready.onChangeUntil({ it }) {
-		if (it) op()
-	  }
-	}
-  }
-
-  override fun cleanup() {
-	trial.value!!.div.element.remove()
-	loadDiv.remove()
-  }
 }
 
 class DrawingTrial(
-  val segments: List<Segment>, val segCycle: ListIterator<Segment>, dData: DrawingData
+  val segments: List<Segment>,
+  private val segCycle: ListIterator<Segment>,
+  dData: DrawingData,
+  val idx: Int
 ): Drawing by dData {
 
   val phaseProp = VarProp(UNSELECTED)
@@ -468,16 +407,6 @@ class DrawingTrial(
   val segmentsWithResponse get() = segments.filter { it.hasResponse }
   val completionFraction get() = "${segmentsWithResponse.size}/${segments.size}"
 
-  //  fun redraw() {
-  //	segments.forEach { it.redraw() }
-  //  }
-
-  //  fun Segment.redraw() {
-  //	labelledCanvas.showing = hasResponse
-  //	selectCanvas.showing = this in selectedSegments
-  //	selectLabeledCanvas.showing = hasResponse && this in selectedSegments
-  //  }
-
   val finishedProp = segments.map { it.hasResponseProp }.reduce { r1, r2 -> r1.and(r2) }.apply {
 	onChange {
 	  if (it) phase = FINISHED
@@ -486,10 +415,6 @@ class DrawingTrial(
   val isFinished get() = finishedProp.value
   val isNotFinished get() = !isFinished
   var selectedSegments = BasicObservableSet<Segment>()
-
-  /*val selectedSegResponse = selectedSeg.chainBinding {
-	it?.responseProp
-  }*/
   var hoveredSeg = BindableProperty<Segment?>(null)
 
   override fun toString() = "${this::class.simpleName} for $baseImageName"
@@ -524,6 +449,13 @@ class DrawingTrial(
 	if (seg == hoveredSeg.value) return
 	hoveredSeg.value = seg
   }
+
+  fun data() = TrialData(
+	image = baseImageName,
+	index = idx,
+	responses = segments.map { SegmentResponse(it.id, it.response!!) },
+	trialLog = log.get()
+  )
 
 }
 
