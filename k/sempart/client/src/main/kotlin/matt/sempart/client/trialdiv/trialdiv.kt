@@ -184,6 +184,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ImageAndControlsScreen(
 	  height = HALF_HEIGHT.px
 	  box()
 	  display = flex
+	  flexDirection = column
 	  padding = MED_SPACE
 	  justifyContent = spaceEvenly
 	  alignItems = stretch
