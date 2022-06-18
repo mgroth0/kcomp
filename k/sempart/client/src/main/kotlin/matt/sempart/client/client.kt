@@ -52,6 +52,7 @@ fun main() = defaultMain {
   PhaseChange.afterEndOfNext(Scaling) {
 	fun presentImage(drawingData: DrawingData) {
 	  val loadingProcess = DrawingLoadingProcess("downloading image data")
+	  loadingProcess.start()
 	  drawingData.ready.whenTrueOnce {
 		val trial = drawingData.trial.value!!
 		document.body!!.appendWrapper(trial.div)
