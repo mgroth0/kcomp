@@ -36,6 +36,7 @@ import matt.sempart.client.scaleDiv.scaleDiv
 import matt.sempart.client.scaleDiv.scaleProp
 import matt.sempart.client.state.DrawingData.Segment
 import matt.sempart.client.state.DrawingTrial
+import matt.sempart.client.state.ExperimentPhase
 import matt.sempart.client.state.ExperimentPhase.Trial
 import matt.sempart.client.state.ExperimentState
 import matt.sempart.client.state.TrialPhase.FINISHED
@@ -55,12 +56,37 @@ interface TrialDiv: HTMLElementWrapper<HTMLDivElement> {
   val nextImageButton: HoldButton
 }
 
+
+open class ImageAndControlsScreen(
+  phase: ExperimentPhase,
+  cfg: ImageAndControlsScreen.()->Unit = {}
+): ExperimentScreen(
+  phase,
+  flexDir = row
+) {
+  val stackDiv = div {
+	sty {
+	  width = WIDTH.px
+	  height = HEIGHT.px
+	}
+  }
+  val controlsDiv: HTMLDivWrapper = div {
+	sty {
+	  marginBottom = MED_SPACE
+	  width = WIDTH.px
+	}
+  }
+
+  init {
+	cfg()
+  }
+}
+
 private val trialsDivs = WeakMap<DrawingTrial, TrialDiv>().withStoringDefault { it.trialDiv() }
 val DrawingTrial.div: TrialDiv get() = trialsDivs[this]
 
-private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
+private fun DrawingTrial.trialDiv(): TrialDiv = object: ImageAndControlsScreen(
   Trial,
-  flexDir = row
 ), TrialDiv {
 
   init {
@@ -78,69 +104,61 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ExperimentScreen(
 
   private var zIdx = 0
 
-  private val stackDiv = div {
-	sty {
-	  width = WIDTH.px
-	  height = HEIGHT.px
-	}
-	fun stackCanvas(
-	  im: HTMLImageWrapper?,
-	  hide: Boolean = true,
-	  op: HTMLCanvasWrapper.()->Unit = {}
-	) {
-	  canvas {
-		width = WIDTH
-		height = HEIGHT
-		sty {
-		  position = absolute
-		  zIndex = zIdx++
+  init {
+	stackDiv.withConfig {
+	  fun stackCanvas(
+		im: HTMLImageWrapper?,
+		hide: Boolean = true,
+		op: HTMLCanvasWrapper.()->Unit = {}
+	  ) {
+		canvas {
+		  width = WIDTH
+		  height = HEIGHT
+		  sty {
+			position = absolute
+			zIndex = zIdx++
+		  }
+		  im?.let { draw(it) }
+		  hidden = hide
+		  op()
 		}
-		im?.let { draw(it) }
-		hidden = hide
-		op()
 	  }
-	}
-	stackCanvas(baseIm, hide = false)
-	stackCanvas(im = null) {
-	  hoveredSeg.onChange {
-		showing = it != null
-		if (it != null) put(if (it.hasResponse) it.hiLabeledPixels else it.highlightPixels)
+	  stackCanvas(baseIm, hide = false)
+	  stackCanvas(im = null) {
+		hoveredSeg.onChange {
+		  showing = it != null
+		  if (it != null) put(if (it.hasResponse) it.hiLabeledPixels else it.highlightPixels)
+		}
 	  }
-	}
 
-	segments.forEach { theSeg: Segment ->
-	  stackCanvas(theSeg.labelledIm) {
-		hiddenProperty().bind(theSeg.hasResponseProp.not())
+	  segments.forEach { theSeg: Segment ->
+		stackCanvas(theSeg.labelledIm) {
+		  hiddenProperty().bind(theSeg.hasResponseProp.not())
+		}
+		stackCanvas(theSeg.selectIm) {
+		  hiddenProperty().bind(selectedSegments.binding { theSeg !in it })
+		}
+		stackCanvas(theSeg.selectLabeledIm) {
+		  hiddenProperty().bind(selectedSegments.binding(theSeg.responseProp) { theSeg !in it || theSeg.hasNoResponse })
+		}
 	  }
-	  stackCanvas(theSeg.selectIm) {
-		hiddenProperty().bind(selectedSegments.binding { theSeg !in it })
-	  }
-	  stackCanvas(theSeg.selectLabeledIm) {
-		hiddenProperty().bind(selectedSegments.binding(theSeg.responseProp) { theSeg !in it || theSeg.hasNoResponse })
-	  }
-	}
-	stackCanvas(im = null, hide = false) {
-	  setOnMouseMove {
-		ExperimentState.interacted()
-		hover(eventToSeg(it))
-	  }
-	  onclick = interaction("click") {
-		val seg = eventToSeg(it)
-		if (seg == null) selectedSegments.clear()
-		else if (seg !in selectedSegments) {
-		  if (!PARAMS.allowMultiSelection || !it.shiftKey) selectedSegments.clear()
-		  select(seg)
+	  stackCanvas(im = null, hide = false) {
+		setOnMouseMove {
+		  ExperimentState.interacted()
+		  hover(eventToSeg(it))
+		}
+		onclick = interaction("click") {
+		  val seg = eventToSeg(it)
+		  if (seg == null) selectedSegments.clear()
+		  else if (seg !in selectedSegments) {
+			if (!PARAMS.allowMultiSelection || !it.shiftKey) selectedSegments.clear()
+			select(seg)
+		  }
 		}
 	  }
 	}
   }
 
-  val controlsDiv: HTMLDivWrapper = div {
-	sty {
-	  marginBottom = MED_SPACE
-	  width = WIDTH.px
-	}
-  }
 
   val labelsDiv = controlsDiv.div {
 	hiddenProperty().bind(selectedSegments.isEmptyProperty())

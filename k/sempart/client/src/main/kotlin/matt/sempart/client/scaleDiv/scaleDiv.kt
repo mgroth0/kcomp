@@ -15,22 +15,22 @@ import matt.sempart.client.const.WIDTH
 import matt.sempart.client.state.ExperimentPhase.Scaling
 import matt.sempart.client.state.ExperimentState
 import matt.sempart.client.state.PhaseChange
-import matt.sempart.client.ui.ExperimentScreen
+import matt.sempart.client.sty.MED_SPACE
+import matt.sempart.client.trialdiv.ImageAndControlsScreen
 
 const val DEFAULT_SCALE = "1.0"
 
-val scaleDiv = ExperimentScreen(Scaling) {
-  img {
+val scaleDiv = ImageAndControlsScreen(Scaling) {
+  stackDiv.img {
 	src = INSTRUCTIONS_IM_RELATIVE
 	height = HEIGHT
 	width = WIDTH
   }
-  br
-  p {
+  controlsDiv.p {
 	+"Every computer is different, and some people use various accessibility settings to change scaling and zoom settings. In this experiment, we need everyone to see the images at the same size. Please use a ruler and adjust the slider above so the image is exactly 3 inches wide on your screen. The scaling you select here will be used throughout the experiment."
+	sty.marginBottom = MED_SPACE
   }
-  br
-  button {
+  controlsDiv.button {
 	sty.margin = auto
 	+"Click here when finished rescaling"
 	setOnClick { ExperimentState.finishedScaling = true }
