@@ -96,7 +96,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ImageAndControlsScreen(
 
   init {
 	element.sty.resetTransform {
-	  scale(scaleProp.value.toDouble())
+	  scale(scaleProp.value)
 	}
 	scaleProp.onChange {
 	  element.sty.resetTransform {

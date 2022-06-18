@@ -2,7 +2,6 @@ package matt.sempart.client.scaleDiv
 
 //import matt.sempart.client.mainDivClass
 import matt.kjs.css.Position.absolute
-import matt.kjs.css.auto
 import matt.kjs.css.percent
 import matt.kjs.css.sty
 import matt.kjs.handlers.setOnClick
@@ -36,7 +35,7 @@ val scaleDiv = ImageAndControlsScreen(Scaling) {
 	sty.marginBottom = MED_SPACE
   }
   controlsDiv.button {
-	sty.margin = auto
+	sty.width = 100.percent
 	+"Click here when finished rescaling"
 	setOnClick { ExperimentState.finishedScaling.value = true }
   }
