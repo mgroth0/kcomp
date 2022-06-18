@@ -48,7 +48,7 @@ fun main() = defaultMain {
 
   PhaseChange.afterEndOfNext(Scaling) {
 	fun presentImage(drawingData: DrawingData) {
-//	  gitPush again and again
+//	  gitPush again and again and again
 	  val loadingProcess = DrawingLoadingProcess("downloading image data")
 	  drawingData.ready.whenTrueOnce {
 		val trial = drawingData.trial.value!!
