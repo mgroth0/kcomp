@@ -103,13 +103,11 @@ object ExperimentState {
 	lastInteract = Date.now()
   }
 
-  var error by Delegates.observable<Failure?>(null) { _, _, n ->
-
-	errorDiv.element.innerHTML = n.toString()
-
-	ExperimentPhase.determineAndEmit()
-
-
+  var error = VarProp<Failure?>(null).apply {
+	onChange {
+	  errorDiv.element.innerHTML = it.toString()
+	  ExperimentPhase.determineAndEmit()
+	}
   }
 
   private var lastInteract = Date.now()
@@ -130,25 +128,23 @@ object ExperimentState {
 	}
 
   fun idle() = Date.now() - ExperimentState.lastInteract >= PARAMS.idleThresholdMS
-  var finishedScaling by Delegates.observable(false) { _, _, _ ->
-	ExperimentPhase.determineAndEmit()
-
+  var finishedScaling = VarProp(false).apply {
+	onChange { ExperimentPhase.determineAndEmit() }
   }
-  var finishedVid by Delegates.observable(false) { _, _, _ ->
-	ExperimentPhase.determineAndEmit()
-
+  var finishedVid = VarProp(false).apply {
+	onChange { ExperimentPhase.determineAndEmit() }
   }
-  var begun by Delegates.observable(false) { _, _, _ ->
-	ExperimentPhase.determineAndEmit()
+  var begun = VarProp(false).apply {
+	onChange { ExperimentPhase.determineAndEmit() }
   }
-  var onBreak by Delegates.observable(false) { _, _, _ ->
-	ExperimentPhase.determineAndEmit()
+  var onBreak = VarProp(false).apply {
+	onChange { ExperimentPhase.determineAndEmit() }
   }
-  var complete by Delegates.observable(false) { _, _, _ ->
-	ExperimentPhase.determineAndEmit()
+  var complete = VarProp(false).apply {
+	onChange { ExperimentPhase.determineAndEmit() }
   }
-  var working by Delegates.observable(false) { _, _, _ ->
-	ExperimentPhase.determineAndEmit()
+  var working = VarProp(false).apply {
+	onChange { ExperimentPhase.determineAndEmit() }
   }
 }
 
@@ -166,6 +162,7 @@ enum class ExperimentPhase {
 	fun determineAndEmit() = PhaseChange.dispatchToAllHTML(currentPhase.value to ExperimentPhase.determine())
 
 	fun determine(): ExperimentPhase {
+	  lock?.let { return it }
 	  val w = window.innerWidth
 	  val h = window.innerHeight
 	  return when {
@@ -180,6 +177,12 @@ enum class ExperimentPhase {
 		working                                 -> Loading
 		else                                    -> Trial
 	  }
+	}
+
+	private var lock: ExperimentPhase? = null
+	fun lockAt(phase: ExperimentPhase?) {
+	  lock = phase
+	  determineAndEmit()
 	}
 
 	init {
@@ -271,6 +274,8 @@ object PhaseChange: ChangeEventDispatcher<Pair<ExperimentPhase, ExperimentPhase>
 	}
 	beforeDispatchOps.add(op)
   }
+
+
 }
 
 

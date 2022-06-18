@@ -13,6 +13,7 @@ import matt.kjs.nextOrNull
 import matt.kjs.prop.whenTrueOnce
 import matt.sempart.client.const.ORIG_DRAWING_IMS
 import matt.sempart.client.const.TRAIN_IM
+import matt.sempart.client.devBar.devBar
 import matt.sempart.client.loadingDiv.DrawingLoadingProcess
 import matt.sempart.client.params.PARAMS
 import matt.sempart.client.scaleDiv.scaleInput
@@ -26,6 +27,7 @@ import matt.sempart.client.trialdiv.div
 import matt.sempart.client.ui.SCREENS
 import org.w3c.dom.HTMLBodyElement
 
+val DEV_MODE = true
 
 fun main() = defaultMain {
   document.head!!.wrapped().apply {
@@ -42,6 +44,7 @@ fun main() = defaultMain {
 
 
   document.body!!.appendWrappers(scaleInput, *SCREENS.toTypedArray())
+  if (DEV_MODE) document.body!!.appendWrapper(devBar)
 
   val images = listOf(TRAIN_IM) + ORIG_DRAWING_IMS.shuffled()
   val imIterator = images.withIndex().toList().listIterator()
@@ -63,9 +66,9 @@ fun main() = defaultMain {
 				PhaseChange.afterEndOfNext(Break) {
 				  presentImage(nextDrawingData)
 				}
-				ExperimentState.onBreak = true
+				ExperimentState.onBreak.value = true
 			  } else presentImage(nextDrawingData)
-			} else ExperimentState.complete = true
+			} else ExperimentState.complete.value = true
 		  }
 		}
 		loadingProcess.finish()
