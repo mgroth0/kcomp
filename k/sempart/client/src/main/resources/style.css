@@ -61,6 +61,10 @@ button:hover {
     border-color: #DDDDDD;
 }
 
+button:active:hover {
+    cursor: pointer;
+}
+
 button:active {
     color: #BBBBBB;
     border-color: #BBBBBB;
