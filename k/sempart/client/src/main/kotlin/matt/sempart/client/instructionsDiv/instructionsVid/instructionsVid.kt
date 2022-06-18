@@ -44,6 +44,9 @@ val instructionsVidDiv = ImageAndControlsScreen(InstructionsVid) {
 	sty.width = 100.percent
 	disabled = true
 	+"Click here when you are ready to move on"
-	setOnClick { ExperimentState.finishedVid.value = true }
+	setOnClick {
+	  vid.pause()
+	  ExperimentState.finishedVid.value = true
+	}
   }
 }
