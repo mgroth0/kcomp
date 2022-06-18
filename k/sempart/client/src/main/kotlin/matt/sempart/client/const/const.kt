@@ -2,9 +2,10 @@ package matt.sempart.client.const
 
 import matt.kjs.Path
 
-val WIDTH: Int = 600
-val HEIGHT: Int = 700
-val HALF_WIDTH = WIDTH/2
+const val WIDTH: Int = 600
+const val HEIGHT: Int = 700
+const val HALF_WIDTH = WIDTH/2
+const val HALF_HEIGHT = HEIGHT/2
 
 
 val DATA_FOLDER = Path("data")

@@ -33,6 +33,7 @@ import matt.kjs.props.hiddenProperty
 import matt.kjs.props.innerHTMLProperty
 import matt.kjs.showing
 import matt.klib.dmap.withStoringDefault
+import matt.sempart.client.const.HALF_HEIGHT
 import matt.sempart.client.const.HEIGHT
 import matt.sempart.client.const.LABELS
 import matt.sempart.client.const.WIDTH
@@ -177,6 +178,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ImageAndControlsScreen(
   val labelsDiv = controlsDiv.div {
 	/*hiddenProperty().bind(selectedSegments.isEmptyProperty())*/
 	sty {
+	  height = HALF_HEIGHT.px
 	  box()
 	}
 	(LABELS.shuffled() + "Something else" + "I don't know").forEach { l ->
