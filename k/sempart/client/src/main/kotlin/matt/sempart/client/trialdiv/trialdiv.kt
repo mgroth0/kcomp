@@ -211,15 +211,15 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ImageAndControlsScreen(
 
   val buttonsDiv = controlsDiv.div {
 	sty.box()
-  }
-
-  val regularNextSegButtonBox = buttonsDiv.div {
-	hidden = PARAMS.removeNpButtonsKeepUnlabelledNpButtons
 	sty {
 	  display = flex
 	  flexDirection = row
 	  justifyContent = spaceEvenly
 	}
+  }
+
+  val regularNextSegButtonBox = buttonsDiv.div {
+	hidden = PARAMS.removeNpButtonsKeepUnlabelledNpButtons
   }
 
   val previousSegmentButton = regularNextSegButtonBox.boxButton {
