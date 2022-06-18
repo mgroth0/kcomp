@@ -15,8 +15,10 @@ import matt.kjs.css.FlexDirection.row
 import matt.kjs.css.FontStyle.italic
 import matt.kjs.css.FontWeight.bold
 import matt.kjs.css.JustifyContent
+import matt.kjs.css.JustifyContent.spaceEvenly
 import matt.kjs.css.Position.absolute
 import matt.kjs.css.Transform.Scale
+import matt.kjs.css.percent
 import matt.kjs.css.px
 import matt.kjs.css.sty
 import matt.kjs.handlers.setOnMouseMove
@@ -184,6 +186,9 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ImageAndControlsScreen(
 	}
 	(LABELS.shuffled() + "Something else" + "I don't know").forEach { l ->
 	  boxButton {
+		sty {
+		  width = 100.percent
+		}
 		hiddenProperty().bind(selectedSegments.isEmptyProperty())
 		disabledProperty().bind(
 		  UI.disabledProp or selectedSegments.binding(
@@ -210,6 +215,11 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ImageAndControlsScreen(
 
   val regularNextSegButtonBox = buttonsDiv.div {
 	hidden = PARAMS.removeNpButtonsKeepUnlabelledNpButtons
+	sty {
+	  display = flex
+	  flexDirection = row
+	  justifyContent = spaceEvenly
+	}
   }
 
   val previousSegmentButton = regularNextSegButtonBox.boxButton {
