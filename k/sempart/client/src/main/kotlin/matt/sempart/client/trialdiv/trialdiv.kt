@@ -175,12 +175,13 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ImageAndControlsScreen(
 
 
   val labelsDiv = controlsDiv.div {
-	hiddenProperty().bind(selectedSegments.isEmptyProperty())
+	/*hiddenProperty().bind(selectedSegments.isEmptyProperty())*/
 	sty {
 	  box()
 	}
 	(LABELS.shuffled() + "Something else" + "I don't know").forEach { l ->
 	  boxButton {
+		hiddenProperty().bind(selectedSegments.isEmptyProperty())
 		disabledProperty().bind(
 		  UI.disabledProp or selectedSegments.binding(
 			*segments.map { it.responseProp }.toTypedArray()
