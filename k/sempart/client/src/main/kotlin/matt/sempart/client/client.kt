@@ -27,7 +27,7 @@ import matt.sempart.client.trialdiv.div
 import matt.sempart.client.ui.SCREENS
 import org.w3c.dom.HTMLBodyElement
 
-val DEV_MODE = true
+private const val DEV_MODE = true
 
 fun main() = defaultMain {
   document.head!!.wrapped().apply {
