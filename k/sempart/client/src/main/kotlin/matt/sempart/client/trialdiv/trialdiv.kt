@@ -263,6 +263,8 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ImageAndControlsScreen(
 
 
   val helpText = controlsDiv.div {
+	hidden = !training
+
 	sty {
 	  box()
 	  borderColor = red
@@ -270,7 +272,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ImageAndControlsScreen(
 	}
 	p {
 
-	  hidden = !training
+
 	  selectedSegments.onChange {
 		if (selectedSegments.isEmpty() && isNotFinished) phase = UNSELECTED
 		if (selectedSegments.isNotEmpty()) {
