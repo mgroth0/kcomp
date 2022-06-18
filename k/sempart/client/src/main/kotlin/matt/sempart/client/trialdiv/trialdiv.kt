@@ -287,10 +287,13 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ImageAndControlsScreen(
 	sty {
 	  box()
 	  borderColor = red
-	  height = 275.px
+	  height = 200.px
 	}
 	p {
 
+	  sty {
+		fontSize = 15.px
+	  }
 
 	  selectedSegments.onChange {
 		if (selectedSegments.isEmpty() && isNotFinished) phase = UNSELECTED
