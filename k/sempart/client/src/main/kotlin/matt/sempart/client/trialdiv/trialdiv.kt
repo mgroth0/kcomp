@@ -8,6 +8,7 @@ import matt.kjs.bindings.not
 import matt.kjs.bindings.or
 import matt.kjs.css.AlignItems.stretch
 import matt.kjs.css.BoxSizing.borderBox
+import matt.kjs.css.Color.red
 import matt.kjs.css.Display.flex
 import matt.kjs.css.FlexDirection.column
 import matt.kjs.css.FlexDirection.row
@@ -261,42 +262,50 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ImageAndControlsScreen(
 	})
 
 
-  val helpText = controlsDiv.p {
-	hidden = !training
-	selectedSegments.onChange {
-	  if (selectedSegments.isEmpty() && isNotFinished) phase = UNSELECTED
-	  if (selectedSegments.isNotEmpty()) {
-		if (selectedSegments.any { it.hasResponse }) {
-		  if (isNotFinished) phase = SELECTED_LABELLED
-		} else {
-		  if (isNotFinished) phase = SELECTED_UNLABELLED
+  val helpText = controlsDiv.div {
+	sty {
+	  box()
+	  borderColor = red
+	  height = 300.px
+	}
+	p {
+
+	  hidden = !training
+	  selectedSegments.onChange {
+		if (selectedSegments.isEmpty() && isNotFinished) phase = UNSELECTED
+		if (selectedSegments.isNotEmpty()) {
+		  if (selectedSegments.any { it.hasResponse }) {
+			if (isNotFinished) phase = SELECTED_LABELLED
+		  } else {
+			if (isNotFinished) phase = SELECTED_UNLABELLED
+		  }
 		}
 	  }
+
+	  val finished =
+		"Great job. You have chosen a label for every segment in this drawing. You can still go back and change your responses before continuing. Once ready, click and hold the \"${nextImageButton.text}\" button. After moving onto the next drawing, you will not be able to come back and change your responses on the current drawing."
+
+	  if (PARAMS.allowMultiSelection) {
+		innerHTMLProperty().bind(phaseProp.binding {
+		  "This first drawing is for training purposes only and the data will not be used.<br><br>" + when (it) {
+			UNSELECTED          -> "You may select one or more segments by clicking them. Normally, clicking a segment will deselect your previous selections. In order to select multiple segments, hold down the SHIFT key. You may also click the \"${nextUnlabeledSegmentButton.innerText}\" button or the \"${previousUnlabeledSegmentButton.innerText}\" button to cycle through unselected segments automatically. This will also deselect your previous selection(s)."
+			SELECTED_UNLABELLED -> "Now that one or more segments are selected, you may choose a label. Please choose the label by clicking the label button that you think best fits the segment(s). If you change your mind after selecting a label you can reselect the segment(s) and change your response. After choosing a label for a segment for the first time, your selection will be cleared and the next unlabelled segment will automatically be selected for you."
+			SELECTED_LABELLED   -> "One or more selected segments are already labelled. You can still change which label you are assigning to these segments by clicking one of the label buttons."
+			FINISHED            -> finished
+		  }
+		})
+	  } else {
+		innerHTMLProperty().bind(phaseProp.binding {
+		  "This first drawing is for training purposes only and the data will not be used.<br><br>" + when (it) {
+			UNSELECTED          -> "You may select a segment by clicking it. You may also click the \"${nextUnlabeledSegmentButton.innerText}\" button or the \"${previousUnlabeledSegmentButton.innerText}\" button to cycle through unselected segments automatically."
+			SELECTED_UNLABELLED -> "Now that a segment is selected, you may choose a label. Please choose the label by clicking the label button that you think best fits this segment. If you change your mind after selecting a label you can reselect the segment and change your response. After choosing a label for a segment for the first time, the next unlabelled segment will automatically be selected for you."
+			SELECTED_LABELLED   -> "This segment is already labelled. You can still change which label you are assigning to this segment by clicking one of the label buttons."
+			FINISHED            -> finished
+		  }
+		})
+	  }
+
 	}
-
-	val finished =
-	  "Great job. You have chosen a label for every segment in this drawing. You can still go back and change your responses before continuing. Once ready, click and hold the \"${nextImageButton.text}\" button. After moving onto the next drawing, you will not be able to come back and change your responses on the current drawing."
-
-	if (PARAMS.allowMultiSelection) {
-	  innerHTMLProperty().bind(phaseProp.binding {
-		"This first drawing is for training purposes only and the data will not be used.<br><br>" + when (it) {
-		  UNSELECTED          -> "You may select one or more segments by clicking them. Normally, clicking a segment will deselect your previous selections. In order to select multiple segments, hold down the SHIFT key. You may also click the \"${nextUnlabeledSegmentButton.innerText}\" button or the \"${previousUnlabeledSegmentButton.innerText}\" button to cycle through unselected segments automatically. This will also deselect your previous selection(s)."
-		  SELECTED_UNLABELLED -> "Now that one or more segments are selected, you may choose a label. Please choose the label by clicking the label button that you think best fits the segment(s). If you change your mind after selecting a label you can reselect the segment(s) and change your response. After choosing a label for a segment for the first time, your selection will be cleared and the next unlabelled segment will automatically be selected for you."
-		  SELECTED_LABELLED   -> "One or more selected segments are already labelled. You can still change which label you are assigning to these segments by clicking one of the label buttons."
-		  FINISHED            -> finished
-		}
-	  })
-	} else {
-	  innerHTMLProperty().bind(phaseProp.binding {
-		"This first drawing is for training purposes only and the data will not be used.<br><br>" + when (it) {
-		  UNSELECTED          -> "You may select a segment by clicking it. You may also click the \"${nextUnlabeledSegmentButton.innerText}\" button or the \"${previousUnlabeledSegmentButton.innerText}\" button to cycle through unselected segments automatically."
-		  SELECTED_UNLABELLED -> "Now that a segment is selected, you may choose a label. Please choose the label by clicking the label button that you think best fits this segment. If you change your mind after selecting a label you can reselect the segment and change your response. After choosing a label for a segment for the first time, the next unlabelled segment will automatically be selected for you."
-		  SELECTED_LABELLED   -> "This segment is already labelled. You can still change which label you are assigning to this segment by clicking one of the label buttons."
-		  FINISHED            -> finished
-		}
-	  })
-	}
-
   }
 
 }
