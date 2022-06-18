@@ -6,6 +6,7 @@ import matt.kjs.bind.binding
 import matt.kjs.bindings.isEmptyProperty
 import matt.kjs.bindings.not
 import matt.kjs.bindings.or
+import matt.kjs.css.BoxSizing.borderBox
 import matt.kjs.css.FlexDirection.row
 import matt.kjs.css.FontStyle.italic
 import matt.kjs.css.FontWeight.bold
@@ -57,7 +58,7 @@ interface TrialDiv: HTMLElementWrapper<HTMLDivElement> {
 }
 
 
-@Suppress("UNUSED_EXPRESSION")
+@Suppress("UNUSED_EXPRESSION", "LeakingThis")
 open class ImageAndControlsScreen(
   phase: ExperimentPhase,
   cfg: ImageAndControlsScreen.()->Unit = {}
@@ -67,7 +68,7 @@ open class ImageAndControlsScreen(
 ) {
 
   companion object {
-	val TOTAL_WIDTH = WIDTH * 2
+	val TOTAL_WIDTH = WIDTH*2
   }
 
   val stackDiv = div {
@@ -78,7 +79,7 @@ open class ImageAndControlsScreen(
   }
   val controlsDiv: HTMLDivWrapper = div {
 	sty {
-//	  marginBottom = MED_SPACE
+	  boxSizing = borderBox
 	  padding = MED_SPACE
 	  width = WIDTH.px
 	}
