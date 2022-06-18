@@ -47,6 +47,8 @@ import matt.sempart.client.errorDiv.errorDiv
 import matt.sempart.client.params.PARAMS
 import matt.sempart.client.resizeDiv.neededHeight
 import matt.sempart.client.resizeDiv.neededWidth
+import matt.sempart.client.scaleDiv.neededHeight
+import matt.sempart.client.scaleDiv.neededWidth
 import matt.sempart.client.scaleDiv.scaleProp
 import matt.sempart.client.state.DrawingData.ImName.HiLabelledIm
 import matt.sempart.client.state.DrawingData.ImName.SegmentHighlighted
@@ -163,7 +165,7 @@ enum class ExperimentPhase {
 
 	}
 
-	fun determineAndEmit() = PhaseChange.dispatchToAllHTML(currentPhase.value to ExperimentPhase.determine())s
+	fun determineAndEmit() = PhaseChange.dispatchToAllHTML(currentPhase.value to ExperimentPhase.determine())
 
 	fun determine(): ExperimentPhase {
 	  val w = window.innerWidth
