@@ -1,7 +1,6 @@
 package matt.sempart.client.instructionsDiv.instructionsVid
 
 import matt.kjs.css.Display.flex
-import matt.kjs.css.auto
 import matt.kjs.css.percent
 import matt.kjs.css.sty
 import matt.kjs.handlers.setOnClick
@@ -44,7 +43,6 @@ val instructionsVidDiv = ImageAndControlsScreen(InstructionsVid) {
   moveOnButton = controlsDiv.button {
 	sty.width = 100.percent
 	disabled = true
-	sty.margin = auto
 	+"Click here when you are ready to move on"
 	setOnClick { ExperimentState.finishedVid.value = true }
   }
