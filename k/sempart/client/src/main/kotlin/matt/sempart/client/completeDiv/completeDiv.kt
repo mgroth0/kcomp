@@ -4,6 +4,7 @@ import matt.kjs.css.Display.flex
 import matt.kjs.css.FlexDirection.column
 import matt.kjs.css.JustifyContent.center
 import matt.kjs.css.TextAlign
+import matt.kjs.css.px
 import matt.kjs.css.sty
 import matt.kjs.handlers.setOnClick
 import matt.kjs.handlers.setOnInput
@@ -38,9 +39,13 @@ val completeDiv = ExperimentScreen(Complete) {
 	  justifyContent = center
 	  textAlign = TextAlign.center
 	  margin = MED_SPACE
+	  padding = MED_SPACE
 	}
 	+"Optionally, if you would like to give the researchers feedback on this experiment please submit it here."
 	val ta = textArea {
+	  sty {
+		height = 300.px
+	  }
 	  setOnInput {
 		b!!.enabled = true
 	  }
