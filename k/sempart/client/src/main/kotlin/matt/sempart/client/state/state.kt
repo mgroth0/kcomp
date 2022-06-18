@@ -56,6 +56,7 @@ import matt.sempart.client.state.DrawingData.ImName.SegmentSelectedLabelled
 import matt.sempart.client.state.DrawingData.Segment
 import matt.sempart.client.state.ExperimentPhase.Inactive
 import matt.sempart.client.state.ExperimentState.working
+import matt.sempart.client.state.Participant.pid
 import matt.sempart.client.state.TrialPhase.FINISHED
 import matt.sempart.client.state.TrialPhase.UNSELECTED
 import org.w3c.dom.CustomEvent
@@ -93,7 +94,7 @@ object UI {
 }
 
 object Participant {
-  val pid = URLSearchParams(window.location.href.substringAfter("?")).get(QueryParams.PROLIFIC_PID)
+  val pid = URLSearchParams(window.location.href.substringAfter("?")).get(QueryParams.PROLIFIC_PID)!!
 }
 
 
@@ -119,7 +120,7 @@ object ExperimentState {
 
 	  PhaseChange.beforeDispatch {
 		if (it.second == Inactive) {
-		  sendData(Issue(currentTimeMillis(), "participant went idle and experiment was cancelled"))
+		  sendData(Issue(pid, currentTimeMillis(), "participant went idle and experiment was cancelled"))
 		}
 	  }
 

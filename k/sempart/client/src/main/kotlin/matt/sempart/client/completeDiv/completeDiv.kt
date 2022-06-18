@@ -14,6 +14,7 @@ import matt.kjs.prop.VarProp
 import matt.sempart.Feedback
 import matt.sempart.client.const.COMPLETION_URL
 import matt.sempart.client.state.ExperimentPhase.Complete
+import matt.sempart.client.state.Participant.pid
 import matt.sempart.client.state.sendData
 import matt.sempart.client.sty.MED_SPACE
 import matt.sempart.client.sty.box
@@ -61,7 +62,7 @@ val completeDiv = ExperimentScreen(Complete) {
 		enabled = false
 		setOnClick {
 		  enabled = false
-		  sendData(Feedback(ta.value))
+		  sendData(Feedback(pid,ta.value))
 		}
 	  }
 	  sentFeedback.onChangeUntil({ it }, {
