@@ -13,7 +13,7 @@ val devBar by lazy {
   div {
 	sty {
 	  position = absolute
-	  bottom = 100.px
+	  bottom = 50.px
 	  display = flex
 	  flexDirection = row
 	  opacity = 0.25
