@@ -115,7 +115,9 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ImageAndControlsScreen(
 		scale(scaleDiv.sty.transform.funs.filterIsInstance<Scale>().first().args)
 	  }
 	}
-	controlsDiv.sty.justifyContent = spaceBetween
+	addConfig {
+	  controlsDiv.sty.justifyContent = spaceBetween
+	}
   }
 
   fun eventToSeg(e: MouseEvent) = segmentOf(e.pixelIndexInTarget())
