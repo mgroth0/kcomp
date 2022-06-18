@@ -90,7 +90,7 @@ open class ImageAndControlsScreen(
 	  display = flex
 	  flexDirection = column
 	  alignItems = stretch
-	  justifyContent = JustifyContent.spaceEvenly
+	  justifyContent = JustifyContent.center
 	}
   }
   val nothing = cfg()
