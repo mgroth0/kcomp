@@ -156,16 +156,14 @@ enum class ExperimentPhase {
   Scaling, InstructionsVid, Instructions, Trial, Break, Complete, Inactive, Resize, Loading, Err;
 
   companion object {
-	val currentPhase: ReadOnlyBindableProperty<ExperimentPhase> = BindableProperty(determine()).apply {
+	private val currentPhase: ReadOnlyBindableProperty<ExperimentPhase> = BindableProperty(determine()).apply {
 	  PhaseChange.beforeDispatch {
 		if (it.second != value) value = it.second
 	  }
 
 	}
 
-	fun determineAndEmit() {
-	  PhaseChange.dispatchToAllHTML(currentPhase.value to ExperimentPhase.determine())
-	}
+	fun determineAndEmit() = PhaseChange.dispatchToAllHTML(currentPhase.value to ExperimentPhase.determine())s
 
 	fun determine(): ExperimentPhase {
 	  val w = window.innerWidth

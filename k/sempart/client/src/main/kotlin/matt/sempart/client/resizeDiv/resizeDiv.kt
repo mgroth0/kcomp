@@ -8,8 +8,7 @@ import matt.sempart.client.state.ExperimentPhase.Resize
 import matt.sempart.client.trialdiv.ImageAndControlsScreen.Companion.TOTAL_WIDTH
 import matt.sempart.client.ui.ExperimentScreen
 
-fun neededHeight() = scaleProp.value*HEIGHT
-fun neededWidth() = scaleProp.value*TOTAL_WIDTH
+
 
 val resizeDiv = ExperimentScreen(Resize) {
   p {
