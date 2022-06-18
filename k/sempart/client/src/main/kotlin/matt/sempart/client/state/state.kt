@@ -56,6 +56,7 @@ import matt.sempart.client.state.ExperimentPhase.Inactive
 import matt.sempart.client.state.ExperimentState.working
 import matt.sempart.client.state.TrialPhase.FINISHED
 import matt.sempart.client.state.TrialPhase.UNSELECTED
+import matt.sempart.client.trialdiv.ImageAndControlsScreen.Companion.TOTAL_WIDTH
 import org.w3c.dom.CustomEvent
 import org.w3c.dom.CustomEventInit
 import org.w3c.dom.events.Event
@@ -161,7 +162,7 @@ enum class ExperimentPhase {
 	  val h = window.innerHeight
 	  return when {
 		ExperimentState.error != null    -> Err
-		w < 1200 || h < 750              -> Resize
+		w < TOTAL_WIDTH || h < HEIGHT    -> Resize
 		!ExperimentState.finishedScaling -> Scaling
 		!ExperimentState.finishedVid     -> InstructionsVid
 		!ExperimentState.begun           -> Instructions

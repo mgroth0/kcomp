@@ -64,6 +64,11 @@ open class ImageAndControlsScreen(
   phase,
   flexDir = row
 ) {
+
+  companion object {
+	val TOTAL_WIDTH = WIDTH * 2
+  }
+
   val stackDiv = div {
 	sty {
 	  width = WIDTH.px
