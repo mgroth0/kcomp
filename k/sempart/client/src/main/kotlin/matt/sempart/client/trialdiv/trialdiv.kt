@@ -15,10 +15,10 @@ import matt.kjs.css.FlexDirection.row
 import matt.kjs.css.FontStyle.italic
 import matt.kjs.css.FontWeight.bold
 import matt.kjs.css.JustifyContent
+import matt.kjs.css.JustifyContent.spaceBetween
 import matt.kjs.css.JustifyContent.spaceEvenly
 import matt.kjs.css.Position.absolute
 import matt.kjs.css.Transform.Scale
-import matt.kjs.css.percent
 import matt.kjs.css.px
 import matt.kjs.css.sty
 import matt.kjs.handlers.setOnMouseMove
@@ -115,6 +115,7 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ImageAndControlsScreen(
 		scale(scaleDiv.sty.transform.funs.filterIsInstance<Scale>().first().args)
 	  }
 	}
+	controlsDiv.sty.justifyContent = spaceBetween
   }
 
   fun eventToSeg(e: MouseEvent) = segmentOf(e.pixelIndexInTarget())
@@ -182,12 +183,13 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ImageAndControlsScreen(
 	sty {
 	  height = HALF_HEIGHT.px
 	  box()
+	  display = flex
+	  padding = MED_SPACE
+	  justifyContent = spaceEvenly
+	  alignItems = stretch
 	}
 	(LABELS.shuffled() + "Something else" + "I don't know").forEach { l ->
 	  boxButton {
-		sty {
-		  width = 100.percent
-		}
 		hiddenProperty().bind(selectedSegments.isEmptyProperty())
 		disabledProperty().bind(
 		  UI.disabledProp or selectedSegments.binding(
@@ -273,18 +275,18 @@ private fun DrawingTrial.trialDiv(): TrialDiv = object: ImageAndControlsScreen(
 	type = ButtonType.button.realValue
 	sty {
 	  fontWeight = bold
-	  boxButton()
+	  //	  boxButton()
 	}
   })
 
 
   val helpText = controlsDiv.div {
-	hidden = !training
+	if (!training) sty.opacity = 0
 
 	sty {
 	  box()
 	  borderColor = red
-	  height = 300.px
+	  height = 275.px
 	}
 	p {
 
