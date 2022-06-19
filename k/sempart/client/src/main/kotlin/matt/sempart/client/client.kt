@@ -1,6 +1,7 @@
 package matt.sempart.client
 
 import kotlinx.browser.document
+import matt.kjs.bindings.not
 import matt.kjs.css.Color.black
 import matt.kjs.css.Color.white
 import matt.kjs.css.sty
@@ -20,7 +21,6 @@ import matt.sempart.client.loadingDiv.DrawingLoadingProcess
 import matt.sempart.client.params.PARAMS
 import matt.sempart.client.scaleDiv.scaleInput
 import matt.sempart.client.state.DrawingData
-import matt.sempart.client.state.ExperimentPhase.Break
 import matt.sempart.client.state.ExperimentPhase.Scaling
 import matt.sempart.client.state.ExperimentState
 import matt.sempart.client.state.ExperimentState.nameIsGood
@@ -75,16 +75,14 @@ fun main() = defaultMain {
 			sendData(trial.data())
 			if (nextDrawingData != null) {
 			  if ((nextDrawingData.idx - 1)%PARAMS.breakInterval == 0) {
-				PhaseChange.afterEndOfNext(Break) {
-				  presentImage(nextDrawingData)
-				}
+				presentImage(nextDrawingData)
 				ExperimentState.onBreak.value = true
 			  } else presentImage(nextDrawingData)
 			} else ExperimentState.complete.value = true
 		  }
 		}
 		loadingProcess.finish()
-		trial.log += "trial start"
+		ExperimentState.onBreak.not().whenTrueOnce { trial.log += "trial start" }
 	  }
 	}
 	presentImage(DrawingData(imIterator.next(), training = true))
