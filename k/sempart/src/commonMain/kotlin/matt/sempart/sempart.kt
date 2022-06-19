@@ -2,26 +2,29 @@ package matt.sempart
 
 import kotlinx.serialization.Serializable
 
-interface HasPid {
+interface CoreInfo {
   val pid: String
+  val unixTimeMSsessionID: Long
 }
 
 @Serializable
-sealed class ExperimentData(): HasPid
+sealed class ExperimentData(): CoreInfo
 
 @Serializable
 class Issue(
   override val pid: String,
+  override val unixTimeMSsessionID: Long,
   val unixTimeMS: Long,
   val message: String
 ): ExperimentData()
 
 @Serializable
-class Feedback(override val pid: String, val feedback: String): ExperimentData()
+class Feedback(override val pid: String, override val unixTimeMSsessionID: Long, val feedback: String): ExperimentData()
 
 @Serializable
 class TrialData(
   override val pid: String,
+  override val unixTimeMSsessionID: Long,
   val image: String,
   val index: Int,
   val responses: List<SegmentResponse>,
@@ -60,6 +63,12 @@ class FinalData(
 @Serializable
 class Participant(
   val pid: String,
+  val sessions: MutableList<Session> = mutableListOf(),
+)
+
+@Serializable
+class Session(
+  val unixTimeMSsessionID: Long,
   val drawings: MutableList<Drawing> = mutableListOf(),
   val feedback: MutableList<String> = mutableListOf(),
   val issues: MutableList<SimpleIssue> = mutableListOf()

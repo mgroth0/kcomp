@@ -4,6 +4,7 @@ import kotlinx.browser.document
 import matt.kjs.css.Color.black
 import matt.kjs.css.Color.white
 import matt.kjs.css.sty
+import matt.kjs.currentTimeMillis
 import matt.kjs.defaultMain
 import matt.kjs.html.elements.appendWrapper
 import matt.kjs.html.elements.appendWrappers
@@ -31,7 +32,7 @@ import matt.sempart.client.ui.SCREENS
 import org.w3c.dom.HTMLBodyElement
 
 private const val DEV_MODE = false
-
+val unixMSsessionID = currentTimeMillis()
 
 fun main() = defaultMain {
 
