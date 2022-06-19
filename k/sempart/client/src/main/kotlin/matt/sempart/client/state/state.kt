@@ -94,7 +94,7 @@ object UI {
 }
 
 object Participant {
-  val pid = URLSearchParams(window.location.href.substringAfter("?")).get(QueryParams.PROLIFIC_PID)!!
+  var pid = URLSearchParams(window.location.href.substringAfter("?")).get(QueryParams.PROLIFIC_PID)!!
 }
 
 
@@ -131,6 +131,9 @@ object ExperimentState {
   var finishedScaling = VarProp(false).apply {
 	onChange { ExperimentPhase.determineAndEmit() }
   }
+  var nameIsGood = VarProp(false).apply {
+	onChange { ExperimentPhase.determineAndEmit() }
+  }
   var finishedVid = VarProp(false).apply {
 	onChange { ExperimentPhase.determineAndEmit() }
   }
@@ -149,7 +152,7 @@ object ExperimentState {
 }
 
 enum class ExperimentPhase {
-  Scaling, InstructionsVid, Instructions, Trial, Break, Complete, Inactive, Resize, Loading, Err;
+  Name, Scaling, InstructionsVid, Instructions, Trial, Break, Complete, Inactive, Resize, Loading, Err;
 
   companion object {
 	private val currentPhase: ReadOnlyBindableProperty<ExperimentPhase> = BindableProperty(determine()).apply {
@@ -169,6 +172,7 @@ enum class ExperimentPhase {
 		ExperimentState.error.value != null     -> Err
 		w < neededWidth() || h < neededHeight() -> Resize
 		!ExperimentState.finishedScaling.value  -> Scaling
+		!ExperimentState.nameIsGood.value       -> Name
 		!ExperimentState.finishedVid.value      -> InstructionsVid
 		!ExperimentState.begun.value            -> Instructions
 		ExperimentState.complete.value          -> Complete
@@ -302,6 +306,9 @@ class DrawingData(
   override val training: Boolean
 ): Drawing {
 
+  override fun toString(): String {
+	return "${DrawingData::class.simpleName} for $baseImageName"
+  }
 
   override val baseImageName = indexedIm.value
   val idx = indexedIm.index

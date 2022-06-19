@@ -12,6 +12,7 @@ import matt.kjs.html.elements.head.wrapped
 import matt.kjs.nextOrNull
 import matt.kjs.prop.whenTrueOnce
 import matt.sempart.client.const.ORIG_DRAWING_IMS
+import matt.sempart.client.const.PILOT_PID
 import matt.sempart.client.const.TRAIN_IM
 import matt.sempart.client.devBar.devBar
 import matt.sempart.client.loadingDiv.DrawingLoadingProcess
@@ -21,6 +22,7 @@ import matt.sempart.client.state.DrawingData
 import matt.sempart.client.state.ExperimentPhase.Break
 import matt.sempart.client.state.ExperimentPhase.Scaling
 import matt.sempart.client.state.ExperimentState
+import matt.sempart.client.state.Participant.pid
 import matt.sempart.client.state.PhaseChange
 import matt.sempart.client.state.sendData
 import matt.sempart.client.trialdiv.div
@@ -29,7 +31,11 @@ import org.w3c.dom.HTMLBodyElement
 
 private const val DEV_MODE = false
 
+
 fun main() = defaultMain {
+
+  ExperimentState.nameIsGood.value = pid != PILOT_PID
+
   document.head!!.wrapped().apply {
 	title = "Semantic Segmentation"
 	link {

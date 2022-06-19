@@ -35,3 +35,5 @@ val SEND_DATA_PREFIX = "send?PROLIFIC_PID="
 val TRIAL_CONFIRM_MESSAGE = "Are you sure you are ready to proceed? You cannot go back to this image."
 
 val COMPLETION_URL = "https://app.prolific.co/submissions/complete?cc=92B81EA2"
+
+const val PILOT_PID = "TEST"

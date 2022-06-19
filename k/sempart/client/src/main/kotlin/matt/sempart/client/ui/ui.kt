@@ -30,6 +30,7 @@ import matt.sempart.client.inactiveDiv.inactiveDiv
 import matt.sempart.client.instructionsDiv.instructionsDiv
 import matt.sempart.client.instructionsDiv.instructionsVid.instructionsVidDiv
 import matt.sempart.client.loadingDiv.loadingDiv
+import matt.sempart.client.nameDiv.nameDiv
 import matt.sempart.client.resizeDiv.resizeDiv
 import matt.sempart.client.scaleDiv.DEFAULT_SCALE
 import matt.sempart.client.scaleDiv.scaleDiv
@@ -42,6 +43,7 @@ import org.w3c.dom.HTMLDivElement
 val SCREENS by lazy {
   val list = listOf(
 	scaleDiv,
+	nameDiv,
 	instructionsVidDiv,
 	instructionsDiv,
 	resizeDiv,
