@@ -62,6 +62,7 @@ import matt.sempart.client.state.Participant.pid
 import matt.sempart.client.state.TrialPhase.FINISHED
 import matt.sempart.client.state.TrialPhase.UNSELECTED
 import matt.sempart.client.trialdiv.div
+import matt.sempart.client.unixMSsessionID
 import org.w3c.dom.CustomEvent
 import org.w3c.dom.CustomEventInit
 import org.w3c.dom.events.Event
@@ -123,7 +124,12 @@ object ExperimentState {
 
 	  PhaseChange.beforeDispatch {
 		if (it.second == Inactive) {
-		  sendData(Issue(pid, currentTimeMillis(), "participant went idle and experiment was cancelled"))
+		  sendData(
+			Issue(
+			  pid = pid, unixTimeMS = currentTimeMillis(), unixTimeMSsessionID = unixMSsessionID,
+			  message = "participant went idle and experiment was cancelled"
+			)
+		  )
 		}
 	  }
 
@@ -490,6 +496,7 @@ class DrawingTrial(
 
   fun data() = TrialData(
 	pid = pid,
+	unixTimeMSsessionID = unixMSsessionID,
 	image = baseImageName,
 	index = idx,
 	responses = segments.map { SegmentResponse(it.id, it.response!!) },

@@ -19,6 +19,7 @@ import matt.sempart.client.state.sendData
 import matt.sempart.client.sty.MED_SPACE
 import matt.sempart.client.sty.box
 import matt.sempart.client.ui.ExperimentScreen
+import matt.sempart.client.unixMSsessionID
 
 val completeDiv = ExperimentScreen(Complete) {
 
@@ -62,7 +63,7 @@ val completeDiv = ExperimentScreen(Complete) {
 		enabled = false
 		setOnClick {
 		  enabled = false
-		  sendData(Feedback(pid, ta.value)) {
+		  sendData(Feedback(pid = pid, unixTimeMSsessionID = unixMSsessionID, feedback = ta.value)) {
 			sentFeedback.value = true
 		  }
 		}
