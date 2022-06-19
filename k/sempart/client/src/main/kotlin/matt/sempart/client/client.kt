@@ -22,6 +22,7 @@ import matt.sempart.client.state.DrawingData
 import matt.sempart.client.state.ExperimentPhase.Break
 import matt.sempart.client.state.ExperimentPhase.Scaling
 import matt.sempart.client.state.ExperimentState
+import matt.sempart.client.state.ExperimentState.nameIsGood
 import matt.sempart.client.state.Participant.pid
 import matt.sempart.client.state.PhaseChange
 import matt.sempart.client.state.sendData
@@ -35,6 +36,7 @@ private const val DEV_MODE = false
 fun main() = defaultMain {
 
   ExperimentState.nameIsGood.value = pid != PILOT_PID
+  println("nameIsGood1=${nameIsGood.value}")
 
   document.head!!.wrapped().apply {
 	title = "Semantic Segmentation"
@@ -56,6 +58,7 @@ fun main() = defaultMain {
   val imIterator = images.withIndex().toList().listIterator()
 
   PhaseChange.afterEndOfNext(Scaling) {
+	println("nameIsGood2=${nameIsGood.value}")
 	fun presentImage(drawingData: DrawingData) {
 	  val loadingProcess = DrawingLoadingProcess("downloading image data")
 	  loadingProcess.start()
