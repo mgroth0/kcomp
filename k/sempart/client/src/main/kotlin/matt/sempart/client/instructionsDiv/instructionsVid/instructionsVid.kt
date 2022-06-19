@@ -1,7 +1,7 @@
 package matt.sempart.client.instructionsDiv.instructionsVid
 
-import matt.kjs.css.Display.flex
-import matt.kjs.css.percent
+import matt.klib.css.Display.flex
+import matt.klib.css.percent
 import matt.kjs.css.sty
 import matt.kjs.handlers.setOnClick
 import matt.kjs.html.elements.button.HTMLButtonWrapper

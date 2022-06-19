@@ -1,13 +1,13 @@
 package matt.sempart.client.scaleDiv
 
 //import matt.sempart.client.mainDivClass
-import matt.kjs.css.Position.absolute
-import matt.kjs.css.percent
+import matt.klib.css.Position.absolute
+import matt.klib.css.percent
 import matt.kjs.css.sty
 import matt.kjs.handlers.setOnClick
 import matt.kjs.handlers.setOnInput
 import matt.kjs.html.elements.rangeInput
-import matt.kjs.prop.VarProp
+import matt.klib.prop.VarProp
 import matt.kjs.props.hiddenProperty
 import matt.sempart.client.const.HEIGHT
 import matt.sempart.client.const.IMAGE_INCH_WIDTH

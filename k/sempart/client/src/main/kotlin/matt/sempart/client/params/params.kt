@@ -1,8 +1,8 @@
 package matt.sempart.client.params
 
 import kotlinx.serialization.Serializable
-import matt.kjs.HOUR_MS
-import matt.kjs.MINUTE_MS
+import matt.klib.HOUR_MS
+import matt.klib.MINUTE_MS
 import matt.klib.todo
 
 

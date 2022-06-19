@@ -2,8 +2,8 @@ package matt.sempart.client
 
 import kotlinx.browser.document
 import matt.kjs.bindings.not
-import matt.kjs.css.Color.black
-import matt.kjs.css.Color.white
+import matt.klib.css.Color.black
+import matt.klib.css.Color.white
 import matt.kjs.css.sty
 import matt.kjs.currentTimeMillis
 import matt.kjs.defaultMain
@@ -11,8 +11,8 @@ import matt.kjs.html.elements.appendWrapper
 import matt.kjs.html.elements.appendWrappers
 import matt.kjs.html.elements.body.wrapped
 import matt.kjs.html.elements.head.wrapped
-import matt.kjs.nextOrNull
-import matt.kjs.prop.whenTrueOnce
+import matt.klib.nextOrNull
+import matt.klib.prop.whenTrueOnce
 import matt.sempart.client.const.ORIG_DRAWING_IMS
 import matt.sempart.client.const.PILOT_PID
 import matt.sempart.client.const.TRAIN_IM

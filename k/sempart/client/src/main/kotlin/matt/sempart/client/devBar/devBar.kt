@@ -1,9 +1,9 @@
 package matt.sempart.client.devBar
 
-import matt.kjs.css.Display.flex
-import matt.kjs.css.FlexDirection.row
-import matt.kjs.css.Position.absolute
-import matt.kjs.css.px
+import matt.klib.css.Display.flex
+import matt.klib.css.FlexDirection.row
+import matt.klib.css.Position.absolute
+import matt.klib.css.px
 import matt.kjs.css.sty
 import matt.kjs.handlers.setOnClick
 import matt.kjs.html.elements.div

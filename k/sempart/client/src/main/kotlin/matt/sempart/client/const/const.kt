@@ -1,6 +1,6 @@
 package matt.sempart.client.const
 
-import matt.kjs.Path
+import matt.klib.Path
 
 const val WIDTH: Int = 600
 const val HEIGHT: Int = 700

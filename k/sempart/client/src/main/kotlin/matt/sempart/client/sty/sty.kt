@@ -1,10 +1,10 @@
 package matt.sempart.client.sty
 
-import matt.kjs.css.BorderStyle.solid
-import matt.kjs.css.BorderWidth.thin
-import matt.kjs.css.BoxSizing.borderBox
-import matt.kjs.css.MyStyleDsl
-import matt.kjs.css.px
+import matt.klib.css.BorderStyle.solid
+import matt.klib.css.BorderWidth.thin
+import matt.klib.css.BoxSizing.borderBox
+import matt.klib.css.MyStyleDsl
+import matt.klib.css.px
 
 fun MyStyleDsl.box() {
   borderStyle = solid

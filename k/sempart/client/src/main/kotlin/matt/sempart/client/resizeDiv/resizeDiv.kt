@@ -1,6 +1,6 @@
 package matt.sempart.client.resizeDiv
 
-import matt.kjs.css.auto
+import matt.klib.css.auto
 import matt.kjs.css.sty
 import matt.sempart.client.scaleDiv.neededHeight
 import matt.sempart.client.scaleDiv.neededWidth

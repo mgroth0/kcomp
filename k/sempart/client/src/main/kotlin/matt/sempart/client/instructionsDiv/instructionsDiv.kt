@@ -1,7 +1,7 @@
 package matt.sempart.client.instructionsDiv
 
-import matt.kjs.css.auto
-import matt.kjs.css.px
+import matt.klib.css.auto
+import matt.klib.css.px
 import matt.kjs.css.sty
 import matt.kjs.handlers.setOnClick
 import matt.sempart.client.const.INSTRUCTIONS_IM_RELATIVE
