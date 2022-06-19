@@ -6,7 +6,7 @@ import matt.kjs.css.percent
 import matt.kjs.css.sty
 import matt.kjs.handlers.setOnClick
 import matt.kjs.handlers.setOnInput
-import matt.kjs.html.elements.input
+import matt.kjs.html.elements.rangeInput
 import matt.kjs.prop.VarProp
 import matt.kjs.props.hiddenProperty
 import matt.sempart.client.const.HEIGHT
@@ -43,7 +43,7 @@ val scaleDiv = ImageAndControlsScreen(Scaling) {
 
 
 val scaleInput by lazy {
-  input {
+  rangeInput {
 	/*cant do and end of scaling becuase resize phase can happen during*/
 	hiddenProperty().bind(ExperimentState.finishedScaling)
 	type = "range"
