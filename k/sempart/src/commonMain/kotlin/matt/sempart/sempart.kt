@@ -54,21 +54,21 @@ object QueryParams {
 
 @Serializable
 class FinalData(
-  val participants: List<Participant>
+  val participants: MutableList<Participant> = mutableListOf()
 )
 
 @Serializable
 class Participant(
   val pid: String,
-  val drawings: List<Drawing>,
-  val feedback: List<String>,
-  val issues: List<SimpleIssue>
+  val drawings: MutableList<Drawing> = mutableListOf(),
+  val feedback: MutableList<String> = mutableListOf(),
+  val issues: MutableList<SimpleIssue> = mutableListOf()
 )
 
 @Serializable
 class Drawing(
-  val responses: List<SegmentResponse>,
-  val log: List<LogMessage>
+  val responses: MutableList<SegmentResponse> = mutableListOf(),
+  val log: MutableList<LogMessage> = mutableListOf()
 )
 
 @Serializable
