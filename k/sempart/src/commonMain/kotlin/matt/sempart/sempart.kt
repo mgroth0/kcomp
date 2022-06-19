@@ -51,3 +51,28 @@ object QueryParams {
   val STUDY_ID = "STUDY_ID"
   val preview = "preview"
 }
+
+@Serializable
+class FinalData(
+  val participants: List<Participant>
+)
+
+@Serializable
+class Participant(
+  val pid: String,
+  val drawings: List<Drawing>,
+  val feedback: List<String>,
+  val issues: List<SimpleIssue>
+)
+
+@Serializable
+class Drawing(
+  val responses: List<SegmentResponse>,
+  val log: List<LogMessage>
+)
+
+@Serializable
+class SimpleIssue(
+  val unixTimeMS: Long,
+  val message: String
+)
