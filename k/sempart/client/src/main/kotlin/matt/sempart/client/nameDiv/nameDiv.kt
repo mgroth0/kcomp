@@ -1,5 +1,6 @@
 package matt.sempart.client.nameDiv
 
+import matt.kjs.handlers.setOnClick
 import matt.kjs.handlers.setOnInput
 import matt.kjs.html.elements.button.HTMLButtonWrapper
 import matt.sempart.client.state.ExperimentPhase.Name
@@ -17,8 +18,10 @@ val nameDiv = ExperimentScreen(Name) {
   }
   b = button {
 	disabled = true
-	Participant.pid = encodeURIComponent(t.value)
-	ExperimentState.nameIsGood.value = true
+	setOnClick {
+	  Participant.pid = encodeURIComponent(t.value)
+	  ExperimentState.nameIsGood.value = true
+	}
   }
 }
 
