@@ -46,7 +46,6 @@ val scaleInput by lazy {
   rangeInput {
 	/*cant do and end of scaling becuase resize phase can happen during*/
 	hiddenProperty().bind(ExperimentState.finishedScaling)
-	type = "range"
 	step = "0.01"
 	min = MIN_SCALE.toString()
 	defaultValue = DEFAULT_SCALE.toString()
