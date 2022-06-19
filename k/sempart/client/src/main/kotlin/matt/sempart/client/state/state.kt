@@ -481,11 +481,10 @@ class DrawingTrial(
   }
 
   fun hover(seg: Segment?) {
-	if (seg == hoveredSeg.value) {
+	if (seg == hoveredSeg.value) return
+	if (seg == null) {
 	  div.sty.cursor = null
-	  return
-	}
-	div.sty.cursor = Cursor.pointer
+	} else div.sty.cursor = Cursor.pointer
 	hoveredSeg.value = seg
   }
 
