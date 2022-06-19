@@ -15,6 +15,11 @@ val instructionsVidDiv = ImageAndControlsScreen(InstructionsVid) {
   stackDiv.sty {
 	display = flex
   }
+
+  controlsDiv.p {
+	+"please turn up your volume so you can hear the video."
+  }
+
   var playPauseButton: HTMLButtonWrapper? = null
   var moveOnButton: HTMLButtonWrapper? = null
   val vid = stackDiv.video {
@@ -33,7 +38,7 @@ val instructionsVidDiv = ImageAndControlsScreen(InstructionsVid) {
   }
   playPauseButton = controlsDiv.button {
 	sty.width = 100.percent
-	disabled = true
+	//	disabled = true
 	+"play/pause"
 	setOnClick {
 	  if (vid.paused) vid.play()

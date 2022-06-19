@@ -14,6 +14,7 @@ val instructionsDiv = ImageAndControlsScreen(Instructions) {
   stackDiv.img {
 	src = INSTRUCTIONS_IM_RELATIVE
   }
+
   controlsDiv.p {
 	sty {
 	  width = WIDTH.px

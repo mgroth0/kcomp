@@ -12,6 +12,8 @@ import matt.kjs.bind.binding
 import matt.kjs.bindings.and
 import matt.kjs.bindings.isNull
 import matt.kjs.bindings.not
+import matt.kjs.css.Cursor
+import matt.kjs.css.sty
 import matt.kjs.currentTimeMillis
 import matt.kjs.every
 import matt.kjs.first
@@ -59,6 +61,7 @@ import matt.sempart.client.state.ExperimentState.working
 import matt.sempart.client.state.Participant.pid
 import matt.sempart.client.state.TrialPhase.FINISHED
 import matt.sempart.client.state.TrialPhase.UNSELECTED
+import matt.sempart.client.trialdiv.div
 import org.w3c.dom.CustomEvent
 import org.w3c.dom.CustomEventInit
 import org.w3c.dom.events.Event
@@ -478,7 +481,11 @@ class DrawingTrial(
   }
 
   fun hover(seg: Segment?) {
-	if (seg == hoveredSeg.value) return
+	if (seg == hoveredSeg.value) {
+	  div.sty.cursor = null
+	  return
+	}
+	div.sty.cursor = Cursor.pointer
 	hoveredSeg.value = seg
   }
 

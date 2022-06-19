@@ -37,3 +37,5 @@ val TRIAL_CONFIRM_MESSAGE = "Are you sure you are ready to proceed? You cannot g
 val COMPLETION_URL = "https://app.prolific.co/submissions/complete?cc=92B81EA2"
 
 const val PILOT_PID = "TEST"
+
+const val IMAGE_INCH_WIDTH = 4
