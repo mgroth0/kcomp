@@ -15,7 +15,6 @@ import matt.kjs.css.FlexDirection.column
 import matt.kjs.css.FlexDirection.row
 import matt.kjs.css.FontStyle.italic
 import matt.kjs.css.FontWeight.bold
-import matt.kjs.css.JustifyContent
 import matt.kjs.css.JustifyContent.spaceBetween
 import matt.kjs.css.JustifyContent.spaceEvenly
 import matt.kjs.css.Position.absolute
@@ -37,6 +36,7 @@ import matt.kjs.props.disabledProperty
 import matt.kjs.props.hiddenProperty
 import matt.kjs.props.innerHTMLProperty
 import matt.kjs.showing
+import matt.klib.css.JustifyContent
 import matt.klib.dmap.withStoringDefault
 import matt.sempart.client.const.HALF_HEIGHT
 import matt.sempart.client.const.HEIGHT

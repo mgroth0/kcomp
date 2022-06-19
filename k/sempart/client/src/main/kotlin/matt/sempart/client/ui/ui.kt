@@ -11,7 +11,6 @@ import matt.kjs.css.Display.flex
 import matt.kjs.css.Display.none
 import matt.kjs.css.FlexDirection
 import matt.kjs.css.FlexDirection.column
-import matt.kjs.css.JustifyContent
 import matt.kjs.css.Px
 import matt.kjs.css.percent
 import matt.kjs.css.px
@@ -22,6 +21,7 @@ import matt.kjs.html.elements.WithDefaultDisplay
 import matt.kjs.html.elements.button.HTMLButtonWrapper
 import matt.kjs.prop.BindableProperty
 import matt.kjs.prop.ReadOnlyBindableProperty
+import matt.klib.css.JustifyContent
 import matt.sempart.client.breakDiv.breakDiv
 import matt.sempart.client.completeDiv.completeDiv
 import matt.sempart.client.const.HALF_WIDTH

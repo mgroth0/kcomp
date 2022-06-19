@@ -68,7 +68,7 @@ fun VagrantfileForSingularityBuild(buildFolder: MFile) = """
     # Example for VirtualBox:
     #
     # config.vm.provider "virtualbox" do |vb|
-    #   # Display the VirtualBox GUI when booting the machine
+    #   # matt.klib.css.Display the VirtualBox GUI when booting the machine
     #   vb.gui = true
     #
     #   # Customize the amount of memory on the VM:

@@ -4,13 +4,13 @@ import matt.kjs.css.Display.flex
 import matt.kjs.css.FlexDirection.column
 import matt.kjs.css.JustifyContent.center
 import matt.kjs.css.JustifyContent.spaceEvenly
-import matt.kjs.css.TextAlign
 import matt.kjs.css.px
 import matt.kjs.css.sty
 import matt.kjs.handlers.setOnClick
 import matt.kjs.handlers.setOnInput
 import matt.kjs.html.elements.button.HTMLButtonWrapper
 import matt.kjs.prop.VarProp
+import matt.klib.css.TextAlign
 import matt.sempart.Feedback
 import matt.sempart.client.const.COMPLETION_URL
 import matt.sempart.client.state.ExperimentPhase.Complete

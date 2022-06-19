@@ -12,7 +12,6 @@ import matt.kjs.bind.binding
 import matt.kjs.bindings.and
 import matt.kjs.bindings.isNull
 import matt.kjs.bindings.not
-import matt.kjs.css.Cursor
 import matt.kjs.css.sty
 import matt.kjs.currentTimeMillis
 import matt.kjs.every
@@ -34,6 +33,7 @@ import matt.kjs.req.HTTPType.POST
 import matt.kjs.req.SimpleSuccess
 import matt.kjs.req.Success
 import matt.kjs.req.SuccessText
+import matt.klib.css.Cursor
 import matt.klib.oset.BasicObservableSet
 import matt.sempart.ExperimentData
 import matt.sempart.Issue

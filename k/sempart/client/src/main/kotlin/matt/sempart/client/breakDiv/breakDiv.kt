@@ -4,10 +4,10 @@ import kotlinx.html.ButtonType
 import matt.kjs.css.Display.flex
 import matt.kjs.css.FlexDirection.column
 import matt.kjs.css.JustifyContent.center
-import matt.kjs.css.TextAlign
 import matt.kjs.css.px
 import matt.kjs.css.sty
 import matt.kjs.handlers.setOnClick
+import matt.klib.css.TextAlign
 import matt.sempart.client.const.WIDTH
 import matt.sempart.client.state.ExperimentPhase.Break
 import matt.sempart.client.state.ExperimentState
