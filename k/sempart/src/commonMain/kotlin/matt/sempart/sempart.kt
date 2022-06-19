@@ -67,6 +67,7 @@ class Participant(
 
 @Serializable
 class Drawing(
+  val image: String,
   val responses: MutableList<SegmentResponse> = mutableListOf(),
   val log: MutableList<LogMessage> = mutableListOf()
 )
