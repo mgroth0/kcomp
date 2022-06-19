@@ -24,7 +24,7 @@ val nameDiv = ExperimentScreen(Name) {
   val t = textInput {
 	sty.margin = MED_SPACE
 	setOnInput {
-	  b!!.disabled = value.isNotBlank()
+	  b!!.enabled = value.isNotBlank()
 	}
   }
   b = button {
