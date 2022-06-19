@@ -16,8 +16,6 @@ import matt.kjlib.jmath.ranges.step
 import matt.kjlib.jmath.times
 import matt.kjlib.jmath.toApfloat
 import matt.klib.commons.get
-import matt.klib.file.ext.text
-import matt.klib.file.ext.write
 import matt.klib.lang.err
 import matt.klib.lang.go
 import matt.klib.math.Point
