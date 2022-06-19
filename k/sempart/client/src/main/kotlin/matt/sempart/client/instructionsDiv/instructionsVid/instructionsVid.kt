@@ -8,7 +8,6 @@ import matt.kjs.html.elements.button.HTMLButtonWrapper
 import matt.sempart.client.const.INSTRUCTIONS_VID_WOLFRAM
 import matt.sempart.client.state.ExperimentPhase.InstructionsVid
 import matt.sempart.client.state.ExperimentState
-import matt.sempart.client.state.PhaseChange
 import matt.sempart.client.trialdiv.ImageAndControlsScreen
 
 val instructionsVidDiv = ImageAndControlsScreen(InstructionsVid) {
@@ -17,7 +16,7 @@ val instructionsVidDiv = ImageAndControlsScreen(InstructionsVid) {
   }
 
   controlsDiv.p {
-	+"please turn up your volume so you can hear the video."
+	+"Please turn up your volume so you can hear the video."
   }
 
   var playPauseButton: HTMLButtonWrapper? = null
@@ -32,9 +31,9 @@ val instructionsVidDiv = ImageAndControlsScreen(InstructionsVid) {
 	  playPauseButton!!.disabled = false
 	  moveOnButton!!.disabled = false
 	}
-	PhaseChange.atStartOf(InstructionsVid) {
+	/*PhaseChange.atStartOf(InstructionsVid) {
 	  play()
-	}
+	}*/
   }
   playPauseButton = controlsDiv.button {
 	sty.width = 100.percent
