@@ -52,3 +52,9 @@
 [submodule "k/mstruct"]
 	path = k/mstruct
 	url = https://github.com/mgroth0/mstruct
+[submodule "k/reflect"]
+	path = k/reflect
+	url = https://github.com/mgroth0/reflect
+[submodule "k/gui"]
+	path = k/gui
+	url = https://github.com/mgroth0/gui
