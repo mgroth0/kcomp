@@ -10,9 +10,6 @@
 [submodule "KJ/hurricanefx"]
 	path = KJ/hurricanefx
 	url = https://github.com/mgroth0/hurricanefx
-[submodule "KJ/auto"]
-	path = KJ/auto
-	url = https://github.com/mgroth0/auto
 [submodule "KJ/exec"]
 	path = KJ/exec
 	url = https://github.com/mgroth0/exec
@@ -55,3 +52,9 @@
 [submodule "k/klib"]
 	path = k/klib
 	url = https://github.com/mgroth0/klib
+[submodule "k/auto"]
+	path = k/auto
+	url = https://github.com/mgroth0/auto
+[submodule "k/async"]
+	path = k/async
+	url = https://github.com/mgroth0/async
