@@ -4,9 +4,6 @@
 [submodule "KJ/kjlib"]
 	path = KJ/kjlib
 	url = https://github.com/mgroth0/kjlib
-[submodule "KJ/json"]
-	path = KJ/json
-	url = https://github.com/mgroth0/json
 [submodule "style"]
 	path = style
 	url = https://github.com/mgroth0/style
@@ -52,3 +49,6 @@
 [submodule "k/hotkey"]
 	path = k/hotkey
 	url = https://github.com/mgroth0/hotkey
+[submodule "k/hurricanefx"]
+	path = k/hurricanefx
+	url = https://github.com/mgroth0/hurricanefx
