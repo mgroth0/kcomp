@@ -1,9 +1,6 @@
 [submodule "KJ/reflect"]
 	path = KJ/reflect
 	url = https://github.com/mgroth0/reflect
-[submodule "KJ/kjlib"]
-	path = KJ/kjlib
-	url = https://github.com/mgroth0/kjlib
 [submodule "style"]
 	path = style
 	url = https://github.com/mgroth0/style
