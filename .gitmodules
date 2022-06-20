@@ -37,9 +37,6 @@
 [submodule "KJ/dataman"]
 	path = KJ/dataman
 	url = https://github.com/mgroth0/dataman
-[submodule "KJ/async"]
-	path = KJ/async
-	url = https://github.com/mgroth0/async
 [submodule "KJ/caching"]
 	path = KJ/caching
 	url = https://github.com/mgroth0/caching
