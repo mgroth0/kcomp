@@ -1,6 +1,3 @@
-[submodule "KJ/reflect"]
-	path = KJ/reflect
-	url = https://github.com/mgroth0/reflect
 [submodule "style"]
 	path = style
 	url = https://github.com/mgroth0/style
@@ -46,3 +43,12 @@
 [submodule "k/hurricanefx"]
 	path = k/hurricanefx
 	url = https://github.com/mgroth0/hurricanefx
+[submodule "k/json"]
+	path = k/json
+	url = https://github.com/mgroth0/json
+[submodule "k/kjlib"]
+	path = k/kjlib
+	url = https://github.com/mgroth0/kjlib
+[submodule "k/mstruct"]
+	path = k/mstruct
+	url = https://github.com/mgroth0/mstruct
