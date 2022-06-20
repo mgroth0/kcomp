@@ -10,9 +10,6 @@
 [submodule "KJ/hurricanefx"]
 	path = KJ/hurricanefx
 	url = https://github.com/mgroth0/hurricanefx
-[submodule "KJ/gui"]
-	path = KJ/gui
-	url = https://github.com/mgroth0/gui
 [submodule "style"]
 	path = style
 	url = https://github.com/mgroth0/style
@@ -25,15 +22,9 @@
 [submodule "KJ/hotkey"]
 	path = KJ/hotkey
 	url = https://github.com/mgroth0/hotkey
-[submodule "KJ/fxlib"]
-	path = KJ/fxlib
-	url = https://github.com/mgroth0/fxlib
 [submodule "k/stream"]
 	path = k/stream
 	url = https://github.com/mgroth0/stream
-[submodule "KJ/fx"]
-	path = KJ/fx
-	url = https://github.com/mgroth0/fx
 [submodule "k/key"]
 	path = k/key
 	url = https://github.com/mgroth0/key
@@ -55,3 +46,12 @@
 [submodule "k/dataman"]
 	path = k/dataman
 	url = https://github.com/mgroth0/dataman
+[submodule "k/exec"]
+	path = k/exec
+	url = https://github.com/mgroth0/exec
+[submodule "k/fx"]
+	path = k/fx
+	url = https://github.com/mgroth0/fx
+[submodule "k/fxlib"]
+	path = k/fxlib
+	url = https://github.com/mgroth0/fxlib
