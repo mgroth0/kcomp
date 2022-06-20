@@ -4,9 +4,6 @@
 [submodule "style"]
 	path = style
 	url = https://github.com/mgroth0/style
-[submodule "KJ/mstruct"]
-	path = KJ/mstruct
-	url = https://github.com/mgroth0/mstruct
 [submodule "RootFiles"]
 	path = RootFiles
 	url = https://github.com/mgroth0/RootFiles
