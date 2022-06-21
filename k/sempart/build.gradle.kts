@@ -6,7 +6,7 @@ implementations (
 
 )
 dependencies {
-  jsMainImplementation(libs.kotlinx.serialization.json)
+  commonMainImplementation(libs.kotlinx.serialization.json)
 }
 
 plugins {
