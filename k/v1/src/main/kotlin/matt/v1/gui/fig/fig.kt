@@ -128,7 +128,7 @@ class Figure: Pane() {
 	"use GuiUpdate.fromJson() instead, or if I really want to do this I can reimplement it later but currently it probably wont work right"
   )
   fun loadJson(file: MFile) {
-	file.loadJson(JsonArray::class).forEachIndexed { i, e ->
+	file.loadJson<JsonArray>().forEachIndexed { i, e ->
 	  val s = series[i]
 	  e.jsonArray.forEachIndexed { ii, p ->
 		val point = p.jsonObject
