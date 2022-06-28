@@ -3,10 +3,10 @@ package matt.sempart.client.sty
 import matt.klib.css.BorderStyle.solid
 import matt.klib.css.BorderWidth.thin
 import matt.klib.css.BoxSizing.borderBox
-import matt.klib.css.MyStyleDsl
+import matt.klib.css.CssStyleDSL
 import matt.klib.css.px
 
-fun MyStyleDsl.box() {
+fun CssStyleDSL.box() {
   borderStyle = solid
   borderWidth = thin
   //  margin = MED_SPACE
