@@ -1,5 +1,4 @@
-import matt.klib.commons.RootProjects.kcomp
-import matt.klib.commons.plus
+import matt.file.commons.RootProjects.kcomp
 
 modtype = APP
 dependencies {
