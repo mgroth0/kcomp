@@ -1,6 +1,6 @@
 package matt.remote.vagrant
 
-import matt.klib.file.MFile
+import matt.file.MFile
 
 
 /*fun VagrantfileForSingularityBuild(buildFolder: File) = """

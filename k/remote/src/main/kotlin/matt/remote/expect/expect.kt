@@ -1,6 +1,6 @@
 package matt.remote.expect
 
-import matt.klib.file.MFile
+import matt.file.MFile
 import matt.remote.host.prompt
 import net.sf.expectit.Expect
 import net.sf.expectit.Result
