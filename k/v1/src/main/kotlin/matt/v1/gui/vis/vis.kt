@@ -18,6 +18,7 @@ import matt.hurricanefx.eye.collect.toObservable
 import matt.hurricanefx.eye.lib.onChange
 import matt.hurricanefx.lazyTab
 import matt.file.commons.DATA_FOLDER
+import matt.file.mFile
 import matt.klib.dmap.withStoringDefault
 import matt.klib.lang.NEVER
 import matt.klib.math.floorInt
@@ -171,7 +172,7 @@ class IttiKochVisualizer: FilteredImageVisualizer(
   }
 
   private val featureCache = mutableMapOf<String, Map<FeatureDef, NDArray<Int, D2>>>().withStoringDefault {
-	Salience().computeFeatures(preprocessImage(MFile(it))).apply {
+	Salience().computeFeatures(preprocessImage(mFile(it))).apply {
 	  println("computed $size features")
 	}
   }
