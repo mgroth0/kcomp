@@ -23,7 +23,7 @@ import matt.json.custom.double
 import matt.json.prim.loadJson
 import matt.kjlib.jmath.ranges.step
 import matt.klib.dmap.withStoringDefault
-import matt.klib.file.MFile
+import matt.file.MFile
 import matt.stream.applyEach
 import matt.v1.comp.Fit.Gaussian
 import matt.v1.figmodels.AxisConfig

@@ -6,8 +6,7 @@ import matt.kjlib.jmath.ranges.step
 import matt.kjlib.jmath.times
 import matt.kjlib.jmath.toApfloat
 import matt.stream.forEachPairing
-import matt.klib.commons.USER_HOME
-import matt.klib.commons.get
+import matt.file.commons.USER_HOME
 import matt.klib.lang.err
 import matt.klib.math.BasicPoint
 import matt.klib.stream.allUnique

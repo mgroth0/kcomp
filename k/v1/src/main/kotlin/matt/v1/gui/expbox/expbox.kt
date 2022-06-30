@@ -39,6 +39,7 @@ import matt.hurricanefx.tornadofx.nodes.add
 import matt.hurricanefx.tornadofx.nodes.disableWhen
 import matt.hurricanefx.tornadofx.tab.staticTab
 import matt.hurricanefx.tornadofx.tab.tabpane
+import matt.hurricanefx.wrapper.VBoxWrapper
 import matt.klib.lang.cap
 import matt.klib.str.addSpacesUntilLengthIs
 import matt.stream.map.lazyMap
@@ -116,7 +117,7 @@ fun EventTarget.figBox(statusLabel: StatusLabel, opp: HBox.()->Unit) = hbox {
 	dragsSnapshot()
   }
   var figControlBox: VBox? = null
-  val rightBox = vbox()
+  val rightBox = VBoxWrapper(vbox())
   val expConsole = rightBox.customConsole(takesInput = false) {
 	//	red()
   }

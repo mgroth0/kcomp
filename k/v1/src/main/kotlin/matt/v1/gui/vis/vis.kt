@@ -16,10 +16,8 @@ import matt.gui.resize.DragResizer
 import matt.hurricanefx.eye.collect.toObservable
 import matt.hurricanefx.eye.lib.onChange
 import matt.hurricanefx.lazyTab
-import matt.klib.commons.DATA_FOLDER
-import matt.klib.commons.get
+import matt.file.commons.DATA_FOLDER
 import matt.klib.dmap.withStoringDefault
-import matt.klib.file.MFile
 import matt.klib.lang.NEVER
 import matt.klib.math.floorInt
 import matt.v1.gui.GuiMode

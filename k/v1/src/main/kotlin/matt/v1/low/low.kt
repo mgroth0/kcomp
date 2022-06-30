@@ -25,9 +25,8 @@ import matt.kjlib.jmath.ser.ApintSerializer
 import matt.kjlib.jmath.times
 import matt.kjlib.jmath.toApfloat
 import matt.kjlib.jmath.unaryMinus
-import matt.klib.commons.REGISTERED_FOLDER
-import matt.klib.commons.get
-import matt.klib.file.ext.filterHasExtension
+import matt.file.commons.REGISTERED_FOLDER
+import matt.file.ext.filterHasExtension
 import matt.klib.log.warn
 import matt.klib.math.BasicPoint
 import matt.klib.math.Point
