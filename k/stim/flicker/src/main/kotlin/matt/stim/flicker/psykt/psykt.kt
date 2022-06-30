@@ -184,15 +184,15 @@ class Logger {
 	//                "Psykt-" +
 	//                "${currentTask!!::class.simpleName}${File.separator}${dateString()}--${currentSubject!!.name}${currentSubjectIteration}" + ".log")
 	logFile =
-	  MFile(System.getProperty("user.home") + "${MFile.separator}Desktop${MFile.separator}${dateString()}--${currentSubject!!.name}${currentSubjectIteration}" + ".log")
+	  mFile(System.getProperty("user.home") + "${MFile.separator}Desktop${MFile.separator}${dateString()}--${currentSubject!!.name}${currentSubjectIteration}" + ".log")
   }
 
-  val dataFolder = MFile("data")
+  val dataFolder = mFile("data")
   var currentTask: Task? = null
   var currentSubject: Subject? = null
   var currentTrial = 0
   var currentSubjectIteration = 1
-  var logFile = MFile("data/nulllog.txt")
+  var logFile = mFile("data/nulllog.txt")
 }
 
 abstract class Task() {
@@ -310,7 +310,7 @@ class APVT: Task() {
   }
 
   val soundClip by lazy {
-	val sound = Media(MFile("sounds" + MFile.separator + soundProp.get()).toURI().toString())
+	val sound = Media(mFile("sounds" + MFile.separator + soundProp.get()).toURI().toString())
 	MediaPlayer(sound)
   }
 
@@ -929,15 +929,15 @@ class ECEO: Task() {
   val thankYou = "thank you.m4a"
 
   val closeSoundClip by lazy {
-	val sound = Media(MFile("sounds" + MFile.separator + closeFile).toURI().toString())
+	val sound = Media(mFile("sounds" + MFile.separator + closeFile).toURI().toString())
 	MediaPlayer(sound)
   }
   val openSoundClip by lazy {
-	val sound = Media(MFile("sounds" + MFile.separator + openFile).toURI().toString())
+	val sound = Media(mFile("sounds" + MFile.separator + openFile).toURI().toString())
 	MediaPlayer(sound)
   }
   val thankYouClip by lazy {
-	val sound = Media(MFile("sounds" + MFile.separator + thankYou).toURI().toString())
+	val sound = Media(mFile("sounds" + MFile.separator + thankYou).toURI().toString())
 	MediaPlayer(sound)
   }
 
@@ -966,7 +966,7 @@ class NBack: Task() {
   lateinit var thread: Thread
   var stimImageView: ImageView? = null
   val stimHistory = mutableListOf<MFile>()
-  val stimuli = (MFile("images") + ("stimuli")).listFiles()!!
+  val stimuli = (mFile("images") + ("stimuli")).listFiles()!!
   val numStimuli = stimuli.size
   var stimImage: MFile? = null
   var shouldPress: Boolean = false
@@ -1251,15 +1251,15 @@ val lookAtScreen = "look_at_screen.m4a"
 val thankYou = "thank you.m4a"
 
 val lookAtWallClip by lazy {
-  val sound = Media(MFile("sounds" + MFile.separator + lookAtWall).toURI().toString())
+  val sound = Media(mFile("sounds" + MFile.separator + lookAtWall).toURI().toString())
   MediaPlayer(sound)
 }
 val lookAtScreenClip by lazy {
-  val sound = Media(MFile("sounds" + MFile.separator + lookAtScreen).toURI().toString())
+  val sound = Media(mFile("sounds" + MFile.separator + lookAtScreen).toURI().toString())
   MediaPlayer(sound)
 }
 val thankYouClip by lazy {
-  val sound = Media(MFile("sounds" + MFile.separator + thankYou).toURI().toString())
+  val sound = Media(mFile("sounds" + MFile.separator + thankYou).toURI().toString())
   MediaPlayer(sound)
 }
 
@@ -1792,7 +1792,7 @@ class SpeedReading: Task() {
   fun text() =
 	if (reading.get().contains(".txt")) {
 	  adaptive.set(false)
-	  MFile("readings" + MFile.separator + reading).readText()
+	  mFile("readings" + MFile.separator + reading).readText()
 	} else {
 	  currentBlock = adaptiveReading.blocks[blockIndex]
 	  currentBlock.text
@@ -2282,7 +2282,7 @@ class Video: Task() {
 	paramProps += "video" to this
   }
   val vid by lazy {
-	val actualFile = MFile("videos" + MFile.separator + video)
+	val actualFile = mFile("videos" + MFile.separator + video)
 	//        val emptyfile = File("videos" + File.separator + "blank.mp4")
 	val media = Media(actualFile.toURI().toString())
 	//        copyData(media, actualFile)
@@ -2535,8 +2535,8 @@ fun smallImage(imageFile: MFile) = ImageView(imageFile.toURI().toURL().toString(
 
 }
 
-fun defaultImage(imageFile: String) = defaultImage(MFile(imageFile))
-fun smallImage(imageFile: String) = smallImage(MFile(imageFile))
+fun defaultImage(imageFile: String) = defaultImage(mFile(imageFile))
+fun smallImage(imageFile: String) = smallImage(mFile(imageFile))
 
 
 object TaskConfigPane: VBox()
