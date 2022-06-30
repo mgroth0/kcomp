@@ -12,6 +12,7 @@ import javafx.scene.layout.BorderWidths
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.util.StringConverter
+import matt.file.MFile
 import matt.gui.resize.DragResizer
 import matt.hurricanefx.eye.collect.toObservable
 import matt.hurricanefx.eye.lib.onChange

@@ -62,6 +62,7 @@ import matt.hurricanefx.eye.prop.setValue
 import matt.hurricanefx.tornadofx.nodes.add
 import matt.hurricanefx.tornadofx.nodes.clear
 import matt.file.MFile
+import matt.file.mFile
 import matt.klib.lang.err
 import matt.stim.flicker.psykt.ECEO.Phase.EC
 import matt.stim.flicker.psykt.ECEO.Phase.EO
@@ -104,7 +105,7 @@ class Logger {
   val data = LinkedHashMap<String, Any>()
   fun writeHeaders() {
 	logFile.parentFile!!.mkdirs()
-	val gitignore = MFile(logFile.parentFile!!.absolutePath + MFile.separator + ".gitignore")
+	val gitignore = mFile(logFile.parentFile!!.absolutePath + MFile.separator + ".gitignore")
 	gitignore.createNewFile()
 	gitignore.writeText(
 	  "# Ignore everything in this directory\n" +
