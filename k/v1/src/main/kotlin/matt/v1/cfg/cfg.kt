@@ -51,6 +51,7 @@ abstract class GuiConfigurable(
 	  thisRef: GuiConfigurable,
 	  property: KProperty<*>
 	): T {
+	  @Suppress("UNCHECKED_CAST")
 	  return value as T
 	}
 
@@ -155,7 +156,6 @@ abstract class GuiConfigurable(
 
 
 		  var changingFromSlider = false
-		  var changingFromText = false
 
 		  var theSlider: Slider? = null
 
@@ -175,7 +175,7 @@ abstract class GuiConfigurable(
 
 		  val tf = TextField(p.value.toString()).apply {
 			prefWidth = 100.0
-			textProperty().addListener { observable, oldValue, newValue ->
+			textProperty().addListener { _, _, newValue ->
 			  if (!changingFromSlider) {
 				val b = when (p) {
 				  is CfgIntProp    -> (newValue.isInt() && newValue.toInt() >= p.min && newValue.toInt() <= p.max)
@@ -185,14 +185,14 @@ abstract class GuiConfigurable(
 				if (b) {
 				  /*p.value = newValue
 				  onConfigChanged()*/
-				  theSlider!!.value = newValue.toDouble()
+				  theSlider.value = newValue.toDouble()
 				}
 			  }
 			}
 		  }
 
 		  exactWidthProperty().bind(fp.widthProperty()*.4)
-		  theSlider!!.apply {
+		  theSlider.apply {
 			isSnapToTicks = p is CfgIntProp
 			isShowTickMarks = p is CfgIntProp
 			isShowTickLabels = p is CfgIntProp
