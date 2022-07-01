@@ -1,4 +1,3 @@
-
 package matt.v1.salience
 
 import matt.async.date.withStopwatch
@@ -125,8 +124,8 @@ data class Salience(
 
 
 		val g0 = featIntense.convolve(LPF_KERNEL)
-		val ln = featIntense - g0.map { it.roundToInt() }
-		val orients = listOf(0,45,90,135)
+		@Suppress("UNUSED_VARIABLE") val ln = featIntense - g0.map { it.roundToInt() }
+		@Suppress("UNUSED_VARIABLE") val orients = listOf(0, 45, 90, 135)
 
 
 		(1..center).forEach { _ ->

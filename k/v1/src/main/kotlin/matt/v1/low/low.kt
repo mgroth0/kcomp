@@ -2,13 +2,15 @@
 
 package matt.v1.low
 
+//import matt.kjlib.commons.REGISTERED_FOLDER
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.plus
 import matt.caching.compcache.ComputeCache
 import matt.caching.compcache.ComputeInput
-//import matt.kjlib.commons.REGISTERED_FOLDER
+import matt.file.commons.REGISTERED_FOLDER
+import matt.file.ext.filterHasExtension
 import matt.kjlib.file.recursiveChildren
 import matt.kjlib.jmath.API
 import matt.kjlib.jmath.Ae
@@ -25,8 +27,7 @@ import matt.kjlib.jmath.ser.ApintSerializer
 import matt.kjlib.jmath.times
 import matt.kjlib.jmath.toApfloat
 import matt.kjlib.jmath.unaryMinus
-import matt.file.commons.REGISTERED_FOLDER
-import matt.file.ext.filterHasExtension
+import matt.kjlib.lang.jlang.resourceTxt
 import matt.klib.log.warn
 import matt.klib.math.BasicPoint
 import matt.klib.math.Point
@@ -50,7 +51,7 @@ import kotlin.math.sqrt
 
 fun eulerBugChecker() = thread {
   val KCOMP_FOLDER = REGISTERED_FOLDER["kcomp"]
-  val badEuler = KCOMP_FOLDER["KJ"]["v1"]["badEuler.txt"].text /*so that this kotlin file can be searched too*/
+  val badEuler = resourceTxt("badEuler.txt")!! /*so that this kotlin file can be searched too*/
   KCOMP_FOLDER["KJ"].recursiveChildren()
 	.filterHasExtension("kt")
 	.forEach {

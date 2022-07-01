@@ -11,6 +11,7 @@ import javafx.scene.image.Image
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import matt.caching.with
+import matt.file.MFile
 import matt.fx.graphics.async.runLaterReturn
 import matt.fx.graphics.clip.dragsSnapshot
 import matt.fx.graphics.layout.hbox
@@ -27,7 +28,6 @@ import matt.hurricanefx.tornadofx.nodes.add
 import matt.hurricanefx.tornadofx.nodes.clear
 import matt.kjlib.image.resize
 import matt.kjlib.image.toSquare
-import matt.file.MFile
 import matt.stream.forEachNested
 import matt.v1.cfg.GuiConfigurable
 import matt.v1.model.FieldGenerator
@@ -44,6 +44,7 @@ abstract class ImageVisualizer(
   protected val imageHW: Int,
   val imgScale: Double,
 ): GuiConfigurable(responsive = responsive) {
+  @Suppress("PropertyName")
   protected val HWd = imageHW.toDouble()
 
   val node = VBox()
@@ -53,7 +54,7 @@ abstract class ImageVisualizer(
   }
 
 
-  open fun update() {}
+  open fun update() = Unit
   abstract fun visualize()
   override fun onConfigChanged() {
 	update()
@@ -62,11 +63,12 @@ abstract class ImageVisualizer(
 
   protected var canv: ScaledCanvas? = null
 
-  open fun left() {}
+  open fun left() = Unit
 
   init {
 	node.alignment = TOP_CENTER
 
+	@Suppress("LeakingThis")
 	left()
 	imageBox.label("configurable") {
 
@@ -79,7 +81,7 @@ abstract class ImageVisualizer(
 	  this.prefHeightProperty().bind(canv!!.heightProperty())
 	  imageBox.exactHeightProperty().bind(this.heightProperty())
 	}
-	Platform.runLater { /*must runlater to get child props*/
+	Platform.runLater { /*must runLater to get child props*/
 	  val cfgPane = configPane().apply {
 		exactHeight = 150.0
 	  }
@@ -116,13 +118,13 @@ abstract class GeneratedImageVisualizer(
   /*  abstract fun draw(x: Int, y: Int): matt.klib.css.Color*/
 
 
-  val theBox = imageBox.hbox {
+  private val theBox = imageBox.hbox {
 	alignment = CENTER_LEFT
 	prefHeightProperty().bind(canv!!.heightProperty())
   }
 
-  val sem = Semaphore(1)
-  fun setGens(vararg gens: Pair<String, FieldGenerator>) {
+  private val sem = Semaphore(1)
+  @Suppress("unused") fun setGens(vararg gens: Pair<String, FieldGenerator>) {
 	thread {
 	  sem.with {
 		if (sem.queueLength == 0) { /*not sure if queueLength is reliable*/
@@ -145,10 +147,10 @@ abstract class GeneratedImageVisualizer(
 	}
   }
 
-  fun ScaledCanvas.drawObj(g: FieldGenerator) {
+  private fun ScaledCanvas.drawObj(g: FieldGenerator) {
 	(0..imageHW)
 	  .forEachNested { x, y ->
-		val v = g.getVisSample(x = x/HWd, y = y/HWd, relWithSign = true) ?: 0.0
+		val v = g.getVisSample(x = x/HWd, y = y/HWd, relWithSign = true)
 		var rg = 0.0
 		var b = 0.0
 		if (v > 0.0) {
@@ -174,7 +176,7 @@ abstract class FilteredImageVisualizer(
 	return ImageIO.read(file).toSquare().resize(imageHW, imageHW)
   }
 
-  protected fun preprocessImageFX(file: MFile): Image {
+  private fun preprocessImageFX(file: MFile): Image {
 	return SwingFXUtils.toFXImage(preprocessImage(file), null)
   }
 
@@ -186,14 +188,14 @@ abstract class FilteredImageVisualizer(
 
   abstract fun draw(input: MFile): MultiArray<Int, D2>
 
-  override fun left(): Unit {
-	staticImages.forEach {
-	  imageBox.imageview(preprocessImageFX(it.value)) {
+  override fun left() {
+	staticImages.forEach { staticIm ->
+	  imageBox.imageview(preprocessImageFX(staticIm.value)) {
 		Platform.runLater {
 		  fitWidthProperty().bind(canv!!.widthProperty())
 		  fitHeightProperty().bind(canv!!.heightProperty())
 		}
-		it.onChange {
+		staticIm.onChange {
 		  image = preprocessImageFX(it!!)
 		}
 	  }

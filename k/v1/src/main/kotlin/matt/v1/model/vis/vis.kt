@@ -1,7 +1,5 @@
-
 package matt.v1.model.vis
 
-import matt.klib.lang.err
 import matt.stream.flatten
 import matt.stream.forEachNested
 import matt.v1.model.FieldGenerator
@@ -20,32 +18,30 @@ fun FieldGenerator.calcVis(): Array<DoubleArray> {
   val v = (0 until fieldCfg.length).map { DoubleArray(fieldCfg.length) }.toTypedArray()
   when (NORM) {
 	RATIO       -> {
-	  err("No")
 	  val matMin by lazy {
-		mat.flatten().filter { it != null }.minOf { it!!.toDouble() }
-
+		mat.flatten().minOf { it.toDouble() }
 	  }
-	  val matMax by lazy { mat.flatten().filter { it != null }.maxOf { it!!.toDouble() } }
+	  val matMax by lazy { mat.flatten().maxOf { it.toDouble() } }
 	  if (matMin == matMax) {
 		println("stopping because min equals max")
 		exitProcess(0)
 	  }
 	  val diff = matMax - matMin
 	  (0 until fieldCfg.length).forEachNested { x, y ->
-		if (mat[x][y] != null) {
-		  v[x][y] = ((mat[x][y]!! - matMin)/diff).toDouble()
+		if (!mat[x][y].isNaN()) {
+		  v[x][y] = (mat[x][y] - matMin)/diff
 		} else {
 		  v[x][y] = Double.NaN
 		}
 
 	  }
 	}
+
 	ADD_POINT_5 -> {
 	  (0 until fieldCfg.length).forEachNested { x, y ->        /*the fact that the number is sometimes more than 1.0 / less than  0.0 is concerning*/        /*it seems to start at a=0.51*/        /*maybe in the model it doesn't matter since mapping to pixel values is just for visualization*/
 
-
-		if (mat[x][y] != null) {
-		  v[x][y] = /*max(min(*/mat[x][y]!!.toDouble()!!/* + 0.5, 1.0), 0.0)*/
+		if (!mat[x][y].isNaN()) {
+		  v[x][y] = /*max(min(*/mat[x][y].toDouble()/* + 0.5, 1.0), 0.0)*/
 		} else {
 		  v[x][y] = Double.NaN
 		}
