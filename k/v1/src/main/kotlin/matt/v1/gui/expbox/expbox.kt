@@ -121,8 +121,8 @@ fun EventTarget.figBox(statusLabel: StatusLabel, opp: HBox.()->Unit) = hbox {
   val expConsole = rightBox.customConsole(takesInput = false) {
 	//	red()
   }
-  val (writer, reader) = expConsole.custom()
-  val sysConsole = rightBox.interceptConsole {
+  val (writer, _) = expConsole.custom()
+  rightBox.interceptConsole {
 	interceptStdOutErr()
 	//	yellow()
   }
