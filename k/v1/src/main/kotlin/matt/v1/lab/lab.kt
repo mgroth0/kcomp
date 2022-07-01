@@ -1,4 +1,3 @@
-
 package matt.v1.lab
 
 import javafx.application.Platform.runLater
@@ -161,9 +160,9 @@ data class Experiment(
 			jsonFile.text.parseJsonObjs().forEach {
 			  val update = Json.decodeFromJsonElement<FigureUpdate>(it)
 
-				/*FigureUpdate.new(listOf()).apply {
-				loadProperties(it)
-			  }*/
+			  /*FigureUpdate.new(listOf()).apply {
+			  loadProperties(it)
+			}*/
 			  figUpdater.update(update)
 			  if (stopped) return@apply
 			}
@@ -183,6 +182,7 @@ data class Experiment(
 					  figUpdater.update(it)
 					}
 				  }
+
 				  is StatusUpdate -> gui.statusLabel.counters[it.counterName + ":"] = it.count to it.total
 				}
 				if (stopped) cancel()
@@ -269,7 +269,7 @@ data class Experiment(
 	var isLast = false
 	protected abstract fun iteration(): Y
 	fun runExp(extraction: (ExperimentalLoop<X, Y>.(Y)->Unit)? = null) {
-	  itr.asSequence().onEveryIndexed(10) { i, _ ->
+	  @Suppress("UNUSED_ANONYMOUS_PARAMETER") itr.asSequence().onEveryIndexed(10) { i, _ ->
 		err("""if (extraction != null && i > 0) statusLabel.counters["idk"] = i to itr.size""")
 	  }.forEachIndexed { i, newX ->
 		isLast = i == itr.size - 1
@@ -312,7 +312,9 @@ data class Experiment(
 		)
 		priorW = y.priorWeight
 		y.popRcfg.go { err("idk -> popRCfg = idk") }
+		@Suppress("UNREACHABLE_CODE")
 		poissonVar = y.poissonVar
+		@Suppress("UNREACHABLE_CODE")
 		ser.value += JsonPoint(
 		  x.toDouble(), y.yExtractCustom!!.invoke(this).toDouble()
 		)
