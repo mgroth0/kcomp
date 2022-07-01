@@ -130,7 +130,7 @@ abstract class FieldGenerator(
   val maxAbsVis by lazy { vis.maxOf { it.map { abs(it) }.maxOrNull()!! } }
 
   /*x y here are percentages like 0.25 might come in and that means 25%*/
-  fun getVisSample(x: Double, y: Double, rel: Boolean = false, relWithSign: Boolean = false): Double {
+  fun getVisSample(x: Double, y: Double, relWithSign: Boolean = false): Double {
 
 	if (fieldCfg.shape == MAT_CIRCLE) {
 	  val absX = x*fieldCfg.fieldAbsMinMax*2 - fieldCfg.fieldAbsMinMax
@@ -143,8 +143,7 @@ abstract class FieldGenerator(
 	val sY = kotlin.math.min(kotlin.math.floor(y*vis.size).toInt(), vis.size - 1)
 
 	val v = vis[sX][sY]
-	if (relWithSign) return v/maxAbsVis
-	else return v
+	return if (relWithSign) v/maxAbsVis else v
 
 	/*return */
   }
