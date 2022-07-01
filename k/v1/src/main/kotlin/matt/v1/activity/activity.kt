@@ -53,7 +53,7 @@ data class Stimulation(
 	}
 	var sinR: Float? = null
 	var cosR: Float? = null
-	val input = (input as? RawInput)?.v ?: run {
+	val inputValue = (input as? RawInput)?.v ?: run {
 	  sinR = cell.sinCell.stimulate(input as Stimulus)
 	  cosR = cell.cosCell.stimulate(input)
 	  val inp = sinR!!.sq() + cosR!!.sq()
@@ -61,7 +61,7 @@ data class Stimulation(
 	}
 	G = divNormS?.toDouble()
 	var r =
-	  ((if (ti != null) DYNAMIC_BASELINE_B.toDouble() else activityConfig.baselineActivityDC) + input.toDouble()).let {
+	  ((if (ti != null) DYNAMIC_BASELINE_B.toDouble() else activityConfig.baselineActivityDC) + inputValue.toDouble()).let {
 		if (popR == null) {
 		  if (attention) {
 			it*AttentionAmp(
@@ -82,7 +82,7 @@ data class Stimulation(
 	  r = riLast + (h!!*(-riLast + r))
 	}
 	val resp = Response(
-	  R = r.toDouble(), G_S = G, debugSinR = sinR!!.toDouble(),
+	  R = r, G_S = G, debugSinR = sinR!!.toDouble(),
 	  debugCosR = cosR!!.toDouble()
 	)
 	if (h != null) {
