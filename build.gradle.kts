@@ -8,7 +8,6 @@ import matt.kbuild.root.mustRunAfterAllCleans
 import matt.kbuild.root.setAllProjectsVersionsToGroupAndSysTime
 import matt.kbuild.root.standardizeSubprojectGroupNamesAndNames
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 val thisFile = buildscript.sourceFile!!.toMFile()
 require(thisFile.hardLinkCount == 2)
 plugins {
