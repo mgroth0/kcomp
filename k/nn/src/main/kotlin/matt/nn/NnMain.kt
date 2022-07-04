@@ -1,6 +1,5 @@
 package matt.nn
 
-//import matt.reflect.os
 import matt.gui.app.GuiApp
 import matt.kjlib.jmath.sigmoid
 import matt.kjlib.jmath.sigmoidDerivative
@@ -10,7 +9,6 @@ import matt.nn.NeuralNetwork.Companion.INPUT_LENGTH
 import matt.nn.model.Axon
 import matt.nn.model.Neuron
 import matt.nn.model.SumOfSquaresError
-import matt.remote.host.ARemoteClassToMarkUsage
 import matt.remote.host.Hosts
 import matt.remote.runThisOnOM
 import matt.remote.slurm.SRun
