@@ -1,20 +1,17 @@
-import matt.file.commons.RootProjects.kcomp
-
 modtype = APP
 dependencies {
   implementation(projects.k.gui)
   implementation(projects.k.kjlib.kjlibShell)
-  //  implementation(libs.brainflow
-  //  )
-  implementation(files(kcomp.folder + "k/jar/brainflow-jar-with-dependencies.jar"))
+  implementation(libs.brainflow)
+//  implementation(files(kcomp.folder + "k" + "jar" + "brainflow-jar-with-dependencies.jar"))
 }
 repositories {
   maven {
 	url = uri("https://maven.pkg.github.com/brainflow-dev/brainflow")
 	credentials {
+	  /*https://github.com/settings/tokens*/
 	  username = "mgroth0"/*project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")*/
-	  password =
-		"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"/*project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")*/
+	  password = "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" /*"Read Packages Forever"*/ /*project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")*/
 	}
   }
 }
