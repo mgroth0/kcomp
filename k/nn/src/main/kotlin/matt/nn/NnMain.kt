@@ -6,8 +6,10 @@ import matt.kjlib.jmath.sigmoid
 import matt.kjlib.jmath.sigmoidDerivative
 import matt.klib.commons.os
 import matt.klib.math.nextUnitDouble
-import matt.klib.math.sq
 import matt.nn.NeuralNetwork.Companion.INPUT_LENGTH
+import matt.nn.model.Axon
+import matt.nn.model.Neuron
+import matt.nn.model.SumOfSquaresError
 import matt.remote.host.ARemoteClassToMarkUsage
 import matt.remote.host.Hosts
 import matt.remote.runThisOnOM
@@ -17,8 +19,6 @@ import kotlin.concurrent.thread
 import kotlin.random.Random.Default.nextDouble
 import kotlin.system.exitProcess
 
-
-fun yeah() = ARemoteClassToMarkUsage()
 
 const val REMOTE = false
 
@@ -140,23 +140,3 @@ class NeuralNetwork(
 }
 
 
-data class Neuron(val bias: Double = 0.0) {
-  val axons = mutableListOf<Axon>()
-  var activation = 0.0
-}
-
-class Axon(
-  val output: Neuron,
-  var weight: Double = 1.0
-)
-
-abstract class LossFunction {
-  abstract fun compute(predicted: DoubleArray, actual: DoubleArray): Double
-}
-
-object SumOfSquaresError: LossFunction() {
-  override fun compute(predicted: DoubleArray, actual: DoubleArray): Double {
-	require(predicted.size == actual.size)
-	return predicted.mapIndexed { i, p -> (actual[i] - p).sq() }.sum()
-  }
-}
