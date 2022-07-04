@@ -54,7 +54,8 @@ private fun getDataFromBoard() {
   }
   // board_shim.start_stream (); // use this for default options
   // board_shim.start_stream (); // use this for default options
-  board_shim.start_stream(450000, "file://file_stream.csv:w")
+  /*board_shim.start_stream(450000, "file://file_stream.csv:w")*/
+  board_shim.start_stream(450000, "")
   BoardShim.log_message(LEVEL_INFO._code, "Start sleeping in the main thread")
 
 //  board_shim.
