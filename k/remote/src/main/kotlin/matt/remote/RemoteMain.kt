@@ -15,6 +15,7 @@ import matt.remote.expect.writeFile
 import matt.remote.host.Hosts
 import matt.remote.host.catchUp
 import matt.remote.host.setPrompt
+import matt.remote.om.OM.OM2_HOME
 import matt.remote.om.OM.OM_DATA_FOLD
 import matt.remote.om.OM.OM_KCOMP
 import matt.remote.singularity.SINGULARITY_FILE_NAME
@@ -82,11 +83,12 @@ fun Expect.runOnOM(proj: String, srun: SRun? = null) {
 	sendLine(srun.command)
 	setPrompt()
   }
+  sendLineAndWait("git checkout master")
   sendLineAndWait("git pull")
-  sendLineAndWait("git submodule update --recursive")
+  sendLineAndWait("git submodule update --init --recursive")
   t.toc("finished git")
   /*NVIDIA binaries may not be bound with --writable*/
-  sendLine("singularity exec -B $OM_KCOMP:$OM_KCOMP -B $OM_DATA_FOLD:$OM_DATA_FOLD --nv $SINGULARITY_SIMG_NAME /bin/bash")
+  sendLine("singularity exec -B $OM_KCOMP:$OM_KCOMP -B $OM_DATA_FOLD:$OM_DATA_FOLD -B $OM2_HOME:$OM2_HOME -H $OM2_HOME --nv $SINGULARITY_SIMG_NAME /bin/bash")
   t.toc("in singularity")
   /*singularity exec -B /om2/user/mjgroth/kcomp:/om2/user/mjgroth/kcomp kcomp.simg /bin/bash*/
   setPrompt(/*numExpectPrompts = 2*/)
@@ -96,7 +98,8 @@ fun Expect.runOnOM(proj: String, srun: SRun? = null) {
   sendLineAndWait("export DISPLAY=:0")
   t.toc("started up xvfb display")
   catchUp()
-  sendLineAndWait("/opt/gradle/gradle-${GRADLE_VERSION}/bin/gradle KJ:v1:run --console=plain")
+  sendLineAndWait("export GRADLE_USER_HOME=$OM2_HOME")
+  sendLineAndWait("/opt/gradle/gradle-${GRADLE_VERSION}/bin/gradle k:nn:run --console=plain")
   t.toc("catching up after gradle")
   catchUp()
   t.toc("finished gradle")

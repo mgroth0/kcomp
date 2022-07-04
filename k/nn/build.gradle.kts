@@ -1,9 +1,17 @@
 modtype = APP
 
-dependencies {
-  implementation(projects.k.gui)
-  implementation(projects.k.remote)
-  implementation(projects.k.kjlib.kjlibJmath)
-//  implementation(libs.bundles.multik.full)
-//  implementation(libs.chartFX)
-}
+implementations(
+  projects.k.gui,
+  projects.k.remote,
+  projects.k.kjlib.kjlibJmath,
+
+
+//  fileTree(RootProjects.kcomp.folder + "k" + "jar" + "tf"), /*for actual executable code*/
+
+//  libs.tensorflow /*for navigating sources in IDE*/
+
+
+
+  //  libs.bundles.multik.full,
+  //  libs.chartFX
+)

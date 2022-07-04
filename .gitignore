@@ -21,7 +21,6 @@
 /log/
 /logs/
 /bin/jar/
-/build.gradle.kts
 /settings.gradle.kts
 /gradle.properties
 /shadow.gradle

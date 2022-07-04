@@ -22,7 +22,7 @@ class Host(private val hostname: String) {
 	/*used to set shell command-line prompt to UNIQUE_PROMPT.*/
 	const val PROMPT_SET_SH = "PS1='[$SUB_PROMPT]\\$ '"
 
-	val PASS_LONG = USER_HOME[".passlong"].readText().reversed()
+	val PASS_LONG by lazy { USER_HOME[".passlong"].readText().reversed() }
   }
 
 
@@ -30,7 +30,9 @@ class Host(private val hostname: String) {
 
 	val jSch = JSch().apply {
 	  setKnownHosts(USER_HOME[".ssh"]["known_hosts"].absolutePath)
-	  addIdentity(USER_HOME[".ssh"]["id_rsa"].absolutePath/*, HOME_DIR[".passlong"].readText()*/)
+
+	  /*addIdentity(USER_HOME[".ssh"]["id_rsa"].absolutePath*//*, HOME_DIR[".passlong"].readText()*//*)*/
+
 	}
 	val session = jSch.getSession(OM.USER, hostname).apply {
 	  setPassword(PASS_LONG)
@@ -50,32 +52,32 @@ class Host(private val hostname: String) {
 	channel.connect()
 
 	val p = ExpectBuilder()
-		.withInputs(channel.inputStream, channel.extInputStream)
-		.withOutput(channel.outputStream)
-		.withEchoInput(object: Appendable {
-		  override fun append(csq: CharSequence?): java.lang.Appendable {
-			System.out.append(csq)
-			echos.forEach { it.append(csq) }
-			return this
-		  }
+	  .withInputs(channel.inputStream, channel.extInputStream)
+	  .withOutput(channel.outputStream)
+	  .withEchoInput(object: Appendable {
+		override fun append(csq: CharSequence?): java.lang.Appendable {
+		  System.out.append(csq)
+		  echos.forEach { it.append(csq) }
+		  return this
+		}
 
-		  override fun append(csq: CharSequence?, start: Int, end: Int): java.lang.Appendable {
-			System.out.append(csq, start, end)
-			echos.forEach { it.append(csq, start, end) }
-			return this
-		  }
+		override fun append(csq: CharSequence?, start: Int, end: Int): java.lang.Appendable {
+		  System.out.append(csq, start, end)
+		  echos.forEach { it.append(csq, start, end) }
+		  return this
+		}
 
-		  override fun append(c: Char): java.lang.Appendable {
-			System.out.append(c)
-			echos.forEach { it.append(c) }
-			return this
-		  }
+		override fun append(c: Char): java.lang.Appendable {
+		  System.out.append(c)
+		  echos.forEach { it.append(c) }
+		  return this
+		}
 
-		})
-		.withEchoOutput(System.err)
-		.withExceptionOnFailure()
-		.withInfiniteTimeout()
-		.build()
+	  })
+	  .withEchoOutput(System.err)
+	  .withExceptionOnFailure()
+	  .withInfiniteTimeout()
+	  .build()
 
 	println("established SSH connection to $hostname")
 	try {
