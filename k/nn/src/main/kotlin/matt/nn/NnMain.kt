@@ -23,6 +23,7 @@ import kotlin.system.exitProcess
 const val REMOTE = false
 
 fun main() = GuiApp {
+  println("yes i use ${Hosts.POLESTAR}")
   if (REMOTE) {
 	thread {
 	  Hosts.POLESTAR.ssh {
