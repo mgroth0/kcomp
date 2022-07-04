@@ -13,6 +13,8 @@ import kotlin.system.exitProcess
 
 fun main(): Unit = GuiApp {
 
+
+
   val bt = "State: On" in execReturn("/usr/sbin/system_profiler", "SPBluetoothDataType")
 
   if (bt) {
