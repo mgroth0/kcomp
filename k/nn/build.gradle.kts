@@ -1,7 +1,6 @@
 modtype = APP
 
 implementations(
-  projects.k.exec,
   projects.k.remote,
   projects.k.kjlib.kjlibJmath,
 
