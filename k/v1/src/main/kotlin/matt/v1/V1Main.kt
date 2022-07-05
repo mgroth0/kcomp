@@ -9,6 +9,7 @@ import matt.klib.commons.thisMachine
 import matt.klib.sys.Mac
 import matt.klib.todo
 import matt.reflect.onLinux
+import matt.remote.openmind.Polestar
 import matt.remote.runThisOnOM
 import matt.remote.slurm.SRun
 import matt.v1.gui.GuiMode
@@ -56,7 +57,7 @@ fun main(): Unit = GuiApp(screenIndex = 2) {
 	thread {
 	  remoteStatus!!.status.value = WORKING
 	  println("WORKING 2")
-	  Hosts.POLESTAR.ssh(OM.USER, object: Appendable {
+	  Polestar.ssh( object: Appendable {
 		var clearOnNext = false
 		override fun append(csq: CharSequence?): java.lang.Appendable {
 		  csq?.forEach {
