@@ -58,3 +58,6 @@
 [submodule "k/gui"]
 	path = k/gui
 	url = https://github.com/mgroth0/gui
+[submodule "k/remote"]
+	path = k/remote
+	url = https://github.com/mgroth0/remote
