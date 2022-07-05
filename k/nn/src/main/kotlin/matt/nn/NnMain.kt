@@ -6,9 +6,10 @@ import matt.klib.sys.Mac
 import matt.nn.model.NeuralNetwork
 import matt.nn.model.NeuralNetwork.Companion.INPUT_LENGTH
 import matt.nn.model.SumOfSquaresError
-import matt.remote.host.Hosts
+import matt.remote.openmind.OM
 import matt.remote.runThisOnOM
 import matt.remote.slurm.SRun
+import matt.remote.ssh.Hosts
 import kotlin.concurrent.thread
 import kotlin.random.Random.Default.nextDouble
 
@@ -19,7 +20,7 @@ fun main() {
   println("yes i use ${Hosts.POLESTAR}")
   if (REMOTE && thisMachine is Mac) {
 	thread {
-	  Hosts.POLESTAR.ssh {
+	  Hosts.POLESTAR.ssh(OM.USER) {
 		runThisOnOM(srun = SRun(timeMin = 15))
 	  }
 	}

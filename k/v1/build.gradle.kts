@@ -17,6 +17,7 @@ implementations(
   projects.k.remote,
   projects.k.remote.slurm,
   projects.k.remote.ssh,
+  projects.k.remote.openmind,
   projects.k.fxlib.console,
   projects.k.dataman,
   projects.k.kjlib.jmath,

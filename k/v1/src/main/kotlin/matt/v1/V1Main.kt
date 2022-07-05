@@ -1,17 +1,18 @@
 package matt.v1
 
-import matt.async.date.simplePrinting
-import matt.gui.app.GuiApp
 //import matt.kjlib.commons.DATA_FOLDER
+//import matt.reflect.ismac
+import matt.async.date.simplePrinting
 import matt.file.commons.DATA_FOLDER
+import matt.gui.app.GuiApp
 import matt.klib.commons.thisMachine
 import matt.klib.sys.Mac
 import matt.klib.todo
-//import matt.reflect.ismac
 import matt.reflect.onLinux
-import matt.remote.host.Hosts
+import matt.remote.openmind.OM
 import matt.remote.runThisOnOM
 import matt.remote.slurm.SRun
+import matt.remote.ssh.Hosts
 import matt.v1.gui.GuiMode
 import matt.v1.gui.V1Gui
 import matt.v1.gui.status.StatusLabel
@@ -33,10 +34,11 @@ val V1_DATA_FOLDER = DATA_FOLDER["kcomp"]["v1"]
 val V1_USER_CFG_FILE = V1_DATA_FOLDER["usercfg.json"]
 
 
-
 fun main(): Unit = GuiApp(screenIndex = 2) {
 
-  todo("start with https://stackoverflow.com/questions/72325605/how-to-properly-register-primitives-and-nulls-in-polymorphic-serialization?noredirect=1#comment128047613_72325605 (json/problem/problem.kt)")
+  todo(
+	"start with https://stackoverflow.com/questions/72325605/how-to-properly-register-primitives-and-nulls-in-polymorphic-serialization?noredirect=1#comment128047613_72325605 (json/problem/problem.kt)"
+  )
 
   simplePrinting = true
 
@@ -56,7 +58,7 @@ fun main(): Unit = GuiApp(screenIndex = 2) {
 	thread {
 	  remoteStatus!!.status.value = WORKING
 	  println("WORKING 2")
-	  Hosts.POLESTAR.ssh(object: Appendable {
+	  Hosts.POLESTAR.ssh(OM .USER, object: Appendable {
 		var clearOnNext = false
 		override fun append(csq: CharSequence?): java.lang.Appendable {
 		  csq?.forEach {
