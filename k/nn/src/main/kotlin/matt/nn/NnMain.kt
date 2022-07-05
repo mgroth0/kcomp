@@ -7,7 +7,7 @@ import matt.nn.model.NeuralNetwork
 import matt.nn.model.NeuralNetwork.Companion.INPUT_LENGTH
 import matt.nn.model.SumOfSquaresError
 import matt.remote.openmind.Polestar
-import matt.remote.runThisOnOM
+import matt.remote.runOnOM
 import matt.remote.slurm.SRun
 import kotlin.concurrent.thread
 import kotlin.random.Random.Default.nextDouble
@@ -19,7 +19,7 @@ fun main() {
   if (REMOTE && thisMachine is Mac) {
 	thread {
 	  Polestar.ssh {
-		runThisOnOM(srun = SRun(timeMin = 15))
+		runOnOM(srun = SRun(timeMin = 15))
 	  }
 	}
   } else {
