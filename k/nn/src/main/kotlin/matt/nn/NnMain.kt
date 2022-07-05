@@ -14,7 +14,7 @@ import kotlin.concurrent.thread
 import kotlin.random.Random.Default.nextDouble
 
 
-const val REMOTE = true
+val REMOTE = true
 
 fun main() {
   println("yes i use ${Hosts.POLESTAR}")
