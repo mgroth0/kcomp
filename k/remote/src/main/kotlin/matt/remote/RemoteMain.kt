@@ -84,7 +84,7 @@ fun Expect.runOnOM(proj: String, srun: SRun? = null) {
 	setPrompt()
   }
   sendLineAndWait("git checkout master")
-  sendLineAndWait("git pull")
+  sendLineAndWait("git pull origin master")
   sendLineAndWait("git submodule update --init --recursive")
   t.toc("finished git")
   /*NVIDIA binaries may not be bound with --writable*/
