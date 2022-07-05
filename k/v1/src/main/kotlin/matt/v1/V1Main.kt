@@ -25,7 +25,7 @@ import kotlin.concurrent.thread
 import kotlin.system.exitProcess
 
 
-private const val REMOTE = false
+private  val REMOTE = false
 private val REMOTE_AND_MAC = REMOTE && thisMachine is Mac
 
 val visualizer by lazy { RosenbergVisualizer(ARI_BASE_CFG) }
