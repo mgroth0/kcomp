@@ -18,6 +18,7 @@ val REMOTE = true
 
 fun main() {
   println("yes i use ${Hosts.POLESTAR}")
+  println("OM.USER=${OM.USER}")
   if (REMOTE && thisMachine is Mac) {
 	thread {
 	  Hosts.POLESTAR.ssh(OM.USER) {
