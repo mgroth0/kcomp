@@ -10,7 +10,7 @@ import matt.klib.sys.Mac
 import matt.klib.todo
 import matt.reflect.onLinux
 import matt.remote.openmind.Polestar
-import matt.remote.runThisOnOM
+import matt.remote.runOnOM
 import matt.remote.slurm.SRun
 import matt.v1.gui.GuiMode
 import matt.v1.gui.V1Gui
@@ -85,7 +85,7 @@ fun main(): Unit = GuiApp(screenIndex = 2) {
 		}
 
 	  }) {
-		runThisOnOM(srun = SRun(timeMin = 15))
+		runOnOM(srun = SRun(timeMin = 15))
 	  }
 	  remoteStatus.status.value = IDLE
 	  println("IDLE 2")
