@@ -1,7 +1,7 @@
 modtype = APP
 dependencies {
   implementation(projects.k.gui)
-  implementation(projects.k.kjlib.kjlibShell)
+  implementation(projects.k.kjlib.shell)
   implementation(libs.brainflow)
 //  implementation(files(kcomp.folder + "k" + "jar" + "brainflow-jar-with-dependencies.jar"))
 }

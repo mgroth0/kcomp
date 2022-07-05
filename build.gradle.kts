@@ -32,6 +32,16 @@ tasks.wrapper {/*Use Gradle from: "gradle-wrapper.properties' file*/
 checkVersionsAndProperties()
 standardizeSubprojectGroupNamesAndNames()
 setAllProjectsVersionsToGroupAndSysTime(except = "idea")
+//allprojects {
+//  apply<IdeaPlugin>()
+//  configure<org.gradle.plugins.ide.idea.model.IdeaModel> {
+//	module {
+//		this.iml {
+//
+//		}
+//	}
+//  }
+//}
 addAtypicalTasksToAllProjects()
 allprojects { configureIdeaExcludes() }
 val root = matt.kbuild.root.RootProject(rootProject)

@@ -7,7 +7,7 @@ implementations(
   projects.k.gui,
   libs.kotlinx.multik.api,
   libs.mat,
-  projects.k.fx.fxGraphics,
+  projects.k.fx.graphics,
   projects.k.caching,
   projects.k.async,
   libs.commons.math,
@@ -15,10 +15,10 @@ implementations(
   libs.apfloat,
   libs.fx.swing,
   projects.k.remote,
-  projects.k.fxlib.fxlibConsole,
+  projects.k.fxlib.console,
   projects.k.dataman,
-  projects.k.kjlib.kjlibJmath,
+  projects.k.kjlib.jmath,
   projects.k.reflect,
-  projects.k.fx.fxGraphics,
+  projects.k.fx.graphics,
   libs.slf4j.nop
 )

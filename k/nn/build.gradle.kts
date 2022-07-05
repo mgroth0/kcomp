@@ -2,7 +2,7 @@ modtype = APP
 
 implementations(
   projects.k.remote,
-  projects.k.kjlib.kjlibJmath,
+  projects.k.kjlib.jmath,
 
 
 //  fileTree(RootProjects.kcomp.folder + "k" + "jar" + "tf"), /*for actual executable code*/

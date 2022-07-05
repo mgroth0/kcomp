@@ -7,5 +7,5 @@ dependencies {
   implementation(kotlin("reflect"))
 //  implementation(projects.k.fx.media)
 //  implementation(projects.k.async)
-  implementation(projects.k.fx.fxGraphics)
+  implementation(projects.k.fx.graphics)
 }
