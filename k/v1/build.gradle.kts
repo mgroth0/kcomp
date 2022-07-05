@@ -16,6 +16,7 @@ implementations(
   libs.fx.swing,
   projects.k.remote,
   projects.k.remote.slurm,
+  projects.k.remote.ssh,
   projects.k.fxlib.console,
   projects.k.dataman,
   projects.k.kjlib.jmath,
