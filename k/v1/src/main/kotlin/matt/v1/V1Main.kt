@@ -25,7 +25,7 @@ import kotlin.concurrent.thread
 import kotlin.system.exitProcess
 
 
-private  val REMOTE = false
+private val REMOTE = false
 private val REMOTE_AND_MAC = REMOTE && thisMachine is Mac
 
 val visualizer by lazy { RosenbergVisualizer(ARI_BASE_CFG) }
@@ -35,6 +35,8 @@ val V1_USER_CFG_FILE = V1_DATA_FOLDER["usercfg.json"]
 
 
 fun main(): Unit = GuiApp(screenIndex = 2) {
+
+  println("OM.USER=${OM.USER}")
 
   todo(
 	"start with https://stackoverflow.com/questions/72325605/how-to-properly-register-primitives-and-nulls-in-polymorphic-serialization?noredirect=1#comment128047613_72325605 (json/problem/problem.kt)"
@@ -58,7 +60,7 @@ fun main(): Unit = GuiApp(screenIndex = 2) {
 	thread {
 	  remoteStatus!!.status.value = WORKING
 	  println("WORKING 2")
-	  Hosts.POLESTAR.ssh(OM .USER, object: Appendable {
+	  Hosts.POLESTAR.ssh(OM.USER, object: Appendable {
 		var clearOnNext = false
 		override fun append(csq: CharSequence?): java.lang.Appendable {
 		  csq?.forEach {
