@@ -1,4 +1,3 @@
-modtype = JS_CLIENT
 
 implementations(
   ":k:kjs".auto(),

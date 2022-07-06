@@ -1,4 +1,3 @@
-modtype = APP
 
 plugins {
   kotlin("plugin.serialization")

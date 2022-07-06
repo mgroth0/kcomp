@@ -1,4 +1,3 @@
-modtype = APP
 
 dependencies {
 //  implementation(libs.chartFX)

@@ -1,4 +1,3 @@
-modtype = APP
 dependencies {
   implementation(projects.k.gui)
   implementation(projects.k.kjlib.shell)

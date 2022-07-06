@@ -1,4 +1,3 @@
-modtype = NO_NATIVE
 apis(
 
 )
