@@ -1,13 +1,13 @@
 package matt.sempart.client.breakDiv
 
 import kotlinx.html.ButtonType
-import matt.klib.css.Display.flex
-import matt.klib.css.FlexDirection.column
-import matt.klib.css.JustifyContent.center
-import matt.klib.css.px
+import matt.css.Display.flex
+import matt.css.FlexDirection.column
+import matt.css.JustifyContent.center
+import matt.css.px
 import matt.kjs.css.sty
 import matt.kjs.handlers.setOnClick
-import matt.klib.css.TextAlign
+import matt.css.TextAlign
 import matt.sempart.client.const.WIDTH
 import matt.sempart.client.state.ExperimentPhase.Break
 import matt.sempart.client.state.ExperimentState
