@@ -1,8 +1,8 @@
 package matt.sempart.client.scaleDiv
 
 //import matt.sempart.client.mainDivClass
-import matt.klib.css.Position.absolute
-import matt.klib.css.percent
+import matt.css.Position.absolute
+import matt.css.percent
 import matt.kjs.css.sty
 import matt.kjs.handlers.setOnClick
 import matt.kjs.handlers.setOnInput

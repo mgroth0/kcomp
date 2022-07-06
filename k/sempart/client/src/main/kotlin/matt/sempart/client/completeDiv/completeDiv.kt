@@ -1,16 +1,16 @@
 package matt.sempart.client.completeDiv
 
-import matt.klib.css.Display.flex
-import matt.klib.css.FlexDirection.column
-import matt.klib.css.JustifyContent.center
-import matt.klib.css.JustifyContent.spaceEvenly
-import matt.klib.css.px
+import matt.css.Display.flex
+import matt.css.FlexDirection.column
+import matt.css.JustifyContent.center
+import matt.css.JustifyContent.spaceEvenly
+import matt.css.px
 import matt.kjs.css.sty
 import matt.kjs.handlers.setOnClick
 import matt.kjs.handlers.setOnInput
 import matt.kjs.html.elements.button.HTMLButtonWrapper
 import matt.klib.prop.VarProp
-import matt.klib.css.TextAlign
+import matt.css.TextAlign
 import matt.sempart.Feedback
 import matt.sempart.client.const.COMPLETION_URL
 import matt.sempart.client.state.ExperimentPhase.Complete

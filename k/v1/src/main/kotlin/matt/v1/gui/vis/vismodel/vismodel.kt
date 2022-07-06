@@ -115,7 +115,7 @@ abstract class GeneratedImageVisualizer(
 		canv!![x, y] = draw(x, y)
 	  }*/
 
-  /*  abstract fun draw(x: Int, y: Int): matt.klib.css.Color*/
+  /*  abstract fun draw(x: Int, y: Int): matt.css.Color*/
 
 
   private val theBox = imageBox.hbox {

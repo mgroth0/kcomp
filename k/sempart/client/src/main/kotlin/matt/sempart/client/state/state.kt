@@ -27,7 +27,7 @@ import matt.klib.Loop
 import matt.klib.Path
 import matt.klib.PixelIndex
 import matt.klib.bind.binding
-import matt.klib.css.Cursor
+import matt.css.Cursor
 import matt.klib.first
 import matt.klib.firstBackwards
 import matt.klib.oset.BasicObservableSet

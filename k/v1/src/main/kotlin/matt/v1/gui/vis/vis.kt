@@ -150,7 +150,7 @@ class RosenbergVisualizer(
   override fun draw(x: Int, y: Int) = run {
 	val rg = theStim?.getVisSample(x/HWd, y/HWd) ?: 0.0
 	val b = theCell?.getVisSample(x/HWd, y/HWd) ?: 0.0
-	matt.klib.css.Color.color(rg, rg, b)
+	matt.css.Color.color(rg, rg, b)
   }!!*/
 
   init {

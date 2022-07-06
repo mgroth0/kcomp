@@ -2,8 +2,8 @@ package matt.sempart.client
 
 import kotlinx.browser.document
 import matt.kjs.bindings.not
-import matt.klib.css.Color.black
-import matt.klib.css.Color.white
+import matt.css.Color.black
+import matt.css.Color.white
 import matt.kjs.css.sty
 import matt.kjs.currentTimeMillis
 import matt.kjs.defaultMain

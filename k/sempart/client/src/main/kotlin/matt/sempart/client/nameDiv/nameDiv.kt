@@ -1,8 +1,8 @@
 package matt.sempart.client.nameDiv
 
-import matt.klib.css.Display.flex
-import matt.klib.css.FlexDirection.column
-import matt.klib.css.JustifyContent.center
+import matt.css.Display.flex
+import matt.css.FlexDirection.column
+import matt.css.JustifyContent.center
 import matt.kjs.css.sty
 import matt.kjs.handlers.setOnClick
 import matt.kjs.handlers.setOnInput

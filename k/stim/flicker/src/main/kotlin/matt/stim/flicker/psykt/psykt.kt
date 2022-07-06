@@ -655,13 +655,13 @@ class DigitSpan: Task() {
 	correct = newCorrect
 	logger.data["correct"] = correct
 	//            val checkImage = defaultImage("images/check.png")
-	//            val checkImage = Circle(25.0,matt.klib.css.Color.GREEN)
+	//            val checkImage = Circle(25.0,matt.css.Color.GREEN)
 	val checkImage = Label("✓").apply {
 	  font = Font.font(250.0)
 	  textFill = Color.GREEN
 	}
 	//            val xImage = defaultImage("images/x.png")
-	//            val xImage = Rectangle(25.0,25.0,matt.klib.css.Color.RED)
+	//            val xImage = Rectangle(25.0,25.0,matt.css.Color.RED)
 	val xImage = Label("X").apply {
 	  font = Font.font(250.0)
 	  textFill = Color.RED
@@ -1216,15 +1216,15 @@ class ScreenFlicker1: Task() {
 
 	  val timeline = Timeline(
 		KeyFrame(Duration.ZERO, EventHandler {
-		  //                        fill = matt.klib.css.Color.DARKGREEN
+		  //                        fill = matt.css.Color.DARKGREEN
 		  fill = Color.BLACK
 		}),
 		KeyFrame(Duration.seconds(1/freqHz.toDouble()/2), EventHandler {
-		  //                        fill = matt.klib.css.Color.LIGHTBLUE
+		  //                        fill = matt.css.Color.LIGHTBLUE
 		  fill = Color.WHITE
 		}),
 		KeyFrame(Duration.seconds(1/freqHz.toDouble()), EventHandler {
-		  //                        fill = matt.klib.css.Color.DARKGREEN
+		  //                        fill = matt.css.Color.DARKGREEN
 		  fill = Color.BLACK
 		})
 	  )
@@ -1232,7 +1232,7 @@ class ScreenFlicker1: Task() {
 	  timeline.cycleCount = Timeline.INDEFINITE
 	  timeline.play()
 
-	  //            matt.klib.css.Color.BLACK
+	  //            matt.css.Color.BLACK
 	}, dot.apply {
 	  toFront()
 	})
@@ -1421,22 +1421,22 @@ class ScreenFlicker2: Task() {
 	  lastTimeLine = Timeline(
 		KeyFrame(Duration.ZERO, EventHandler {
 		  fill = Color.DARKGREEN
-		  //                        fill = matt.klib.css.Color.BLACK
+		  //                        fill = matt.css.Color.BLACK
 		}),
 		KeyFrame(Duration.seconds(1/freqHz.toDouble()/2), EventHandler {
 		  fill = Color.LIGHTBLUE
-		  //                        fill = matt.klib.css.Color.WHITE
+		  //                        fill = matt.css.Color.WHITE
 		}),
 		KeyFrame(Duration.seconds(1/freqHz.toDouble()), EventHandler {
 		  fill = Color.DARKGREEN
-		  //                        fill = matt.klib.css.Color.BLACK
+		  //                        fill = matt.css.Color.BLACK
 		})
 	  )
 
 	  lastTimeLine?.cycleCount = Timeline.INDEFINITE
 	  lastTimeLine?.play()
 
-	  //            matt.klib.css.Color.BLACK
+	  //            matt.css.Color.BLACK
 	}, dot.apply {
 	  toFront()
 	})
@@ -1632,18 +1632,18 @@ class ScreenFlicker3: Task() {
 			KeyFrame(Duration.seconds(start), EventHandler {
 			  fill = Color.DARKGREEN
 			  //                            StackPane.setAlignment(this, Pos.CENTER_RIGHT)
-			  //                        fill = matt.klib.css.Color.BLACK
+			  //                        fill = matt.css.Color.BLACK
 			}),
 			KeyFrame(Duration.seconds(mid), EventHandler {
 			  fill = Color.LIGHTBLUE
 			  //                            StackPane.setAlignment(this, Pos.CENTER_LEFT)
-			  //                        fill = matt.klib.css.Color.WHITE
+			  //                        fill = matt.css.Color.WHITE
 
 			})
 			//                        KeyFrame(Duration.seconds(end.toDouble()), EventHandler {
-			//                            fill = matt.klib.css.Color.DARKGREEN
+			//                            fill = matt.css.Color.DARKGREEN
 			//                            StackPane.setAlignment(this, Pos.CENTER_RIGHT)
-			////                        fill = matt.klib.css.Color.BLACK
+			////                        fill = matt.css.Color.BLACK
 			//                        })
 		  )
 		}
@@ -1652,7 +1652,7 @@ class ScreenFlicker3: Task() {
 		//            lastTimeLine?.cycleCount = Timeline.INDEFINITE
 		lastTimeLine?.play()
 
-		//            matt.klib.css.Color.BLACK
+		//            matt.css.Color.BLACK
 	  }, dot
 	).apply {
 	  prefWidthProperty().bind(ExperimentRoot.widthProperty()/2)
@@ -2091,18 +2091,18 @@ class SSVEPverify: Task() {
 			KeyFrame(Duration.seconds(start), EventHandler {
 			  fill = Color.DARKGREEN
 			  //                            StackPane.setAlignment(this, Pos.CENTER_RIGHT)
-			  //                        fill = matt.klib.css.Color.BLACK
+			  //                        fill = matt.css.Color.BLACK
 			}),
 			KeyFrame(Duration.seconds(mid), EventHandler {
 			  fill = Color.LIGHTBLUE
 			  //                            StackPane.setAlignment(this, Pos.CENTER_LEFT)
-			  //                        fill = matt.klib.css.Color.WHITE
+			  //                        fill = matt.css.Color.WHITE
 
 			})
 			//                        KeyFrame(Duration.seconds(end.toDouble()), EventHandler {
-			//                            fill = matt.klib.css.Color.DARKGREEN
+			//                            fill = matt.css.Color.DARKGREEN
 			//                            StackPane.setAlignment(this, Pos.CENTER_RIGHT)
-			////                        fill = matt.klib.css.Color.BLACK
+			////                        fill = matt.css.Color.BLACK
 			//                        })
 		  )
 		}
@@ -2111,7 +2111,7 @@ class SSVEPverify: Task() {
 		//            lastTimeLine?.cycleCount = Timeline.INDEFINITE
 		lastTimeLine?.play()
 
-		//            matt.klib.css.Color.BLACK
+		//            matt.css.Color.BLACK
 	  }, freqLabel
 	  //                dot.apply {
 	  //            toFront()

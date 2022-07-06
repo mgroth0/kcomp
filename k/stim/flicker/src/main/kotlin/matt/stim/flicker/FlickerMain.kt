@@ -30,11 +30,11 @@ fun main() = GuiApp {
 		  cycleCount = INDEFINITE
 		  keyframe(Duration.seconds(HALF_PER_SEC)) {
 			keyvalue(this@circle.visibleProperty(), false, Interpolator.DISCRETE)
-			/*keyvalue(this@circle.fillProperty(), matt.klib.css.Color.BLACK, Interpolator.DISCRETE)*/
+			/*keyvalue(this@circle.fillProperty(), matt.css.Color.BLACK, Interpolator.DISCRETE)*/
 		  }
 		  keyframe(Duration.seconds(PER_SEC)) {
 			keyvalue(this@circle.visibleProperty(), true, Interpolator.DISCRETE)
-			/*keyvalue(this@circle.fillProperty(), matt.klib.css.Color.WHITE, Interpolator.DISCRETE)*/
+			/*keyvalue(this@circle.fillProperty(), matt.css.Color.WHITE, Interpolator.DISCRETE)*/
 		  }
 		}
 	  }
