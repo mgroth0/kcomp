@@ -24,7 +24,11 @@ val ktversion = tomlVersion("kotlin")
 logger.info("using gradle version ${gradle.gradleVersion}")
 val tomlGradleVersion = tomlVersion("gradle")
 tasks.wrapper {/*Use Gradle from: "gradle-wrapper.properties' file*/
-  doFirst { (rootDirM + "gradle" + "wrapper").listFiles()!!.forEach { it.deleteRecursively() } /*yup, necessary*/ }
+  doFirst {
+	(rootDirM + "gradle" + "wrapper").listFiles()!!.forEach { it.deleteRecursively() } /*yup, necessary*/
+	(rootDirM  + "gradlew").delete()
+	(rootDirM  + "gradlew.bat").delete()
+  }
   distributionType = Wrapper.DistributionType.ALL
   logger.info("root wrapper gradle version set to $tomlGradleVersion")
   gradleVersion = tomlGradleVersion
