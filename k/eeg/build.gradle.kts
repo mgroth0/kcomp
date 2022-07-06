@@ -2,8 +2,8 @@ modtype = APP
 dependencies {
   implementation(projects.k.gui)
   implementation(projects.k.kjlib.shell)
-  implementation(libs.brainflow)
-//  implementation(files(kcomp.folder + "k" + "jar" + "brainflow-jar-with-dependencies.jar"))
+  compileOnly(libs.brainflow) /*for source navigation?*/
+  implementation(files(matt.file.commons.RootProjects.kcomp.folder + "k" + "jar" + "brainflow-jar-with-dependencies.jar"))
 }
 repositories {
   maven {

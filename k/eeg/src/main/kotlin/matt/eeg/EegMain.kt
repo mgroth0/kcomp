@@ -5,6 +5,7 @@ import brainflow.BoardShim
 import brainflow.BrainFlowError
 import brainflow.BrainFlowInputParams
 import brainflow.LogLevels.LEVEL_INFO
+import com.sun.jna.Native
 import matt.gui.app.GuiApp
 import matt.kjlib.shell.execReturn
 import java.util.Arrays
@@ -32,8 +33,10 @@ fun main(): Unit = GuiApp {
 }.start()
 
 private fun getDataFromBoard() {
-  BoardShim.enable_board_logger()
+  println("java.class.path=${System.getProperty("java.class.path")}")
+  BoardShim.enable_dev_board_logger()
   BoardShim.set_log_level(0)
+
   val params = BrainFlowInputParams()
   params.serial_port = "/dev/cu.usbmodem11"
   params.mac_address
