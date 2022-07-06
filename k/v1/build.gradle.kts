@@ -22,5 +22,6 @@ implementations(
   projects.k.kjlib.jmath,
   projects.k.reflect,
   projects.k.fx.graphics,
-  libs.slf4j.nop
+  libs.slf4j.nop,
+  ":k:file".jvm(),
 )

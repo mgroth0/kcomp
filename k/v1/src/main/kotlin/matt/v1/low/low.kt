@@ -11,7 +11,6 @@ import matt.caching.compcache.ComputeCache
 import matt.caching.compcache.ComputeInput
 import matt.file.commons.REGISTERED_FOLDER
 import matt.file.ext.filterHasExtension
-import matt.kjlib.file.recursiveChildren
 import matt.kjlib.jmath.API
 import matt.kjlib.jmath.Ae
 import matt.kjlib.jmath.PI
