@@ -42,6 +42,9 @@ setAllProjectsVersionsToGroupAndSysTime(except = "idea")
 //	}
 //  }
 //}
+
+
+
 addAtypicalTasksToAllProjects()
 allprojects { configureIdeaExcludes() }
 val root = matt.kbuild.root.RootProject(rootProject)
