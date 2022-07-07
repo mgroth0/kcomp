@@ -46,6 +46,7 @@ import matt.hurricanefx.tornadofx.tab.staticTab
 import matt.hurricanefx.tornadofx.tab.tabpane
 import matt.hurricanefx.wrapper.HBoxWrapper
 import matt.hurricanefx.wrapper.VBoxWrapper
+import matt.hurricanefx.wrapper.wrapped
 import matt.klib.lang.cap
 import matt.klib.str.addSpacesUntilLengthIs
 import matt.stream.map.lazyMap
@@ -79,7 +80,7 @@ fun EventTarget.expBox(opp: VBoxWrapper.()->Unit) = vbox {
 	vgrow = ALWAYS
   }
   yellow()
-  add(statusLabel)
+  wrapped().add(statusLabel.wrapped())
   opp()
 }
 
@@ -147,7 +148,7 @@ fun EventTarget.figBox(statusLabel: StatusLabel, opp: HBoxWrapper.()->Unit) = hb
   }
   val allButtons = mutableListOf<Button>()
   exps.forEach { exp ->
-	exp.category.pane.button(exp.name.addSpacesUntilLengthIs(4)) {
+	exp.category.pane.wrapped().button(exp.name.addSpacesUntilLengthIs(4)) {
 	  allButtons += this
 	  fun cfgStartButton() {
 		text = exp.name.addSpacesUntilLengthIs(4)

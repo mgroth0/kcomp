@@ -26,6 +26,7 @@ import matt.hurricanefx.tornadofx.control.imageview
 import matt.hurricanefx.tornadofx.control.label
 import matt.hurricanefx.tornadofx.nodes.add
 import matt.hurricanefx.tornadofx.nodes.clear
+import matt.hurricanefx.wrapper.wrapped
 import matt.kjlib.image.resize
 import matt.kjlib.image.toSquare
 import matt.stream.forEachNested
@@ -79,11 +80,11 @@ abstract class ImageVisualizer(
 		canv = this
 	  }
 	  this.prefHeightProperty().bind(canv!!.heightProperty())
-	  imageBox.exactHeightProperty.bind(this.heightProperty())
+	  imageBox.exactHeightProperty().bind(this.heightProperty())
 	}
 	Platform.runLater { /*must runLater to get child props*/
 	  val cfgPane = configPane().apply {
-		exactHeight = 150.0
+		wrapped().exactHeight = 150.0
 	  }
 
 	  if (node.scene != null) {
@@ -93,7 +94,7 @@ abstract class ImageVisualizer(
 		cfgPane.prefWrapLengthProperty().bind(node.stage!!.widthProperty())
 	  }
 
-	  node.add(cfgPane)
+	  node.wrapped().add(cfgPane.wrapped())
 	  node.minHeightProperty().bind(imageBox.heightProperty + cfgPane.heightProperty() /*+ 350.0*/)
 	}
   }

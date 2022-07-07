@@ -13,18 +13,18 @@ import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
+import matt.file.MFile
 import matt.fx.graphics.clip.copyToClipboard
 import matt.fx.graphics.menu.context.mcontextmenu
 import matt.hurricanefx.exactHeightProperty
 import matt.hurricanefx.exactWidthProperty
 import matt.hurricanefx.tornadofx.control.label
 import matt.hurricanefx.tornadofx.control.textfield
+import matt.hurricanefx.wrapper.wrapped
 import matt.json.custom.double
 import matt.json.prim.loadJson
 import matt.kjlib.jmath.ranges.step
 import matt.klib.dmap.withStoringDefault
-import matt.file.MFile
-import matt.hurricanefx.wrapper.wrapped
 import matt.stream.applyEach
 import matt.v1.comp.Fit.Gaussian
 import matt.v1.figmodels.AxisConfig
@@ -272,7 +272,7 @@ class Figure: Pane() {
   }
 
   fun controlBox() = VBox().apply {
-	label(text = "xMin", graphic = textfield(chart!!.xAxis.minProperty())) {
+	wrapped().label(text = "xMin", graphic = wrapped().textfield(chart!!.xAxis.minProperty())) {
 	  contentDisplay = RIGHT
 	}
   }

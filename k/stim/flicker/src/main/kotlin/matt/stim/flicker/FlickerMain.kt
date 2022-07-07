@@ -10,7 +10,7 @@ import matt.gui.app.GuiApp
 import matt.hurricanefx.tornadofx.animation.keyframe
 import matt.hurricanefx.tornadofx.animation.timeline
 import matt.hurricanefx.tornadofx.shapes.circle
-import matt.stim.flicker.psykt.ExperimentStage.centerOnScreen
+import matt.hurricanefx.wrapper.wrapped
 
 const val HZ = 10.0
 const val PER_SEC = 1/HZ
@@ -21,7 +21,7 @@ fun main() = GuiApp {
 
 
   rootPane {
-	circle(centerX = 300.0, centerY = 300.0, radius = 50.0) {
+	wrapped().circle(centerX = 300.0, centerY = 300.0, radius = 50.0) {
 	  isCache = true
 	  cacheHint = CacheHint.SPEED
 	  fill = Color.WHITE

@@ -56,13 +56,14 @@ import javafx.scene.text.TextAlignment
 import javafx.scene.text.TextFlow
 import javafx.stage.Stage
 import javafx.util.Duration
+import matt.file.MFile
+import matt.file.mFile
 import matt.hurricanefx.eye.prop.div
 import matt.hurricanefx.eye.prop.getValue
 import matt.hurricanefx.eye.prop.setValue
 import matt.hurricanefx.tornadofx.nodes.add
 import matt.hurricanefx.tornadofx.nodes.clear
-import matt.file.MFile
-import matt.file.mFile
+import matt.hurricanefx.wrapper.wrapped
 import matt.klib.lang.err
 import matt.stim.flicker.psykt.ECEO.Phase.EC
 import matt.stim.flicker.psykt.ECEO.Phase.EO
@@ -1658,9 +1659,9 @@ class ScreenFlicker3: Task() {
 	  prefWidthProperty().bind(ExperimentRoot.widthProperty()/2)
 	  prefHeightProperty().bind(ExperimentRoot.heightProperty()/2)
 	  if (showFreq) {
-		add(freqLabel.apply {
+		wrapped().add(freqLabel.apply {
 		  translateY = 600.0
-		})
+		}.wrapped())
 	  }
 	})
   }
@@ -1685,18 +1686,18 @@ class SpeedReading: Task() {
 	  val thread = Thread.currentThread()
 	  currentQuestion = currentBlock.questions[questionIndex]
 	  val stim = VBox().apply {
-		add(Label(currentQuestion.question))
+		wrapped().add(Label(currentQuestion.question).wrapped())
 		val answerButtons = ToggleGroup()
 		val answers = currentQuestion.wrongAnswers.toMutableList().apply {
 		  add(currentQuestion.rightAnswer)
 		  shuffle()
 		}
 		answers.forEach {
-		  add(RadioButton(it).apply {
+		  wrapped().add(RadioButton(it).apply {
 			answerButtons.toggles.add(this)
-		  })
+		  }.wrapped())
 		}
-		add(Button("Continue").apply {
+		wrapped().add(Button("Continue").apply {
 
 		  setOnAction {
 			if (answerButtons.selectedToggle != null) {
@@ -1712,7 +1713,7 @@ class SpeedReading: Task() {
 
 		  }
 
-		})
+		}.wrapped())
 	  }
 
 	  runLater {
@@ -2420,7 +2421,7 @@ fun Task.prepareExperiment(i: String? = null) {
 
 fun Task.stimulate(node: Node) {
   runLater {
-	ExperimentRoot.add(node)
+	ExperimentRoot.wrapped().add(node.wrapped())
   }
 }
 

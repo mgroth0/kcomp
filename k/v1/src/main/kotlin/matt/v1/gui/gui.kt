@@ -7,6 +7,7 @@ import matt.hurricanefx.eye.prop.objectBinding
 import matt.hurricanefx.tornadofx.fx.attachTo
 import matt.hurricanefx.tornadofx.nodes.add
 import matt.hurricanefx.visibleAndManagedProp
+import matt.hurricanefx.wrapper.wrapped
 import matt.v1.gui.GuiMode.ITTI_KOCH
 import matt.v1.gui.GuiMode.ROSENBERG
 import matt.v1.gui.expbox.expBox
@@ -26,7 +27,7 @@ class V1Gui(startup: GuiMode, remoteStatus: StatusLabel?): VBox() {
 	alignment = TOP_CENTER/*val figHeightProp = DProp(500.0)*/
 
 	val visPane = VisualizerPane(startup)
-	add(visPane)
+	wrapped().add(visPane.wrapped())
 	val ittKochTab = visPane.tabs[1]
 	modeProp.bind(ittKochTab.selectedProperty().objectBinding {
 	  if (it!!) ITTI_KOCH else ROSENBERG
@@ -34,6 +35,6 @@ class V1Gui(startup: GuiMode, remoteStatus: StatusLabel?): VBox() {
 	expBox {
 	  visibleAndManagedProp().bind(modeProp.isEqualTo(ROSENBERG))
 	}
-	remoteStatus?.attachTo(this)
+	remoteStatus?.attachTo(this.wrapped())
   }
 }

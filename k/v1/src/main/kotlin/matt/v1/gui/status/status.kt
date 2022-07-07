@@ -7,6 +7,7 @@ import matt.caching.every
 import matt.fx.graphics.async.runLaterReturn
 import matt.hurricanefx.eye.lang.Prop
 import matt.hurricanefx.tornadofx.control.label
+import matt.hurricanefx.wrapper.wrapped
 import matt.klib.str.prependZeros
 import matt.stream.itr.loopIterator
 import matt.v1.gui.status.StatusLabel.Status.IDLE
@@ -36,7 +37,7 @@ class StatusLabel(
 	prefWidth = 150.0 /*so label is steady*/
 	layoutX = 0.0
 	layoutY = 0.0
-	val statusLabel = label("") {
+	val statusLabel = wrapped().label("") {
 	  font = Font.font("Monospaced")
 	}
 

@@ -118,7 +118,7 @@ abstract class GuiConfigurable(
 	vgap = 10.0
 	props.forEach { p ->
 	  when (p) {
-		is CfgObjProp<*> -> combobox(values = p.values.toList()) {
+		is CfgObjProp<*> -> wrapped().combobox(values = p.values.toList()) {
 		  value = p.value
 		  /*maxWidthProperty().bind(fp.widthProperty())*/
 		  /*exactWidthProperty().bind(fp.widthProperty()*.4)*/
@@ -140,7 +140,7 @@ abstract class GuiConfigurable(
 
 		  }
 		}
-		is CfgBoolProp   -> checkbox(p.name) {
+		is CfgBoolProp   -> wrapped().checkbox(p.name) {
 		  isSelected = p.value as Boolean
 		  wrapped().exactWidthProperty().bind(fp.widthProperty()*.4)
 		  selectedProperty().onChange {
@@ -236,7 +236,7 @@ abstract class GuiConfigurable(
 			}
 		  }
 
-		  add(tf)
+		  wrapped().add(tf.wrapped())
 
 
 		}
