@@ -94,7 +94,7 @@ abstract class ImageVisualizer(
 	  }
 
 	  node.add(cfgPane)
-	  node.minHeightProperty().bind(imageBox.heightProperty() + cfgPane.heightProperty() /*+ 350.0*/)
+	  node.minHeightProperty().bind(imageBox.heightProperty + cfgPane.heightProperty() /*+ 350.0*/)
 	}
   }
 }
@@ -120,7 +120,7 @@ abstract class GeneratedImageVisualizer(
 
   private val theBox = imageBox.hbox {
 	alignment = CENTER_LEFT
-	prefHeightProperty().bind(canv!!.heightProperty())
+	prefHeightProperty.bind(canv!!.heightProperty())
   }
 
   private val sem = Semaphore(1)

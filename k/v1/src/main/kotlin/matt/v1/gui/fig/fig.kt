@@ -24,6 +24,7 @@ import matt.json.prim.loadJson
 import matt.kjlib.jmath.ranges.step
 import matt.klib.dmap.withStoringDefault
 import matt.file.MFile
+import matt.hurricanefx.wrapper.wrapped
 import matt.stream.applyEach
 import matt.v1.comp.Fit.Gaussian
 import matt.v1.figmodels.AxisConfig
@@ -78,8 +79,8 @@ class Figure: Pane() {
 	  isMinorTickVisible = false
 	}
 	chart = XYChart(xAxis, yAxis).apply {
-	  exactHeightProperty().bind(this@Figure.heightProperty())
-	  exactWidthProperty().bind(this@Figure.widthProperty())
+	  wrapped().exactHeightProperty().bind(this@Figure.heightProperty())
+	  wrapped().exactWidthProperty().bind(this@Figure.widthProperty())
 	  this@Figure.children.add(this)
 	  title = chartTitle
 	  triggerDistance = 0.0

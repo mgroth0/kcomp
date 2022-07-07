@@ -17,6 +17,7 @@ import matt.hurricanefx.tornadofx.control.label
 import matt.hurricanefx.tornadofx.control.slider
 import matt.hurricanefx.tornadofx.item.combobox
 import matt.hurricanefx.tornadofx.nodes.add
+import matt.hurricanefx.wrapper.wrapped
 import matt.kjlib.jmath.sigFigs
 import matt.klib.lang.NEVER
 import matt.klib.str.truncateWithElipses
@@ -121,7 +122,7 @@ abstract class GuiConfigurable(
 		  value = p.value
 		  /*maxWidthProperty().bind(fp.widthProperty())*/
 		  /*exactWidthProperty().bind(fp.widthProperty()*.4)*/
-		  exactWidth = 400.0
+		  wrapped().exactWidth = 400.0
 		  promptText = p.name + "?"
 		  valueProperty().onChange {
 			println("obj changed: $it")
@@ -141,7 +142,7 @@ abstract class GuiConfigurable(
 		}
 		is CfgBoolProp   -> checkbox(p.name) {
 		  isSelected = p.value as Boolean
-		  exactWidthProperty().bind(fp.widthProperty()*.4)
+		  wrapped().exactWidthProperty().bind(fp.widthProperty()*.4)
 		  selectedProperty().onChange {
 			p.value = it
 			onConfigChanged()
