@@ -130,7 +130,7 @@ fun EventTarget.figBox(statusLabel: StatusLabel, opp: HBox.()->Unit) = hbox {
 	blue()
   }
   var figControlBox: VBox? = null
-  val rightBox = VBoxWrapper(vbox()) {
+  val rightBox = vbox {
 //	every(1.sec) {println("Figure.width=${width}")}
 	runLater {
 	  maxWidthProperty().bind(stage!!.widthProperty() * 0.25)
