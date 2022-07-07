@@ -50,7 +50,7 @@ abstract class ImageVisualizer(
   val node = VBox()
   protected val imageBox = node.hbox {
 	alignment = CENTER_LEFT
-	prefWidthProperty().bind(node.widthProperty())
+	prefWidthProperty.bind(node.widthProperty())
   }
 
 
@@ -79,7 +79,7 @@ abstract class ImageVisualizer(
 		canv = this
 	  }
 	  this.prefHeightProperty().bind(canv!!.heightProperty())
-	  imageBox.exactHeightProperty().bind(this.heightProperty())
+	  imageBox.exactHeightProperty.bind(this.heightProperty())
 	}
 	Platform.runLater { /*must runLater to get child props*/
 	  val cfgPane = configPane().apply {
