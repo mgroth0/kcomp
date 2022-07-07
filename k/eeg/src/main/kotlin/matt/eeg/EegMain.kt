@@ -10,7 +10,7 @@ import matt.kjlib.shell.execReturn
 import java.util.Arrays
 import kotlin.system.exitProcess
 
-const val SIMPLIFIED = true
+@Suppress("MayBeConstant") val SIMPLIFIED = true
 
 fun main(): Unit = GuiApp {
 
