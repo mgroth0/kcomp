@@ -1,6 +1,7 @@
 
 package matt.v1.gui.expbox
 
+import javafx.application.Platform.runLater
 import javafx.beans.property.BooleanProperty
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.event.EventTarget
@@ -23,14 +24,19 @@ import matt.fx.graphics.layout.hbox
 import matt.fx.graphics.layout.vbox
 import matt.fx.graphics.layout.vgrow
 import matt.fx.graphics.menu.context.mcontextmenu
+import matt.fx.graphics.style.blue
+import matt.fx.graphics.style.green
+import matt.fx.graphics.style.red
+import matt.fx.graphics.style.white
+import matt.fx.graphics.style.yellow
 import matt.fxlib.console.customConsole
 import matt.fxlib.console.interceptConsole
 import matt.hurricanefx.addr
 import matt.hurricanefx.exactHeight
-import matt.hurricanefx.exactWidthProperty
 import matt.hurricanefx.eye.delegate.fx
 import matt.hurricanefx.eye.lib.onChange
 import matt.hurricanefx.eye.prop.doubleBinding
+import matt.hurricanefx.eye.prop.times
 import matt.hurricanefx.op
 import matt.hurricanefx.tornadofx.control.button
 import matt.hurricanefx.tornadofx.control.checkbox
@@ -72,6 +78,7 @@ fun EventTarget.expBox(opp: VBox.()->Unit) = vbox {
   figBox(statusLabel) {
 	vgrow = ALWAYS
   }
+  yellow()
   add(statusLabel)
   opp()
 }
@@ -89,14 +96,17 @@ val somethingRunningProp = SimpleBooleanProperty(false)
 fun EventTarget.figBox(statusLabel: StatusLabel, opp: HBox.()->Unit) = hbox {
   alignment = CENTER
   val exps = experiments()
+//  every(1.sec) {println("figBox.width=${width}")}
+  white()
   vbox {
+//	every(1.sec) {println("leftBox.width=${width}")}
 	checkbox("save", CFG::saveExps.fx) {
 	  disableWhen { somethingRunningProp }
 	}
 	checkbox("load", CFG::loadExps.fx) {
 	  disableWhen { somethingRunningProp }
 	}
-	choicebox<PerformanceMode>(CFG::scale.fx, PerformanceMode.values().toList()) {
+	choicebox(CFG::scale.fx, PerformanceMode.values().toList()) {
 	  disableWhen { somethingRunningProp }
 	}
 	button("open data folder") withAction EXPS_DATA_FOLDER::subl
@@ -104,22 +114,31 @@ fun EventTarget.figBox(statusLabel: StatusLabel, opp: HBox.()->Unit) = hbox {
 	button("save norm cache") withAction {
 	  ComputeCache.saveCache<Norm,Double>()
 	}
+	green()
   }
   mcontextmenu {
 	checkitem("load", CFG::loadExps.fx as BooleanProperty)
 	"toggle square fig" toggles squareFigProp
   }
   val fig = addr(Figure()) {
+//	every(1.sec) {println("Figure.width=${width}")}
 	vgrow = ALWAYS
-	exactWidthProperty().bind(squareFigProp.doubleBinding(heightProperty()) {
+	prefWidthProperty().bind(squareFigProp.doubleBinding(heightProperty()) {
 	  if (it!!) height else Double.MAX_VALUE
 	})
 	dragsSnapshot()
+	blue()
   }
   var figControlBox: VBox? = null
-  val rightBox = VBoxWrapper(vbox())
+  val rightBox = VBoxWrapper(vbox()) {
+//	every(1.sec) {println("Figure.width=${width}")}
+	runLater {
+	  maxWidthProperty().bind(stage!!.widthProperty() * 0.25)
+	}
+	red()
+  }
   val expConsole = rightBox.customConsole(takesInput = false) {
-	//	red()
+
   }
   val (writer, _) = expConsole.custom()
   rightBox.interceptConsole {

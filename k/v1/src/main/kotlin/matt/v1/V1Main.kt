@@ -1,7 +1,5 @@
 package matt.v1
 
-//import matt.kjlib.commons.DATA_FOLDER
-//import matt.reflect.ismac
 import matt.async.date.simplePrinting
 import matt.file.commons.DATA_FOLDER
 import matt.gui.app.GuiApp
@@ -57,7 +55,7 @@ fun main(): Unit = GuiApp(screenIndex = 2) {
 	thread {
 	  remoteStatus!!.status.value = WORKING
 	  println("WORKING 2")
-	  Polestar.ssh( object: Appendable {
+	  Polestar.ssh(object: Appendable {
 		var clearOnNext = false
 		override fun append(csq: CharSequence?): java.lang.Appendable {
 		  csq?.forEach {
