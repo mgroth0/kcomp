@@ -9,7 +9,6 @@ import javafx.geometry.Pos.CENTER
 import javafx.geometry.Pos.TOP_CENTER
 import javafx.scene.control.Button
 import javafx.scene.layout.FlowPane
-import javafx.scene.layout.HBox
 import javafx.scene.layout.Priority.ALWAYS
 import javafx.scene.layout.VBox
 import matt.async.daemon
@@ -45,6 +44,7 @@ import matt.hurricanefx.tornadofx.nodes.add
 import matt.hurricanefx.tornadofx.nodes.disableWhen
 import matt.hurricanefx.tornadofx.tab.staticTab
 import matt.hurricanefx.tornadofx.tab.tabpane
+import matt.hurricanefx.wrapper.HBoxWrapper
 import matt.hurricanefx.wrapper.VBoxWrapper
 import matt.klib.lang.cap
 import matt.klib.str.addSpacesUntilLengthIs
@@ -64,7 +64,7 @@ import java.io.PrintWriter
 val expCategoryPanes = lazyMap<ExpCategory, FlowPane> { FlowPane() }
 val ExpCategory.pane get() = expCategoryPanes[this]!!
 
-fun EventTarget.expBox(opp: VBox.()->Unit) = vbox {
+fun EventTarget.expBox(opp: VBoxWrapper.()->Unit) = vbox {
   alignment = TOP_CENTER
   this.vgrow = ALWAYS
   tabpane {
@@ -93,7 +93,7 @@ class ExpGui(
 val squareFigProp = SimpleBooleanProperty(true)
 val somethingRunningProp = SimpleBooleanProperty(false)
 
-fun EventTarget.figBox(statusLabel: StatusLabel, opp: HBox.()->Unit) = hbox {
+fun EventTarget.figBox(statusLabel: StatusLabel, opp: HBoxWrapper.()->Unit) = hbox {
   alignment = CENTER
   val exps = experiments()
 //  every(1.sec) {println("figBox.width=${width}")}
@@ -133,7 +133,7 @@ fun EventTarget.figBox(statusLabel: StatusLabel, opp: HBox.()->Unit) = hbox {
   val rightBox = vbox {
 //	every(1.sec) {println("Figure.width=${width}")}
 	runLater {
-	  maxWidthProperty().bind(stage!!.widthProperty() * 0.25)
+	  maxWidthProperty.bind(stage!!.widthProperty() * 0.25)
 	}
 	red()
   }
