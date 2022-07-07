@@ -9,13 +9,16 @@ import kotlin.system.exitProcess
 
 
 fun main() {
-  BoardShim.enable_board_logger()
+  BoardShim.enable_dev_board_logger()
   val params = BrainFlowInputParams()
   params.serial_port = "/dev/cu.usbmodem11"
   val board_id = BoardIds.GANGLION_BOARD._code
   val board_shim = BoardShim(board_id, params)
+  println("preparing session")
   board_shim.prepare_session()
-  board_shim.start_stream(450000, "file://file_stream.csv:w")
+  println("session prepared")
+  board_shim.start_stream(450000, "")
+  println("started stream")
   BoardShim.log_message(LEVEL_INFO._code, "Start sleeping in the main thread")
   Thread.sleep(5000)
   board_shim.stop_stream()

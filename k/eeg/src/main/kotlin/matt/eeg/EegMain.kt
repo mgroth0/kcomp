@@ -5,35 +5,38 @@ import brainflow.BoardShim
 import brainflow.BrainFlowError
 import brainflow.BrainFlowInputParams
 import brainflow.LogLevels.LEVEL_INFO
-import com.sun.jna.Native
 import matt.gui.app.GuiApp
 import matt.kjlib.shell.execReturn
 import java.util.Arrays
 import kotlin.system.exitProcess
 
+const val SIMPLIFIED = true
 
 fun main(): Unit = GuiApp {
 
-
-
-  val bt = "State: On" in execReturn("/usr/sbin/system_profiler", "SPBluetoothDataType")
-
-  if (bt) {
-	getDataFromBoard()
+  if (SIMPLIFIED) {
+	matt.eeg.simplified.main()
   } else {
-	println("please turn on bluetooth")
-	exitProcess(1)
+
+	val bt = "State: On" in execReturn("/usr/sbin/system_profiler", "SPBluetoothDataType")
+
+	if (bt) {
+	  getDataFromBoard()
+	} else {
+	  println("please turn on bluetooth")
+	  exitProcess(1)
+	}
+
+	/*//  println(execPython(python))
+	//
+	//  val testString = "${'$'}{something}"*/
+
+
   }
-
-  /*//  println(execPython(python))
-  //
-  //  val testString = "${'$'}{something}"*/
-
 
 }.start()
 
 private fun getDataFromBoard() {
-  println("java.class.path=${System.getProperty("java.class.path")}")
   BoardShim.enable_dev_board_logger()
   BoardShim.set_log_level(0)
 
@@ -45,15 +48,15 @@ private fun getDataFromBoard() {
 
   try {
 	board_shim.prepare_session()
-//    val instanceProp = BoardShim::class.memberProperties.first { it.name == "instance" }
-//    instanceProp.isAccessible = true
-//    val ec = instanceProp.get(board_shim).prepare_session(board_shim.board_id, board_shim.input_json)
-//    if (ec != STATUS_OK._code) {
-//      throw BrainFlowError("Error in prepare_session", ec)
-//    }
+	//    val instanceProp = BoardShim::class.memberProperties.first { it.name == "instance" }
+	//    instanceProp.isAccessible = true
+	//    val ec = instanceProp.get(board_shim).prepare_session(board_shim.board_id, board_shim.input_json)
+	//    if (ec != STATUS_OK._code) {
+	//      throw BrainFlowError("Error in prepare_session", ec)
+	//    }
   } catch (e: BrainFlowError) {
-    println("e.message=${e.message}")
-    e.printStackTrace()
+	println("e.message=${e.message}")
+	e.printStackTrace()
 	println("Is the Ganglion turned on?")
 	exitProcess(2)
   }
@@ -63,15 +66,16 @@ private fun getDataFromBoard() {
   board_shim.start_stream(450000, "")
   BoardShim.log_message(LEVEL_INFO._code, "Start sleeping in the main thread")
 
-//  board_shim.
+  //  board_shim.
 
 
   print("board_shim.board_id=${board_shim.board_id}")
 
-//  board_shim.config_board()
+  //  board_shim.config_board()
 
   Thread.sleep(5000)
   board_shim.stop_stream()
+
   println(board_shim._board_data_count)
   val data = board_shim.get_current_board_data(30) // doesnt flush it from ring buffer
 
@@ -84,16 +88,13 @@ private fun getDataFromBoard() {
   }
   board_shim.release_session()
 
+
   println("get_eeg_channels= ${BoardShim.get_eeg_channels(BoardIds.GANGLION_BOARD._code)}")
   println("get_emg_channels= ${BoardShim.get_emg_channels(BoardIds.GANGLION_BOARD._code)}")
   println("get_ecg_channels= ${BoardShim.get_ecg_channels(BoardIds.GANGLION_BOARD._code)}")
   println("get_accel_channels= ${BoardShim.get_accel_channels(BoardIds.GANGLION_BOARD._code)}")
   println("get_sampling_rate= ${BoardShim.get_sampling_rate(BoardIds.GANGLION_BOARD._code)}")
   println("get_timestamp_channel= ${BoardShim.get_timestamp_channel(BoardIds.GANGLION_BOARD._code)}")
-
-
-
-
 
 
   /*this throws an error?*/
