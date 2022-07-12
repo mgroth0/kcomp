@@ -9,14 +9,23 @@ import matt.kbuild.root.standardizeSubprojectGroupNamesAndNames
 val thisFile = buildscript.sourceFile!!.toMFile()
 require(thisFile.hardLinkCount == 2)
 plugins {
-  id("com.github.johnrengelman.shadow") // version "7.1.2"
   id("com.dorongold.task-tree") version "2.1.0"
-  /*need to reference absolute path here because gradle API in KJG doesn't switch to the right working dir*/
   val stupidKtVersion = File("/Users/matthewgroth/registered/ide/flow/RootFiles/libs.versions.toml").readText()
 	.substringAfter("kotlin").substringAfter('"').substringBefore('"')
   kotlin("plugin.serialization") version stupidKtVersion apply false
-  idea
 }
+libs
+pluginManager.apply {
+  apply("com.github.johnrengelman.shadow") // version "7.1.2"
+  //  apply("com.dorongold.task-tree") /*version "2.1.0"*/
+  /*need to reference absolute path here because gradle API in KJG doesn't switch to the right working dir*/
+
+
+  apply("idea")
+}
+//plugins {
+//  idea
+//}
 val ktversion = tomlVersion("kotlin")
 logger.info("using gradle version ${gradle.gradleVersion}")
 val root = matt.kbuild.root.RootProject(rootProject)

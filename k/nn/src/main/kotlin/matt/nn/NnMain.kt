@@ -15,17 +15,14 @@ import kotlin.random.Random.Default.nextDouble
 
 val REMOTE = true
 private val OMMachine = Polestar
+val srun = if (OMMachine != Polestar) SRun(timeMin = 15) else null
 
 fun main() {
   if (REMOTE && thisMachine is Mac) {
 	thread {
-	  println("here1")
 	  OMMachine.ssh {
-		println("here2")
-		runOnOM(srun = SRun(timeMin = 15))
-		println("here3")
+		runOnOM(srun = srun)
 	  }
-	  println("here4")
 	}
   } else {
 	println("os:$os")
