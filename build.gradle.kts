@@ -9,12 +9,13 @@ import matt.kbuild.root.standardizeSubprojectGroupNamesAndNames
 val thisFile = buildscript.sourceFile!!.toMFile()
 require(thisFile.hardLinkCount == 2)
 plugins {
+
   id("com.dorongold.task-tree") version "2.1.0"
-  val stupidKtVersion = File("/Users/matthewgroth/registered/ide/flow/RootFiles/libs.versions.toml").readText()
-	.substringAfter("kotlin").substringAfter('"').substringBefore('"')
-  kotlin("plugin.serialization") version stupidKtVersion apply false
+
+//  val stupidKtVersion = File("/Users/matthewgroth/registered/ide/flow/RootFiles/libs.versions.toml").readText()
+//	.substringAfter("kotlin").substringAfter('"').substringBefore('"')
+  kotlin("plugin.serialization") version libs.versions.kotlin apply false
 }
-libs
 pluginManager.apply {
   apply("com.github.johnrengelman.shadow") // version "7.1.2"
   //  apply("com.dorongold.task-tree") /*version "2.1.0"*/
