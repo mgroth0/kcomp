@@ -8,8 +8,12 @@ import matt.nn.model.NeuralNetwork.Companion.INPUT_LENGTH
 import matt.nn.model.SumOfSquaresError
 import matt.remote.openmind.Polestar
 import matt.remote.runOnOM
-import matt.remote.stfpKbuildToOMIfNeeded
 import matt.remote.slurm.SRun
+import matt.remote.stfpKbuildToOMIfNeeded
+import org.tensorflow.ConcreteFunction
+import org.tensorflow.Signature
+import org.tensorflow.op.Ops
+import org.tensorflow.types.TInt32
 import kotlin.concurrent.thread
 import kotlin.random.Random.Default.nextDouble
 
@@ -31,11 +35,11 @@ fun main() {
   } else {
 	println("os:$os")
 	bareBonesNNDemo()
-	//	tfDemo()
+	tfDemo()
   }
 }
 
-/*fun tfDemo() {
+fun tfDemo() {
   fun dbl(tf: Ops): Signature {
 	val x = tf.placeholder(TInt32::class.java)
 	val dblX = tf.math.add(x, x)
@@ -50,7 +54,7 @@ fun main() {
 	  }
 	}
   }
-}*/
+}
 
 fun bareBonesNNDemo() {
   val nn = NeuralNetwork(randomWeights = true)
