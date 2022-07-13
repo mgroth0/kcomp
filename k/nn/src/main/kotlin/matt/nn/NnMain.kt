@@ -8,7 +8,7 @@ import matt.nn.model.NeuralNetwork.Companion.INPUT_LENGTH
 import matt.nn.model.SumOfSquaresError
 import matt.remote.openmind.Polestar
 import matt.remote.runOnOM
-import matt.remote.scpKbuildToOMIfNeeded
+import matt.remote.stfpKbuildToOMIfNeeded
 import matt.remote.slurm.SRun
 import kotlin.concurrent.thread
 import kotlin.random.Random.Default.nextDouble
@@ -22,7 +22,7 @@ fun main() {
   if (REMOTE && thisMachine is Mac) {
 	thread {
 	  OMMachine.session {
-		scpKbuildToOMIfNeeded()
+		stfpKbuildToOMIfNeeded()
 		ssh {
 		  runOnOM(srun = srun)
 		}

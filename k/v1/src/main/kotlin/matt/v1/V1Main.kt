@@ -9,7 +9,7 @@ import matt.klib.todo
 import matt.reflect.onLinux
 import matt.remote.openmind.Polestar
 import matt.remote.runOnOM
-import matt.remote.scpKbuildToOMIfNeeded
+import matt.remote.stfpKbuildToOMIfNeeded
 import matt.remote.slurm.SRun
 import matt.v1.gui.GuiMode
 import matt.v1.gui.V1Gui
@@ -57,7 +57,7 @@ fun main(): Unit = GuiApp(screenIndex = 2) {
 	  remoteStatus!!.status.value = WORKING
 	  println("WORKING 2")
 	  Polestar.session {
-		scpKbuildToOMIfNeeded()
+		stfpKbuildToOMIfNeeded()
 		ssh(object: Appendable {
 		  var clearOnNext = false
 		  override fun append(csq: CharSequence?): java.lang.Appendable {
