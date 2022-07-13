@@ -40,6 +40,7 @@ fun main() {
 }
 
 fun tfDemo() {
+
   fun dbl(tf: Ops): Signature {
 	val x = tf.placeholder(TInt32::class.java)
 	val dblX = tf.math.add(x, x)
