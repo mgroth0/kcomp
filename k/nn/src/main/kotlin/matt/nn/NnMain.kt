@@ -8,6 +8,7 @@ import matt.nn.model.NeuralNetwork.Companion.INPUT_LENGTH
 import matt.nn.model.SumOfSquaresError
 import matt.remote.openmind.Polestar
 import matt.remote.runOnOM
+import matt.remote.scpKbuildToOMIfNeeded
 import matt.remote.slurm.SRun
 import kotlin.concurrent.thread
 import kotlin.random.Random.Default.nextDouble
@@ -20,8 +21,11 @@ val srun = if (OMMachine != Polestar) SRun(timeMin = 15) else null
 fun main() {
   if (REMOTE && thisMachine is Mac) {
 	thread {
-	  OMMachine.ssh {
-		runOnOM(srun = srun)
+	  OMMachine.session {
+		scpKbuildToOMIfNeeded()
+		ssh {
+		  runOnOM(srun = srun)
+		}
 	  }
 	}
   } else {

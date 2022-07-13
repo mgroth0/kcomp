@@ -9,6 +9,7 @@ import matt.klib.todo
 import matt.reflect.onLinux
 import matt.remote.openmind.Polestar
 import matt.remote.runOnOM
+import matt.remote.scpKbuildToOMIfNeeded
 import matt.remote.slurm.SRun
 import matt.v1.gui.GuiMode
 import matt.v1.gui.V1Gui
@@ -55,36 +56,40 @@ fun main(): Unit = GuiApp(screenIndex = 2) {
 	thread {
 	  remoteStatus!!.status.value = WORKING
 	  println("WORKING 2")
-	  Polestar.ssh(object: Appendable {
-		var clearOnNext = false
-		override fun append(csq: CharSequence?): java.lang.Appendable {
-		  csq?.forEach {
-			append(it)
-		  }
-		  return this
-		}
-
-		override fun append(csq: CharSequence?, start: Int, end: Int): java.lang.Appendable {
-		  if (csq != null) append(csq.subSequence(start, end))
-		  return this
-		}
-
-		override fun append(c: Char): java.lang.Appendable {
-		  if (c in listOf('\n', '\r')) {
-			clearOnNext = true
-		  } else {
-			if (clearOnNext) {
-			  remoteStatus.statusExtra = ""
-			  clearOnNext = false
+	  Polestar.session {
+		scpKbuildToOMIfNeeded()
+		ssh(object: Appendable {
+		  var clearOnNext = false
+		  override fun append(csq: CharSequence?): java.lang.Appendable {
+			csq?.forEach {
+			  append(it)
 			}
-			remoteStatus.statusExtra += c
+			return this
 		  }
-		  return this
-		}
 
-	  }) {
-		runOnOM(srun = SRun(timeMin = 15))
+		  override fun append(csq: CharSequence?, start: Int, end: Int): java.lang.Appendable {
+			if (csq != null) append(csq.subSequence(start, end))
+			return this
+		  }
+
+		  override fun append(c: Char): java.lang.Appendable {
+			if (c in listOf('\n', '\r')) {
+			  clearOnNext = true
+			} else {
+			  if (clearOnNext) {
+				remoteStatus.statusExtra = ""
+				clearOnNext = false
+			  }
+			  remoteStatus.statusExtra += c
+			}
+			return this
+		  }
+
+		}) {
+		  runOnOM(srun = SRun(timeMin = 15))
+		}
 	  }
+
 	  remoteStatus.status.value = IDLE
 	  println("IDLE 2")
 	}
