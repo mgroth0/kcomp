@@ -5,6 +5,7 @@ import matt.kbuild.root.checkVersionsAndProperties
 import matt.kbuild.root.configureIdeaExcludes
 import matt.kbuild.root.setAllProjectsVersionsToGroupAndSysTime
 import matt.kbuild.root.standardizeSubprojectGroupNamesAndNames
+import matt.klib.sys.Mac
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
 
 val thisFile = buildscript.sourceFile!!.toMFile()
@@ -37,7 +38,7 @@ checkVersionsAndProperties()
 standardizeSubprojectGroupNamesAndNames()
 setAllProjectsVersionsToGroupAndSysTime(except = "idea")
 addAtypicalTasksToAllProjects()
-allprojects { configureIdeaExcludes() }
+if (thisMachine is Mac) allprojects { configureIdeaExcludes() }
 root.addTypicalGitTasksToAppropriateProjects()
 root.addRootFilesSyncAndCompleteGitTasks()
 val allChecks = root.addCheckTasksToAllProjects()
