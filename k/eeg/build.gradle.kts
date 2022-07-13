@@ -2,7 +2,7 @@ dependencies {
   implementation(projects.k.gui)
   implementation(projects.k.kjlib.shell)
   compileOnly(libs.brainflow) /*for source navigation?*/
-  implementation(files(matt.file.commons.RootProjects.kcomp.folder + "k" + "jar" + "brainflow-jar-with-dependencies.jar"))
+  implementation(files(matt.file.commons.JAR_FOLDER + "brainflow-jar-with-dependencies.jar"))
 }
 repositories {
   maven {

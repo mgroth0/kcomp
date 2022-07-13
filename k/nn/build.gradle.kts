@@ -20,7 +20,6 @@ implementations(
 		"this check is to ensure that I'm using the same tf version on all machines"
 	  }
 	})
-
 	else       -> libs.tensorflow
   },
   /*for actual executable code*/
