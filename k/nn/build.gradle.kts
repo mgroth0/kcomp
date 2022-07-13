@@ -6,6 +6,8 @@ implementations {
   remoteSlurm
   remoteOpenmind
   kjlibJmath
+}
+compileOnlys {
   libs.tensorflow /*for navigating sources in IDE*/
 }
 println("it is ${libs.tensorflow.get().versionConstraint}")
