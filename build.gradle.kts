@@ -38,9 +38,11 @@ checkVersionsAndProperties()
 standardizeSubprojectGroupNamesAndNames()
 setAllProjectsVersionsToGroupAndSysTime(except = "idea")
 addAtypicalTasksToAllProjects()
-if (thisMachine is Mac) allprojects { configureIdeaExcludes() }
-root.addTypicalGitTasksToAppropriateProjects()
-root.addRootFilesSyncAndCompleteGitTasks()
+if (thisMachine is Mac) {
+  allprojects { configureIdeaExcludes() }
+  root.addTypicalGitTasksToAppropriateProjects()
+  root.addRootFilesSyncAndCompleteGitTasks()
+}
 val allChecks = root.addCheckTasksToAllProjects()
 root.configureJavaAndKotlinCompileInAllProjects()
 root.tryToSilenceNPM()
