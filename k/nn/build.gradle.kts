@@ -10,9 +10,7 @@ implementations {
 compileOnlys {
   libs.tensorflow /*for navigating sources in IDE*/
 }
-println("it is ${libs.tensorflow.get().versionConstraint}")
 implementations(
-
   when (matt.klib.commons.thisMachine) {
 	is NEW_MAC -> fileTree((matt.file.commons.JAR_FOLDER + "tf").apply {
 	  val needIn = "-${libs.tensorflow.get().versionConstraint}-SNAPSHOT"
@@ -22,10 +20,7 @@ implementations(
 		"this check is to ensure that I'm using the same tf version on all machines"
 	  }
 	})
+
 	else       -> libs.tensorflow
   },
-  /*for actual executable code*/
-
-  //  libs.bundles.multik.full,
-  //  libs.chartFX
 )
