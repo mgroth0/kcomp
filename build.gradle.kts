@@ -6,7 +6,9 @@ import matt.kbuild.root.configureIdeaExcludes
 import matt.kbuild.root.setAllProjectsVersionsToGroupAndSysTime
 import matt.kbuild.root.standardizeSubprojectGroupNamesAndNames
 import matt.klib.sys.Mac
-import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
+import matt.klib.sys.OPEN_MIND
+
+if (thisMachine is OPEN_MIND) GIT = false
 
 val thisFile = buildscript.sourceFile!!.toMFile()
 if (thisMachine == NEW_MAC) require(thisFile.hardLinkCount == 2)
