@@ -8,7 +8,7 @@ import matt.kbuild.root.standardizeSubprojectGroupNamesAndNames
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
 
 val thisFile = buildscript.sourceFile!!.toMFile()
-require(thisFile.hardLinkCount == 2)
+if (thisMachine == NEW_MAC) require(thisFile.hardLinkCount == 2)
 plugins {
   //  id("com.github.johnrengelman.shadow") version "7.1.2"
   id("com.dorongold.task-tree") version "2.1.0"
