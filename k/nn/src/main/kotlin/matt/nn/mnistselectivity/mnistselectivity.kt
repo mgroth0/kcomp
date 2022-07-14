@@ -81,11 +81,14 @@ fun mnistSelectivityDemo() {
 
 	// Compile Model
 	model.compile(tf, compileOptions)
+
+
 	val loaders: org.tensorflow.utils.Pair<GraphLoader<Float>, GraphLoader<Float>> = MNIST.graphLoaders2D()
 	loaders.first().use { train ->
 	  loaders.second().use { test ->
 		// Fit model
 		model.fit(tf, train, test, fitOptions)
+
 	  }
 	}
   }

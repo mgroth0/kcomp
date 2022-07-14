@@ -34,7 +34,8 @@ public class Input<T extends Number> extends Layer<T> {
   public void build(Ops tf, Class<T> dtype) {
     this.dtype = dtype;
     System.out.println(dtype);
-    this.input = tf.placeholder(dtype, Placeholder.shape(Keras.shapeFromDims(Keras.concatenate(-1, this.dims))));
+    long[] variable1 = Keras.concatenate(-1, this.dims);
+    this.input = tf.placeholder(dtype, Placeholder.shape(Keras.shapeFromDims(variable1)));
     this.built = true;
   }
 
