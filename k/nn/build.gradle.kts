@@ -6,6 +6,8 @@ implementations {
   remoteSlurm
   remoteOpenmind
   kjlibJmath
+  async
+  kjlibGit
 }
 compileOnlys {
   libs.tensorflow /*for navigating sources in IDE*/

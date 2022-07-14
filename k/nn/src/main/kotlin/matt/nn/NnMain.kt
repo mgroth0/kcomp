@@ -1,8 +1,11 @@
 package matt.nn
 
+import matt.file.commons.RootProjects.kcomp
+import matt.kjlib.git.SimpleGit
 import matt.klib.commons.os
 import matt.klib.commons.thisMachine
 import matt.klib.sys.Mac
+import matt.nn.mnistselectivity.mnistSelectivityDemo
 import matt.nn.model.NeuralNetwork
 import matt.nn.model.NeuralNetwork.Companion.INPUT_LENGTH
 import matt.nn.model.SumOfSquaresError
@@ -25,6 +28,16 @@ val srun = if (OMMachine != Polestar) SRun(timeMin = 15) else null
 fun main() {
   if (REMOTE && thisMachine is Mac) {
 	thread {
+	/*  SimpleGit(projectDir = kcomp.folder + "k" + "nn", debug = true).apply {
+		addAll()
+		commit()
+		push()
+	  }*/
+	  SimpleGit(projectDir = kcomp.folder, debug = true).apply {
+		addAll()
+		commit()
+		push()
+	  }
 	  OMMachine.session {
 		stfpKbuildToOMIfNeeded()
 		ssh {
@@ -36,11 +49,11 @@ fun main() {
 	println("os:$os")
 	bareBonesNNDemo()
 	tfDemo()
+	mnistSelectivityDemo()
   }
 }
 
 fun tfDemo() {
-
   fun dbl(tf: Ops): Signature {
 	val x = tf.placeholder(TInt32::class.java)
 	val dblX = tf.math.add(x, x)
@@ -55,6 +68,7 @@ fun tfDemo() {
 	  }
 	}
   }
+
 }
 
 fun bareBonesNNDemo() {
