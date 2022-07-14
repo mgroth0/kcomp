@@ -1,7 +1,6 @@
 package org.tensorflow.keras.models;
 
-import org.tensorflow.Shape;
-import org.tensorflow.data.GraphLoader;
+import org.tensorflow.keras.data.GraphLoader;
 import org.tensorflow.keras.layers.Layer;
 import org.tensorflow.keras.losses.Loss;
 import org.tensorflow.keras.losses.Losses;
@@ -12,7 +11,6 @@ import org.tensorflow.keras.optimizers.Optimizers;
 import org.tensorflow.op.Ops;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public abstract class Model<T extends Number> extends Layer<T> {

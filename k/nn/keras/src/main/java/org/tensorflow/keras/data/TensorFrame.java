@@ -1,8 +1,4 @@
-package org.tensorflow.data;
-
-import org.tensorflow.Operand;
-import org.tensorflow.Session;
-import org.tensorflow.op.Ops;
+package org.tensorflow.keras.data;
 
 public abstract class TensorFrame<T> implements Dataset<T>, GraphLoader<T> {
   protected long batchSize = 1;

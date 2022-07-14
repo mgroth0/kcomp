@@ -4,7 +4,7 @@ import org.tensorflow.Graph;
 import org.tensorflow.Operand;
 import org.tensorflow.Session;
 import org.tensorflow.Tensor;
-import org.tensorflow.data.GraphLoader;
+import org.tensorflow.keras.data.GraphLoader;
 import org.tensorflow.keras.activations.Activations;
 import org.tensorflow.keras.datasets.MNIST;
 import org.tensorflow.keras.layers.Dense;

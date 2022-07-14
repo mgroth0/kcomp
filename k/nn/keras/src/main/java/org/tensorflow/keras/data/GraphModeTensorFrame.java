@@ -1,4 +1,4 @@
-package org.tensorflow.data;
+package org.tensorflow.keras.data;
 
 import org.tensorflow.*;
 import org.tensorflow.op.Ops;

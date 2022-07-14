@@ -1,4 +1,4 @@
-package org.tensorflow.data;
+package org.tensorflow.keras.data;
 
 public interface Dataset<T> extends AutoCloseable {
   /**

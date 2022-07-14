@@ -1,13 +1,8 @@
-package org.tensorflow.data;
+package org.tensorflow.keras.data;
 
 import org.tensorflow.Operand;
 import org.tensorflow.Session;
-import org.tensorflow.Tensor;
 import org.tensorflow.op.Ops;
-import org.tensorflow.op.core.Placeholder;
-import org.tensorflow.utils.SessionRunner;
-
-import java.util.Iterator;
 
 public interface GraphLoader<T> extends Dataset<T> {
 

@@ -1,8 +1,8 @@
  package org.tensorflow.keras.datasets;
 
  import org.tensorflow.Tensors;
- import org.tensorflow.data.GraphLoader;
- import org.tensorflow.data.GraphModeTensorFrame;
+ import org.tensorflow.keras.data.GraphLoader;
+ import org.tensorflow.keras.data.GraphModeTensorFrame;
  import org.tensorflow.keras.utils.DataUtils;
  import org.tensorflow.keras.utils.Keras;
  import org.tensorflow.utils.Pair;

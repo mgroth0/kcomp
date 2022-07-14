@@ -1,7 +1,7 @@
 package org.tensorflow.keras.models;
 
 import org.tensorflow.*;
-import org.tensorflow.data.GraphLoader;
+import org.tensorflow.keras.data.GraphLoader;
 import org.tensorflow.keras.layers.Input;
 import org.tensorflow.keras.layers.Layer;
 import org.tensorflow.keras.losses.Loss;

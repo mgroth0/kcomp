@@ -1,13 +1,11 @@
 package org.tensorflow.keras.examples.fashionMnist;
 
 import org.tensorflow.Graph;
-import org.tensorflow.data.GraphLoader;
+import org.tensorflow.keras.data.GraphLoader;
 import org.tensorflow.keras.activations.Activations;
 import org.tensorflow.keras.datasets.FashionMNIST;
 import org.tensorflow.keras.initializers.Initializers;
 import org.tensorflow.keras.layers.Dense;
-import org.tensorflow.keras.layers.Flatten;
-import org.tensorflow.keras.layers.Layer;
 import org.tensorflow.keras.layers.Layers;
 import org.tensorflow.keras.losses.Losses;
 import org.tensorflow.keras.metrics.Metrics;
