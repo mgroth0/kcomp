@@ -2,6 +2,7 @@ package matt.nn.mnistselectivity
 
 import matt.async.date.tic
 import matt.file.commons.DATA_FOLDER
+import org.tensorflow.keras.datasets.MNIST
 
 /*ORIG: https://colab.research.google.com/drive/1n1yBIF3rSA5KPqP8VYk97yLZ7VSK37qe#scrollTo=y5a20t84B01h*/
 /*MINE (just added download line): https://colab.research.google.com/drive/1vGnaYrjaNdGTiPZ2msZDJ-WEzyNdlBWb*/
