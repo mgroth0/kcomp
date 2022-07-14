@@ -21,7 +21,7 @@ fun mnistSelectivityDemo() {
 	t.toc("finished cloning robustness")
   }
   t.toc("generating datasets")
-  shell("python", "main.py", "--run=config", "--config=generate_datasets", workingDir = robustnessFold)
+  shell("/usr/bin/python3", "main.py", "--run=config", "--config=generate_datasets", workingDir = robustnessFold)
   t.toc("finished generating datasets")
   t.toc("finished MNIST selectivity demo")
 }
