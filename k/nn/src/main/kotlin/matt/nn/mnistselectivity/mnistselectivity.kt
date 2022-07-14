@@ -13,9 +13,10 @@ fun mnistSelectivityDemo() {
   val t = tic(prefix = "MNIST SELECTIVITY")
   t.toc("starting MNIST selectivity demo")
   val sampleDataFold = PRIV_DATA_FOLD + "sample_data"
+
   val robustnessFold = PRIV_DATA_FOLD + "Robustness"
   sampleDataFold.mkdirs()
-  if (PRIV_DATA_FOLD.doesNotExist) {
+  if (robustnessFold.doesNotExist) {
 	t.toc("cloning robustness")
 	shell("git", "clone", "https://github.com/kimvc7/Robustness.git", workingDir = PRIV_DATA_FOLD, debug = true)
 	t.toc("finished cloning robustness")
