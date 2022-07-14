@@ -21,6 +21,7 @@ import org.tensorflow.utils.Pair;
 import java.io.IOException;
 import java.util.List;
 
+@SuppressWarnings("rawtypes")
 public class MNISTTensorFrameClassifier implements Runnable {
    private static final int INPUT_SIZE = 28 * 28;
 

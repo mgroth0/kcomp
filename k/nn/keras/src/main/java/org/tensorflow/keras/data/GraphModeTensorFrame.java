@@ -7,6 +7,7 @@ import org.tensorflow.op.core.Slice;
 
 import java.util.Arrays;
 
+@SuppressWarnings("unchecked")
 public class GraphModeTensorFrame<T> extends TensorFrame<T> implements GraphLoader<T>, AutoCloseable {
     private Class<T> dtype;
 

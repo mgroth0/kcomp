@@ -13,6 +13,7 @@ import org.tensorflow.op.Ops;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("unchecked")
 public abstract class Model<T extends Number> extends Layer<T> {
     public Model(Class<T> dtype) {
         // TODO:  For now, models take in only 1 input

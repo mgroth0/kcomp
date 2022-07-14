@@ -9,6 +9,7 @@ import org.tensorflow.op.Ops;
 /**
  * Base activation function class.
  */
+@SuppressWarnings("unchecked")
 public abstract class Activation<T extends Number> extends Layer<T> {
 
   public Activation() {

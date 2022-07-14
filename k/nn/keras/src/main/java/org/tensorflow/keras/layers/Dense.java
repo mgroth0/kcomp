@@ -11,6 +11,7 @@ import org.tensorflow.op.Op;
 import org.tensorflow.op.Ops;
 import org.tensorflow.op.core.Variable;
 
+@SuppressWarnings("unchecked")
 public class Dense<T extends Number> extends Layer<T> {
     private static int DENSE_INPUT_LENGTH = 1;
     private int units;
