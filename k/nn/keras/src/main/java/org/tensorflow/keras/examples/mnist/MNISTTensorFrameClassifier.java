@@ -1,9 +1,6 @@
 package org.tensorflow.keras.examples.mnist;
 
-import org.tensorflow.Graph;
-import org.tensorflow.Operand;
-import org.tensorflow.Session;
-import org.tensorflow.Tensor;
+import org.tensorflow.*;
 import org.tensorflow.keras.data.GraphLoader;
 import org.tensorflow.keras.activations.Activations;
 import org.tensorflow.keras.datasets.MNIST;
@@ -52,7 +49,7 @@ public class MNISTTensorFrameClassifier implements Runnable {
            try (GraphLoader<Float> train = data.first();
                 GraphLoader<Float> test = data.second()) {
 
-               Input inputLayer = new Input<>(Float.class, INPUT_SIZE);
+               Input inputLayer = new Input<>(/*Float.class,*/ INPUT_SIZE);
                Dense denseLayer = new Dense(FEATURES, Dense.Options.builder().setActivation(Activations.softmax).build());
 
                Loss loss = Losses.select(Losses.sparseCategoricalCrossentropy);
@@ -68,9 +65,9 @@ public class MNISTTensorFrameClassifier implements Runnable {
                test.build(tf);
                Operand<Float>[] testOps = test.getBatchOperands();
 
-               inputLayer.build(tf);
+               inputLayer.build(tf, Shape.make(INPUT_SIZE));
                denseLayer.build(tf, inputLayer.computeOutputShape());
-               optimizer.build(tf);
+               optimizer.build(tf,Float.class);
 
 
                // Fit Model (TRAIN)
@@ -84,15 +81,15 @@ public class MNISTTensorFrameClassifier implements Runnable {
                        Operand<Float> yTrue = yOp;
                        Operand<Float> yPred = denseLayer.apply(tf, XOp);
 
-                       Operand<Float> batchLoss = loss.apply(tf, yTrue, yPred);
-                       Operand<Float> batchAccuracy = accuracy.apply(tf, yTrue, yPred);
+                       Operand<Float> batchLoss = loss.apply(tf,Float.class, yTrue, yPred);
+                       Operand<Float> batchAccuracy = accuracy.apply(tf,Float.class, yTrue, yPred);
 
                        List<Operand<Float>> minimize = optimizer.minimize(tf, batchLoss, denseLayer.trainableWeights());
 
 
                        // Run initializer ops
-                       for (Operand<Float> op : denseLayer.initializerOps()) {
-                           runner.addTarget(op);
+                       for (Object op : denseLayer.initializerOps()) {
+                           runner.addTarget((Operand<Float>) op); //NOSONAR
                        }
 
                        runner.run();
@@ -135,8 +132,8 @@ public class MNISTTensorFrameClassifier implements Runnable {
                        Operand<Float> yTrue = yOp;
                        Operand<Float> yPred = denseLayer.apply(tf, XOp);
 
-                       Operand<Float> batchLoss = loss.apply(tf, yTrue, yPred);
-                       Operand<Float> batchAccuracy = accuracy.apply(tf, yTrue, yPred);
+                       Operand<Float> batchLoss = loss.apply(tf,Float.class, yTrue, yPred);
+                       Operand<Float> batchAccuracy = accuracy.apply(tf, Float.class,yTrue, yPred);
 
                        float trainEpochAccuracy = 0;
                        float trainEpochLoss = 0;
