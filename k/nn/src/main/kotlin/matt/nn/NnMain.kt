@@ -1,7 +1,5 @@
 package matt.nn
 
-import matt.file.commons.RootProjects.kcomp
-import matt.kjlib.git.SimpleGit
 import matt.klib.commons.os
 import matt.klib.commons.thisMachine
 import matt.klib.sys.Mac
@@ -28,16 +26,11 @@ val srun = if (OMMachine != Polestar) SRun(timeMin = 15) else null
 fun main() {
   if (REMOTE && thisMachine is Mac) {
 	thread {
-	/*  SimpleGit(projectDir = kcomp.folder + "k" + "nn", debug = true).apply {
+	/*  SimpleGit(projectDir = kcomp.folder, debug = true).apply {
 		addAll()
 		commit()
 		push()
 	  }*/
-	  SimpleGit(projectDir = kcomp.folder, debug = true).apply {
-		addAll()
-		commit()
-		push()
-	  }
 	  OMMachine.session {
 		stfpKbuildToOMIfNeeded()
 		ssh {
