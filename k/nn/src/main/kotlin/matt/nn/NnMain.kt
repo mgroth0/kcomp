@@ -67,7 +67,7 @@ fun tfDemo() {
 fun bareBonesNNDemo() {
   val nn = NeuralNetwork(randomWeights = true)
   val stim = DoubleArray(INPUT_LENGTH) { nextDouble() }
-  (0..5).forEach {
+  repeat(6) {
 	val y = nn.feedforward(stim)
 	println("y=${y[0]}")
 	val actual = doubleArrayOf(0.5)
