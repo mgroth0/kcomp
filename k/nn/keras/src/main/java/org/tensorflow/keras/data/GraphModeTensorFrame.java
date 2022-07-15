@@ -1,41 +1,48 @@
 package org.tensorflow.keras.data;
 
 import org.tensorflow.*;
+import org.tensorflow.op.OpScope;
 import org.tensorflow.op.Ops;
 import org.tensorflow.op.core.Placeholder;
+import org.tensorflow.op.core.Shape;
+import org.tensorflow.op.core.Shapes;
 import org.tensorflow.op.core.Slice;
+import org.tensorflow.types.TInt32;
+import org.tensorflow.types.TInt64;
+import org.tensorflow.types.family.TType;
+import org.tensorflow.utils.SessionRunner;
 
 import java.util.Arrays;
 
 @SuppressWarnings("unchecked")
-public class GraphModeTensorFrame<T> extends TensorFrame<T> implements GraphLoader<T>, AutoCloseable {
+public class GraphModeTensorFrame<T extends TType> extends TensorFrame<T> implements GraphLoader<T>, AutoCloseable {
     private Class<T> dtype;
 
-    private Tensor<T>[] dataTensors;
+    private T[] dataTensors;
     private Placeholder<T>[] dataPlaceholders;
     private Slice<T>[] batchOperands;
 
-    private Placeholder<Long>[] batchStart;
-    private Placeholder<Long>[] batchSize;
+    private Placeholder<TInt32>[] batchStart;
+    private Placeholder<TInt32>[] batchSize;
 
     private boolean built = false;
 
     @SafeVarargs
-    public GraphModeTensorFrame(Class<T> dtype, Tensor<T> firstTensor, Tensor<T>... tensors) {
+    public GraphModeTensorFrame(Class<T> dtype, T firstTensor, T... tensors) {
         this.dtype = dtype;
 
         // Check first dimension matches
-        long matchDim = firstTensor.shape()[0];
+        long matchDim = firstTensor.shape().asArray()[0];
 
-        for (Tensor<T> t : tensors) {
-            if (t.shape()[0] != matchDim) {
+        for (T t : tensors) {
+            if (t.shape().asArray()[0] != matchDim) {
                 throw new IllegalArgumentException(
                         "All dataTensors in a tensor frame must have equal first dimension.");
             }
         }
 
         // Record matt.keras.Tensor Objects
-        this.dataTensors = (Tensor<T>[]) new Tensor[tensors.length + 1];
+        this.dataTensors = (T[]) new Tensor[tensors.length + 1];
         this.dataTensors[0] = firstTensor;
         System.arraycopy(tensors, 0, this.dataTensors, 1, tensors.length);
     }
@@ -45,7 +52,7 @@ public class GraphModeTensorFrame<T> extends TensorFrame<T> implements GraphLoad
     }
 
     public long size() {
-        return this.dataTensors[0].shape()[0];
+        return this.dataTensors[0].shape().asArray()[0];
     }
 
     public void build(Ops tf) {
@@ -115,9 +122,9 @@ public class GraphModeTensorFrame<T> extends TensorFrame<T> implements GraphLoad
         return batchOperands;
     }
 
-    /**
+   /* *//**
      * Utility to construct a Shape from a long[]
-     */
+     *//*
     private static Shape getShape(long... dims) {
         assert dims.length > 0;
 
@@ -125,8 +132,13 @@ public class GraphModeTensorFrame<T> extends TensorFrame<T> implements GraphLoad
         long[] tail = new long[dims.length - 1];
         System.arraycopy(dims, 1, tail, 0, dims.length - 1);
 
-        return Shape.make(head, tail);
-    }
+        Session()
+        new OpScope() ;
+
+        Shape.create()
+
+        return Shape.(head, tail);
+    }*/
 
     @Override
     public void close() {
