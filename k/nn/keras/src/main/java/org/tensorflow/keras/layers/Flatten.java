@@ -1,7 +1,7 @@
 package org.tensorflow.keras.layers;
 
 import org.tensorflow.Operand;
-import org.tensorflow.op.core.Shape;
+import org.tensorflow.ndarray.Shape;
 import org.tensorflow.keras.utils.TensorShape;
 import org.tensorflow.op.Ops;
 import org.tensorflow.op.core.Constant;

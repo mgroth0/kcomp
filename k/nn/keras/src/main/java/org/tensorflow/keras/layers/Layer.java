@@ -1,7 +1,7 @@
 package org.tensorflow.keras.layers;
 
 import org.tensorflow.Operand;
-import org.tensorflow.op.core.Shape;
+import org.tensorflow.ndarray.Shape;
 import org.tensorflow.keras.initializers.Initializer;
 import org.tensorflow.keras.initializers.Initializers;
 import org.tensorflow.keras.mixin.LayerFunction;
