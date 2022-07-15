@@ -1,5 +1,6 @@
 package org.tensorflow.keras.layers;
 
+import kotlin.NotImplementedError;
 import org.tensorflow.Operand;
 import org.tensorflow.keras.activations.Activation;
 import org.tensorflow.keras.activations.Activations;
@@ -75,8 +76,10 @@ public class Dense<T extends TNumber> extends Layer<T> {
     }
 
     private Operand<T> call(Ops tf, Operand<T> input) {
-        Operand<T> signal = tf.add(tf.matMul(input, this.kernel), this.bias);
-        return this.activation.apply(tf, signal);
+        throw new NotImplementedError("""
+                Operand<T> signal = tf.math.add(tf.matMul(input, this.kernel), this.bias);
+                        return this.activation.apply(tf, signal);        
+                """);
     }
 
 
@@ -121,7 +124,7 @@ public class Dense<T extends TNumber> extends Layer<T> {
                 return setActivation(Activations.select(activation));
             }
 
-            public Builder setActivation(Activation<? extends Number> activation) {
+            public Builder setActivation(Activation<? extends TNumber> activation) {
                 this.options.activation = activation;
                 return this;
             }
