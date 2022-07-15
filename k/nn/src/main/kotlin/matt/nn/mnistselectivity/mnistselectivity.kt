@@ -15,6 +15,7 @@ import org.tensorflow.keras.models.Model
 import org.tensorflow.keras.models.Sequential
 import org.tensorflow.keras.optimizers.Optimizers
 import org.tensorflow.op.Ops
+import org.tensorflow.types.TFloat32
 
 
 /*ORIG: c*/
@@ -43,7 +44,7 @@ fun mnistSelectivityDemo() {
 
 
   val model = Sequential.of(
-	Float::class.java,
+	TFloat32::class.java,
 	Layers.input(28, 28),
 	Layers.flatten(),  /*28 * 28*/
 
@@ -57,7 +58,7 @@ fun mnistSelectivityDemo() {
 	),
 
 	// Using static helper Layers.dense(...)
-	Layers.dense<Float>(10, Activations.softmax, Initializers.randomNormal, Initializers.zeros)
+	Layers.dense<TFloat32>(10, Activations.softmax, Initializers.randomNormal, Initializers.zeros)
   )
 
 
@@ -83,7 +84,7 @@ fun mnistSelectivityDemo() {
 	model.compile(tf, compileOptions)
 
 
-	val loaders: org.tensorflow.utils.Pair<GraphLoader<Float>, GraphLoader<Float>> = MNIST.graphLoaders2D()
+	val loaders: org.tensorflow.utils.Pair<GraphLoader<TFloat32>, GraphLoader<TFloat32>> = MNIST.graphLoaders2D()
 	loaders.first().use { train ->
 	  loaders.second().use { test ->
 		// Fit model
