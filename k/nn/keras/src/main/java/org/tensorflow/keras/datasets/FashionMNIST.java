@@ -5,6 +5,7 @@ import org.tensorflow.keras.data.GraphLoader;
 import org.tensorflow.keras.data.GraphModeTensorFrame;
 import org.tensorflow.keras.utils.DataUtils;
 import org.tensorflow.keras.utils.Keras;
+import org.tensorflow.types.TFloat32;
 import org.tensorflow.utils.Pair;
 
 import java.io.IOException;
@@ -52,7 +53,7 @@ public class FashionMNIST {
                         Float.class, Tensors.create(testImages), Tensors.create(testLabels)));
     }
 
-    public static Pair<GraphLoader<Float>, GraphLoader<Float>> graphLoaders2D() throws IOException {
+    public static Pair<GraphLoader<TFloat32>, GraphLoader<TFloat32>> graphLoaders2D() throws IOException {
         // Download MNIST files if they don't exist.
         FashionMNIST.download();
 

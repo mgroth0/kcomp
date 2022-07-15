@@ -24,7 +24,7 @@ public class Flatten<T extends TNumber> extends Layer<T> {
 
     public Shape computeOutputShape(Shape inputShape) {
         // leaves unknown dimensions unknown
-        return Shape.make(new TensorShape(inputShape).numElements());
+        return Shape.of(new TensorShape(inputShape).numElements());
     }
 
     @SafeVarargs

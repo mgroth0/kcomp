@@ -1,12 +1,12 @@
 package org.tensorflow.keras.layers;
 
 import org.tensorflow.Operand;
-import org.tensorflow.op.core.Shape;
 import org.tensorflow.keras.activations.Activation;
 import org.tensorflow.keras.activations.Activations;
 import org.tensorflow.keras.initializers.Initializer;
 import org.tensorflow.keras.initializers.Initializers;
 import org.tensorflow.keras.utils.TensorShape;
+import org.tensorflow.ndarray.Shape;
 import org.tensorflow.op.Op;
 import org.tensorflow.op.Ops;
 import org.tensorflow.op.core.Variable;
@@ -51,8 +51,8 @@ public class Dense<T extends TNumber> extends Layer<T> {
         Class<T> dtype = this.getDtype();
 
         // Compute shapes of kernel and bias matrices
-        Shape kernelShape = Shape.make(inputShape.size(inputShape.numDimensions() - 1), this.units);
-        Shape biasShape = Shape.make(this.units);
+        Shape kernelShape = Shape.of(inputShape.size(inputShape.numDimensions() - 1), this.units);
+        Shape biasShape = Shape.of(this.units);
 
         // Create dense kernel tensor
         this.kernel = this.addWeight(tf, KERNEL, tf.variable(kernelShape, dtype), KERNEL_INIT, this.kernelInitializer);

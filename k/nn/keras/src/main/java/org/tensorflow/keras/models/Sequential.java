@@ -7,8 +7,8 @@ import org.tensorflow.keras.layers.Layer;
 import org.tensorflow.keras.losses.Loss;
 import org.tensorflow.keras.metrics.Metric;
 import org.tensorflow.keras.optimizers.Optimizer;
+import org.tensorflow.ndarray.Shape;
 import org.tensorflow.op.Ops;
-import org.tensorflow.op.core.Shape;
 import org.tensorflow.op.core.Variable;
 import org.tensorflow.types.family.TNumber;
 
@@ -152,9 +152,9 @@ public class Sequential<T extends TNumber> extends Model<T> {
                 runner.fetch(batchLoss);
                 runner.fetch(batchAccuracy);
 
-                List<Tensor<?>> values = runner.run();
-                try (Tensor<?> lossTensor = values.get(0);
-                     Tensor<?> accuracyTensor = values.get(1)) {
+                List<Tensor> values = runner.run();
+                try (Tensor lossTensor = values.get(0);
+                     Tensor accuracyTensor = values.get(1)) {
                     trainEpochAccuracy += accuracyTensor.floatValue() / data.numBatches();
                     trainEpochLoss += lossTensor.floatValue() / data.numBatches();
                 }

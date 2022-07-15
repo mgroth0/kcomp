@@ -5,11 +5,12 @@ import org.tensorflow.op.Ops;
 import org.tensorflow.op.core.Constant;
 import org.tensorflow.op.core.Gradients;
 import org.tensorflow.op.core.Variable;
+import org.tensorflow.types.family.TNumber;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GradientDescentOptimizer<T extends Number> extends Optimizer<T> {
+public class GradientDescentOptimizer<T extends TNumber> extends Optimizer<T> {
     private final float lr;
     private Constant<T> alpha;
 

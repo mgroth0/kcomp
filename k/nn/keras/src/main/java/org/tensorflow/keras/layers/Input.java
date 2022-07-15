@@ -1,8 +1,8 @@
 package org.tensorflow.keras.layers;
 
 import org.tensorflow.Operand;
-import org.tensorflow.op.core.Shape;
 import org.tensorflow.keras.utils.Keras;
+import org.tensorflow.ndarray.Shape;
 import org.tensorflow.op.Ops;
 import org.tensorflow.op.core.Placeholder;
 import org.tensorflow.types.family.TNumber;
