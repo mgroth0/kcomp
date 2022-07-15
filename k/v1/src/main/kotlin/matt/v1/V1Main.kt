@@ -86,7 +86,7 @@ fun main(): Unit = GuiApp(screenIndex = 2) {
 		  }
 
 		}) {
-		  runOnOM(srun = SRun(timeMin = 15))
+		  runOnOM("k:v1:run", srun = SRun(timeMin = 15))
 		}
 	  }
 
