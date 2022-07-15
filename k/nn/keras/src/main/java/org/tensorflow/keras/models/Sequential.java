@@ -8,6 +8,7 @@ import org.tensorflow.keras.losses.Loss;
 import org.tensorflow.keras.metrics.Metric;
 import org.tensorflow.keras.optimizers.Optimizer;
 import org.tensorflow.op.Ops;
+import org.tensorflow.op.core.Shape;
 import org.tensorflow.op.core.Variable;
 
 import java.util.ArrayList;
