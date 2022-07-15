@@ -1,6 +1,7 @@
 package org.tensorflow.keras.initializers;
 
 
+import kotlin.NotImplementedError;
 import org.tensorflow.Operand;
 import org.tensorflow.op.Ops;
 import org.tensorflow.types.TInt32;
@@ -23,12 +24,15 @@ public class RandomNormal extends Initializer {
 
     @Override
     public <T extends TType> Operand<T> initialize(Ops tf, Operand<TInt32> shape, Class<T> dtype) {
-        return tf.parameterizedTruncatedNormal(
-                shape,
-                tf.constant(this.mean, dtype),
-                tf.constant(this.stdev, dtype),
-                tf.constant(this.p1, dtype),
-                tf.constant(this.p2, dtype)
-        );
+        throw new NotImplementedError("""
+                return tf.parameterizedTruncatedNormal(
+                           shape,
+                           tf.constant(this.mean, dtype),
+                           tf.constant(this.stdev, dtype),
+                           tf.constant(this.p1, dtype),
+                           tf.constant(this.p2, dtype)
+                   );     
+                """);
+
     }
 }

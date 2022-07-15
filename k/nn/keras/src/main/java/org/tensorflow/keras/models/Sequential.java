@@ -158,8 +158,8 @@ public class Sequential<T extends TNumber> extends Model<T> {
                 List<Tensor> values = runner.run();
                 try (Tensor lossTensor = values.get(0);
                      Tensor accuracyTensor = values.get(1)) {
-                    trainEpochAccuracy += accuracyTensor.floatValue() / data.numBatches();
-                    trainEpochLoss += lossTensor.floatValue() / data.numBatches();
+                    trainEpochAccuracy += accuracyTensor.asRawTensor().data().asFloats() .getFloat(0)/ data.numBatches();
+                    trainEpochLoss += lossTensor.asRawTensor().data().asFloats() .getFloat(0) / data.numBatches();
                 }
             }
 

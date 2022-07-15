@@ -1,5 +1,6 @@
 package org.tensorflow.keras.optimizers;
 
+import org.tensorflow.types.TFloat32;
 import org.tensorflow.types.family.TNumber;
 
 public enum Optimizers {
@@ -8,7 +9,7 @@ public enum Optimizers {
   public static <T extends TNumber> Optimizer<T> select(Optimizers optimizerType) {
     switch (optimizerType) {
       case sgd:
-        return new GradientDescentOptimizer<>(0.2f);
+        return new GradientDescentOptimizer<>(TFloat32.scalarOf(0.2f));
       default:
         throw new IllegalArgumentException("Invalid Optimizer Type.");
     }
