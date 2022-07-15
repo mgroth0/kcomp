@@ -1,6 +1,6 @@
 package org.tensorflow.utils;
 
-import org.tensorflow.ndarray.Shape
+import org.tensorflow.ndarray.Shape;
 
 import java.util.Arrays;
 
