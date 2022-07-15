@@ -1,16 +1,14 @@
 package org.tensorflow.keras.data;
 
-import org.tensorflow.*;
-import org.tensorflow.op.OpScope;
+import matt.keras.Tensors;
+import org.tensorflow.Operand;
+import org.tensorflow.Session;
+import org.tensorflow.Tensor;
 import org.tensorflow.op.Ops;
 import org.tensorflow.op.core.Placeholder;
-import org.tensorflow.op.core.Shape;
-import org.tensorflow.op.core.Shapes;
 import org.tensorflow.op.core.Slice;
-import org.tensorflow.types.TInt32;
 import org.tensorflow.types.TInt64;
 import org.tensorflow.types.family.TType;
-import org.tensorflow.utils.SessionRunner;
 
 import java.util.Arrays;
 
@@ -22,8 +20,8 @@ public class GraphModeTensorFrame<T extends TType> extends TensorFrame<T> implem
     private Placeholder<T>[] dataPlaceholders;
     private Slice<T>[] batchOperands;
 
-    private Placeholder<TInt32>[] batchStart;
-    private Placeholder<TInt32>[] batchSize;
+    private Placeholder<TInt64>[] batchStart;
+    private Placeholder<TInt64>[] batchSize;
 
     private boolean built = false;
 
@@ -60,7 +58,10 @@ public class GraphModeTensorFrame<T extends TType> extends TensorFrame<T> implem
         this.dataPlaceholders = new Placeholder[this.length()];
         for (int i = 0; i < this.length(); ++i) {
             this.dataPlaceholders[i] =
-                    tf.placeholder(this.dtype, Placeholder.shape(getShape(this.dataTensors[i].shape())));
+
+                    /* Placeholder.shape(getShape(this.dataTensors[i].shape()))*/
+
+                    tf.placeholder(this.dtype);
         }
 
         // Placeholder representing batch start and size selectors.
@@ -68,8 +69,10 @@ public class GraphModeTensorFrame<T extends TType> extends TensorFrame<T> implem
         this.batchSize = new Placeholder[this.length()];
 
         for (int i = 0; i < this.length(); i++) {
-            batchStart[i] = tf.placeholder(Long.class, Placeholder.shape(Shape.make(this.dataTensors[i].numDimensions())));
-            batchSize[i] = tf.placeholder(Long.class, Placeholder.shape(Shape.make(this.dataTensors[i].numDimensions())));
+            /*, Placeholder.shape(Shape.make(this.dataTensors[i].numDimensions()))*/
+            batchStart[i] = tf.placeholder(TInt64.class);
+            /*, Placeholder.shape(Shape.make(this.dataTensors[i].numDimensions()))*/
+            batchSize[i] = tf.placeholder(TInt64.class);
         }
 
 
@@ -91,11 +94,11 @@ public class GraphModeTensorFrame<T extends TType> extends TensorFrame<T> implem
 
         // Feed Batch Selectors
         for (int i = 0; i < this.length(); i++) {
-            long[] start = new long[dataTensors[i].numDimensions()];
+            long[] start = new long[dataTensors[i].shape().asArray().length];
             Arrays.fill(start, 0);
             start[0] = batch * this.batchSize();
 
-            long[] size = new long[dataTensors[i].numDimensions()];
+            long[] size = new long[dataTensors[i].shape().asArray().length];
             Arrays.fill(size, -1);
             size[0] = this.batchSize();
 
@@ -110,7 +113,7 @@ public class GraphModeTensorFrame<T extends TType> extends TensorFrame<T> implem
         return built;
     }
 
-    public Tensor<T>[] getDataTensors() {
+    public T[] getDataTensors() {
         return dataTensors;
     }
 
@@ -142,7 +145,7 @@ public class GraphModeTensorFrame<T extends TType> extends TensorFrame<T> implem
 
     @Override
     public void close() {
-        for (Tensor<T> tensor : this.dataTensors) {
+        for (T tensor : this.dataTensors) {
             tensor.close();
         }
     }
