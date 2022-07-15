@@ -7,5 +7,6 @@ implementations {
   kjlibGit
 }
 implementations(
-  libs.kotlindl.api
+  libs.kotlindl.api,
+  libs.bundles.kotlindl.gpu
 )
