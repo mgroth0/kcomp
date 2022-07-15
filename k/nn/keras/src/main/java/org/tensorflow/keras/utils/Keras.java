@@ -1,8 +1,10 @@
 package org.tensorflow.keras.utils;
 
 import org.tensorflow.Operand;
-import org.tensorflow.op.core.Shape;
 import org.tensorflow.op.Ops;
+import org.tensorflow.types.TInt32;
+import org.tensorflow.ndarray.Shape;
+
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -40,11 +42,11 @@ public class Keras {
   // Keras backend utilties
   //
 
-  public static Operand<Integer> constArray(Ops tf, int... i) {
+  public static Operand<TInt32> constArray(Ops tf, int... i) {
     return tf.constant(i);
   }
 
-  public static Operand<Integer> shapeOperand(Ops tf, Shape shape) {
+  public static Operand<TInt32> shapeOperand(Ops tf, Shape shape) {
     int[] shapeArray = new int[shape.numDimensions()];
     for (int i = 0; i < shapeArray.length; i++) {
       shapeArray[i] = (int) shape.size(i);
@@ -84,6 +86,7 @@ public class Keras {
   }
 
   public static Shape shapeFromDims(long... dims) {
-    return Shape.make(head(dims), tail(dims));
+    /*return Shape.of(head(dims), tail(dims));*/
+    return Shape.of(dims);
   }
 }

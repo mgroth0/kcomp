@@ -84,7 +84,7 @@ public class SessionRunner {
     return this;
   }
 
-  public List<Tensor<?>> run() {
+  public List<Tensor> run() {
     return this.runner.run();
   }
 }

@@ -9,6 +9,7 @@ import org.tensorflow.op.core.Placeholder;
 import org.tensorflow.op.core.Slice;
 import org.tensorflow.types.TInt64;
 import org.tensorflow.types.family.TType;
+import org.tensorflow.ndarray.Shape;
 
 import java.util.Arrays;
 
@@ -125,9 +126,10 @@ public class GraphModeTensorFrame<T extends TType> extends TensorFrame<T> implem
         return batchOperands;
     }
 
-   /* *//**
-     * Utility to construct a Shape from a long[]
-     *//*
+
+    /*
+    Utility to construct a Shape from a long[]
+    */
     private static Shape getShape(long... dims) {
         assert dims.length > 0;
 
@@ -135,13 +137,9 @@ public class GraphModeTensorFrame<T extends TType> extends TensorFrame<T> implem
         long[] tail = new long[dims.length - 1];
         System.arraycopy(dims, 1, tail, 0, dims.length - 1);
 
-        Session()
-        new OpScope() ;
 
-        Shape.create()
-
-        return Shape.(head, tail);
-    }*/
+        return Shape.of(dims);
+    }
 
     @Override
     public void close() {

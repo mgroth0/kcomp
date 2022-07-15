@@ -8,6 +8,7 @@ import org.tensorflow.keras.mixin.LayerFunction;
 import org.tensorflow.op.Ops;
 import org.tensorflow.op.core.Assign;
 import org.tensorflow.op.core.Variable;
+import org.tensorflow.types.family.TType;
 
 import java.util.*;
 
@@ -19,7 +20,7 @@ import java.util.*;
  *
  * @param <T> Numeric type of the output (Float, Double)
  */
-public abstract class Layer<T extends Number> implements LayerFunction<T> {
+public abstract class Layer<T extends TType> implements LayerFunction<T> {
     private int INPUTS_LENGTH;
 
     // Input() layer needs to access dtype and built.
@@ -39,21 +40,20 @@ public abstract class Layer<T extends Number> implements LayerFunction<T> {
 
     /**
      * Override create(Ops) to add variables (weight tensors) to the layer.
-     *
+     * <p>
      * The addWeight function and some tf ops require passing a Class<T> "dtype" object
-     *
+     * <p>
      * To get the dtype of this layer in the build function, use Layer.getDtype()
      *
      * @param tf         Tensorflow Ops accessor
      * @param inputShape Shape of the layer's input tensor
-     *
      */
     protected abstract void build(Ops tf, Shape inputShape);
 
     public final void build(Ops tf, Shape inputShape, Class<T> dtype) {
-      this.dtype = dtype;
-      build(tf, inputShape);
-      this.built = true;
+        this.dtype = dtype;
+        build(tf, inputShape);
+        this.built = true;
     }
 
 
@@ -86,13 +86,11 @@ public abstract class Layer<T extends Number> implements LayerFunction<T> {
     @SafeVarargs
     public final Operand<T> apply(Ops tf, Operand<T>... inputs) {
         if (!this.built) {
-            throw new IllegalStateException(
-                    "Layer.call() cannot be called before the layer is built (Layer.build())");
+            throw new IllegalStateException("Layer.call() cannot be called before the layer is built (Layer.build())");
         }
 
         if (inputs.length != INPUTS_LENGTH) {
-            throw new IllegalArgumentException(
-                    "Layer call() expected " + INPUTS_LENGTH + "inputs; received " + inputs.length + ".");
+            throw new IllegalArgumentException("Layer call() expected " + INPUTS_LENGTH + "inputs; received " + inputs.length + ".");
         }
 
         return this.call(tf, inputs);
@@ -148,7 +146,7 @@ public abstract class Layer<T extends Number> implements LayerFunction<T> {
     }
 
     public boolean hasDtype() {
-      return this.dtype != null;
+        return this.dtype != null;
     }
 
     public Class<T> getDtype() {
