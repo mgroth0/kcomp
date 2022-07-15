@@ -1,4 +1,4 @@
-package matt.nn.mnistselectivity
+package matt.nn.two.mnistselectivity
 
 import matt.async.date.tic
 import matt.file.commons.DATA_FOLDER

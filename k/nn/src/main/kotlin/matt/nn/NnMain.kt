@@ -3,7 +3,6 @@ package matt.nn
 import matt.klib.commons.os
 import matt.klib.commons.thisMachine
 import matt.klib.sys.Mac
-import matt.nn.mnistselectivity.mnistSelectivityDemo
 import matt.nn.model.NeuralNetwork
 import matt.nn.model.NeuralNetwork.Companion.INPUT_LENGTH
 import matt.nn.model.SumOfSquaresError
@@ -11,10 +10,6 @@ import matt.remote.openmind.Polestar
 import matt.remote.runOnOM
 import matt.remote.slurm.SRun
 import matt.remote.stfpKbuildToOMIfNeeded
-import org.tensorflow.ConcreteFunction
-import org.tensorflow.Signature
-import org.tensorflow.op.Ops
-import org.tensorflow.types.TInt32
 import kotlin.concurrent.thread
 import kotlin.random.Random.Default.nextDouble
 
@@ -26,41 +21,21 @@ val srun = if (OMMachine != Polestar) SRun(timeMin = 15) else null
 fun main() {
   if (REMOTE && thisMachine is Mac) {
 	thread {
-	/*  SimpleGit(projectDir = kcomp.folder, debug = true).apply {
-		addAll()
-		commit()
-		push()
-	  }*/
 	  OMMachine.session {
 		stfpKbuildToOMIfNeeded()
 		ssh {
-		  runOnOM(srun = srun)
+		  runOnOM("k:nn:run", srun = srun)
 		}
 	  }
 	}
   } else {
 	println("os:$os")
 	bareBonesNNDemo()
-	tfDemo()
-	mnistSelectivityDemo()
+	kotlindlDemo()
   }
 }
 
-fun tfDemo() {
-  fun dbl(tf: Ops): Signature {
-	val x = tf.placeholder(TInt32::class.java)
-	val dblX = tf.math.add(x, x)
-	return Signature.builder().input("x", x).output("dbl", dblX).build()
-  }
-  ConcreteFunction.create { dbl(it) }.use { dbl ->
-	TInt32.scalarOf(10).use { x ->
-	  dbl.call(x).use { dblX ->
-		println(
-		  x.getInt().toString() + " doubled is " + (dblX as TInt32).getInt()
-		)
-	  }
-	}
-  }
+fun kotlindlDemo() {
 
 }
 
