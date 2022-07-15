@@ -5,12 +5,13 @@ import org.tensorflow.op.core.Shape;
 import org.tensorflow.keras.layers.Layer;
 import org.tensorflow.keras.mixin.ActivationFunction;
 import org.tensorflow.op.Ops;
+import org.tensorflow.types.family.TType;
 
 /**
  * Base activation function class.
  */
 @SuppressWarnings("unchecked")
-public abstract class Activation<T extends Number> extends Layer<T> {
+public abstract class Activation<T extends TType> extends Layer<T> {
 
   public Activation() {
     super(1);
