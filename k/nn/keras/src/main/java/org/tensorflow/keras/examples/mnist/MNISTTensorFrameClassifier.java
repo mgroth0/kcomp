@@ -24,7 +24,7 @@ import java.util.List;
 public class MNISTTensorFrameClassifier implements Runnable {
    private static final int INPUT_SIZE = 28 * 28;
 
-   private static final float LEARNING_RATE = 0.15f;
+   private static final TFloat32 LEARNING_RATE = TFloat32.scalarOf(0.15f);
    private static final int FEATURES = 10;
    private static final int BATCH_SIZE = 100;
 
