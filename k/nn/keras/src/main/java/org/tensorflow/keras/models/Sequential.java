@@ -1,5 +1,6 @@
 package org.tensorflow.keras.models;
 
+import kotlin.NotImplementedError;
 import org.tensorflow.*;
 import org.tensorflow.keras.data.GraphLoader;
 import org.tensorflow.keras.layers.Input;
@@ -95,10 +96,12 @@ public class Sequential<T extends TNumber> extends Model<T> {
 
     @Override
     public void fit(Ops tf, GraphLoader<T> train, GraphLoader<T> test, int epochs, int batchSize) {
-        try (Session session = new Session(tf.scope().graph())) {
-            runTrainingLoop(tf, session, train, epochs, batchSize, true);
-            runPredictionLoop(tf, session, test, batchSize);
-        }
+        throw new NotImplementedError("""
+                try (Session session = new Session(tf.scope().graph())) {
+                            runTrainingLoop(tf, session, train, epochs, batchSize, true);
+                            runPredictionLoop(tf, session, test, batchSize);
+                        }
+                """);
     }
     private void runPredictionLoop(Ops tf, Session session, GraphLoader<T> data, int batchSize) {
         runTrainingLoop(tf, session, data, 1, batchSize, false);

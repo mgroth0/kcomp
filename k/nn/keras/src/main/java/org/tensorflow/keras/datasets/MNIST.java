@@ -81,9 +81,9 @@ public class MNIST {
         // Return a pair of graph loaders; train and test sets
         return new Pair<>(
                 new GraphModeTensorFrame<>(
-                        Float.class, Tensors.create(trainImages), Tensors.create(trainLabels)),
+                        TFloat32.class, Tensors.create(trainImages), Tensors.create(trainLabels)),
                 new GraphModeTensorFrame<>(
-                        Float.class, Tensors.create(testImages), Tensors.create(testLabels)));
+                        TFloat32.class, Tensors.create(testImages), Tensors.create(testLabels)));
     }
 
     /**

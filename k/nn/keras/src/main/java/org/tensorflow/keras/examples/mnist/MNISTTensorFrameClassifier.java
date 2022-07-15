@@ -115,8 +115,9 @@ public class MNISTTensorFrameClassifier implements Runnable {
                                List<Tensor> values = runner.run();
                                try (Tensor lossTensor = values.get(0);
                                     Tensor accuracyTensor = values.get(1)) {
-                                   trainEpochAccuracy += accuracyTensor.floatValue() / train.numBatches();
-                                   trainEpochLoss += lossTensor.floatValue() / train.numBatches();
+                                   accuracyTensor.asRawTensor().data().asFloats();
+                                   trainEpochAccuracy += accuracyTensor.asRawTensor().data().asFloats().getFloat(0) / train.numBatches();
+                                   trainEpochLoss += lossTensor.asRawTensor().data().asFloats().getFloat(0) / train.numBatches();
                                }
                            }
 
@@ -150,8 +151,8 @@ public class MNISTTensorFrameClassifier implements Runnable {
                            List<Tensor> values = runner.run();
                            try (Tensor lossTensor = values.get(0);
                                 Tensor accuracyTensor = values.get(1)) {
-                               trainEpochAccuracy += accuracyTensor.floatValue() / test.numBatches();
-                               trainEpochLoss += lossTensor.floatValue() / test.numBatches();
+                               trainEpochAccuracy += accuracyTensor.asRawTensor().data().asFloats().getFloat(0) / test.numBatches();
+                               trainEpochLoss += lossTensor.asRawTensor().data().asFloats().getFloat(0) / test.numBatches();
                            }
                        }
 
