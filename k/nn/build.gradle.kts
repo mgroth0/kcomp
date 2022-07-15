@@ -6,3 +6,6 @@ implementations {
   async
   kjlibGit
 }
+implementations(
+  libs.kotlindl.api
+)

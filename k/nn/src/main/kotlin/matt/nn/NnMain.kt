@@ -1,43 +1,23 @@
 package matt.nn
 
-import matt.klib.commons.os
-import matt.klib.commons.thisMachine
-import matt.klib.sys.Mac
+import matt.nn.kotlindldemo.kotlindlDemo
 import matt.nn.model.NeuralNetwork
 import matt.nn.model.NeuralNetwork.Companion.INPUT_LENGTH
 import matt.nn.model.SumOfSquaresError
 import matt.remote.openmind.Polestar
-import matt.remote.runOnOM
+import matt.remote.remoteOrLocal
 import matt.remote.slurm.SRun
-import matt.remote.stfpKbuildToOMIfNeeded
-import kotlin.concurrent.thread
 import kotlin.random.Random.Default.nextDouble
 
 
-val REMOTE = true
 private val OMMachine = Polestar
 val srun = if (OMMachine != Polestar) SRun(timeMin = 15) else null
 
-fun main() {
-  if (REMOTE && thisMachine is Mac) {
-	thread {
-	  OMMachine.session {
-		stfpKbuildToOMIfNeeded()
-		ssh {
-		  runOnOM("k:nn:run", srun = srun)
-		}
-	  }
-	}
-  } else {
-	println("os:$os")
-	bareBonesNNDemo()
-	kotlindlDemo()
-  }
+fun main() = OMMachine.remoteOrLocal("k:nn:run", remote = false) {
+  bareBonesNNDemo()
+  kotlindlDemo()
 }
 
-fun kotlindlDemo() {
-
-}
 
 fun bareBonesNNDemo() {
   val nn = NeuralNetwork(randomWeights = true)
