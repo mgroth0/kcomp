@@ -13,7 +13,7 @@ import kotlin.random.Random.Default.nextDouble
 private val OMMachine = Polestar
 val srun = if (OMMachine != Polestar) SRun(timeMin = 15) else null
 
-fun main() = OMMachine.remoteOrLocal("k:nn:run", remote = true) {
+fun main() = OMMachine.remoteOrLocal("k:nn:run", remote = true, srun = srun) {
   bareBonesNNDemo()
   kotlindlDemo()
 }
