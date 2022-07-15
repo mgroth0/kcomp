@@ -48,9 +48,9 @@ public class FashionMNIST {
         // Return a pair of graph loaders; train and test sets
         return new Pair<>(
                 new GraphModeTensorFrame<>(
-                        Float.class, Tensors.create(trainImages), Tensors.create(trainLabels)),
+                        TFloat32.class, Tensors.create(trainImages), Tensors.create(trainLabels)),
                 new GraphModeTensorFrame<>(
-                        Float.class, Tensors.create(testImages), Tensors.create(testLabels)));
+                        TFloat32.class, Tensors.create(testImages), Tensors.create(testLabels)));
     }
 
     public static Pair<GraphLoader<TFloat32>, GraphLoader<TFloat32>> graphLoaders2D() throws IOException {

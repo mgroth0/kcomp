@@ -105,8 +105,8 @@ public class Iris {
 
 
             return new Pair<>(
-                    new GraphModeTensorFrame<>(Float.class, Tensors.create(XTrain), Tensors.create(yTrain)),
-                    new GraphModeTensorFrame<>(Float.class, Tensors.create(XVal), Tensors.create(yVal))
+                    new GraphModeTensorFrame<>(TFloat32.class, Tensors.create(XTrain), Tensors.create(yTrain)),
+                    new GraphModeTensorFrame<>(TFloat32.class, Tensors.create(XVal), Tensors.create(yVal))
             );
         }
     }

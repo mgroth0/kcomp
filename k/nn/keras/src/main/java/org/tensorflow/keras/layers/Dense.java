@@ -94,7 +94,7 @@ public class Dense<T extends TNumber> extends Layer<T> {
                     .build();
         }
 
-        public <T extends Number> Activation<T> getActivation() {
+        public <T extends TNumber> Activation<T> getActivation() {
             return (Activation<T>) activation;
         }
 
