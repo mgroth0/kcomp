@@ -34,7 +34,7 @@ public class GraphModeTensorFrame<T> extends TensorFrame<T> implements GraphLoad
             }
         }
 
-        // Record Tensor Objects
+        // Record matt.keras.Tensor Objects
         this.dataTensors = (Tensor<T>[]) new Tensor[tensors.length + 1];
         this.dataTensors[0] = firstTensor;
         System.arraycopy(tensors, 0, this.dataTensors, 1, tensors.length);

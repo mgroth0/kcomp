@@ -5,13 +5,13 @@
 // import org.nd4j.linalg.api.ndarray.INDArray;
 // import org.nd4j.linalg.factory.Nd4j;
 // import org.nd4j.serde.binary.BinarySerde;
-// import org.tensorflow.Tensor;
+// import org.tensorflow.matt.keras.Tensor;
 // import org.tensorflow.Tensors;
 // public class ConversionUtils {
 //
 //    public static void main(String[] args) {
 //
-//        Tensor<Float> first = Tensors.create(new float[][] {{1, 3, 5},
+//        matt.keras.Tensor<Float> first = Tensors.create(new float[][] {{1, 3, 5},
 //                {7, 9, 11}
 //        });
 //
@@ -23,14 +23,14 @@
 //        //System.out.println(TensorFromNDArray(NDArrayFromTensor(first)));
 //    }
 //
-//    public static INDArray NDArrayFromTensor(Tensor tensor) {
+//    public static INDArray NDArrayFromTensor(matt.keras.Tensor tensor) {
 //        DataBuffer dbf = new FloatBuffer(tensor.numElements());
 //        tensor.writeTo(dbf.asNioFloat());
 //        return Nd4j.create(dbf, tensor.shape());
 //    }
 //
-//    public static Tensor<Float> TensorFromNDArray(INDArray ndArray) {
+//    public static matt.keras.Tensor<Float> TensorFromNDArray(INDArray ndArray) {
 //        java.nio.FloatBuffer dbf = BinarySerde.toByteBuffer(ndArray).asFloatBuffer();
-//        return Tensor.create(ndArray.shape(), dbf);
+//        return matt.keras.Tensor.create(ndArray.shape(), dbf);
 //    }
 // }

@@ -5,9 +5,9 @@ import org.tensorflow.op.core.Shape;
 import java.util.Arrays;
 
 /**
- * Represents the shape of a `Tensor`.
+ * Represents the shape of a `matt.keras.Tensor`.
  *
- * <p>A `TensorShape` represents a possibly-partial shape specification for a `Tensor`. It may be
+ * <p>A `TensorShape` represents a possibly-partial shape specification for a `matt.keras.Tensor`. It may be
  * one of the following:
  *
  * <p>Fully-known shape: has a known number of dimensions and known size for each dimension.

@@ -1,18 +1,20 @@
- package org.tensorflow.keras.datasets;
+package org.tensorflow.keras.datasets;
 
- import org.tensorflow.Tensors;
- import org.tensorflow.keras.data.GraphLoader;
- import org.tensorflow.keras.data.GraphModeTensorFrame;
- import org.tensorflow.keras.utils.DataUtils;
- import org.tensorflow.keras.utils.Keras;
- import org.tensorflow.utils.Pair;
+// import org.tensorflow.Tensors;
 
- import java.io.BufferedReader;
- import java.io.FileReader;
- import java.io.IOException;
- import java.util.Arrays;
+import matt.keras.Tensors;
+import org.tensorflow.keras.data.GraphLoader;
+import org.tensorflow.keras.data.GraphModeTensorFrame;
+import org.tensorflow.keras.utils.DataUtils;
+import org.tensorflow.keras.utils.Keras;
+import org.tensorflow.utils.Pair;
 
- public class Iris {
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Arrays;
+
+public class Iris {
     private static final String IRIS_ORIGIN =
             "https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data";
     private static final int NUM_EXAMPLES = 151;
@@ -25,8 +27,13 @@
         setosa(0), versicolor(1), virginica(2);
         private final int value;
 
-        COLOR(int value) { this.value = value; }
-        int getValue() { return this.value; }
+        COLOR(int value) {
+            this.value = value;
+        }
+
+        int getValue() {
+            return this.value;
+        }
     }
 
 
@@ -57,7 +64,7 @@
 
             String line;
             int count = 0;
-            while((line = br.readLine()) != null && count < trainSize) {
+            while ((line = br.readLine()) != null && count < trainSize) {
                 if (line.equals("")) break;
 
                 String[] values = line.split(",Iris-");
@@ -69,14 +76,14 @@
                 }
 
                 float[] yvector = oneHot(COLOR.valueOf(values[1]).getValue(),
- COLOR.values().length);
+                        COLOR.values().length);
 
                 XTrain[count] = xvector;
                 yTrain[count] = yvector;
-                count ++;
+                count++;
             }
 
-            while((line = br.readLine()) != null && count < NUM_EXAMPLES) {
+            while ((line = br.readLine()) != null && count < NUM_EXAMPLES) {
                 if (line.equals("")) break;
 
                 String[] values = line.split(",Iris-");
@@ -88,13 +95,12 @@
                 }
 
                 float[] yvector = oneHot(COLOR.valueOf(values[1]).getValue(),
- COLOR.values().length);
+                        COLOR.values().length);
 
                 XVal[count - trainSize] = xvector;
                 yVal[count - trainSize] = yvector;
-                count ++;
+                count++;
             }
-
 
 
             return new Pair<>(
@@ -114,4 +120,4 @@
         oneHot[label] = 1.0f;
         return oneHot;
     }
- }
+}

@@ -69,9 +69,9 @@
 //
 //
 //                for (int i = 0; i < TRAIN_IMAGE_PATH.size(); i ++) {
-//                    try (Tensor<Float> imageBatch = Tensors.create(TRAIN_IMAGE_PATH.get(i));
-//                         Tensor<Float> labelBatch = Tensors.create(TRAIN_LABEL_PATH.get(i));
-//                         Tensor<?> value = session.runner()
+//                    try (matt.keras.Tensor<Float> imageBatch = Tensors.create(TRAIN_IMAGE_PATH.get(i));
+//                         matt.keras.Tensor<Float> labelBatch = Tensors.create(TRAIN_LABEL_PATH.get(i));
+//                         matt.keras.Tensor<?> value = session.runner()
 //                                 .addTarget(applyGradientDescent)
 //                                 .fetch(error)
 //                                 .feed(X.asOutput(), imageBatch)

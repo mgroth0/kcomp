@@ -19,7 +19,7 @@ public abstract class Initializer {
     }
 
     /**
-     * Returns a Tensor object initialized as
+     * Returns a matt.keras.Tensor object initialized as
      * specified by the initializer.
      *
      * @param tf    Tensorflow Ops Handle

@@ -69,7 +69,7 @@ public class FashionMNISTKeras {
 
             // Accessors for MNIST Data
             Pair<GraphLoader<Float>, GraphLoader<Float>> loaders = FashionMNIST.graphLoaders2D();
-            // GraphLoader objects contain AutoCloseable `Tensor` objects.
+            // GraphLoader objects contain AutoCloseable `matt.keras.Tensor` objects.
             try (GraphLoader<Float> train = loaders.first();
                  GraphLoader<Float> test = loaders.second()) {
                 // Fit model

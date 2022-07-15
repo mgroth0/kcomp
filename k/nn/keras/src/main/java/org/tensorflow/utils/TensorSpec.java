@@ -4,9 +4,9 @@ import org.tensorflow.DataType;
 import org.tensorflow.op.core.Shape;
 
 /**
- * Describes a tf.Tensor
+ * Describes a tf.matt.keras.Tensor
  *
- * <p>Class to represent metadata describing the `tf.Tensor` objects accepted or returned by some
+ * <p>Class to represent metadata describing the `tf.matt.keras.Tensor` objects accepted or returned by some
  * TensorFlow APIs.
  */
 public class TensorSpec {
