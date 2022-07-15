@@ -5,8 +5,9 @@ import org.tensorflow.op.core.Shape;
 import org.tensorflow.keras.utils.Keras;
 import org.tensorflow.op.Ops;
 import org.tensorflow.op.core.Placeholder;
+import org.tensorflow.types.family.TNumber;
 
-public class Input<T extends Number> extends Layer<T> {
+public class Input<T extends TNumber> extends Layer<T> {
   private Placeholder<T> input;
   private long[] dims;
 

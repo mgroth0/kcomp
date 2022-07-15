@@ -5,6 +5,7 @@ import org.tensorflow.keras.activations.Activations;
 import org.tensorflow.keras.initializers.Initializer;
 import org.tensorflow.keras.initializers.Initializers;
 import org.tensorflow.keras.utils.Keras;
+import org.tensorflow.types.family.TNumber;
 
 public class Layers {
     // Builders for Input Layer
@@ -21,7 +22,7 @@ public class Layers {
         return new Dense<>(units, options);
     }
 
-    public static <T extends Number> Dense<T> dense(int units, Activation<T> activation) {
+    public static <T extends TNumber> Dense<T> dense(int units, Activation<T> activation) {
         return new Dense<T>(units, Dense.Options.builder().setActivation(activation).build());
     }
 

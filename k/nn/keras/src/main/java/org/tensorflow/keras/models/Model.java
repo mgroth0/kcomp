@@ -9,12 +9,13 @@ import org.tensorflow.keras.metrics.Metrics;
 import org.tensorflow.keras.optimizers.Optimizer;
 import org.tensorflow.keras.optimizers.Optimizers;
 import org.tensorflow.op.Ops;
+import org.tensorflow.types.family.TNumber;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("unchecked")
-public abstract class Model<T extends Number> extends Layer<T> {
+public abstract class Model<T extends TNumber> extends Layer<T> {
     public Model(Class<T> dtype) {
         // TODO:  For now, models take in only 1 input
         super(1);

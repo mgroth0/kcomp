@@ -5,10 +5,12 @@ import org.tensorflow.op.core.Shape;
 import org.tensorflow.keras.utils.TensorShape;
 import org.tensorflow.op.Ops;
 import org.tensorflow.op.core.Constant;
+import org.tensorflow.types.TInt32;
+import org.tensorflow.types.family.TNumber;
 
-public class Flatten<T extends Number> extends Layer<T> {
+public class Flatten<T extends TNumber> extends Layer<T> {
     private static int FLATTEN_INPUT_LENGTH = 1;
-    private Constant<Integer> units;
+    private Constant<TInt32> units;
 
     public Flatten() {
         super(FLATTEN_INPUT_LENGTH);

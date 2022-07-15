@@ -10,12 +10,13 @@ import org.tensorflow.keras.optimizers.Optimizer;
 import org.tensorflow.op.Ops;
 import org.tensorflow.op.core.Shape;
 import org.tensorflow.op.core.Variable;
+import org.tensorflow.types.family.TNumber;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Sequential<T extends Number> extends Model<T> {
+public class Sequential<T extends TNumber> extends Model<T> {
     private Input<T> firstLayer;
     private Optimizer<T> optimizer;
     private List<Layer<T>> layers;

@@ -10,9 +10,10 @@ import org.tensorflow.keras.utils.TensorShape;
 import org.tensorflow.op.Op;
 import org.tensorflow.op.Ops;
 import org.tensorflow.op.core.Variable;
+import org.tensorflow.types.family.TNumber;
 
 @SuppressWarnings("unchecked")
-public class Dense<T extends Number> extends Layer<T> {
+public class Dense<T extends TNumber> extends Layer<T> {
     private static int DENSE_INPUT_LENGTH = 1;
     private int units;
 
