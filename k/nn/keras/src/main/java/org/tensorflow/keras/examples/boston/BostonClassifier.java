@@ -3,7 +3,7 @@
 //
 // import io.gitlab.keras.datasets.BostonHousing;
 // import io.gitlab.keras.data.Dataset;
-// import org.tensorflow.Shape;
+// import org.tensorflow.op.core.Shape;
 // import org.tensorflow.*;
 // import org.tensorflow.op.Ops;
 // import org.tensorflow.op.core.*;

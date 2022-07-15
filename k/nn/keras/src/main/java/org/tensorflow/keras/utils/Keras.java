@@ -1,7 +1,7 @@
 package org.tensorflow.keras.utils;
 
 import org.tensorflow.Operand;
-import org.tensorflow.Shape;
+import org.tensorflow.op.core.Shape;
 import org.tensorflow.op.Ops;
 
 import java.nio.file.Path;

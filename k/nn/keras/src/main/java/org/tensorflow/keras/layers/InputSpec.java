@@ -1,6 +1,6 @@
 package org.tensorflow.keras.layers;
 
-import org.tensorflow.Shape;
+import org.tensorflow.op.core.Shape;
 import org.tensorflow.Tensor;
 
 import java.util.List;

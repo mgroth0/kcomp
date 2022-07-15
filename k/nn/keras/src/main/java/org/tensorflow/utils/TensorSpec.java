@@ -1,7 +1,7 @@
 package org.tensorflow.utils;
 
 import org.tensorflow.DataType;
-import org.tensorflow.Shape;
+import org.tensorflow.op.core.Shape;
 
 /**
  * Describes a tf.Tensor

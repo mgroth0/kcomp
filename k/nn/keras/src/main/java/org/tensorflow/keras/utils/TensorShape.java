@@ -1,7 +1,7 @@
 package org.tensorflow.keras.utils;
 
 import java.lang.Math;
-import org.tensorflow.Shape;
+import org.tensorflow.op.core.Shape;
 
 import static org.tensorflow.keras.utils.Keras.*;
 
