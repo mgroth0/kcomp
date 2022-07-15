@@ -4,6 +4,9 @@ import org.tensorflow.Operand;
 import org.tensorflow.keras.mixin.ActivationFunction;
 import org.tensorflow.op.Ops;
 import org.tensorflow.op.core.*;
+import org.tensorflow.op.math.Sigmoid;
+import org.tensorflow.op.math.Tanh;
+import org.tensorflow.op.nn.*;
 
 /**
  * Helper functions to compute activations using a TF Ops object.
