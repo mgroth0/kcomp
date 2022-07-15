@@ -36,7 +36,7 @@ public class Sequential<T extends TNumber> extends Model<T> {
     }
 
     @SafeVarargs
-    public static <T extends Number> Sequential<T> of(Class<T> dtype, Input<T> firstLayer, Layer<T>... layers) {
+    public static <T extends TNumber> Sequential<T> of(Class<T> dtype, Input<T> firstLayer, Layer<T>... layers) {
         return new Sequential<>(dtype, firstLayer, layers);
     }
 

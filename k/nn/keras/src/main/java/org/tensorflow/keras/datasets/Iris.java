@@ -7,6 +7,7 @@ import org.tensorflow.keras.data.GraphLoader;
 import org.tensorflow.keras.data.GraphModeTensorFrame;
 import org.tensorflow.keras.utils.DataUtils;
 import org.tensorflow.keras.utils.Keras;
+import org.tensorflow.types.TFloat32;
 import org.tensorflow.utils.Pair;
 
 import java.io.BufferedReader;
@@ -46,7 +47,7 @@ public class Iris {
         DataUtils.getFile(LOCAL_PREFIX + LOCAL_FILE, IRIS_ORIGIN);
     }
 
-    public static Pair<GraphLoader<Float>, GraphLoader<Float>> loadData(double val_split) throws IOException {
+    public static Pair<GraphLoader<TFloat32>, GraphLoader<TFloat32>> loadData(double val_split) throws IOException {
         Iris.download();
         try (BufferedReader br = new BufferedReader(new FileReader(
                 Keras.kerasPath(LOCAL_PREFIX + LOCAL_FILE).toFile()))) {

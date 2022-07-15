@@ -1,6 +1,6 @@
 package org.tensorflow.utils;
 
-import org.tensorflow.op.core.Shape;
+import org.tensorflow.ndarray.Shape
 
 import java.util.Arrays;
 
@@ -140,11 +140,13 @@ public class TensorShape {
   }
 
   private static long[] dimsFromShape(Shape shape) {
-    long[] dims = new long[shape.numDimensions()];
-    for (int i = 0; i < shape.numDimensions(); i++) {
+    /*long[] dims = new long[shape.rank()];
+    for (int i = 0; i < shape.rank(); i++) {
       dims[i] = shape.size(i);
-    }
-    return dims;
+    }*/
+    /*return shape.shape().asArray();*/
+    return shape.asArray();
+    /*return dims;*/
   }
 
   private static long[] concatenate(long[] first, long... last) {
@@ -163,6 +165,6 @@ public class TensorShape {
   }
 
   public Shape toShape() {
-    return Shape.make(head(dims), tail(dims));
+    return Shape.of(dims);
   }
 }

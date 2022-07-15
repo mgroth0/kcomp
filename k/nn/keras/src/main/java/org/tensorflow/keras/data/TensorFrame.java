@@ -1,6 +1,8 @@
 package org.tensorflow.keras.data;
 
-public abstract class TensorFrame<T> implements Dataset<T>, GraphLoader<T> {
+import org.tensorflow.types.family.TType;
+
+public abstract class TensorFrame<T extends TType> implements Dataset<T>, GraphLoader<T> {
   protected long batchSize = 1;
   protected boolean dropRemainder = false;
 

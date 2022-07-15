@@ -83,8 +83,8 @@ public class MNISTTensorFrameClassifier implements Runnable {
                        Operand<TFloat32> yTrue = yOp;
                        Operand<TFloat32> yPred = denseLayer.apply(tf, XOp);
 
-                       Operand<TFloat32> batchLoss = loss.apply(tf,Float.class, yTrue, yPred);
-                       Operand<TFloat32> batchAccuracy = accuracy.apply(tf,Float.class, yTrue, yPred);
+                       Operand<TFloat32> batchLoss = loss.apply(tf,TFloat32.class, yTrue, yPred);
+                       Operand<TFloat32> batchAccuracy = accuracy.apply(tf,TFloat32.class, yTrue, yPred);
 
                        List<Operand<TFloat32>> minimize = optimizer.minimize(tf, batchLoss, denseLayer.trainableWeights());
 

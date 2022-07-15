@@ -50,7 +50,7 @@ public class MNIST {
                 "986c5b8cbc6074861436f5581f7798be35c7c0025262d33b4df4c9ef668ec773", DataUtils.Checksum.sha256);
     }
 
-    public static Pair<GraphLoader<Float>, GraphLoader<Float>> graphLoaders() throws IOException {
+    public static Pair<GraphLoader<TFloat32>, GraphLoader<TFloat32>> graphLoaders() throws IOException {
         // Download MNIST files if they don't exist.
         MNIST.download();
 

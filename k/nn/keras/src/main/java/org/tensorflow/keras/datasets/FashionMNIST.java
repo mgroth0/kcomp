@@ -35,7 +35,7 @@ public class FashionMNIST {
                 "bb300cfdad3c16e7a12a480ee83cd310", DataUtils.Checksum.md5);
     }
 
-    public static Pair<GraphLoader<Float>, GraphLoader<Float>> graphLoaders() throws IOException {
+    public static Pair<GraphLoader<TFloat32>, GraphLoader<TFloat32>> graphLoaders() throws IOException {
         // Download MNIST files if they don't exist.
         FashionMNIST.download();
 
