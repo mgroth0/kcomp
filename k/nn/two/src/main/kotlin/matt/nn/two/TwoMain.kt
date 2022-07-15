@@ -13,7 +13,7 @@ import org.tensorflow.types.TInt32
 private val OMMachine = Polestar
 val srun = if (OMMachine != Polestar) SRun(timeMin = 15) else null
 
-fun main() = OMMachine.remoteOrLocal("k:nn:two:run", remote = true) {
+fun main() = OMMachine.remoteOrLocal("k:nn:two:run", remote = true, srun= srun) {
   tfDemo()
   mnistSelectivityDemo()
 }
