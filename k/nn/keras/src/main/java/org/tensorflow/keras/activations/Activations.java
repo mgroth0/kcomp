@@ -7,7 +7,6 @@ import org.tensorflow.op.math.Sigmoid;
 import org.tensorflow.op.math.Tanh;
 import org.tensorflow.op.nn.*;
 import org.tensorflow.types.family.TNumber;
-import org.tensorflow.types.family.TType;
 
 /**
  * Helper functions to compute activations using a TF Ops object.
@@ -19,7 +18,7 @@ public enum Activations {
     /**
      * Create an `Activation` object given a type from the `Activations` enumeration.
      */
-    public static <T extends TType> Activation<T> select(Activations type) {
+    public static <T extends TNumber> Activation<T> select(Activations type) {
         return new Lambda<>(getActivationFunction(type));
     }
 
@@ -60,48 +59,48 @@ public enum Activations {
      * Sigmoid activation function.
      */
     public static <T extends TNumber> Sigmoid<T> sigmoid(Ops tf, Operand<T> x) {
-        return tf.sigmoid(x);
+        return tf.math.sigmoid(x);
     }
 
     /**
      * Tanh activation function.
      */
     public static <T extends TNumber> Tanh<T> tanh(Ops tf, Operand<T> x) {
-        return tf.tanh(x);
+        return tf.math.tanh(x);
     }
 
     /**
      * Rectified linear unit.
      */
     public static <T extends TNumber> Relu<T> relu(Ops tf, Operand<T> x) {
-        return tf.relu(x);
+        return tf.nn.relu(x);
     }
 
     /**
      * Exponential linear unit.
      */
     public static <T extends TNumber> Elu<T> elu(Ops tf, Operand<T> x) {
-        return tf.elu(x);
+        return tf.nn.elu(x);
     }
 
     /**
      * Scaled exponential linear Unit.
      */
     public static <T extends TNumber> Selu<T> selu(Ops tf, Operand<T> x) {
-        return tf.selu(x);
+        return tf.nn.selu(x);
     }
 
     /**
      * Softmax activation function.
      */
     public static <T extends TNumber> Softmax<T> softmax(Ops tf, Operand<T> x) {
-        return tf.softmax(x);
+        return tf.nn.softmax(x);
     }
 
     /**
      * Log Softmax activation function.
      */
     public static <T extends TNumber> LogSoftmax<T> logSoftmax(Ops tf, Operand<T> x) {
-        return tf.logSoftmax(x);
+        return tf.nn.logSoftmax(x);
     }
 }
