@@ -23,12 +23,11 @@ import org.jetbrains.kotlinx.dl.dataset.handler.NUMBER_OF_CLASSES
 import org.jetbrains.kotlinx.dl.dataset.mnist
 
 
-fun kotlindlDemo() {
+fun kotlindlDemo(epochs: Int = 3) {
 
   val t = tic(prefix = "kotlindlDemo")
   t.toc("starting")
 
-  val EPOCHS = 3
   val TRAINING_BATCH_SIZE = 1000
   val NUM_CHANNELS = 1L
   val IMAGE_SIZE = 28L
@@ -112,7 +111,7 @@ fun kotlindlDemo() {
 
 	t.toc("got summary")
 
-	it.fit(dataset = train, epochs = EPOCHS, batchSize = TRAINING_BATCH_SIZE)
+	it.fit(dataset = train, epochs = epochs, batchSize = TRAINING_BATCH_SIZE)
 
 	t.toc("fit mode")
 
