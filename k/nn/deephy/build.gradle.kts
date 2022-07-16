@@ -2,6 +2,6 @@ apis {
 
 }
 implementations {
-	gui
-//  	libs.kotlinx-s
+  gui
+  libs.`kotlinx-serialization-cbor`
 }
