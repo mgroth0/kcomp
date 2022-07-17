@@ -16,7 +16,6 @@ import matt.fx.graphics.layout.hbox
 import matt.fx.graphics.layout.vbox
 import matt.gui.app.GuiApp
 import matt.hurricanefx.eye.collect.toObservable
-import matt.hurricanefx.eye.lang.IProp
 import matt.hurricanefx.eye.lang.Prop
 import matt.hurricanefx.eye.lang.SProp
 import matt.hurricanefx.eye.lib.onChange
@@ -122,7 +121,6 @@ fun main() = GuiApp(decorated = true) {
 		  label("Layer ID: ${top.layer_ID}")
 		  label("Layer Name: ${top.layer_Name}")
 		  label("Num Neurons: ${top.num_Neurons}")
-		  val unitIndexProp = IProp()
 		  var cb: ChoiceBox<Int>? = null
 		  hbox {
 			label("choose neuron: ")

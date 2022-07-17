@@ -26,9 +26,13 @@ private val PRIV_DATA_FOLD = DATA_FOLDER + "MNIST_selectivity"
 fun mnistSelectivityDemo() {
   val t = tic(prefix = "MNIST SELECTIVITY")
   t.toc("starting MNIST selectivity demo")
-  val sampleDataFold = PRIV_DATA_FOLD + "sample_data"
 
-  val robustnessFold = PRIV_DATA_FOLD + "Robustness"
+  @Suppress("UNUSED_VARIABLE") val sampleDataFold = PRIV_DATA_FOLD + "sample_data"
+  @Suppress("UNUSED_VARIABLE") val robustnessFold = PRIV_DATA_FOLD + "Robustness"
+
+
+
+
   //  sampleDataFold.mkdirs()
   //  if (robustnessFold.doesNotExist) {
   //	t.toc("cloning robustness")
