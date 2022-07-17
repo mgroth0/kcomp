@@ -22,13 +22,13 @@ tasks {
 	classpath = sourceSets.main.get().runtimeClasspath
 	mainClass.set(JavaExecutable(project).mainClass)
 	dependsOn(rootProject.tasks.matching { it.name == matt.kbuild.root.KBUILD_TASK_NAME })
-	args!!.add(REMOTE_GRADLE_ARG)
+	args = listOf(REMOTE_GRADLE_ARG)
   }
   val remoteShadowRun by registering(JavaExec::class) {
 	classpath = sourceSets.main.get().runtimeClasspath
 	mainClass.set(JavaExecutable(project).mainClass)
 	dependsOn(withType<ShadowJar>())
-	args!!.add(REMOTE_SHADOW_ARG)
+	args = listOf(REMOTE_SHADOW_ARG)
   }
 }
 
