@@ -2,6 +2,7 @@ package matt.nn
 
 import matt.key.REMOTE_GRADLE_ARG
 import matt.key.REMOTE_SHADOW_ARG
+import matt.klib.str.taball
 import matt.nn.kotlindldemo.kotlindlDemo
 import matt.nn.model.NeuralNetwork
 import matt.nn.model.NeuralNetwork.Companion.INPUT_LENGTH
@@ -17,16 +18,19 @@ import kotlin.random.Random.Default.nextDouble
 private val OMMachine = Polestar
 val srun = if (OMMachine != Polestar) SRun(timeMin = 15) else null
 
-fun main(args: Array<String>) = when {
-  REMOTE_GRADLE_ARG in args -> OMMachine.remoteOrLocal(GradleTaskExec("k:nn:run"), remote = true, srun = srun) {
-	run()
-  }
+fun main(args: Array<String>) {
+  taball("args", args)
+  when {
+	REMOTE_GRADLE_ARG in args -> OMMachine.remoteOrLocal(GradleTaskExec("k:nn:run"), remote = true, srun = srun) {
+	  run()
+	}
 
-  REMOTE_SHADOW_ARG in args -> OMMachine.remoteOrLocal(ShadowJarExec("nn"), remote = true, srun = srun) {
-	run()
-  }
+	REMOTE_SHADOW_ARG in args -> OMMachine.remoteOrLocal(ShadowJarExec("nn"), remote = true, srun = srun) {
+	  run()
+	}
 
-  else                      -> run()
+	else                      -> run()
+  }
 }
 
 private fun run() {
