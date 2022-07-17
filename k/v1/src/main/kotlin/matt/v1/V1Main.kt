@@ -6,11 +6,13 @@ import matt.gui.app.GuiApp
 import matt.klib.commons.thisMachine
 import matt.klib.sys.Mac
 import matt.klib.todo
+import matt.mstruct.KBUILD_JAR
 import matt.reflect.onLinux
+import matt.remote.GradleTaskExec
 import matt.remote.openmind.Polestar
 import matt.remote.runOnOM
 import matt.remote.slurm.SRun
-import matt.remote.stfpKbuildToOMIfNeeded
+import matt.remote.stfpToOMIfNeeded
 import matt.v1.gui.GuiMode
 import matt.v1.gui.V1Gui
 import matt.v1.gui.status.StatusLabel
@@ -57,7 +59,7 @@ fun main(): Unit = GuiApp(screenIndex = 2) {
 	  remoteStatus!!.status.value = WORKING
 	  println("WORKING 2")
 	  Polestar.session {
-		stfpKbuildToOMIfNeeded()
+		stfpToOMIfNeeded(KBUILD_JAR)
 		ssh(object: Appendable {
 		  var clearOnNext = false
 		  override fun append(csq: CharSequence?): java.lang.Appendable {
@@ -86,7 +88,7 @@ fun main(): Unit = GuiApp(screenIndex = 2) {
 		  }
 
 		}) {
-		  runOnOM("k:v1:run", srun = SRun(timeMin = 15))
+		  runOnOM(GradleTaskExec("k:v1:run"), srun = SRun(timeMin = 15))
 		}
 	  }
 

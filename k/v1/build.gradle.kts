@@ -1,7 +1,8 @@
 
-plugins {
-  kotlin("plugin.serialization")
+implementations{
+  mstruct
 }
+
 implementations(
   projects.k.gui,
   libs.kotlinx.multik.api,
