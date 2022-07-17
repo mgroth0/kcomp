@@ -7,9 +7,9 @@ import matt.nn.model.SumOfSquaresError
 import kotlin.random.Random.Default.nextDouble
 
 
-fun main() {
+fun main(args: Array<String>) {
   bareBonesNNDemo()
-  kotlindlDemo(epochs = 3)
+  kotlindlDemo(epochs = args.takeIf { it.size == 1 }?.get(0)?.toIntOrNull() ?: 3)
 }
 
 fun bareBonesNNDemo() {

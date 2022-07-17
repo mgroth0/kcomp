@@ -25,6 +25,8 @@ import org.jetbrains.kotlinx.dl.dataset.mnist
 
 fun kotlindlDemo(epochs: Int = 3) {
 
+  println("running kotlindl demo with ${epochs} epochs")
+
   val t = tic(prefix = "kotlindlDemo")
   t.toc("starting")
 

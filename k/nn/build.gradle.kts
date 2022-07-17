@@ -28,15 +28,31 @@ tasks {
 	  }
 	}
   }
-  val remoteShadowRun by registering {
-	dependsOn(withType<ShadowJar>())
+  val remoteShadowJar by registering {
 	dependsOn(rootProject.tasks.matching { it.name == matt.kbuild.root.KBUILD_TASK_NAME })
 	doLast {
 	  val OMMachine = matt.remote.openmind.Polestar
 	  val srun = if (OMMachine != matt.remote.openmind.Polestar) matt.remote.slurm.SRun(timeMin = 15) else null
 	  OMMachine.ssh {
-		runOnOM(matt.remote.ShadowJarExec("nn"), srun = srun)
+		runOnOM(matt.remote.GradleTaskExec("k:nn:shadowJar"), srun = srun)
 	  }
+	}
+  }
+  val remoteShadowRun by registering {
+	dependsOn(withType<ShadowJar>())
+	doLast {
+	  val OMMachine = matt.remote.openmind.Polestar
+	  val srun = if (OMMachine != matt.remote.openmind.Polestar) matt.remote.slurm.SRun(timeMin = 15) else null
+	  OMMachine.ssh {
+		runOnOM(matt.remote.ShadowJarExec("nn", args = listOf("4")), srun = srun)
+	  }
+	}
+  }
+
+  /*https://github.com/Kotlin/kotlindl/blob/8a971163c045c290780ac1ef17c97851c02a4ebb/README.md#fat-jar-issue*/
+  withType<ShadowJar> {
+	manifest {
+	  attributes(Pair("Implementation-Version", "1.15"))
 	}
   }
 }
