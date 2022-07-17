@@ -25,7 +25,7 @@ tasks {
 	dependsOn(rootProject.tasks.matching { it.name == matt.kbuild.root.KBUILD_TASK_NAME })
 	doLast {
 	  OMMachine.ssh {
-		runOnOM(matt.remote.GradleTaskExec("k:nn:run"), srun = OMMachine.standardSRun)
+		runOnOM(matt.remote.GradleTaskExec("k:nn:run"), srun = OMMachine.standardSRun, rebuildSingularity = true) /*temp rebuild sing for bug*/
 	  }
 	}
   }
