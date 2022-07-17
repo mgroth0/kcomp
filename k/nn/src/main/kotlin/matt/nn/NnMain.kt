@@ -16,7 +16,7 @@ val srun = if (OMMachine != Polestar) SRun(timeMin = 15) else null
 
 fun main() = OMMachine.remoteOrLocal(GradleTaskExec("k:nn:run"), remote = true, srun = srun) {
   bareBonesNNDemo()
-  kotlindlDemo(epochs = 300)
+  kotlindlDemo(epochs = 3)
 }
 
 
