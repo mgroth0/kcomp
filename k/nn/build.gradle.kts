@@ -28,7 +28,7 @@ tasks {
 	  }
 	}
   }
-  val remoteShadowRun by registering(JavaExec::class) {
+  val remoteShadowRun by registering {
 	dependsOn(withType<ShadowJar>())
 	dependsOn(rootProject.tasks.matching { it.name == matt.kbuild.root.KBUILD_TASK_NAME })
 	doLast {
