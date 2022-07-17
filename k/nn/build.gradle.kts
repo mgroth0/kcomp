@@ -1,15 +1,9 @@
-
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import matt.remote.runOnOM
 
 implementations {
-  remote
-  remoteSlurm
-  remoteOpenmind
   kjlibJmath
   async
-  kjlibGit
-  key
 }
 implementations(
   libs.kotlindl.api,
