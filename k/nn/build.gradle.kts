@@ -1,3 +1,5 @@
+import matt.key.REMOTE_GRADLE_ARG
+
 implementations {
   remote
   remoteSlurm
@@ -5,6 +7,7 @@ implementations {
   kjlibJmath
   async
   kjlibGit
+  key
 }
 implementations(
   libs.kotlindl.api,
@@ -14,7 +17,7 @@ implementations(
 tasks {
   val remoteGradleRun by registering(JavaExec::class) {
 	dependsOn(rootProject.tasks.matching { it.name == "kbuild" })
-	args!!.add("REMOTE_GRADLE")
+	args!!.add(REMOTE_GRADLE_ARG)
   }
 }
 

@@ -1,5 +1,6 @@
 package matt.nn
 
+import matt.key.REMOTE_GRADLE_ARG
 import matt.nn.kotlindldemo.kotlindlDemo
 import matt.nn.model.NeuralNetwork
 import matt.nn.model.NeuralNetwork.Companion.INPUT_LENGTH
@@ -14,10 +15,11 @@ import kotlin.random.Random.Default.nextDouble
 private val OMMachine = Polestar
 val srun = if (OMMachine != Polestar) SRun(timeMin = 15) else null
 
-fun main() = OMMachine.remoteOrLocal(GradleTaskExec("k:nn:run"), remote = true, srun = srun) {
-  bareBonesNNDemo()
-  kotlindlDemo(epochs = 3)
-}
+fun main(args: Array<String>) =
+  OMMachine.remoteOrLocal(GradleTaskExec("k:nn:run"), remote = REMOTE_GRADLE_ARG in args, srun = srun) {
+	bareBonesNNDemo()
+	kotlindlDemo(epochs = 3)
+  }
 
 
 fun bareBonesNNDemo() {
