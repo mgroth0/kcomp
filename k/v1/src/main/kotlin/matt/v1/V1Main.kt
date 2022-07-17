@@ -9,8 +9,8 @@ import matt.klib.todo
 import matt.reflect.onLinux
 import matt.remote.openmind.Polestar
 import matt.remote.runOnOM
-import matt.remote.stfpKbuildToOMIfNeeded
 import matt.remote.slurm.SRun
+import matt.remote.stfpKbuildToOMIfNeeded
 import matt.v1.gui.GuiMode
 import matt.v1.gui.V1Gui
 import matt.v1.gui.status.StatusLabel
