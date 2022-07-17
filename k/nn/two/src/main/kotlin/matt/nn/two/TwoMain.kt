@@ -1,6 +1,7 @@
 package matt.nn.two
 
 import matt.nn.two.mnistselectivity.mnistSelectivityDemo
+import matt.remote.GradleTaskExec
 import matt.remote.openmind.Polestar
 import matt.remote.remoteOrLocal
 import matt.remote.slurm.SRun
@@ -13,7 +14,7 @@ import org.tensorflow.types.TInt32
 private val OMMachine = Polestar
 val srun = if (OMMachine != Polestar) SRun(timeMin = 15) else null
 
-fun main() = OMMachine.remoteOrLocal("k:nn:two:run", remote = true, srun= srun) {
+fun main() = OMMachine.remoteOrLocal(GradleTaskExec("k:nn:two:run"), remote = true, srun = srun) {
   tfDemo()
   mnistSelectivityDemo()
 }
