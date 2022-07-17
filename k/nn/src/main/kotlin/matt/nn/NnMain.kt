@@ -26,9 +26,7 @@ fun main(args: Array<String>) = when {
 	run()
   }
 
-  else                      -> {
-	run()
-  }
+  else                      -> run()
 }
 
 private fun run() {
