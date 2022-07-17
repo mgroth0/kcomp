@@ -8,7 +8,6 @@ import matt.klib.sys.Mac
 import matt.klib.todo
 import matt.reflect.onLinux
 import matt.remote.openmind.Polestar
-import matt.remote.runOnOM
 import matt.remote.stfpKbuildToOMIfNeeded
 import matt.remote.slurm.SRun
 import matt.v1.gui.GuiMode
