@@ -73,3 +73,6 @@
 [submodule "k/sempart"]
 	path = k/sempart
 	url = https://github.com/mgroth0/sempart
+[submodule "k/nn"]
+	path = k/nn
+	url = https://github.com/mgroth0/nn
