@@ -6,9 +6,10 @@ import matt.kbuild.root.configureIdeaExcludes
 import matt.kbuild.root.setAllProjectsVersionsToGroupAndSysTime
 import matt.kbuild.root.standardizeSubprojectGroupNamesAndNames
 import matt.klib.sys.Mac
-import matt.klib.sys.OPEN_MIND
+import matt.klib.sys.Linux
+import matt.klib.sys.Windows
 
-if (thisMachine is OPEN_MIND) GIT = false
+if (thisMachine is Linux || thisMachine is Windows) GIT = false
 
 val thisFile = buildscript.sourceFile!!.toMFile()
 if (thisMachine == NEW_MAC) require(thisFile.hardLinkCount == 2)
@@ -22,7 +23,7 @@ plugins {
   kotlin("plugin.serialization") version libs.versions.kotlin apply false
 }
 pluginManager.apply {
-//  apply("com.github.johnrengelman.shadow") // version "7.1.2"
+  //  apply("com.github.johnrengelman.shadow") // version "7.1.2"
   //  apply("com.dorongold.task-tree") /*version "2.1.0"*/
   /*need to reference absolute path here because gradle API in KJG doesn't switch to the right working dir*/
 
