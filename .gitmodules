@@ -76,3 +76,6 @@
 [submodule "k/nn"]
 	path = k/nn
 	url = https://github.com/mgroth0/nn
+[submodule "k/eeg"]
+	path = k/eeg
+	url = https://github.com/mgroth0/eeg
