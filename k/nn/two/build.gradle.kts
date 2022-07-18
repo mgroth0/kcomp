@@ -1,6 +1,6 @@
 implementations {
-//  remote
-//  remoteSlurm
+  remote
+  remoteSlurm
   remoteOpenmind
   kjlibJmath
   async
