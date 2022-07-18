@@ -12,7 +12,8 @@ import matt.klib.sys.Windows
 if (thisMachine is Linux || thisMachine is Windows) GIT = false
 
 val thisFile = buildscript.sourceFile!!.toMFile()
-if (thisMachine == NEW_MAC) require(thisFile.hardLinkCount == 2)
+/*ln sfile1file link1file*/
+if (thisMachine == NEW_MAC) require(thisFile.hardLinkCount == 3)
 plugins {
   //  id("com.github.johnrengelman.shadow") version "7.1.2"
   id("com.dorongold.task-tree") version "2.1.0"

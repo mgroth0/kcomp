@@ -12,12 +12,6 @@ implementations(
 
 
 tasks {
-  //  val remoteGradleRun by registering(JavaExec::class) {
-  //	classpath = sourceSets.main.get().runtimeClasspath
-  //	mainClass.set(JavaExecutable(project).mainClass)
-  //	dependsOn(rootProject.tasks.matching { it.name == matt.kbuild.root.KBUILD_TASK_NAME })
-  //	args = listOf(REMOTE_GRADLE_ARG)
-  //  }
 
   val OMMachine = matt.remote.openmind.Polestar
 
