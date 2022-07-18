@@ -61,3 +61,6 @@
 [submodule "k/file"]
 	path = k/file
 	url = https://github.com/mgroth0/file
+[submodule "k/jdemo"]
+	path = k/jdemo
+	url = https://github.com/mgroth0/jdemo
