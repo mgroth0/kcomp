@@ -4,9 +4,9 @@ implementations {
   fxGraphics
   caching
   async
-//  remote
-//  remoteSlurm
-//  remoteOpenmind
+  remote
+  remoteSlurm
+  remoteOpenmind
   fxlibConsole
   dataman
   kjlibJmath
