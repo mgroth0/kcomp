@@ -64,3 +64,6 @@
 [submodule "k/jdemo"]
 	path = k/jdemo
 	url = https://github.com/mgroth0/jdemo
+[submodule "k/v1"]
+	path = k/v1
+	url = https://github.com/mgroth0/v1
