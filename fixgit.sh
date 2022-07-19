@@ -1,0 +1,1 @@
+git submodule foreach "echo \"gitdir: /om2/user/mjgroth/kcomp/.git/modules/\"\$(realpath --relative-to=/om2/user/mjgroth/kcomp/ \$PWD) > .git"
