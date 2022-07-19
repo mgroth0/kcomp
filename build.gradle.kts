@@ -1,14 +1,18 @@
 import kotlinx.serialization.encodeToString
+import matt.auto.SublimeText
+import matt.auto.openInIntelliJ
+import matt.auto.openInSublime
 import matt.file.toMFile
 import matt.kbuild.gbuild.depinfo.setupDepInfoTask
 import matt.kbuild.gbuild.depsToBuildJsonDeps
+import matt.kbuild.gbuild.projectDirM
 import matt.kbuild.root.addAtypicalTasksToAllProjects
 import matt.kbuild.root.checkVersionsAndProperties
 import matt.kbuild.root.configureIdeaExcludes
 import matt.kbuild.root.setAllProjectsVersionsToGroupAndSysTime
 import matt.kbuild.root.standardizeSubprojectGroupNamesAndNames
-import matt.klib.sys.Mac
 import matt.klib.sys.Linux
+import matt.klib.sys.Mac
 import matt.klib.sys.Windows
 import matt.mstruct.BuildJsonModule
 
@@ -58,19 +62,31 @@ root.setupKBuildTask(allChecks)
 root.tryToFixCleanBug(allChecks)
 root.moveYarnLock()
 
-allprojects {
-  tasks {
-	val generateBuildJson by creating {
-	  doLast {
-        println()
-		println(matt.json.prim.PrettyJson.encodeToString(
-		  BuildJsonModule(
-			modType = project.modtype::class.simpleName!!,
-			dependencies = project.depsToBuildJsonDeps()
-		  )
-		))
-        println()
-	  }
+tasks {
+  val generateBuildJson by creating {
+
+	doLast {
+	  val p = subprojects.shuffled().first { it.projectDirM["build.gradle.kts"].exists() }
+	  val buildGradleKts = p.projectDirM["build.gradle.kts"]
+	  val buildJson = p.projectDirM["build.json"]
+	  val json = matt.json.prim.PrettyJson.encodeToString(
+		BuildJsonModule(
+		  modType = p.modtype::class.simpleName!!,
+		  dependencies = p.depsToBuildJsonDeps()
+		)
+	  )
+
+	  buildGradleKts.openInSublime()
+	  buildJson.openInSublime()
+	  createTempFile("buildJsonFor-${p.name}",suffix=".json").toMFile().apply {
+		writeText(json)
+	  }.openInSublime()
+
+	  SublimeText.activate()
+
+	  println()
+	  println(json)
+	  println()
 	}
   }
 }
