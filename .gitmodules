@@ -64,9 +64,6 @@
 [submodule "k/v1"]
 	path = k/v1
 	url = https://github.com/mgroth0/v1
-[submodule "k/stim"]
-	path = k/stim
-	url = https://github.com/mgroth0/stim
 [submodule "k/nn"]
 	path = k/nn
 	url = https://github.com/mgroth0/nn
