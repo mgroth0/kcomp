@@ -1,5 +1,7 @@
+import kotlinx.serialization.encodeToString
 import matt.file.toMFile
 import matt.kbuild.gbuild.depinfo.setupDepInfoTask
+import matt.kbuild.gbuild.depsToBuildJsonDeps
 import matt.kbuild.root.addAtypicalTasksToAllProjects
 import matt.kbuild.root.checkVersionsAndProperties
 import matt.kbuild.root.configureIdeaExcludes
@@ -8,6 +10,7 @@ import matt.kbuild.root.standardizeSubprojectGroupNamesAndNames
 import matt.klib.sys.Mac
 import matt.klib.sys.Linux
 import matt.klib.sys.Windows
+import matt.mstruct.BuildJsonModule
 
 if (thisMachine is Linux || thisMachine is Windows) GIT = false
 
@@ -54,3 +57,20 @@ setupDepInfoTask()
 root.setupKBuildTask(allChecks)
 root.tryToFixCleanBug(allChecks)
 root.moveYarnLock()
+
+allprojects {
+  tasks {
+	val generateBuildJson by creating {
+	  doLast {
+        println()
+		println(matt.json.prim.PrettyJson.encodeToString(
+		  BuildJsonModule(
+			modType = project.modtype::class.simpleName!!,
+			dependencies = project.depsToBuildJsonDeps()
+		  )
+		))
+        println()
+	  }
+	}
+  }
+}
