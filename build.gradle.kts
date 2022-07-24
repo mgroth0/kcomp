@@ -8,6 +8,7 @@ import matt.kbuild.gbuild.projectDirM
 import matt.kbuild.root.addAtypicalTasksToAllProjects
 import matt.kbuild.root.checkVersionsAndProperties
 import matt.kbuild.root.configureIdeaExcludes
+import matt.kbuild.root.mod.cfgWrapper
 import matt.kbuild.root.setAllProjectsVersionsToGroupAndSysTime
 import matt.kbuild.root.standardizeSubprojectGroupNamesAndNames
 import matt.klib.sys.Mac
@@ -87,4 +88,8 @@ tasks {
 	  println()
 	}
   }
+}
+
+project("k").subprojects {
+  cfgWrapper()?.config()
 }
