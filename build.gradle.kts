@@ -1,6 +1,5 @@
 import kotlinx.serialization.encodeToString
 import matt.auto.SublimeText
-import matt.auto.openInIntelliJ
 import matt.auto.openInSublime
 import matt.file.toMFile
 import matt.kbuild.gbuild.depinfo.setupDepInfoTask
@@ -11,12 +10,11 @@ import matt.kbuild.root.checkVersionsAndProperties
 import matt.kbuild.root.configureIdeaExcludes
 import matt.kbuild.root.setAllProjectsVersionsToGroupAndSysTime
 import matt.kbuild.root.standardizeSubprojectGroupNamesAndNames
-import matt.klib.sys.Linux
 import matt.klib.sys.Mac
-import matt.klib.sys.Windows
 import matt.mstruct.BuildJsonModule
 
-if (thisMachine is Linux || thisMachine is Windows) GIT = false
+if (thisMachine !is Mac) GIT = false
+if (thisMachine !is Mac || project.name != matt.file.commons.IdeProject.all.name) GEN = false
 
 val thisFile = buildscript.sourceFile!!.toMFile()
 /*ln sfile1file link1file*/
@@ -78,7 +76,7 @@ tasks {
 
 	  buildGradleKts.openInSublime()
 	  buildJson.openInSublime()
-	  createTempFile("buildJsonFor-${p.name}",suffix=".json").toMFile().apply {
+	  createTempFile("buildJsonFor-${p.name}", suffix = ".json").toMFile().apply {
 		writeText(json)
 	  }.openInSublime()
 
