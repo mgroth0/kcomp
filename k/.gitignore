@@ -1,4 +1,5 @@
 /build/
+.git_knn
 /out/
 *.hprof
 *.zip
@@ -21,7 +22,3 @@
 /log/
 /logs/
 /bin/jar/
-/build.gradle.kts
-/settings.gradle.kts
-/gradle.properties
-/shadow.gradle
