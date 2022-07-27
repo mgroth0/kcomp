@@ -1,6 +1,3 @@
-[submodule "RootFiles"]
-	path = RootFiles
-	url = https://github.com/mgroth0/RootFiles
 [submodule "k/stream"]
 	path = k/stream
 	url = https://github.com/mgroth0/stream
